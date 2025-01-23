@@ -1,0 +1,12 @@
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/SDL3-shared.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/SDL3_test.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/SDL_uclibc.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/uninstall.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/package.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/package_source.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/edit_cache.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/rebuild_cache.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/list_install_components.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/install.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/install/local.dir
+C:/Users/juanv/Desktop/Videojuegos-2DGame/SDL3/build/CMakeFiles/install/strip.dir
