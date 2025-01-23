@@ -18,7 +18,7 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 3. Descomprimir el primer zip en el directorio del proyecto. Llamemos a la carpeta descomprimida "SDL3".
 4. Crear una carpeta en ".../SDL3" llamada "build".
 5. Colocar el "sdl3.dll" al lado del "main.cpp" del proyecto.
-6. En la ruta ".../mi_proyecto/SDL3/build/" ejecutar "cmake .. -DSDL_STATIC=OFF"
+6. En la ruta ".../mi_proyecto/SDL3/build/" ejecutar "cmake .. -DSDL_STATIC=OFF" (en caso de posible error "cmake .. -G Ninja -DSDL_STATIC=OFF")
 7. Al finalizarse, ejecutar "ninja".
 8. Vamos al directorio raiz del proyecto (".../mi_proyecto/") y ejecutar: g++ main.cpp -o main -I./SDL3/include -L./SDL3/build -lSDL3
 9. Abrimos el ejecutable con: main.exe
