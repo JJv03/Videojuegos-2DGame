@@ -10,8 +10,13 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 | Diseño de arquitectura   | --- | Todos        | Sin comenzar |
 | Arte del juego           | --- | Juan         | Sin comenzar |
 
+## Primeros pasos del repositorio para ejecutar el juego
 
-## Instalación de SDL3
+1. Hacer "pull"
+2. Ejecutar comando "make". CUIDADO: hay que modificar dos rutas en el MAKEFILE haciendo caso a los comentarios
+3. Ejecutar comando "game.exe"
+
+## ANEXO: Instalación desde 0 de SDL3
 
 1. Crear el proyecto en una ruta sin nombres raros (espacios, signos raros, etc...)
 2. Descargar del repositorio original SDL3 versión 3.20: SDL3-3.2.0.zip (para tener la librería) y SDL3-3.2.0-win32-x64.zip en Windows (para tener el sdl3.dll)
@@ -22,5 +27,3 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 7. Al finalizarse, ejecutar "ninja".
 8. Vamos al directorio raiz del proyecto (".../mi_proyecto/") y ejecutar: g++ main.cpp -o main -I./SDL3/include -L./SDL3/build -lSDL3
 9. Abrimos el ejecutable con: main.exe
-
-10. El punto 8 se puede sustituir por el comando "make". CUIDADO: hay que modificar dos rutas en el MAKEFILE haciendo caso a los comentarios
