@@ -22,3 +22,5 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 7. Al finalizarse, ejecutar "ninja".
 8. Vamos al directorio raiz del proyecto (".../mi_proyecto/") y ejecutar: g++ main.cpp -o main -I./SDL3/include -L./SDL3/build -lSDL3
 9. Abrimos el ejecutable con: main.exe
+
+10. El punto 8 se puede sustituir por el comando "make". CUIDADO: hay que modificar dos rutas en el MAKEFILE haciendo caso a los comentarios
