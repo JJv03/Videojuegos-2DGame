@@ -42,3 +42,4 @@ cmake-build-*/
 
 # Otros archivos de configuración del proyecto (dependiendo de tu entorno)
 *.iml
+Makefile
