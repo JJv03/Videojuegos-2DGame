@@ -1,67 +1,77 @@
-/*
-  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely.
-*/
-#define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
+#define SDL_MAIN_USE_CALLBACKS 1
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
 
-/* This function runs once at startup. */
+// Variables para controlar el rectángulo
+static float rect_x = 500.0f;           // Posición inicial en X
+static float rect_y = 500.0f;           // Posición inicial en Y
+static const float rect_width = 50.0f;  // Ancho del rectángulo
+static const float rect_height = 50.0f; // Alto del rectángulo
+static const float rect_speed = 0.05f;  // Velocidad de movimiento
+
+// Esta función se ejecuta una vez al iniciar.
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    /* Create the window */
-    if (!SDL_CreateWindowAndRenderer("Hello World", 800, 600, SDL_WINDOW_FULLSCREEN, &window, &renderer)) {
-        SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
+    // Crear la ventana
+    if (!SDL_CreateWindowAndRenderer("Game", 800, 600, SDL_WINDOW_FULLSCREEN, &window, &renderer))
+    {
+        SDL_Log("No se pudo crear la ventana y el renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
     return SDL_APP_CONTINUE;
 }
 
-/* This function runs when a new event (mouse input, keypresses, etc) occurs. */
+// Esta función se ejecuta cuando ocurre un evento nuevo (entrada de teclado, ratón, etc).
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event->type == SDL_EVENT_KEY_DOWN ||
-        event->type == SDL_EVENT_QUIT) {
-        return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
+    if (event->type == SDL_EVENT_QUIT || event->key.scancode == SDL_SCANCODE_ESCAPE)
+    {
+        return SDL_APP_SUCCESS; // Finalizar el programa
     }
+
     return SDL_APP_CONTINUE;
 }
 
-/* This function runs once per frame, and is the heart of the program. */
+// Esta función se ejecuta una vez por frame.
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    const char *message = "Hello World!";
-    int w = 0, h = 0;
-    float x, y;
-    const float scale = 4.0f;
+    // Actualizar eventos
+    SDL_PumpEvents();
 
-    /* Center the message and scale it up */
-    SDL_GetRenderOutputSize(renderer, &w, &h);
-    SDL_SetRenderScale(renderer, scale, scale);
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
-    y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
+    // Obtener el estado del teclado
+    const bool *keyboard_state = SDL_GetKeyboardState(NULL);
 
-    /* Draw the message */
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    // HABRÍA QUE AÑADIR UNA PEQUEÑA ACELERACIÓN AL PRINCIPIO DEL MOVIMIENTO (empezar lento hasta una velocidad base)
+    // ADEMÁS AÑADIR UN EFECTO DE DESLIZAMIENTO CUANDO SE CAMBIE DE DIRECCIÓN DE MOVIMIENTO
+    // Actualizar la posición del rectángulo según las teclas presionadas
+    if (keyboard_state[SDL_SCANCODE_A] || keyboard_state[SDL_SCANCODE_LEFT])
+    {
+        rect_x -= rect_speed;
+    }
+    if (keyboard_state[SDL_SCANCODE_D] || keyboard_state[SDL_SCANCODE_RIGHT])
+    {
+        rect_x += rect_speed;
+    }
+
+    // Limpiar la pantalla
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Negro
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDebugText(renderer, x, y, message);
+
+    // Dibujar el rectángulo
+    SDL_FRect rect = {rect_x - rect_width / 2, rect_y - rect_height / 2, rect_width, rect_height};
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Blanco
+    SDL_RenderFillRect(renderer, &rect);
+
+    // Actualizar la pantalla
     SDL_RenderPresent(renderer);
 
     return SDL_APP_CONTINUE;
 }
 
-/* This function runs once at shutdown. */
+// Esta función se ejecuta al finalizar.
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
 }
