@@ -1,7 +1,7 @@
 # Variables
 CC=g++
-CFLAGS=-I".\SDL3\include" -g -Wall -std=c++23	# Asegurarse de que esto apunta a la carpeta "include" de la libreria
-LDFLAGS=-L"." -lSDL3	# Poner entre las comillas dobles la ruta hacia el sdl3.dll
+CFLAGS=-I"./SDL3/include" -I"./SDL3_image/include" -g -Wall -std=c++23	# -I"<ruta/a/carpeta/include/de/libreria>"
+LDFLAGS=-L"." -lSDL3 -L"." -lSDL3_image 		# poner entre las comillas dobles ("") la ruta hacia el .dll de la librería
 SRC=main.cpp
 OBJ=main.o
 EXEC=game
@@ -19,4 +19,4 @@ $(OBJ): $(SRC)
 
 # Limpiar archivos generados
 clean:
-	del -f $(OBJ) $(EXEC)
+	del -f $(OBJ) $(EXEC).exe
