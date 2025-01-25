@@ -12,9 +12,9 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 
 ## Primeros pasos del repositorio para ejecutar el juego
 
-1. Hacer "pull"
+1. Hacer "pull" (ya incluye todas las librerías y .dll)
 2. Ejecutar "make clean" (de momento solo va en Windows).
-3. Ejecutar comando "make". CUIDADO: si no se han seguido los pasos del anexo 1, hay que modificar rutas de las líneas 3 y 4 del MAKEFILE haciendo caso a los comentarios
+3. Ejecutar comando "make". CUIDADO: si quieres poner las librerías y/o .dll en otro sitio, hay que modificar rutas de las líneas 3 y 4 del MAKEFILE haciendo caso a los comentarios
 4. Ejecutar comando "game.exe"
 
 ## ANEXO 1: Instalación desde 0 de SDL3 3.20 en Windows (25/01/2025)
