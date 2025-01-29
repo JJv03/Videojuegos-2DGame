@@ -1,0 +1,33 @@
+# Variables
+CC=g++
+CFLAGS=-I"../SFML/include" -g -Wall -std=c++20
+LDFLAGS= -L"../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
+SRC=main.cpp demo.cpp camera.cpp
+OBJ_DIR=build
+OBJ=$(OBJ_DIR)/main.o $(OBJ_DIR)/demo.o $(OBJ_DIR)/camera.o
+EXEC=$(OBJ_DIR)/game.exe
+
+# Regla por defecto (compilar todo)
+all: $(EXEC)
+
+# Enlazar el ejecutable
+$(EXEC): $(OBJ) | $(OBJ_DIR)
+	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
+	
+# --------------------------
+# Compilar main.cpp a main.o
+$(OBJ_DIR)/main.o: main.cpp demo.h | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c main.cpp -o $(OBJ_DIR)/main.o
+
+# Compilar demo.cpp a demo.o
+$(OBJ_DIR)/demo.o: demo.cpp demo.h | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c demo.cpp -o $(OBJ_DIR)/demo.o
+
+# Compilar camera.cpp a camera.o
+$(OBJ_DIR)/camera.o: camera.cpp camera.h | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c camera.cpp -o $(OBJ_DIR)/camera.o
+# --------------------------
+
+# Limpiar archivos generados
+clean:
+	@rm -f $(OBJ) $(EXEC) || del -f $(OBJ) $(EXEC)
