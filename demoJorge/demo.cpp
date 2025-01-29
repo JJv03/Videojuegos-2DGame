@@ -8,7 +8,7 @@ sf::Texture simonTexture;
 void Init(const sf::Window &window)
 {
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("../assets/Simon.png"))
+    if (!simonImage.loadFromFile("../assets/sprites/player/NES - Castlevania - Simon Belmont.png"))
     {
         std::cerr << "Error cargando la imagen" << std::endl;
         exit(-1);
