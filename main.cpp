@@ -36,6 +36,8 @@ int main()
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite.setPosition({245.f, 139.f});
 
+    bool haciaIzquierda { false };
+    bool haciaDerecha { false };
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -60,23 +62,47 @@ int main()
                     window.close();
                     break;
                 case sf::Keyboard::Scancode::Up:
-                    simonSprite.move({0.f, -3.f});
+                    simonSprite.move({0.f, -1.5f});
                     break;
                 case sf::Keyboard::Scancode::Down:
-                    simonSprite.move({0.f, 3.f});
+                    simonSprite.move({0.f, 1.5f});
                     break;
                 case sf::Keyboard::Scancode::Left:
+                    haciaIzquierda = true;
+                    haciaDerecha = false;
                     simonSprite.setScale({1.f, 1.f});
-                    simonSprite.move({-3.f, 0.f});
                     break;
                 case sf::Keyboard::Scancode::Right:
+                    haciaDerecha = true;
+                    haciaIzquierda = false;
                     simonSprite.setScale({-1.f, 1.f});
-                    simonSprite.move({3.f, 0.f});
+                    break;
+                default:
+                    break;
+                }
+            } else if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>())
+            {
+                switch (keyPressed->scancode)
+                {
+                case sf::Keyboard::Scancode::Left:
+                    haciaIzquierda = false;
+                    break;
+                case sf::Keyboard::Scancode::Right:
+                    haciaDerecha = false;
                     break;
                 default:
                     break;
                 }
             }
+        }
+
+        if (haciaIzquierda && !haciaDerecha)
+        {
+            simonSprite.move({-1.5f, 0.f});
+        }
+        else if (haciaDerecha && !haciaIzquierda)
+        {
+            simonSprite.move({1.5f, 0.f});
         }
         
         window.clear(sf::Color::Black); // obligatorio limpiar la ventana antes de dibujar SIEMPRE
