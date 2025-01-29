@@ -2,9 +2,9 @@
 CC=g++
 CFLAGS=-I"../SFML/include" -g -Wall -std=c++20
 LDFLAGS= -L"../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
-SRC=main.cpp demo.cpp camera.cpp renderer.o
+SRC=main.cpp demo.cpp camera.cpp renderer.o resources.o
 OBJ_DIR=build
-OBJ=$(OBJ_DIR)/main.o $(OBJ_DIR)/demo.o $(OBJ_DIR)/camera.o $(OBJ_DIR)/renderer.o
+OBJ=$(OBJ_DIR)/main.o $(OBJ_DIR)/demo.o $(OBJ_DIR)/camera.o $(OBJ_DIR)/renderer.o $(OBJ_DIR)/resources.o
 EXEC=$(OBJ_DIR)/game.exe
 
 # Regla por defecto (compilar todo)
@@ -30,6 +30,10 @@ $(OBJ_DIR)/camera.o: camera.cpp camera.h | $(OBJ_DIR)
 # Compilar renderer.cpp a renderer.o
 $(OBJ_DIR)/renderer.o: renderer.cpp renderer.h | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c renderer.cpp -o $(OBJ_DIR)/renderer.o
+
+# Compilar renderer.cpp a renderer.o
+$(OBJ_DIR)/resources.o: resources.cpp resources.h | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c resources.cpp -o $(OBJ_DIR)/resources.o
 # --------------------------
 
 # Limpiar archivos generados
