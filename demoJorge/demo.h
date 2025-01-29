@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "renderer.h"
 
 // Inicializa los recursos y configuraciones necesarias
 void Init(const sf::Window &window);
@@ -9,4 +10,4 @@ void Init(const sf::Window &window);
 void Update(float deltaTime);
 
 // Renderiza los elementos en la ventana
-void Render(sf::RenderWindow &window);
+void Render(Renderer &renderer);

@@ -1,18 +1,25 @@
 #include "demo.h"
+#include <iostream>
 
-sf::RectangleShape rectangle;
+// Variables globales
+sf::Texture simonTexture;
 
 // Inicializa los recursos y configuraciones necesarias
 void Init(const sf::Window &window)
 {
-    float width = 1.0f;
-    float height = 2.0f;
+    sf::Image simonImage;
+    if (!simonImage.loadFromFile("../assets/Simon.png"))
+    {
+        std::cerr << "Error cargando la imagen" << std::endl;
+        exit(-1);
+    }
+    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
-    rectangle.setSize(sf::Vector2f(width, height));                 // Establece el tamaño
-    rectangle.setOrigin(sf::Vector2f(width / 2.0f, height / 2.0f)); // Centra el origen
-    rectangle.setFillColor(sf::Color::Transparent);                 // Hace el relleno transparente
-    rectangle.setOutlineThickness(0.02f);                           // Define el grosor del contorno
-    rectangle.setOutlineColor(sf::Color(0, 255, 0));                // Color verde para el contorno
+    if (!simonTexture.loadFromImage(simonImage))
+    {
+        std::cerr << "Error cargando la textura" << std::endl;
+        exit(-1);
+    }
 }
 
 // Actualiza la lógica del programa en función del tiempo transcurrido
@@ -21,7 +28,7 @@ void Update(float deltaTime)
 }
 
 // Renderiza los elementos en la ventana
-void Render(sf::RenderWindow &window)
+void Render(Renderer &renderer)
 {
-    window.draw(rectangle);
+    renderer.Draw(simonTexture, sf::Vector2f(), sf::Vector2f(7.5, 5.5), sf::IntRect({1, 21}, {16, 32}));
 }

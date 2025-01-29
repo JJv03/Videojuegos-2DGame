@@ -5,14 +5,13 @@
 
 #include "demo.h"
 #include "camera.h"
-
-using namespace std;
+#include "renderer.h"
 
 // Definición de constantes para la escala y dimensiones de la ventana
 const int escala{1};
 const int gWindowWidth{1200 * escala};
 const int gWindowHeight{900 * escala};
-const string windowName{"demo"};
+const std::string windowName{"demo"};
 
 int main()
 {
@@ -20,6 +19,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), windowName, sf::Style::Default);
     sf::Clock deltaClock; // Reloj para calcular deltaTime (tiempo real, sin dependencia de la velocidad del procesador)
     Camera camera;        // Instancia de la cámara
+    Renderer renderer(window);
 
     Init(window); // Inicialización del entorno
 
@@ -40,9 +40,9 @@ int main()
         window.setView(camera.GetView(window.getSize())); // Actualiza la vista de la cámara
         Update(deltaTime);                                // Llama a la función de actualización lógica
 
-        window.clear(); // Limpia la ventana antes de renderizar
+        window.clear(sf::Color(20, 20, 20)); // Limpia la ventana antes de renderizar
 
-        Render(window); // Dibuja los elementos en pantalla
+        Render(renderer); // Dibuja los elementos en pantalla
 
         window.display(); // Muestra el contenido renderizado en la ventana
     }
