@@ -2,13 +2,14 @@
 
 Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 
-## Lista de Tareas
+## Librerías usadas:
 
-| Tarea | Descripción | Responsables | Estado |
-|-------|-------------|--------------|--------|
-| Plantear Idea            | --- | Todos        | En progreso  |
-| Diseño de arquitectura   | --- | Todos        | Sin comenzar |
-| Arte del juego           | --- | Juan         | Sin comenzar |
+|      Librería      | Descripción |
+|--------------------|-------------|
+| SDL2 v2.30.11      | Gráficos, ventana de juego, inputs, etc. |
+| SDL2 image v2.8.4  | Para cargar imágenes en todos los formatos (principalmente usaremos .png) |
+| SDL2 ttf v2.24.0   | Para mostrar texto de una fuente determinada por pantalla |
+| SDL2 mixer 2.8.0   | Para el manejo de audio |
 
 ## Primeros pasos del repositorio para ejecutar el juego
 
@@ -17,7 +18,7 @@ Creando un videojuego 2D divertido que tenga a Eduardo Mena como boss final.
 3. Ejecutar comando "make". CUIDADO: si quieres poner las librerías y/o .dll en otro sitio, hay que modificar rutas de las líneas 3 y 4 del MAKEFILE haciendo caso a los comentarios
 4. Ejecutar comando "game.exe"
 
-## ANEXO 1: Instalación desde 0 de SDL3 3.20 en Windows (25/01/2025)
+## ANEXO 1: Preparación de entorno e Instalación desde 0 de SDL3 3.20 en Windows (25/01/2025)
 
 1. Crear el proyecto en una ruta sin nombres raros (espacios, signos raros, etc...). La carpeta del repositorio del Github Desktop sirve.
 2. Descargar del repositorio de SDL3 versión 3.20: SDL3-devel-3.2.0-mingw.zip (para tener la librería)

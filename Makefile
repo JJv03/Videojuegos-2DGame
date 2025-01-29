@@ -1,7 +1,7 @@
 # Variables
 CC=g++
-CFLAGS=-I"./SDL3/include" -I"./SDL3_image/include" -g -Wall -std=c++23	# -I"<ruta/a/carpeta/include/de/libreria>"
-LDFLAGS=-L"." -lSDL3 -L"." -lSDL3_image 		# poner entre las comillas dobles ("") la ruta hacia el .dll de la librería
+CFLAGS=-I"./SFML/include" -g -Wall -std=c++20	# -I"<ruta/a/carpeta/include/de/libreria>"
+LDFLAGS= -L"./SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system		# -L"<ruta/a/carpeta/lib/de/libreria>" -l<nombre_de_la_librería>
 SRC=main.cpp
 OBJ=main.o
 EXEC=game
