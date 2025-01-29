@@ -38,6 +38,7 @@ int main()
 
     bool haciaIzquierda { false };
     bool haciaDerecha { false };
+    bool haciaArriba { false };
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -62,6 +63,7 @@ int main()
                     window.close();
                     break;
                 case sf::Keyboard::Scancode::Up:
+                    haciaArriba = true;
                     simonSprite.move({0.f, -1.5f});
                     break;
                 case sf::Keyboard::Scancode::Down:
@@ -84,6 +86,9 @@ int main()
             {
                 switch (keyPressed->scancode)
                 {
+                case sf::Keyboard::Scancode::Up:
+                    haciaArriba = false;
+                    break;
                 case sf::Keyboard::Scancode::Left:
                     haciaIzquierda = false;
                     break;
@@ -96,11 +101,26 @@ int main()
             }
         }
 
-        if (haciaIzquierda && !haciaDerecha)
+        if (haciaArriba)
+        {
+            if (haciaDerecha)
+            {
+                simonSprite.move({1.f, -1.5f});
+            }
+            else if (haciaIzquierda)
+            {
+                simonSprite.move({-1.f, -1.5f});
+            }
+            else
+            {
+                simonSprite.move({0.f, -1.5f});
+            }
+        }
+        if (haciaIzquierda)
         {
             simonSprite.move({-1.5f, 0.f});
         }
-        else if (haciaDerecha && !haciaIzquierda)
+        else if (haciaDerecha)
         {
             simonSprite.move({1.5f, 0.f});
         }

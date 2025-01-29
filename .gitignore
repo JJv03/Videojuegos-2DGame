@@ -5,3 +5,4 @@
 # Archivos de configuración específicos de Visual Studio
 .vs/
 .vscode/
+Makefile
