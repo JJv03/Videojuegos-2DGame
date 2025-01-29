@@ -10,7 +10,6 @@
 # Archivos temporales de compilación
 *.a
 *.lib
-*.dll
 
 # Archivos de dependencias generados
 *.d
@@ -18,7 +17,6 @@
 # Archivos de CMake (si usas CMake)
 CMakeCache.txt
 CMakeFiles/
-Makefile
 cmake_install.cmake
 
 # Archivos de IDEs comunes
@@ -42,5 +40,3 @@ cmake-build-*/
 
 # Otros archivos de configuración del proyecto (dependiendo de tu entorno)
 *.iml
-
-SDL3/*
