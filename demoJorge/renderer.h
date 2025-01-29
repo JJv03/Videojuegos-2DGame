@@ -8,7 +8,10 @@ public:
     Renderer(sf::RenderTarget &target);
 
     // Método para dibujar una textura en una posición y tamaño especificados, con un recorte opcional.
-    void Draw(const sf::Texture &texture, const sf::Vector2f &position, const sf::Vector2f &size, const sf::IntRect &cut);
+    void DrawCut(const sf::Texture &texture, const sf::Vector2f &position, const sf::Vector2f &size, const sf::IntRect &cut);
+
+    // Método para dibujar una textura en una posición y tamaño especificados, sin recorte.
+    void Draw(const sf::Texture &texture, const sf::Vector2f &position, const sf::Vector2f &size);
 
 private:
     sf::RenderTarget &target; // Referencia al objetivo de renderizado.

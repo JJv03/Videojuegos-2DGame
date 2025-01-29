@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "demo.h"
-#include "camera.h"
 #include "renderer.h"
 
 // Definición de constantes para la escala y dimensiones de la ventana
@@ -18,7 +17,6 @@ int main()
     // Creación de la ventana SFML
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), windowName, sf::Style::Default);
     sf::Clock deltaClock; // Reloj para calcular deltaTime (tiempo real, sin dependencia de la velocidad del procesador)
-    Camera camera;        // Instancia de la cámara
     Renderer renderer(window);
 
     Init(window); // Inicialización del entorno
