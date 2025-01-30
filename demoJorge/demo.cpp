@@ -3,7 +3,7 @@
 #include "map.h"
 #include <iostream>
 
-Map map;
+Map map(12);
 Camera camera(320.0f);
 
 // Inicializa los recursos y configuraciones necesarias
@@ -12,35 +12,29 @@ void Init(const sf::Window &window)
     // En este caso primero se extrae en formato imagen para realizar las conversiones primero, después se almacena en la clase de recursos
     sf::Image simonImage;
     if (!simonImage.loadFromFile("../assets/sprites/player/NES - Castlevania - Simon Belmont.png"))
-    {
-        std::cerr << "Error cargando la imagen" << std::endl;
         exit(-1);
-    }
+
     simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
     if (!Resources::textures["simon"].loadFromImage(simonImage))
-    {
-        std::cerr << "Error cargando la imagen" << std::endl;
         exit(-1);
-    }
 
     // Creación textura de ejemplo cuadrado
     sf::Image squareImage;
     if (!squareImage.loadFromFile("../assets/others/square.png"))
-    {
-        std::cerr << "Error cargando la imagen" << std::endl;
         exit(-1);
-    }
+
     squareImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
     if (!Resources::textures["square"].loadFromImage(squareImage))
-    {
-        std::cerr << "Error cargando la imagen" << std::endl;
         exit(-1);
-    }
 
     // Incializacion del grid del mapa
-    map.createCheckerboard(10, 10);
+    sf::Image image;
+    if (!image.loadFromFile("../assets/others/demoMap.png"))
+        exit(-1);
+
+    map.CreateFromImage(image);
 
     // Posición inicial de la camara
     camera.position = sf::Vector2f(160.0f, 160.0f);

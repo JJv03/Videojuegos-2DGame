@@ -3,17 +3,22 @@
 // Constructor que inicializa el tamaño de la celda y la cuadrícula vacía
 Map::Map(float cellSize) : grid(), cellSize(cellSize) {}
 
-void Map::createCheckerboard(size_t width, size_t height)
+void Map::CreateFromImage(const sf::Image &image)
 {
-    // Inicializa la cuadrícula con ceros
-    grid = std::vector(width, std::vector(height, 0));
+    grid.clear();
 
-    // Llena la cuadrícula con unos
-    for (auto &column : grid)
+    grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
+
+    for (size_t x = 0; x < grid.size(); x++)
     {
-        for (auto &cell : column)
+        for (size_t y = 0; y < grid[x].size(); y++)
         {
-            cell = 1;
+            sf::Vector2u pixelCoords(static_cast<unsigned int>(x), static_cast<unsigned int>(y));
+            sf::Color color = image.getPixel(pixelCoords);
+            if (color == sf::Color::Black)
+            {
+                grid[x][y] = 1;
+            }
         }
     }
 }
