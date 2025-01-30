@@ -3,8 +3,11 @@
 #include "map.h"
 #include <iostream>
 
+// HABRÁ QUE BUSCAR EL TAMAÑO DE CELDAS ADECUADO PARA QUE SEA IGUAL PARA TODOS LOS NIVELES Y ASI NO VARIEN OTROS VALORES
 Map map(12);
 Camera camera(320.0f);
+
+const float movementSpeed = 50.0f;
 
 // Inicializa los recursos y configuraciones necesarias
 void Init(const sf::Window &window)
@@ -43,6 +46,14 @@ void Init(const sf::Window &window)
 // Actualiza la lógica del programa en función del tiempo transcurrido
 void Update(float deltaTime)
 {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+    {
+        camera.position.x += movementSpeed * deltaTime;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+    {
+        camera.position.x -= movementSpeed * deltaTime;
+    }
 }
 
 // Renderiza los elementos en la ventana
