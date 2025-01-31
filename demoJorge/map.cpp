@@ -1,7 +1,7 @@
 #include "Map.h"
 
-// Constructor que inicializa el tamaño de la celda y la cuadrícula vacía
-Map::Map(float cellSize) : grid(), cellSize(cellSize) {}
+// Constructor que inicializa la cuadrícula vacía
+Map::Map() : grid() {}
 
 void Map::CreateFromImage(const sf::Image &image)
 {
@@ -35,11 +35,23 @@ void Map::Draw(Renderer &renderer)
         {
             if (cell)
             {
-                renderer.Draw(Resources::textures["square"],
-                              sf::Vector2f(cellSize * x + cellSize / 2.0f, cellSize * y + cellSize / 2.0f), sf::Vector2f(cellSize, cellSize));
+
+                // Obtener la textura
+                const sf::Texture &texture = Resources::textures["square"];
+
+                // Obtener el tamaño de la textura
+                sf::Vector2u textureSize = texture.getSize();
+
+                // Usar el tamaño de la textura para separarlos
+                renderer.Draw(texture, sf::Vector2f(textureSize.x * x, textureSize.y * y));
             }
             y++;
         }
         x++;
     }
+}
+
+void Map::DrawBackground(Renderer &renderer)
+{
+    renderer.DrawCut(Resources::textures["background"], sf::Vector2f(0, 0), sf::IntRect({1, 11}, {768, 175}));
 }

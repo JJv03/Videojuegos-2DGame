@@ -3,18 +3,17 @@
 #include "map.h"
 #include <iostream>
 
-// HABRÁ QUE BUSCAR EL TAMAÑO DE CELDAS ADECUADO PARA QUE SEA IGUAL PARA TODOS LOS NIVELES Y ASI NO VARIEN OTROS VALORES
-Map map(12);
+Map map;
 Camera camera(320.0f);
 
-const float movementSpeed = 50.0f;
+const float movementSpeed = 75.0f;
 
 // Inicializa los recursos y configuraciones necesarias
 void Init(const sf::Window &window)
 {
     // En este caso primero se extrae en formato imagen para realizar las conversiones primero, después se almacena en la clase de recursos
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("../assets/sprites/player/NES - Castlevania - Simon Belmont.png"))
+    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
         exit(-1);
 
     simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
@@ -32,6 +31,9 @@ void Init(const sf::Window &window)
     if (!Resources::textures["square"].loadFromImage(squareImage))
         exit(-1);
 
+    if (!Resources::textures["background"].loadFromFile("../assets/maps/level1Entrance.png"))
+        exit(-1);
+
     // Incializacion del grid del mapa
     sf::Image image;
     if (!image.loadFromFile("../assets/others/demoMap.png"))
@@ -40,7 +42,7 @@ void Init(const sf::Window &window)
     map.CreateFromImage(image);
 
     // Posición inicial de la camara
-    camera.position = sf::Vector2f(160.0f, 160.0f);
+    camera.position = sf::Vector2f(150.0f, 87.5f);
 }
 
 // Actualiza la lógica del programa en función del tiempo transcurrido
@@ -59,6 +61,7 @@ void Update(float deltaTime)
 // Renderiza los elementos en la ventana
 void Render(Renderer &renderer)
 {
+    map.DrawBackground(renderer);
     map.Draw(renderer);
     // renderer.DrawCut(Resources::textures["simon"], sf::Vector2f(), sf::Vector2f(7.5, 5.5), sf::IntRect({1, 21}, {16, 32}));
 }
