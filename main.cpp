@@ -16,7 +16,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("assets/maps/NES - Castlevania - Level 1 Entrance.png", false))
+    if (!bgTexture.loadFromFile("../assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura" << std::endl;
     }
@@ -24,7 +24,7 @@ int main()
     bgSprite.setTextureRect(sf::IntRect({1, 11}, {768, 192}));
 
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("assets/sprites/player/NES - Castlevania - Simon Belmont.png"))
+    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen" << std::endl;
     }
