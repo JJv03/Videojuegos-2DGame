@@ -41,6 +41,7 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
 
 void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
 {
+    // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
     if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(objectBounds))
     {
         float overlapX = intersection->size.x;
@@ -81,29 +82,6 @@ void CheckAllCollisions()
     sf::FloatRect floorBounds = gFloor.getGlobalBounds();
     sf::FloatRect wallBounds = gWall.getGlobalBounds();
 
-    // Si Simon colisiona con el suelo (su parte inferior ha penetrado en el suelo),
-    // reposicionarlo para que su borde inferior se alinee con el borde superior del suelo.
-    /*
-    if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(floorBounds))
-    {
-        std::cout << "Colision: left=" << intersection->position.x
-              << ", top=" << intersection->position.y
-              << ", width=" << intersection->size.x
-              << ", height=" << intersection->size.y << std::endl;
-        float overlap = (simonBounds.position.y + simonBounds.size.y) - floorBounds.position.y;
-        gSimonSprite->move({0.f, -overlap});
-    }
-
-    if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(wallBounds))
-    {
-        std::cout << "Colision: left=" << intersection->position.x
-              << ", top=" << intersection->position.y
-              << ", width=" << intersection->size.x
-              << ", height=" << intersection->size.y << std::endl;
-        float overlap = (simonBounds.position.x + simonBounds.size.x) - floorBounds.position.x;
-        gSimonSprite->move({-overlap, 0.f});
-    }
-    */
     CheckCollisions(simonBounds, floorBounds);
     CheckCollisions(simonBounds, wallBounds);
 }
@@ -157,7 +135,7 @@ bool init()
     simonSprite.setPosition({245.f, 139.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
-    // Ajusta el origin al centro inferior (o el punto que prefieras como pivote)
+    // Ajusta el origen de las transformaciones al centro inferior
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
     gSprites.push_back(simonSprite);
     gSimonSprite = &gSprites.back();
