@@ -13,6 +13,10 @@ constexpr int gWindowWidth { 768 * escala };
 constexpr int gWindowHeight { 250 * escala };
 constexpr float gMovementSpeed { 50.0f };
 
+// Constantes para la física
+constexpr float GRAVITY { 980.0f };       // aceleración en píxeles/segundo²
+constexpr float JUMP_FORCE { 350.0f };    // velocidad inicial del salto (píxeles/segundo)
+
 // Cámara
 Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
 
@@ -21,7 +25,9 @@ std::vector<sf::Sprite> gSprites;
 std::unordered_map<std::string, sf::Texture> gTextures;
 
 // Puntero global para acceder al sprite de Simon
-sf::Sprite* gSimonSprite = nullptr;
+sf::Sprite* gSimonSprite { nullptr };
+bool isOnGround { true };       // indica si Simon está en el suelo
+float verticalSpeed { 0.0f };   // velocidad vertical actual
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWall;
@@ -44,19 +50,19 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
     // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
     if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(objectBounds))
     {
-        float overlapX = intersection->size.x;
-        float overlapY = intersection->size.y;
+        float overlapX { intersection->size.x };
+        float overlapY { intersection->size.y };
 
         if (overlapX < overlapY)    // Colisión horizontal
         {
             if ((simonBounds.position.x + simonBounds.size.x * 0.5f) < (objectBounds.position.x + objectBounds.size.x * 0.5f))
             {
-                std::cout << "Colision lateral izquierda." << std::endl;
+                std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
                 gSimonSprite->move({-overlapX, 0.f});
             }
             else
             {
-                std::cout << "Colision lateral derecha." << std::endl;
+                std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
                 gSimonSprite->move({overlapX, 0.f});
             }
         }
@@ -64,13 +70,16 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
         {
             if ((simonBounds.position.y + simonBounds.size.y * 0.5f) < (objectBounds.position.y + objectBounds.size.y * 0.5f))
             {
-                std::cout << "Colision superior." << std::endl;
+                std::cout << "Colision con borde superior de objeto." << std::endl;
                 gSimonSprite->move({0.f, -overlapY});
+                verticalSpeed = 0.0f;   // Simon deja de caere
+                isOnGround = true;      // Indicamos que Simon está en el suelo
             }
             else
             {
-                std::cout << "Colision inferior." << std::endl;
+                std::cout << "Colision con borde inferior de objeto." << std::endl;
                 gSimonSprite->move({0.f, overlapY});
+                verticalSpeed = 0.0f;   // Simon pasará a estar cayendo
             }
         }
     }
@@ -95,7 +104,7 @@ void render(sf::RenderWindow& window);
 
 bool init()
 {
-    // Cargar textura de fondo
+    // Fondo ----------------------------------------------------------------------------
     if (!gTextures["bgEntrada"].loadFromFile("./assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
@@ -132,7 +141,7 @@ bool init()
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 139.f});
+    simonSprite.setPosition({245.f, 171.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
@@ -143,7 +152,7 @@ bool init()
     return true;
 }
 
-bool updateMovement(float deltaTime, bool haciaArriba, bool haciaIzquierda, bool haciaDerecha)
+bool updateMovement(const float deltaTime, const bool haciaArriba, const bool haciaIzquierda, const bool haciaDerecha)
 {
     if (!gSimonSprite)
     {
@@ -151,21 +160,21 @@ bool updateMovement(float deltaTime, bool haciaArriba, bool haciaIzquierda, bool
         return false;
     }
 
-    // Si se presiona 'arriba', se mueve en esa dirección.
-    // Si además se presiona 'izquierda' o 'derecha', se añade una componente horizontal.
+    // Movimiento vertical con gravedad
+    verticalSpeed += GRAVITY * deltaTime;
+    gSimonSprite->move({0.f, verticalSpeed * deltaTime});
+
     if (haciaArriba)
     {
         if (haciaDerecha)
         {
-            gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
+            //gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
+            gSimonSprite->move({1.f * deltaTime * gMovementSpeed, 0.f});
         }
         else if (haciaIzquierda)
         {
-            gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
-        }
-        else
-        {
-            gSimonSprite->move({0.f, -1.5f * deltaTime * gMovementSpeed});
+            //gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
+            gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
         }
     }
     else if (haciaIzquierda)
@@ -238,24 +247,24 @@ int main()
                         break;
                     case sf::Keyboard::Scancode::Up:
                         haciaArriba = true;
-                        if (gSimonSprite)
-                            gSimonSprite->move({0.f, -1.5f});
+                        if (isOnGround)
+                        {
+                            verticalSpeed = -JUMP_FORCE;
+                            isOnGround = false;
+                        }
                         break;
                     case sf::Keyboard::Scancode::Down:
-                        if (gSimonSprite)
-                            gSimonSprite->move({0.f, 3.0f});
+                        gSimonSprite->move({0.f, 3.0f});
                         break;
                     case sf::Keyboard::Scancode::Left:
                         haciaIzquierda = true;
                         haciaDerecha = false;
-                        if (gSimonSprite)
-                            gSimonSprite->setScale({1.f, 1.f});
+                        gSimonSprite->setScale({1.f, 1.f});
                         break;
                     case sf::Keyboard::Scancode::Right:
                         haciaDerecha = true;
                         haciaIzquierda = false;
-                        if (gSimonSprite)
-                            gSimonSprite->setScale({-1.f, 1.f});
+                        gSimonSprite->setScale({-1.f, 1.f});
                         break;
                     default:
                         break;
