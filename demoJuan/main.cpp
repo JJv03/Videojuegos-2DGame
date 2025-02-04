@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
+#include "animationManager.hpp"
 
 // Variables globales de configuración
 bool gEnMovimiento { false };
@@ -29,22 +30,16 @@ sf::Sprite* gSimonSprite { nullptr };
 bool isOnGround { true };       // indica si Simon está en el suelo
 float verticalSpeed { 0.0f };   // velocidad vertical actual
 
+// Definir el suelo y la pared para colisiones
 sf::RectangleShape gFloor;
 sf::RectangleShape gWall;
 
+AnimationManager* gAnimationManager { nullptr };
 
-sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
-{
-    sf::RectangleShape rectShape(floatRect.size);
-    rectShape.setPosition(floatRect.position);
+// DEPURACION
+std::string currentAnimation;
 
-    rectShape.setFillColor(sf::Color::Transparent);
-    rectShape.setOutlineColor(sf::Color::Red);
-    rectShape.setOutlineThickness(2.f);
-
-    return rectShape;
-}
-
+// Función de colisiones
 void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
 {
     // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
@@ -57,12 +52,12 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
         {
             if ((simonBounds.position.x + simonBounds.size.x * 0.5f) < (objectBounds.position.x + objectBounds.size.x * 0.5f))
             {
-                std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
+                //std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
                 gSimonSprite->move({-overlapX, 0.f});
             }
             else
             {
-                std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
+                //std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
                 gSimonSprite->move({overlapX, 0.f});
             }
         }
@@ -70,20 +65,21 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
         {
             if ((simonBounds.position.y + simonBounds.size.y * 0.5f) < (objectBounds.position.y + objectBounds.size.y * 0.5f))
             {
-                std::cout << "Colision con borde superior de objeto." << std::endl;
+                //std::cout << "Colision con borde superior de objeto." << std::endl;
                 gSimonSprite->move({0.f, -overlapY});
                 verticalSpeed = 0.0f;   // Simon deja de caere
                 isOnGround = true;      // Indicamos que Simon está en el suelo
             }
             else
             {
-                std::cout << "Colision con borde inferior de objeto." << std::endl;
+                //std::cout << "Colision con borde inferior de objeto." << std::endl;
                 gSimonSprite->move({0.f, overlapY});
                 verticalSpeed = 0.0f;   // Simon pasará a estar cayendo
             }
         }
     }
 }
+
 
 void CheckAllCollisions()
 {
@@ -95,16 +91,10 @@ void CheckAllCollisions()
     CheckCollisions(simonBounds, wallBounds);
 }
 
-
-// Prototipos de funciones
-bool init();
-bool UpdateMovement(float deltaTime, bool haciaArriba, bool haciaIzquierda, bool haciaDerecha);
-void render(sf::RenderWindow& window);
-
-
+// Inicializa Simon, las animaciones, el suelo y las paredes
 bool init()
 {
-    // Fondo ----------------------------------------------------------------------------
+    // Mundo
     if (!gTextures["bgEntrada"].loadFromFile("./assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
@@ -114,45 +104,60 @@ bool init()
     bgSprite.setTextureRect(sf::IntRect({1, 11}, {768, 192}));
     gSprites.push_back(bgSprite);
 
-    // Suelo ----------------------------------------------------------------------------
-
-    gFloor.setSize(sf::Vector2f(static_cast<float>(gWindowWidth), 50.f)); // 50 píxeles de alto (puedes ajustar este valor)
-    gFloor.setFillColor(sf::Color(139, 69, 19)); // Color marrón
-    gFloor.setPosition({0.f, 171.f}); // Posicionado a lo largo del ancho, justo a los pies de Simon
-
-    // Pared ----------------------------------------------------------------------------
-
-    gWall.setSize(sf::Vector2f(50.f, 20.f));
-    gWall.setFillColor(sf::Color(139, 69, 19)); // Color marrón
-    gWall.setPosition({518.f, 75.f});
-
-
-    // Simon ----------------------------------------------------------------------------
-
-    // Cargar imagen y configurar textura de Simon (aplicando color key)
-    sf::Image simonImage;
-    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    // Simon
+    if (!gTextures["simon"].loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
-        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+        std::cerr << "Error cargando la textura de Simon" << std::endl;
         return false;
     }
-    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    gTextures["simon"] = sf::Texture(simonImage, false);
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite.setPosition({245.f, 171.f});
-    sf::FloatRect bounds = simonSprite.getLocalBounds();
     
-    // Ajusta el origen de las transformaciones al centro inferior
+    sf::FloatRect bounds = simonSprite.getLocalBounds();
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
     gSprites.push_back(simonSprite);
     gSimonSprite = &gSprites.back();
 
+    // Inicializar AnimationManager
+    gAnimationManager = new AnimationManager(*gSimonSprite);
+
+    // Definir animaciones
+    std::vector<AnimationManager::Frame> idleFrames {
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 32)), 0.2f}
+    };
+    std::vector<AnimationManager::Frame> jumpFrames {
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 32)), 0.1f}
+    };
+    std::vector<AnimationManager::Frame> walkFrames {
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 32)), 0.1f}
+    };
+
+    gAnimationManager->addAnimation("idle", idleFrames);
+    gAnimationManager->addAnimation("jump", jumpFrames);
+    gAnimationManager->addAnimation("walk", walkFrames);
+
+    gAnimationManager->playAnimation("idle");
+    currentAnimation = "idle";
+
+    // Suelo
+    gFloor.setSize(sf::Vector2f(static_cast<float>(gWindowWidth), 50.f)); // 50 píxeles de alto (puedes ajustar este valor)
+    gFloor.setFillColor(sf::Color(139, 69, 19)); // Color marrón
+    gFloor.setPosition({0.f, 171.f}); // Posicionado a lo largo del ancho, justo a los pies de Simon
+
+    // Pared
+    gWall.setSize(sf::Vector2f(50.f, 20.f));
+    gWall.setFillColor(sf::Color(139, 69, 19)); // Color marrón
+    gWall.setPosition({518.f, 75.f});
+
     return true;
 }
 
-bool updateMovement(const float deltaTime, const bool haciaArriba, const bool haciaIzquierda, const bool haciaDerecha)
+// Movimiento y animación de Simon
+bool updateMovement(const float deltaTime, bool haciaArriba, bool haciaIzquierda, bool haciaDerecha)
 {
     if (!gSimonSprite)
     {
@@ -160,78 +165,81 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         return false;
     }
 
-    // Movimiento vertical con gravedad
-    verticalSpeed += GRAVITY * deltaTime;
-    gSimonSprite->move({0.f, verticalSpeed * deltaTime});
-
-    if (haciaArriba)
+    // Aplicar la gravedad solo si Simon no está en el suelo
+    if (!isOnGround)
     {
-        if (haciaDerecha)
-        {
-            //gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
-            gSimonSprite->move({1.f * deltaTime * gMovementSpeed, 0.f});
-        }
-        else if (haciaIzquierda)
-        {
-            //gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
-            gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
-        }
+        verticalSpeed += GRAVITY * deltaTime;
+        gSimonSprite->move({0.f, verticalSpeed * deltaTime});
     }
-    else if (haciaIzquierda)
+
+    // Saltar solo si Simon está en el suelo
+    if (haciaArriba && isOnGround)
+    {
+        verticalSpeed = -JUMP_FORCE;  // Aplicar la fuerza de salto
+        isOnGround = false;          // Simon ya no está en el suelo
+    }
+
+    // Movimiento horizontal
+    if (haciaIzquierda)
     {
         gSimonSprite->move({-1.5f * deltaTime * gMovementSpeed, 0.f});
+        gSimonSprite->setScale({1.f, 1.f});
     }
     else if (haciaDerecha)
     {
         gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
+        gSimonSprite->setScale({-1.f, 1.f});
     }
 
+    gAnimationManager->update(deltaTime);
     return true;
 }
 
-void render(sf::RenderWindow& window)
+void updateAnimation(bool haciaDerecha, bool haciaIzquierda)
 {
-    window.clear(sf::Color::Black);
-    for (const auto& sprite : gSprites)
-    {
-        window.draw(sprite);
+    // Si Simon no está en el suelo (está en el aire), mostrar la animación de salto
+    if (!isOnGround) {
+        if (currentAnimation != "jump") { // Solo cambiar a la animación de salto si no está ya en esa animación
+            gAnimationManager->playAnimation("jump");
+            currentAnimation = "jump";
+        }
     }
-    window.draw(gFloor);
-    window.draw(FloatRectToRectShape(gFloor.getGlobalBounds()));
-    window.draw(gWall);
-    window.draw(FloatRectToRectShape(gWall.getGlobalBounds()));
-    if (gSimonSprite)
-    {
-        window.draw(*gSimonSprite);
-        window.draw(FloatRectToRectShape(gSimonSprite->getGlobalBounds()));
+    // Si Simon está caminando a la derecha o izquierda
+    else if ((haciaDerecha || haciaIzquierda)) {
+        if (currentAnimation != "walk") { // Solo cambiar a la animación de caminar si no está ya en esa animación
+            gAnimationManager->playAnimation("walk");
+            currentAnimation = "walk";
+        }
     }
-    window.display();
+    // Si Simon no se está moviendo, mostrar la animación de idle
+    else {
+        if (currentAnimation != "idle") { // Solo cambiar a la animación idle si no está ya en esa animación
+            gAnimationManager->playAnimation("idle");
+            currentAnimation = "idle";
+        }
+    }
 }
 
+// Bucle principal del juego
 int main()
 {
-    std::string nombreVentana { "Castlevania: En busca de la Eduardomena Pose" };
-    sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), nombreVentana, sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castlevania", sf::Style::Default);
     window.setVerticalSyncEnabled(true);
     sf::Clock deltaClock;
 
     if (!init())
     {
-        std::cerr << "Error en la inicialización" << std::endl;
         return -1;
     }
-    
-    // Variables para controlar el movimiento
+
     bool haciaIzquierda { false };
     bool haciaDerecha { false };
     bool haciaArriba { false };
 
-    // Bucle principal del juego
     while (window.isOpen())
     {
-        float deltaTime = deltaClock.restart().asSeconds(); // tiempo transcurrido entre fotograma
+        float deltaTime = deltaClock.restart().asSeconds();
 
-        // Procesar eventos
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -288,19 +296,27 @@ int main()
                 }
             }
         }
-
-        window.setView(camera.GetView(window.getSize())); // Actualiza la vista de la cámara
+        std::cout << currentAnimation << std::endl;
+        // Verificar colisiones
+        CheckAllCollisions();
 
         if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
         {
-            std::cerr << "Error en el update" << std::endl;
             return -1;
         }
+        updateAnimation(haciaDerecha, haciaIzquierda);
+        window.clear();
+        for (const auto& sprite : gSprites)
+        {
+            window.draw(sprite);
+        }
 
-        CheckAllCollisions();  // check collisions and correct Simon's position
-
-        render(window);
+        window.draw(gFloor);
+        window.draw(gWall);
+        window.draw(*gSimonSprite);
+        window.display();
     }
 
+    delete gAnimationManager;
     return 0;
 }
