@@ -109,7 +109,7 @@ std::string formatFPSandTime(float deltaTime)
     oss << std::fixed << std::setprecision(2) << (1.f / deltaTime);
     std::string fps = oss.str();
 
-    // Limpia el flujo para reutilizarlo para los milisegundos
+    // Limpia el flujo
     oss.str("");
     oss.clear();
 
@@ -117,7 +117,6 @@ std::string formatFPSandTime(float deltaTime)
     oss << std::fixed << std::setprecision(2) << (deltaTime * 1000);
     std::string ms = oss.str();
 
-    // Devuelve la cadena formateada
     return fps + " FPS\n" + ms + " ms";
 }
 
@@ -300,7 +299,7 @@ int main()
                         }
                         break;
                     case sf::Keyboard::Scancode::Down:
-                        gSimonSprite->move({0.f, 3.0f});
+                        verticalSpeed = JUMP_FORCE * 0.5f;
                         break;
                     case sf::Keyboard::Scancode::Left:
                         haciaIzquierda = true;
