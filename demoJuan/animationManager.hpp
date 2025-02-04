@@ -23,6 +23,7 @@ public:
     void addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop = true);
     void playAnimation(const std::string& name);
     void update(float deltaTime);
+    void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation);
     bool isPlaying(const std::string& name);
 
 private:

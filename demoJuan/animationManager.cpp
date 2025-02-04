@@ -37,6 +37,28 @@ void AnimationManager::update(float deltaTime) {
     }
 }
 
+void AnimationManager::updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation) {
+    if (!isOnGround) {
+        if (currentAnimation != "jump") {
+            playAnimation("jump");
+            currentAnimation = "jump";
+        }
+    }
+    else if (haciaDerecha || haciaIzquierda) {
+        if (currentAnimation != "walk") {
+            playAnimation("walk");
+            currentAnimation = "walk";
+        }
+    }
+    else {
+        if (currentAnimation != "idle") {
+            playAnimation("idle");
+            currentAnimation = "idle";
+        }
+    }
+}
+
+
 bool AnimationManager::isPlaying(const std::string& name){
     return currentAnimation && animations.find(name) != animations.end() && &animations[name] == currentAnimation;
 }

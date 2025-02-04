@@ -105,11 +105,14 @@ bool init()
     gSprites.push_back(bgSprite);
 
     // Simon
-    if (!gTextures["simon"].loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    sf::Image simonImage;
+    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
-        std::cerr << "Error cargando la textura de Simon" << std::endl;
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
     }
+    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
+    gTextures["simon"] = sf::Texture(simonImage, false);
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
@@ -193,31 +196,6 @@ bool updateMovement(const float deltaTime, bool haciaArriba, bool haciaIzquierda
 
     gAnimationManager->update(deltaTime);
     return true;
-}
-
-void updateAnimation(bool haciaDerecha, bool haciaIzquierda)
-{
-    // Si Simon no está en el suelo (está en el aire), mostrar la animación de salto
-    if (!isOnGround) {
-        if (currentAnimation != "jump") { // Solo cambiar a la animación de salto si no está ya en esa animación
-            gAnimationManager->playAnimation("jump");
-            currentAnimation = "jump";
-        }
-    }
-    // Si Simon está caminando a la derecha o izquierda
-    else if ((haciaDerecha || haciaIzquierda)) {
-        if (currentAnimation != "walk") { // Solo cambiar a la animación de caminar si no está ya en esa animación
-            gAnimationManager->playAnimation("walk");
-            currentAnimation = "walk";
-        }
-    }
-    // Si Simon no se está moviendo, mostrar la animación de idle
-    else {
-        if (currentAnimation != "idle") { // Solo cambiar a la animación idle si no está ya en esa animación
-            gAnimationManager->playAnimation("idle");
-            currentAnimation = "idle";
-        }
-    }
 }
 
 // Bucle principal del juego
@@ -304,7 +282,7 @@ int main()
         {
             return -1;
         }
-        updateAnimation(haciaDerecha, haciaIzquierda);
+        gAnimationManager->updateAnimation(isOnGround, haciaDerecha, haciaIzquierda, currentAnimation);
         window.clear();
         for (const auto& sprite : gSprites)
         {
