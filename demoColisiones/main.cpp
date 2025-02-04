@@ -1,6 +1,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <sstream>
+#include <optional>
+#include <iomanip>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -30,7 +33,8 @@ bool isOnGround { true };       // indica si Simon está en el suelo
 float verticalSpeed { 0.0f };   // velocidad vertical actual
 
 sf::RectangleShape gFloor;
-sf::RectangleShape gWall;
+sf::RectangleShape gWallUp;
+sf::RectangleShape gWallDown;
 
 
 sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
@@ -45,7 +49,7 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
     return rectShape;
 }
 
-void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
+void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, const bool debug = false)
 {
     // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
     if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(objectBounds))
@@ -57,12 +61,12 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
         {
             if ((simonBounds.position.x + simonBounds.size.x * 0.5f) < (objectBounds.position.x + objectBounds.size.x * 0.5f))
             {
-                std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
+                if (debug) std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
                 gSimonSprite->move({-overlapX, 0.f});
             }
             else
             {
-                std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
+                if (debug) std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
                 gSimonSprite->move({overlapX, 0.f});
             }
         }
@@ -70,14 +74,14 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
         {
             if ((simonBounds.position.y + simonBounds.size.y * 0.5f) < (objectBounds.position.y + objectBounds.size.y * 0.5f))
             {
-                std::cout << "Colision con borde superior de objeto." << std::endl;
+                if (debug) std::cout << "Colision con borde superior de objeto." << std::endl;
                 gSimonSprite->move({0.f, -overlapY});
                 verticalSpeed = 0.0f;   // Simon deja de caere
                 isOnGround = true;      // Indicamos que Simon está en el suelo
             }
             else
             {
-                std::cout << "Colision con borde inferior de objeto." << std::endl;
+                if (debug) std::cout << "Colision con borde inferior de objeto." << std::endl;
                 gSimonSprite->move({0.f, overlapY});
                 verticalSpeed = 0.0f;   // Simon pasará a estar cayendo
             }
@@ -85,21 +89,42 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
     }
 }
 
-void CheckAllCollisions()
+void CheckAllCollisions(const bool debug = false)
 {
     sf::FloatRect simonBounds = gSimonSprite->getGlobalBounds();
     sf::FloatRect floorBounds = gFloor.getGlobalBounds();
-    sf::FloatRect wallBounds = gWall.getGlobalBounds();
+    sf::FloatRect wallUpBounds = gWallUp.getGlobalBounds();
+    sf::FloatRect wallDownBounds = gWallDown.getGlobalBounds();
 
-    CheckCollisions(simonBounds, floorBounds);
-    CheckCollisions(simonBounds, wallBounds);
+    CheckCollisions(simonBounds, floorBounds, debug);
+    CheckCollisions(simonBounds, wallUpBounds, debug);
+    CheckCollisions(simonBounds, wallDownBounds, debug);
 }
 
+std::string formatFPSandTime(float deltaTime)
+{
+    std::ostringstream oss;
+
+    // Formatea FPS con 2 decimales
+    oss << std::fixed << std::setprecision(2) << (1.f / deltaTime);
+    std::string fps = oss.str();
+
+    // Limpia el flujo para reutilizarlo para los milisegundos
+    oss.str("");
+    oss.clear();
+
+    // Formatea el tiempo en milisegundos con 2 decimales
+    oss << std::fixed << std::setprecision(2) << (deltaTime * 1000);
+    std::string ms = oss.str();
+
+    // Devuelve la cadena formateada
+    return fps + " FPS\n" + ms + " ms";
+}
 
 // Prototipos de funciones
 bool init();
 bool UpdateMovement(float deltaTime, bool haciaArriba, bool haciaIzquierda, bool haciaDerecha);
-void render(sf::RenderWindow& window);
+void render(sf::RenderWindow& window, const sf::Text& text);
 
 
 bool init()
@@ -120,12 +145,17 @@ bool init()
     gFloor.setFillColor(sf::Color(139, 69, 19)); // Color marrón
     gFloor.setPosition({0.f, 171.f}); // Posicionado a lo largo del ancho, justo a los pies de Simon
 
-    // Pared ----------------------------------------------------------------------------
+    // Pared Arriba ----------------------------------------------------------------------------
 
-    gWall.setSize(sf::Vector2f(50.f, 20.f));
-    gWall.setFillColor(sf::Color(139, 69, 19)); // Color marrón
-    gWall.setPosition({518.f, 75.f});
+    gWallUp.setSize(sf::Vector2f(50.f, 20.f));
+    gWallUp.setFillColor(sf::Color(139, 69, 19)); // Color marrón
+    gWallUp.setPosition({518.f, 75.f});
 
+    // Pared Abajo ----------------------------------------------------------------------------
+
+    gWallDown.setSize(sf::Vector2f(50.f, 20.f));
+    gWallDown.setFillColor(sf::Color(139, 69, 19)); // Color marrón
+    gWallDown.setPosition({465.f, 125.f});
 
     // Simon ----------------------------------------------------------------------------
 
@@ -189,7 +219,7 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     return true;
 }
 
-void render(sf::RenderWindow& window)
+void render(sf::RenderWindow& window, const sf::Text& text)
 {
     window.clear(sf::Color::Black);
     for (const auto& sprite : gSprites)
@@ -198,13 +228,16 @@ void render(sf::RenderWindow& window)
     }
     window.draw(gFloor);
     window.draw(FloatRectToRectShape(gFloor.getGlobalBounds()));
-    window.draw(gWall);
-    window.draw(FloatRectToRectShape(gWall.getGlobalBounds()));
+    window.draw(gWallUp);
+    window.draw(FloatRectToRectShape(gWallUp.getGlobalBounds()));
+    window.draw(gWallDown);
+    window.draw(FloatRectToRectShape(gWallDown.getGlobalBounds()));
     if (gSimonSprite)
     {
         window.draw(*gSimonSprite);
         window.draw(FloatRectToRectShape(gSimonSprite->getGlobalBounds()));
     }
+    window.draw(text);
     window.display();
 }
 
@@ -226,10 +259,23 @@ int main()
     bool haciaDerecha { false };
     bool haciaArriba { false };
 
+    sf::Font font;
+    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
+    {
+        std::cerr << "Error en la carga de la fuente de texto" << std::endl;
+        return -1;
+    }
+    
+    sf::Text text(font);
+    text.setString("60 FPS\n16.67 ms");
+    text.setCharacterSize(12);
+    text.setFillColor(sf::Color::White);
+
     // Bucle principal del juego
     while (window.isOpen())
     {
         float deltaTime = deltaClock.restart().asSeconds(); // tiempo transcurrido entre fotograma
+        text.setString(formatFPSandTime(deltaTime));
 
         // Procesar eventos
         while (const std::optional<sf::Event> event = window.pollEvent())
@@ -299,7 +345,7 @@ int main()
 
         CheckAllCollisions();  // check collisions and correct Simon's position
 
-        render(window);
+        render(window, text);
     }
 
     return 0;
