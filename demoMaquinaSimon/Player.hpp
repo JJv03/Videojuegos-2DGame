@@ -1,6 +1,13 @@
 #pragma once
 #include "PlayerStateMachine.hpp"
 
+enum PlayerDirection
+{
+    LEFT,
+    RIGHT,
+};
+
+
 class Player
 {
 protected:
@@ -9,6 +16,10 @@ protected:
     sf::Sprite sprite;
 
 public:
+    PlayerDirection dir;
+    bool isWalking;
+    bool isDucking;
+
     Player();
 
     void handleInput(sf::Event event);
