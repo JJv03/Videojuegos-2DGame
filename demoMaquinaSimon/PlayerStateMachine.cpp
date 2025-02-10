@@ -1,23 +1,23 @@
 #include "PlayerStateMachine.hpp"
 
-void PlayerStateMachine::AddState(StateRef newState)
+void PlayerStateMachine::addState(StateRef newState)
 {
     this->isAdding = true;
     this->newState = std::move(newState);
 }
 
-void PlayerStateMachine::ReplaceState(StateRef newState)
+void PlayerStateMachine::replaceState(StateRef newState)
 {
     this->isReplacing = true;
     this->newState = std::move(newState);
 }
 
-void PlayerStateMachine::RemoveState()
+void PlayerStateMachine::removeState()
 {
     this->isRemoving = true;
 }
 
-void PlayerStateMachine::ProcessStateChanges()
+void PlayerStateMachine::processStateChanges()
 {
     if (this->isRemoving && !this->states.empty())
     {
@@ -55,7 +55,7 @@ void PlayerStateMachine::ProcessStateChanges()
     }
 }
 
-StateRef& PlayerStateMachine::GetActiveState()
+StateRef& PlayerStateMachine::getActiveState()
 {
     return this->states.top();
 }

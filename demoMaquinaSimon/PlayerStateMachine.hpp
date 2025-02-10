@@ -14,13 +14,13 @@ class PlayerStateMachine
         PlayerStateMachine() {}
         ~PlayerStateMachine() {}
 
-        void AddState(StateRef newState);
-        void ReplaceState(StateRef newState);
-        void RemoveState();
+        void addState(StateRef newState);
+        void replaceState(StateRef newState);
+        void removeState();
 
-        void ProcessStateChanges();
+        void processStateChanges();
 
-        StateRef& GetActiveState();
+        StateRef& getActiveState();
 
     private:
         std::stack<StateRef> states;
