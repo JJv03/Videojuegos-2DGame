@@ -1,5 +1,6 @@
 #include "PlayerState.hpp"
 
+PlayerState::PlayerState(){}
 
 // ---------------------------- IDLE ----------------------------
 
@@ -67,11 +68,9 @@ void PlayerIdleState::pause(Player& player)
     // Detener animaciones, sonidos, etc
 }
 
-void PlayerIdleState::resume(Player& player)
+void PlayerIdleState::start(Player& player)
 {
-    init(player);
-
-    // Reanudar animaciones, sonidos, etc
+    // Poner en marcha animaciones, sonidos, etc
 }
 // --------------------------------------------------------------
 
@@ -136,11 +135,103 @@ void PlayerWalkState::pause(Player& player)
     // Detener animaciones, sonidos, etc
 }
 
-void PlayerWalkState::resume(Player& player)
+void PlayerWalkState::start(Player& player)
 {
-    init(player);
+    // Poner en marcha animaciones, sonidos, etc
+}
 
-    // Reanudar animaciones, sonidos, etc
+// --------------------------------------------------------------
+
+
+// ---------------------------- JUMP ----------------------------
+
+PlayerJumpState::PlayerJumpState() : PlayerState()
+{
+
+}
+
+void PlayerJumpState::init(Player& player)
+{
+    if(player.isWalking){
+        player.isWalking = false;
+    }
+
+    if(!player.isDucking){
+        player.isDucking = true;
+    }
+}
+
+void PlayerJumpState::handleInput(Player& player, sf::Event event)
+{
+    const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
+    const auto* keyReleased = event.getIf<sf::Event::KeyReleased>();
+}
+
+void PlayerJumpState::update(Player& player, float deltaTime)
+{
+    // Implementar logica (actualizar fisicas, etc)
+}
+
+void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
+{
+    // Pintar en window (tener en cuenta animaciones, etc)
+}
+
+void PlayerJumpState::pause(Player& player)
+{
+    // Detener animaciones, sonidos, etc
+}
+
+void PlayerJumpState::start(Player& player)
+{
+    // Poner en marcha animaciones, sonidos, etc
+}
+
+// --------------------------------------------------------------
+
+
+// ---------------------------- ATTACK ----------------------------
+
+PlayerAttackState::PlayerAttackState() : PlayerState()
+{
+
+}
+
+void PlayerAttackState::init(Player& player)
+{
+    if(player.isWalking){
+        player.isWalking = false;
+    }
+
+    if(!player.isDucking){
+        player.isDucking = true;
+    }
+}
+
+void PlayerAttackState::handleInput(Player& player, sf::Event event)
+{
+    const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
+    const auto* keyReleased = event.getIf<sf::Event::KeyReleased>();
+}
+
+void PlayerAttackState::update(Player& player, float deltaTime)
+{
+    // Implementar logica (actualizar fisicas, etc)
+}
+
+void PlayerAttackState::draw(Player& player, sf::RenderWindow &window)
+{
+    // Pintar en window (tener en cuenta animaciones, etc)
+}
+
+void PlayerAttackState::pause(Player& player)
+{
+    // Detener animaciones, sonidos, etc
+}
+
+void PlayerAttackState::start(Player& player)
+{
+    // Poner en marcha animaciones, sonidos, etc
 }
 
 // --------------------------------------------------------------
@@ -201,11 +292,9 @@ void PlayerDuckState::pause(Player& player)
     // Detener animaciones, sonidos, etc
 }
 
-void PlayerDuckState::resume(Player& player)
+void PlayerDuckState::start(Player& player)
 {
-    init(player);
-
-    // Reanudar animaciones, sonidos, etc
+    // Poner en marcha animaciones, sonidos, etc
 }
 
 

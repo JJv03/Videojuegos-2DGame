@@ -1,15 +1,15 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include "Player.hpp"
 
-
-
+class Player;
 
 // ---------------------------- BASE (virtual) ----------------------------
 class PlayerState
 {
 public:
-    PlayerState() {}
+    PlayerState();
     virtual ~PlayerState() = default;
 
 
@@ -19,13 +19,14 @@ public:
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
 
     virtual void pause(Player& player) = 0;
-    virtual void resume(Player& player) = 0;
+    virtual void start(Player& player) = 0;
 };
 
 // ---------------------------- IDLE ----------------------------
 class PlayerIdleState : public PlayerState
 {
-    PlayerIdleState() {}
+public:
+    PlayerIdleState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
@@ -33,13 +34,14 @@ class PlayerIdleState : public PlayerState
     void draw(Player& player, sf::RenderWindow &window) override;
 
     void pause(Player& player) override;
-    void resume(Player& player) override;
+    void start(Player& player) override;
 };
 
 // ---------------------------- WALK ----------------------------
 class PlayerWalkState : public PlayerState
 {
-    PlayerWalkState() {}
+public:
+    PlayerWalkState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
@@ -47,13 +49,14 @@ class PlayerWalkState : public PlayerState
     void draw(Player& player, sf::RenderWindow &window) override;
 
     void pause(Player& player) override;
-    void resume(Player& player) override;
+    void start(Player& player) override;
 };
 
 // ---------------------------- JUMP ----------------------------
 class PlayerJumpState : public PlayerState
 {
-    PlayerJumpState() {}
+public:
+    PlayerJumpState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
@@ -61,13 +64,14 @@ class PlayerJumpState : public PlayerState
     void draw(Player& player, sf::RenderWindow &window) override;
 
     void pause(Player& player) override;
-    void resume(Player& player) override;
+    void start(Player& player) override;
 };
 
 // ---------------------------- ATTACK ----------------------------
 class PlayerAttackState : public PlayerState
 {
-    PlayerAttackState() {}
+public:
+    PlayerAttackState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
@@ -75,14 +79,15 @@ class PlayerAttackState : public PlayerState
     void draw(Player& player, sf::RenderWindow &window) override;
 
     void pause(Player& player) override;
-    void resume(Player& player) override;
+    void start(Player& player) override;
 };
 
 
 // ---------------------------- DUCK ----------------------------
 class PlayerDuckState : public PlayerState
 {
-    PlayerDuckState() {}
+public:
+    PlayerDuckState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
@@ -90,6 +95,6 @@ class PlayerDuckState : public PlayerState
     void draw(Player& player, sf::RenderWindow &window) override;
 
     void pause(Player& player) override;
-    void resume(Player& player) override;
+    void start(Player& player) override;
 };
 

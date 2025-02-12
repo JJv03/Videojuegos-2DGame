@@ -1,32 +1,34 @@
-# Variables del compilador y banderas
-CXX         = g++
-CXXFLAGS    = -I"../SFML/include" -g -Wall -std=c++20
-LDFLAGS     = -L"../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
+# Definir el compilador y las opciones de compilación
+CXX = g++
+CXXFLAGS = -I"../SFML/include" -g -Wall -std=c++20
+LDFLAGS= -L"../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
+OBJ_DIR=build
+EXEC=$(OBJ_DIR)/game.exe
 
-# Lista de fuentes y objetos
-SRCS 		= $(wildcard *.cpp)
-OBJ_DIR     = build
-OBJS        = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRCS))
-EXEC        = $(OBJ_DIR)/game.exe
+# Definir el ejecutable
+TARGET = main
 
-# Targets "phony"
-.PHONY: all clean
+# Buscar todos los archivos .cpp en el directorio actual
+SRCS = $(wildcard *.cpp)
 
-# Target por defecto: compila todo
-all: $(EXEC)
+# Generar los nombres de los archivos .o correspondientes
+OBJS = $(SRCS:.cpp=.o)
 
-# Enlazar el ejecutable a partir de los objetos
-$(EXEC): $(OBJS) | $(OBJ_DIR)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+# Regla por defecto que se ejecuta cuando solo escribes `make`
+all: $(TARGET)
 
-# Regla general para compilar archivos .cpp en .o
-$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Regla para construir el ejecutable
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
-# Crear el directorio de objetos (order-only)
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+# Regla para compilar cada archivo .cpp a .o
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDFLAGS)
 
-# Limpieza de archivos generados
+# Regla para compilar cada archivo .cpp a .o
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDFLAGS)
+	
+# Regla para limpiar los archivos generados
 clean:
-	del -f $(OBJS) $(EXEC)
+	del /Q *.o $(TARGET).exe

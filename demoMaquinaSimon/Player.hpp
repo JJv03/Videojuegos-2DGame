@@ -1,5 +1,10 @@
 #pragma once
-#include "PlayerStateMachine.hpp"
+#include <memory>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include "PlayerState.hpp"
+
+class PlayerState;
 
 enum PlayerDirection
 {
@@ -7,18 +12,21 @@ enum PlayerDirection
     RIGHT,
 };
 
+typedef std::unique_ptr<PlayerState> StateRef;
 
 class Player
 {
-protected:
-    PlayerStateMachine stateMachine;
+public:
+    StateRef activeState;
+
     sf::Texture texture;
     sf::Sprite sprite;
 
-public:
     PlayerDirection dir;
     bool isWalking;
     bool isDucking;
+
+// --------------------------------
 
     Player();
 
@@ -27,8 +35,8 @@ public:
     void draw(sf::RenderWindow &window); // Renderiza
 
     void setState(StateRef newState);
-    void addState(StateRef newState);
-    void removeState();
+    //void addState(StateRef newState);
+    //void removeState();
 
     StateRef& getActiveState();
 };

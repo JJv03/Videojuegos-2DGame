@@ -1,5 +1,11 @@
 #include "PlayerStateMachine.hpp"
 
+
+PlayerStateMachine::PlayerStateMachine() {
+    this->addState(std::make_unique<PlayerIdleState>());
+}
+
+
 void PlayerStateMachine::addState(StateRef newState)
 {
     this->isAdding = true;
@@ -17,7 +23,7 @@ void PlayerStateMachine::removeState()
     this->isRemoving = true;
 }
 
-void PlayerStateMachine::processStateChanges()
+void PlayerStateMachine::processStateChanges(Player& player)
 {
     if (this->isRemoving && !this->states.empty())
     {
@@ -25,7 +31,7 @@ void PlayerStateMachine::processStateChanges()
 
         if (!this->states.empty())
         {
-            this->states.top()->resume();
+            this->states.top()->start(player);
         }
 
         this->isRemoving = false;
@@ -35,11 +41,11 @@ void PlayerStateMachine::processStateChanges()
     {
         if (!this->states.empty())
         {
-            this->states.top()->pause();
+            this->states.top()->pause(player);
         }
 
         this->states.push(std::move(this->newState));
-        this->states.top()->init();
+        this->states.top()->init(player);
         this->isAdding = false;
     }
 
@@ -50,7 +56,7 @@ void PlayerStateMachine::processStateChanges()
             this->states.pop();
         }
         this->states.push(std::move(this->newState));
-        this->states.top()->init();
+        this->states.top()->init(player);
         this->isReplacing = false;
     }
 }
