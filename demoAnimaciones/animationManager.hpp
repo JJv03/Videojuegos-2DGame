@@ -6,6 +6,29 @@
 #include <vector>
 #include <string>
 
+enum animationID{
+    // Simon
+    idleSimon,
+    walkSimon,
+    jumpSimon,
+    stairUpSimon,
+    stairDownSimon,
+    hurtSimon,
+    deathSimon,
+    
+    // Enemies
+    walkZombie,
+    idleLeopard,
+    walkLeopard,
+    flyRedBat,
+    sleepBat,
+    flyBat,
+
+    // Bosses
+    sleepPhantomBat,
+    flyPhantomBat
+};
+
 class AnimationManager {
 public:
     /**
@@ -26,7 +49,7 @@ public:
      * An animation consists of multiple frames and a loop flag
      */
     struct Animation {
-        std::string aniName;
+        animationID id;
         std::vector<Frame> frames;
         bool loop;
     };
@@ -43,13 +66,13 @@ public:
      * @param frames The frames that make up the animation.
      * @param loop Whether the animation should loop (default: true).
      */
-    void addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop = true);
+    void addAnimation(animationID id, const std::vector<Frame>& frames, bool loop = true);
     
     /**
      * @brief Starts playing an animation.
      * @param name The name of the animation to play.
      */
-    void playAnimation(const std::string& name);
+    void playAnimation(animationID id);
 
     /**
      * @brief Updates the animation based on elapsed time.
@@ -62,11 +85,11 @@ public:
      * @param name The name of the animation.
      * @return True if the animation is playing, false otherwise.
      */
-    bool isPlaying(const std::string& name);
+    bool isPlaying(animationID id);
 
 private:
     sf::Sprite& sprite;
-    std::unordered_map<std::string, Animation> animations;
+    std::unordered_map<animationID, Animation> animations;
     Animation* currentAnimation;
     float elapsedTime;
     std::size_t currentFrame;

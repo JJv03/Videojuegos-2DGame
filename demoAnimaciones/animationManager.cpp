@@ -3,13 +3,13 @@
 AnimationManager::AnimationManager(sf::Sprite& sprite)
     : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0) {}
 
-void AnimationManager::addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop) {
-    animations[name] = { name, frames, loop };
+void AnimationManager::addAnimation(animationID id, const std::vector<Frame>& frames, bool loop) {
+    animations[id] = { id, frames, loop };
 }
 
-void AnimationManager::playAnimation(const std::string& name) {
-    if (animations.find(name) != animations.end()) {
-        currentAnimation = &animations[name];
+void AnimationManager::playAnimation(animationID id) {
+    if (animations.find(id) != animations.end()) {
+        currentAnimation = &animations[id];
         currentFrame = 0;
         elapsedTime = 0.f;
         sprite.setTextureRect(currentAnimation->frames[0].rect);
@@ -37,6 +37,6 @@ void AnimationManager::update(float deltaTime) {
     }
 }
 
-bool AnimationManager::isPlaying(const std::string& name){
-    return currentAnimation->aniName == name;
+bool AnimationManager::isPlaying(animationID id){
+    return currentAnimation->id == id;
 }

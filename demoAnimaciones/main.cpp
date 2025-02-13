@@ -37,7 +37,7 @@ sf::RectangleShape gWall;
 AnimationManager* gAnimationManager { nullptr };
 
 // DEPURACION
-std::string currentAnimation;
+animationID currentAnimation;
 
 // Función de colisiones
 void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
@@ -139,12 +139,12 @@ bool init()
         AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 32)), 0.1f}
     };
 
-    gAnimationManager->addAnimation("idle", idleFrames);
-    gAnimationManager->addAnimation("jump", jumpFrames);
-    gAnimationManager->addAnimation("walk", walkFrames);
+    gAnimationManager->addAnimation(idleSimon, idleFrames);
+    gAnimationManager->addAnimation(jumpSimon, jumpFrames);
+    gAnimationManager->addAnimation(walkSimon, walkFrames);
 
-    gAnimationManager->playAnimation("idle");
-    currentAnimation = "idle";
+    gAnimationManager->playAnimation(idleSimon);
+    currentAnimation = idleSimon;
 
     // Suelo
     gFloor.setSize(sf::Vector2f(static_cast<float>(gWindowWidth), 50.f)); // 50 píxeles de alto (puedes ajustar este valor)
@@ -200,13 +200,13 @@ bool updateMovement(const float deltaTime, bool haciaArriba, bool haciaIzquierda
 void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda)
 {    
     if (!isOnGround) {
-        currentAnimation = "jump";
+        currentAnimation = jumpSimon;
     }
     else if (haciaDerecha || haciaIzquierda) {
-        currentAnimation = "walk";
+        currentAnimation = walkSimon;
     }
     else {
-        currentAnimation = "idle";
+        currentAnimation = idleSimon;
     }
     if (!gAnimationManager->isPlaying(currentAnimation)){
         gAnimationManager->playAnimation(currentAnimation);
