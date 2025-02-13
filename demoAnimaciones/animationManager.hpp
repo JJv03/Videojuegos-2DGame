@@ -26,6 +26,7 @@ public:
      * An animation consists of multiple frames and a loop flag
      */
     struct Animation {
+        std::string aniName;
         std::vector<Frame> frames;
         bool loop;
     };
@@ -55,15 +56,6 @@ public:
      * @param deltaTime Time elapsed since the last update (in seconds).
      */
     void update(float deltaTime);
-
-    /**
-     * @brief Updates the current animation based on movement conditions.
-     * @param isOnGround Indicates if the character is on the ground.
-     * @param haciaDerecha Indicates if the character is moving to the right.
-     * @param haciaIzquierda Indicates if the character is moving to the left.
-     * @param currentAnimation The current animation being played.
-     */
-    void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation);
     
     /**
      * @brief Checks if a specific animation is currently playing.

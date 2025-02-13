@@ -4,7 +4,7 @@ AnimationManager::AnimationManager(sf::Sprite& sprite)
     : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0) {}
 
 void AnimationManager::addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop) {
-    animations[name] = { frames, loop };
+    animations[name] = { name, frames, loop };
 }
 
 void AnimationManager::playAnimation(const std::string& name) {
@@ -37,28 +37,6 @@ void AnimationManager::update(float deltaTime) {
     }
 }
 
-void AnimationManager::updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation) {
-    if (!isOnGround) {
-        if (currentAnimation != "jump") {
-            playAnimation("jump");
-            currentAnimation = "jump";
-        }
-    }
-    else if (haciaDerecha || haciaIzquierda) {
-        if (currentAnimation != "walk") {
-            playAnimation("walk");
-            currentAnimation = "walk";
-        }
-    }
-    else {
-        if (currentAnimation != "idle") {
-            playAnimation("idle");
-            currentAnimation = "idle";
-        }
-    }
-}
-
-
 bool AnimationManager::isPlaying(const std::string& name){
-    return currentAnimation && animations.find(name) != animations.end() && &animations[name] == currentAnimation;
+    return currentAnimation->aniName == name;
 }

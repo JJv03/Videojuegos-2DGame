@@ -194,8 +194,23 @@ bool updateMovement(const float deltaTime, bool haciaArriba, bool haciaIzquierda
         gSimonSprite->setScale({-1.f, 1.f});
     }
 
-    gAnimationManager->update(deltaTime);
     return true;
+}
+
+void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda)
+{    
+    if (!isOnGround) {
+        currentAnimation = "jump";
+    }
+    else if (haciaDerecha || haciaIzquierda) {
+        currentAnimation = "walk";
+    }
+    else {
+        currentAnimation = "idle";
+    }
+    if (!gAnimationManager->isPlaying(currentAnimation)){
+        gAnimationManager->playAnimation(currentAnimation);
+    }
 }
 
 // Bucle principal del juego
@@ -282,7 +297,8 @@ int main()
         {
             return -1;
         }
-        gAnimationManager->updateAnimation(isOnGround, haciaDerecha, haciaIzquierda, currentAnimation);
+        updateAnimation(isOnGround, haciaDerecha, haciaIzquierda);
+        gAnimationManager->update(deltaTime);
         window.clear();
         for (const auto& sprite : gSprites)
         {
