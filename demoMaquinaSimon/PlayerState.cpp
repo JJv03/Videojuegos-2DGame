@@ -11,6 +11,8 @@ PlayerIdleState::PlayerIdleState() : PlayerState()
 
 void PlayerIdleState::init(Player& player)
 {
+    printf("Idle\n");
+
     if(player.isWalking){
         player.isWalking = false;
     }
@@ -24,7 +26,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
     const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Right) {
         if(player.dir == LEFT){
             player.dir = RIGHT;
         }
@@ -32,7 +34,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         player.setState(std::make_unique<PlayerWalkState>());
     }
     
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Left) {
         if(player.dir == RIGHT){
             player.dir = LEFT;
         }
@@ -40,15 +42,15 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         player.setState(std::make_unique<PlayerWalkState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Down) {
         player.setState(std::make_unique<PlayerDuckState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::X)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::X) {
         player.setState(std::make_unique<PlayerJumpState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Z)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Z) {
         player.setState(std::make_unique<PlayerAttackState>());
     }
 }
@@ -65,6 +67,7 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerIdleState::pause(Player& player)
 {
+    // NO USAR SET STATE AQUI (posible bucle)
     // Detener animaciones, sonidos, etc
 }
 
@@ -84,6 +87,8 @@ PlayerWalkState::PlayerWalkState() : PlayerState()
 
 void PlayerWalkState::init(Player& player)
 {
+    printf("Walking\n");
+
     if(!player.isWalking){
         player.isWalking = true;
     }
@@ -94,28 +99,28 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
     const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
     const auto* keyReleased = event.getIf<sf::Event::KeyReleased>();
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right) && player.dir == LEFT) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Right && player.dir == LEFT) {
         player.dir = RIGHT;
     }
     
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left) && player.dir == RIGHT) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Left && player.dir == RIGHT) {
         player.dir = LEFT;
     }
 
-    if (keyReleased->scancode == sf::Keyboard::Scancode::Right && player.dir == RIGHT || 
-        keyReleased->scancode == sf::Keyboard::Scancode::Left && player.dir == LEFT) {
+    if ((keyReleased->scancode == sf::Keyboard::Scancode::Right && player.dir == RIGHT) || 
+        (keyReleased->scancode == sf::Keyboard::Scancode::Left && player.dir == LEFT)) {
         player.setState(std::make_unique<PlayerIdleState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Down) {
         player.setState(std::make_unique<PlayerDuckState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::X)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::X) {
         player.setState(std::make_unique<PlayerJumpState>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Z)) {
+    if (keyPressed->scancode == sf::Keyboard::Scancode::Z) {
         player.setState(std::make_unique<PlayerAttackState>());
     }
 }
@@ -152,12 +157,13 @@ PlayerJumpState::PlayerJumpState() : PlayerState()
 
 void PlayerJumpState::init(Player& player)
 {
-    if(player.isWalking){
-        player.isWalking = false;
+    printf("Jumping\n");
+    if(player.isDucking){
+        player.isDucking = false;
     }
 
-    if(!player.isDucking){
-        player.isDucking = true;
+    if(!player.isJumping){
+        player.isJumping = true;
     }
 }
 
@@ -165,6 +171,10 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
 {
     const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
     const auto* keyReleased = event.getIf<sf::Event::KeyReleased>();
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Z)) {
+        player.setState(std::make_unique<PlayerAttackState>());
+    }
 }
 
 void PlayerJumpState::update(Player& player, float deltaTime)
@@ -235,6 +245,7 @@ void PlayerAttackState::start(Player& player)
 }
 
 // --------------------------------------------------------------
+
 
 
 // ---------------------------- DUCK ----------------------------

@@ -1,13 +1,16 @@
 #include "Player.hpp"
 
 
-
+/*
 Player::Player() : sprite(texture)
 {
     texture.loadFromFile("player.png");
     sprite.setTexture(texture);
 }
+*/
 
+
+Player::Player(){}
 
 void Player::handleInput(sf::Event event)
 {

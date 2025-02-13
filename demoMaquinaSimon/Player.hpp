@@ -19,11 +19,12 @@ class Player
 public:
     StateRef activeState;
 
-    sf::Texture texture;
-    sf::Sprite sprite;
+    //sf::Texture texture;
+    //sf::Sprite sprite;
 
     PlayerDirection dir;
     bool isWalking;
+    bool isJumping;
     bool isDucking;
 
 // --------------------------------

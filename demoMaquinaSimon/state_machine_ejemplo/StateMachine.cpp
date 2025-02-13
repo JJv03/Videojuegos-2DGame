@@ -1,29 +1,29 @@
-#include "PlayerStateMachine.hpp"
+#include "StateMachine.hpp"
 
 
-PlayerStateMachine::PlayerStateMachine() {
-    this->addState(std::make_unique<PlayerIdleState>());
+StateMachine::StateMachine() {
+    this->addState(std::make_unique<State>());
 }
 
 
-void PlayerStateMachine::addState(StateRef newState)
+void StateMachine::addState(StateRef newState)
 {
     this->isAdding = true;
     this->newState = std::move(newState);
 }
 
-void PlayerStateMachine::replaceState(StateRef newState)
+void StateMachine::replaceState(StateRef newState)
 {
     this->isReplacing = true;
     this->newState = std::move(newState);
 }
 
-void PlayerStateMachine::removeState()
+void StateMachine::removeState()
 {
     this->isRemoving = true;
 }
 
-void PlayerStateMachine::processStateChanges(Player& player)
+void StateMachine::processStateChanges()
 {
     if (this->isRemoving && !this->states.empty())
     {
@@ -31,7 +31,7 @@ void PlayerStateMachine::processStateChanges(Player& player)
 
         if (!this->states.empty())
         {
-            this->states.top()->start(player);
+            //this->states.top()->start();
         }
 
         this->isRemoving = false;
@@ -41,11 +41,11 @@ void PlayerStateMachine::processStateChanges(Player& player)
     {
         if (!this->states.empty())
         {
-            this->states.top()->pause(player);
+            //this->states.top()->pause();
         }
 
         this->states.push(std::move(this->newState));
-        this->states.top()->init(player);
+        //this->states.top()->init();
         this->isAdding = false;
     }
 
@@ -56,12 +56,12 @@ void PlayerStateMachine::processStateChanges(Player& player)
             this->states.pop();
         }
         this->states.push(std::move(this->newState));
-        this->states.top()->init(player);
+        //this->states.top()->init();
         this->isReplacing = false;
     }
 }
 
-StateRef& PlayerStateMachine::getActiveState()
+StateRef& StateMachine::getActiveState()
 {
     return this->states.top();
 }

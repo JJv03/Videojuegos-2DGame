@@ -3,25 +3,21 @@
 #include <memory>
 #include <stack>
 
-#include "PlayerState.hpp"
-#include "Player.hpp"
+class State;
 
-class PlayerState;
-class Player;
+typedef std::unique_ptr<State> StateRef;
 
-typedef std::unique_ptr<PlayerState> StateRef;
-
-class PlayerStateMachine
+class StateMachine
 {
     public:
-        PlayerStateMachine();
-        virtual ~PlayerStateMachine() = default;
+        StateMachine();
+        virtual ~StateMachine() = default;
 
         void addState(StateRef newState);
         void replaceState(StateRef newState);
         void removeState();
 
-        void processStateChanges(Player& player);
+        void processStateChanges();
 
         StateRef& getActiveState();
 
