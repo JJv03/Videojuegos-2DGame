@@ -6,16 +6,19 @@ constexpr int gWindowWidth{ 800 * escala};
 constexpr int gWindowHeight{ 250 * escala};
 
 int main(){
-    printf("Hola\n");
-
     Player player;
 
     std::string nombreVentana { "Castlevania: En busca de la Eduardomena Pose" };
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), nombreVentana, sf::Style::Default);
     window.setVerticalSyncEnabled(true);
 
-    // run the program as long as the window is open
+    sf::Clock clock;
+
     while (window.isOpen()){
+
+        sf::Time dt = clock.restart();
+        float deltaTime = dt.asSeconds();
+
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -25,8 +28,13 @@ int main(){
                 player.handleInput(*event);
             }
         }
+
+        player.update(deltaTime);
+
         window.clear(sf::Color::Black);
+        player.draw(window);
         window.display();
     }
+    
     
 }

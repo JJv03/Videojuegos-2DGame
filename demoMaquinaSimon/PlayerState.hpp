@@ -17,9 +17,6 @@ public:
     virtual void handleInput(Player& player, sf::Event event) = 0;
     virtual void update(Player& player, float deltaTime) = 0;
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
-
-    virtual void pause(Player& player) = 0;
-    virtual void start(Player& player) = 0;
 };
 
 // ---------------------------- IDLE ----------------------------
@@ -32,9 +29,6 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
-
-    void pause(Player& player) override;
-    void start(Player& player) override;
 };
 
 // ---------------------------- WALK ----------------------------
@@ -47,9 +41,6 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
-
-    void pause(Player& player) override;
-    void start(Player& player) override;
 };
 
 // ---------------------------- JUMP ----------------------------
@@ -62,24 +53,6 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
-
-    void pause(Player& player) override;
-    void start(Player& player) override;
-};
-
-// ---------------------------- ATTACK ----------------------------
-class PlayerAttackState : public PlayerState
-{
-public:
-    PlayerAttackState();
-
-    void init(Player& player) override;
-    void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
-    void draw(Player& player, sf::RenderWindow &window) override;
-
-    void pause(Player& player) override;
-    void start(Player& player) override;
 };
 
 
@@ -93,8 +66,108 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
-
-    void pause(Player& player) override;
-    void start(Player& player) override;
 };
+
+
+// ---------------------------- STAIR ----------------------------
+class PlayerStairState : public PlayerState
+{
+public:
+PlayerStairState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+
+// ---------------------------- STAIR-WALK ----------------------------
+class PlayerStairWalkState : public PlayerState
+{
+public:
+PlayerStairWalkState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+// ---------------------------- ATTACK-IDLE ----------------------------
+class PlayerAttackIdleState : public PlayerState
+{
+public:
+PlayerAttackIdleState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+
+// ---------------------------- ATTACK-JUMP ----------------------------
+class PlayerAttackJumpState : public PlayerState
+{
+public:
+PlayerAttackJumpState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+
+// ---------------------------- ATTACK-DUCK ----------------------------
+class PlayerAttackDuckState : public PlayerState
+{
+public:
+PlayerAttackDuckState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+
+// ---------------------------- ATTACK-STAIR ----------------------------
+class PlayerAttackStairState : public PlayerState
+{
+public:
+PlayerAttackStairState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+// ---------------------------- HURT ----------------------------
+class PlayerHurtState : public PlayerState
+{
+public:
+PlayerHurtState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+// ---------------------------- DEAD ----------------------------
+class PlayerDeadState : public PlayerState
+{
+public:
+PlayerDeadState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+};
+
+
 

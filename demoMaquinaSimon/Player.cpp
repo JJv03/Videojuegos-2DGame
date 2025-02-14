@@ -10,7 +10,16 @@ Player::Player() : sprite(texture)
 */
 
 
-Player::Player(){}
+Player::Player(){
+    activeState = std::make_unique<PlayerIdleState>();
+    dir = RIGHT;
+
+    isOnGround = true;
+
+    isWalking = false;
+    isJumping = false;
+    isDucking = false;
+}
 
 void Player::handleInput(sf::Event event)
 {
@@ -29,7 +38,8 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(StateRef newState)
 {
-    this->activeState->pause(*this);
+    // Cancelar animaciones etc automáticamente?
+    //this->activeState->pause(*this);
     this->activeState = std::move(newState);
     this->activeState->init(*this);
 }

@@ -23,9 +23,16 @@ public:
     //sf::Sprite sprite;
 
     PlayerDirection dir;
+
+    bool isOnGround;
+    bool isOnStairs;
+
+    bool isAttacking;
     bool isWalking;
     bool isJumping;
     bool isDucking;
+    bool isDead;
+    bool isBeingHurt;
 
 // --------------------------------
 
