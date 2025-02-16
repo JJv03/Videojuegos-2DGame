@@ -4,6 +4,8 @@
 #include <SFML/Window.hpp>
 #include "PlayerState.hpp"
 
+constexpr float gMovementSpeed { 75.0f };
+
 class PlayerState;
 
 enum PlayerDirection
@@ -19,8 +21,8 @@ class Player
 public:
     StateRef activeState;
 
-    //sf::Texture texture;
-    //sf::Sprite sprite;
+    sf::Texture texture;
+    sf::Sprite* sprite;
 
     PlayerDirection dir;
 

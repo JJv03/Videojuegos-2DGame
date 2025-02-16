@@ -155,7 +155,11 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerWalkState::update(Player& player, float deltaTime)
 {
-    // Implementar logica (actualizar fisicas, animaciones, etc)
+    if(player.dir == RIGHT){
+        player.sprite->move({1.f * deltaTime * gMovementSpeed, 0.f});
+    } else {
+        player.sprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
+    }
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
@@ -359,6 +363,7 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
     } else if(!player.isWalking){
         player.setState(state<Stairs>());
     }
+    
     // Implementar logica (actualizar fisicas, animaciones, etc)
 }
 
