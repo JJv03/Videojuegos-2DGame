@@ -15,10 +15,14 @@ Player::Player(){
     dir = RIGHT;
 
     isOnGround = true;
+    isOnStairs = false;
 
+    isAttacking = false;
     isWalking = false;
     isJumping = false;
     isDucking = false;
+    isDead = false;
+    isBeingHurt = false;
 }
 
 void Player::handleInput(sf::Event event)
