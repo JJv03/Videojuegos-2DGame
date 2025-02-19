@@ -3,13 +3,13 @@
 AnimationManager::AnimationManager(sf::Sprite& sprite)
     : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0) {}
 
-void AnimationManager::addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop) {
-    animations[name] = { frames, loop };
+void AnimationManager::addAnimation(animationID id, const std::vector<Frame>& frames, bool loop) {
+    animations[id] = { id, frames, loop };
 }
 
-void AnimationManager::playAnimation(const std::string& name) {
-    if (animations.find(name) != animations.end()) {
-        currentAnimation = &animations[name];
+void AnimationManager::playAnimation(animationID id) {
+    if (animations.find(id) != animations.end()) {
+        currentAnimation = &animations[id];
         currentFrame = 0;
         elapsedTime = 0.f;
         sprite.setTextureRect(currentAnimation->frames[0].rect);
@@ -37,28 +37,6 @@ void AnimationManager::update(float deltaTime) {
     }
 }
 
-void AnimationManager::updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation) {
-    if (!isOnGround) {
-        if (currentAnimation != "jump") {
-            playAnimation("jump");
-            currentAnimation = "jump";
-        }
-    }
-    else if (haciaDerecha || haciaIzquierda) {
-        if (currentAnimation != "walk") {
-            playAnimation("walk");
-            currentAnimation = "walk";
-        }
-    }
-    else {
-        if (currentAnimation != "idle") {
-            playAnimation("idle");
-            currentAnimation = "idle";
-        }
-    }
-}
-
-
-bool AnimationManager::isPlaying(const std::string& name){
-    return currentAnimation && animations.find(name) != animations.end() && &animations[name] == currentAnimation;
+bool AnimationManager::isPlaying(animationID id){
+    return currentAnimation->id == id;
 }

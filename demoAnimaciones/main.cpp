@@ -37,7 +37,7 @@ sf::RectangleShape gWall;
 AnimationManager* gAnimationManager { nullptr };
 
 // DEPURACION
-std::string currentAnimation;
+animationID currentAnimation;
 
 // Función de colisiones
 void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds)
@@ -136,15 +136,16 @@ bool init()
     std::vector<AnimationManager::Frame> walkFrames {
         AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 32)), 0.1f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
     };
 
-    gAnimationManager->addAnimation("idle", idleFrames);
-    gAnimationManager->addAnimation("jump", jumpFrames);
-    gAnimationManager->addAnimation("walk", walkFrames);
+    gAnimationManager->addAnimation(idleSimon, idleFrames);
+    gAnimationManager->addAnimation(jumpSimon, jumpFrames);
+    gAnimationManager->addAnimation(walkSimon, walkFrames);
 
-    gAnimationManager->playAnimation("idle");
-    currentAnimation = "idle";
+    gAnimationManager->playAnimation(idleSimon);
+    currentAnimation = idleSimon;
 
     // Suelo
     gFloor.setSize(sf::Vector2f(static_cast<float>(gWindowWidth), 50.f)); // 50 píxeles de alto (puedes ajustar este valor)
@@ -194,8 +195,23 @@ bool updateMovement(const float deltaTime, bool haciaArriba, bool haciaIzquierda
         gSimonSprite->setScale({-1.f, 1.f});
     }
 
-    gAnimationManager->update(deltaTime);
     return true;
+}
+
+void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda)
+{    
+    if (!isOnGround) {
+        currentAnimation = jumpSimon;
+    }
+    else if (haciaDerecha || haciaIzquierda) {
+        currentAnimation = walkSimon;
+    }
+    else {
+        currentAnimation = idleSimon;
+    }
+    if (!gAnimationManager->isPlaying(currentAnimation)){
+        gAnimationManager->playAnimation(currentAnimation);
+    }
 }
 
 // Bucle principal del juego
@@ -282,7 +298,8 @@ int main()
         {
             return -1;
         }
-        gAnimationManager->updateAnimation(isOnGround, haciaDerecha, haciaIzquierda, currentAnimation);
+        updateAnimation(isOnGround, haciaDerecha, haciaIzquierda);
+        gAnimationManager->update(deltaTime);
         window.clear();
         for (const auto& sprite : gSprites)
         {

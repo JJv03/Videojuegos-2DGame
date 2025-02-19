@@ -6,6 +6,29 @@
 #include <vector>
 #include <string>
 
+enum animationID{
+    // Simon
+    idleSimon,
+    walkSimon,
+    jumpSimon,
+    stairUpSimon,
+    stairDownSimon,
+    hurtSimon,
+    deathSimon,
+    
+    // Enemies
+    walkZombie,
+    idleLeopard,
+    walkLeopard,
+    flyRedBat,
+    sleepBat,
+    flyBat,
+
+    // Bosses
+    sleepPhantomBat,
+    flyPhantomBat
+};
+
 class AnimationManager {
 public:
     /**
@@ -26,6 +49,7 @@ public:
      * An animation consists of multiple frames and a loop flag
      */
     struct Animation {
+        animationID id;
         std::vector<Frame> frames;
         bool loop;
     };
@@ -42,39 +66,30 @@ public:
      * @param frames The frames that make up the animation.
      * @param loop Whether the animation should loop (default: true).
      */
-    void addAnimation(const std::string& name, const std::vector<Frame>& frames, bool loop = true);
+    void addAnimation(animationID id, const std::vector<Frame>& frames, bool loop = true);
     
     /**
      * @brief Starts playing an animation.
      * @param name The name of the animation to play.
      */
-    void playAnimation(const std::string& name);
+    void playAnimation(animationID id);
 
     /**
      * @brief Updates the animation based on elapsed time.
      * @param deltaTime Time elapsed since the last update (in seconds).
      */
     void update(float deltaTime);
-
-    /**
-     * @brief Updates the current animation based on movement conditions.
-     * @param isOnGround Indicates if the character is on the ground.
-     * @param haciaDerecha Indicates if the character is moving to the right.
-     * @param haciaIzquierda Indicates if the character is moving to the left.
-     * @param currentAnimation The current animation being played.
-     */
-    void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda, std::string& currentAnimation);
     
     /**
      * @brief Checks if a specific animation is currently playing.
      * @param name The name of the animation.
      * @return True if the animation is playing, false otherwise.
      */
-    bool isPlaying(const std::string& name);
+    bool isPlaying(animationID id);
 
 private:
     sf::Sprite& sprite;
-    std::unordered_map<std::string, Animation> animations;
+    std::unordered_map<animationID, Animation> animations;
     Animation* currentAnimation;
     float elapsedTime;
     std::size_t currentFrame;
