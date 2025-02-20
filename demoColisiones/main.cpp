@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
+#include "entity.h"
 
 // Variables globales de configuración
 bool gEnMovimiento { false };
@@ -15,6 +16,8 @@ constexpr int escala { 1 };
 constexpr int gWindowWidth { 768 * escala };
 constexpr int gWindowHeight { 250 * escala };
 constexpr float gMovementSpeed { 50.0f };
+constexpr float tiempoAtaque { 0.5f };
+constexpr float tiempoEnemigoRespawn { 2.0f };
 
 // Constantes para la física
 constexpr float GRAVITY { 980.0f };       // aceleración en píxeles/segundo²
@@ -32,6 +35,13 @@ sf::Sprite* gSimonSprite { nullptr };
 bool isOnGround { true };       // indica si Simon está en el suelo
 float verticalSpeed { 0.0f };   // velocidad vertical actual
 
+sf::RectangleShape gVampireKiller;
+
+// Puntero global enemigo
+Entity gEnemy;
+bool enemigoVivo { true };
+
+
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
 sf::RectangleShape gWallDown;
@@ -47,6 +57,44 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
     rectShape.setOutlineThickness(2.f);
 
     return rectShape;
+}
+
+
+void updateEnemyRespawn(float deltaTime, float& tiempoEnemigoRespawnActual)
+{
+    if (!enemigoVivo)
+    {
+        if (tiempoEnemigoRespawnActual >= tiempoEnemigoRespawn)
+        {
+            enemigoVivo = true;
+            tiempoEnemigoRespawnActual = 0.0f;
+        }
+        else
+        {
+            tiempoEnemigoRespawnActual += deltaTime;
+        }
+    }
+}
+
+void updateSimonAtaque(bool& ataque, float deltaTime, float& tiempoAtaqueActual)
+{
+    if (ataque)
+    {
+        if (tiempoAtaqueActual >= tiempoAtaque)
+        {
+            //gSimonSprite->setTextureRect(sf::IntRect({1, 53}, {16, 32}));
+            tiempoAtaqueActual = 0.0f;
+            ataque = false;
+        }
+        else
+        {
+            tiempoAtaqueActual += deltaTime;
+        }
+    }
+    sf::Vector2f position = gSimonSprite->getPosition();
+    position.x += gSimonSprite->getLocalBounds().size.x * 0.5f;
+    position.y -= gSimonSprite->getLocalBounds().size.y * 0.5f;
+    gVampireKiller.setPosition(position);
 }
 
 void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, const bool debug = false)
@@ -89,7 +137,21 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, cons
     }
 }
 
-void CheckAllCollisions(const bool debug = false)
+void CheckVampireKillerCollision(const bool ataque)
+{
+    if (gEnemy.sprite && enemigoVivo && ataque)
+    {
+        sf::FloatRect enemyBounds = gEnemy.sprite->getGlobalBounds();
+        sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
+
+        if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(enemyBounds))
+        {
+            enemigoVivo = false;
+        }
+    }
+}
+
+void CheckAllCollisions(const bool ataque, const bool debug = false)
 {
     sf::FloatRect simonBounds = gSimonSprite->getGlobalBounds();
     sf::FloatRect floorBounds = gFloor.getGlobalBounds();
@@ -99,6 +161,7 @@ void CheckAllCollisions(const bool debug = false)
     CheckCollisions(simonBounds, floorBounds, debug);
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
+    CheckVampireKillerCollision(ataque);
 }
 
 std::string formatFPSandTime(float deltaTime)
@@ -129,7 +192,7 @@ void render(sf::RenderWindow& window, const sf::Text& text);
 bool init()
 {
     // Fondo ----------------------------------------------------------------------------
-    if (!gTextures["bgEntrada"].loadFromFile("./assets/maps/level1Entrance.png", false))
+    if (!gTextures["bgEntrada"].loadFromFile("../assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
         return false;
@@ -160,7 +223,7 @@ bool init()
 
     // Cargar imagen y configurar textura de Simon (aplicando color key)
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
@@ -177,6 +240,31 @@ bool init()
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
     gSprites.push_back(simonSprite);
     gSimonSprite = &gSprites.back();
+
+    // Vampire Killer ----------------------------------------------------------------------------
+    gVampireKiller.setSize(sf::Vector2f(30.f, 5.f));
+    gVampireKiller.setFillColor(sf::Color::Red);
+
+    // Enemigo ----------------------------------------------------------------------------
+    sf::Image enemyImage;
+    if (!enemyImage.loadFromFile("../assets/sprites/enemies/enemies.png"))
+    {
+        std::cerr << "Error cargando la imagen del enemigo" << std::endl;
+        return false;
+    }
+    enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
+    gTextures["enemy"] = sf::Texture(enemyImage, false);
+
+    gEnemy.sprite = new sf::Sprite(gTextures["enemy"]);
+    gEnemy.sprite->setTextureRect(sf::IntRect({1, 28}, {16, 32}));
+    gEnemy.sprite->setPosition({345.f, 171.f});
+    sf::FloatRect bounds2 = gEnemy.sprite->getLocalBounds();
+    // Ajusta el origen de las transformaciones al centro inferior
+    gEnemy.sprite->setOrigin({bounds2.size.x / 2.f, bounds2.size.y});
+    /*
+    // Por lo que sea, hace que pete
+    gSprites.push_back(*gEnemy.sprite);
+    */
 
     return true;
 }
@@ -218,7 +306,7 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     return true;
 }
 
-void render(sf::RenderWindow& window, const sf::Text& text)
+void render(sf::RenderWindow& window, const sf::Text& text, const bool ataque)
 {
     window.clear(sf::Color::Black);
     for (const auto& sprite : gSprites)
@@ -235,6 +323,15 @@ void render(sf::RenderWindow& window, const sf::Text& text)
     {
         window.draw(*gSimonSprite);
         window.draw(FloatRectToRectShape(gSimonSprite->getGlobalBounds()));
+    }
+    if (ataque)
+    {        
+        window.draw(gVampireKiller);
+    }
+    if (gEnemy.sprite && enemigoVivo)
+    {
+        window.draw(*gEnemy.sprite);
+        window.draw(FloatRectToRectShape(gEnemy.sprite->getGlobalBounds()));
     }
     window.draw(text);
     window.display();
@@ -257,9 +354,12 @@ int main()
     bool haciaIzquierda { false };
     bool haciaDerecha { false };
     bool haciaArriba { false };
+    bool ataque { false };
+    float tiempoAtaqueActual { 0.0f };
+    float tiempoEnemigoRespawnActual { 0.0f };
 
     sf::Font font;
-    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
+    if (!font.openFromFile("../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
         std::cerr << "Error en la carga de la fuente de texto" << std::endl;
         return -1;
@@ -289,6 +389,10 @@ int main()
                 {
                     case sf::Keyboard::Scancode::Escape:
                         window.close();
+                        break;
+                    case sf::Keyboard::Scancode::Z:
+                        ataque = true;
+                        std::cout << "Ataque activado" << std::endl;
                         break;
                     case sf::Keyboard::Scancode::Up:
                         haciaArriba = true;
@@ -342,9 +446,12 @@ int main()
             return -1;
         }
 
-        CheckAllCollisions();  // check collisions and correct Simon's position
+        updateEnemyRespawn(deltaTime, tiempoEnemigoRespawnActual);
+        updateSimonAtaque(ataque, deltaTime, tiempoAtaqueActual);
 
-        render(window, text);
+        CheckAllCollisions(ataque);  // check collisions and correct Simon's position
+
+        render(window, text, ataque);
     }
 
     return 0;
