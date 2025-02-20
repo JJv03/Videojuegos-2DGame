@@ -177,6 +177,13 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castlevania", sf::Style::Default);
     window.setVerticalSyncEnabled(true);
+    sf::Image icon;
+    if (!icon.loadFromFile("./assets/sprites/icon.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+        return false;
+    }
+    window.setIcon(icon);
     soundManager.loadMusic("background", "assets/music/05Wicked_Child(1).mp3");
     soundManager.loadMusic("background2", "assets/music/05Wicked_Child(2).mp3");
     soundManager.playMusicSequence("background", "background2");
