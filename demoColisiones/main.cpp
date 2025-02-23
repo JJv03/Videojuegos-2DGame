@@ -24,7 +24,9 @@ constexpr float GRAVITY { 980.0f };       // aceleración en píxeles/segundo²
 constexpr float JUMP_FORCE { 350.0f };    // velocidad inicial del salto (píxeles/segundo)
 
 // Cámara
-Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
+const sf::Vector2f gViewOrigin {0.f, 27.f};
+const sf::Vector2f gViewSize { 256.f, 175.f };
+Camera camera(sf::FloatRect(gViewOrigin, gViewSize));
 
 // Contenedores para sprites y texturas
 std::vector<sf::Sprite> gSprites;
@@ -233,7 +235,7 @@ bool init()
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 171.f});
+    simonSprite.setPosition({100.f, 171.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
@@ -357,6 +359,10 @@ int main()
     bool ataque { false };
     float tiempoAtaqueActual { 0.0f };
     float tiempoEnemigoRespawnActual { 0.0f };
+    
+    // Variables para controlar el movimiento de la cámara
+    float simonCurrentPositionX {0.0f};
+    float simonNewPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
 
     sf::Font font;
     if (!font.openFromFile("../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
@@ -369,6 +375,7 @@ int main()
     text.setString("60 FPS\n16.67 ms");
     text.setCharacterSize(12);
     text.setFillColor(sf::Color::White);
+    
 
     // Bucle principal del juego
     while (window.isOpen())
@@ -376,7 +383,8 @@ int main()
         float deltaTime = deltaClock.restart().asSeconds(); // tiempo transcurrido entre fotograma
         text.setString(formatFPSandTime(deltaTime));
 
-        // Procesar eventos
+        simonCurrentPositionX = gSimonSprite->getPosition().x;
+
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -438,8 +446,6 @@ int main()
             }
         }
 
-        window.setView(camera.GetView(window.getSize())); // Actualiza la vista de la cámara
-
         if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
         {
             std::cerr << "Error en el update" << std::endl;
@@ -448,9 +454,17 @@ int main()
 
         updateEnemyRespawn(deltaTime, tiempoEnemigoRespawnActual);
         updateSimonAtaque(ataque, deltaTime, tiempoAtaqueActual);
-
         CheckAllCollisions(ataque);  // check collisions and correct Simon's position
 
+        simonNewPositionX = gSimonSprite->getPosition().x; 
+        if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f) {
+            camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};
+            std::cout << "UpdateView: " << simonNewPositionX - simonCurrentPositionX << std::endl;
+        }
+        window.setView(camera.GetView(window.getSize()));
+        simonCurrentPositionX = simonNewPositionX;
+
+        // text.setPosition(view.getPosition());
         render(window, text, ataque);
     }
 
