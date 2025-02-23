@@ -40,7 +40,7 @@ int main()
 
         window.clear(sf::Color(20, 20, 20)); // Limpia la ventana antes de renderizar
 
-        Render(renderer); // Dibuja los elementos en pantalla
+        Render(renderer, window); // Dibuja los elementos en pantalla
 
         window.display(); // Muestra el contenido renderizado en la ventana
     }

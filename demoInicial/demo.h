@@ -13,6 +13,4 @@ void Init(const sf::Window &window);
 void Update(float deltaTime);
 
 // Renderiza los elementos en la ventana
-void Render(Renderer &renderer);
-
-void createFilledSquareTexture(int size, int alpha);
+void Render(Renderer &renderer, sf::RenderWindow &window);
