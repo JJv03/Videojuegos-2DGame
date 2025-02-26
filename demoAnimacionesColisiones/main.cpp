@@ -17,6 +17,7 @@ constexpr int escala { 1 };
 constexpr int gWindowWidth { 768 * escala };
 constexpr int gWindowHeight { 250 * escala };
 constexpr float gMovementSpeed { 50.0f };
+constexpr float gMovementSpeedSlow { 10.0f };
 
 // Enemigos
 constexpr float tiempoEnemigoRespawn { 2.0f }; //Demo colisiones
@@ -58,6 +59,18 @@ AnimationManager* gWhipAnimationManager { nullptr };
 animationID currentAnimation;
 
 //ENEMIGOS DEMO COLISIONES
+
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
+{
+    sf::RectangleShape rectShape(floatRect.size);
+    rectShape.setPosition(floatRect.position);
+
+    rectShape.setFillColor(sf::Color::Transparent);
+    rectShape.setOutlineColor(sf::Color::Red);
+    rectShape.setOutlineThickness(2.f);
+
+    return rectShape;
+}
 
 sf::RectangleShape gVampireKiller;
 
@@ -235,6 +248,13 @@ bool init()
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
     };
 
+    std::vector<AnimationManager::Frame> walkSlowFrames {
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 32)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 1.0f},
+    };
+
     std::vector<AnimationManager::Frame> attackFrames {
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 78), sf::Vector2(16, 32)),  0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 78), sf::Vector2(16, 32)),  0.1f},
@@ -268,6 +288,7 @@ bool init()
     gAnimationManager->addAnimation(idleSimon, idleFrames);
     gAnimationManager->addAnimation(jumpSimon, jumpFrames);
     gAnimationManager->addAnimation(walkSimon, walkFrames);
+    gAnimationManager->addAnimation(walkSlowSimon, walkSlowFrames,false);
     gAnimationManager->addAnimation(duckSimon, duckFrames);
     gAnimationManager->addAnimation(attackSimon, attackFrames,false);
     gAnimationManager->addAnimation(attackFloorSimon, attackFloorFrames,false);
@@ -448,11 +469,15 @@ int main()
     
     bool haciaIzquierda { false };
     bool haciaDerecha { false };
+    bool estabaLlendoDerecha { false };
+    bool estabaLlendoIzquierda { false };
     bool haciaArriba { false };
     bool atacando { false };
+    bool finataque { false };
     bool ducking { false };
     bool duckttacking { false };
     bool pulsarOtraVez { true };
+    bool limite { false };
     float tiempoEnemigoRespawnActual { 0.0f };
     while (window.isOpen())
     {
@@ -466,6 +491,11 @@ int main()
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
+                if (!limite)
+                {
+                    /* code */
+                
+                
                 switch (keyPressed->scancode)
                 {
                     case sf::Keyboard::Scancode::Escape:
@@ -496,6 +526,7 @@ int main()
                         
                         if (!ducking &&  !duckttacking && !atacando && (isOnGround ||(!isOnGround && !facing)))
                         {
+                            
                             facing = false;
                             haciaIzquierda = true;
                             haciaDerecha = false;
@@ -528,6 +559,9 @@ int main()
                             else
                             {
                                 atacando = true;
+                                estabaLlendoDerecha = haciaDerecha;
+                                estabaLlendoIzquierda = haciaIzquierda;
+                                                               
                                 haciaArriba = false;
                                 haciaDerecha = false;
                                 haciaIzquierda = false;
@@ -538,6 +572,7 @@ int main()
                     default:
                         break;
                 }
+            }
             }
             else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
             {
@@ -551,12 +586,24 @@ int main()
                         break;
                     case sf::Keyboard::Scancode::Right:
                         haciaDerecha = false;
+
                         break;
                     case sf::Keyboard::Scancode::Down:
                         ducking = false;
                         break;
                     case sf::Keyboard::Scancode::Z:
                         pulsarOtraVez = true;
+                        if (finataque)
+                        {
+                            haciaIzquierda = estabaLlendoIzquierda;
+                            haciaDerecha = estabaLlendoDerecha;
+                            estabaLlendoDerecha = false;
+                            estabaLlendoIzquierda = false;
+                        }
+                        finataque = false;
+                        
+                        
+
                         break;
                     default:
                         break;
@@ -565,76 +612,136 @@ int main()
         }
         //std::cout << currentAnimation << std::endl;
         // Verificar colisiones
-        updateEnemyRespawn(deltaTime, tiempoEnemigoRespawnActual);
-        CheckAllCollisions(atacando || duckttacking);
-
-        if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha, ducking,atacando))
+        if (gSimonSprite->getPosition().x < 680)
         {
-            return -1;
-        }
-        updateAnimation(isOnGround, haciaDerecha, haciaIzquierda,atacando,ducking,duckttacking);
-        //gWhipAnimationManager->update( deltaTime);
-        gAnimationManager->update(deltaTime);
-        
-        if (Simonatacado) {
-            atacadoCooldown += deltaTime; // Increment the cooldown timer
-            std::cout << "Cooldown: " << atacadoCooldown << std::endl;
-            if (atacadoCooldown >= atacadoCooldownDuration) {
-                Simonatacado = false; // Re-enable atacado after the cooldown
+            updateEnemyRespawn(deltaTime, tiempoEnemigoRespawnActual);
+            CheckAllCollisions(atacando || duckttacking);
+
+            if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha, ducking,atacando))
+            {
+                return -1;
             }
-        }
-        
-        if (atacando || duckttacking) {
-            //gAnimationManager->update(deltaTime);
-            gWhipAnimationManager->update(deltaTime);
-            int currentFrame = gWhipAnimationManager->getCurrentFrameIndex();
-            if(currentFrame==2 || currentFrame==3){
-                gWhipSprite->setPosition(sf::Vector2f(gSimonSprite->getPosition().x + (facing ? 24 : -16), gSimonSprite->getPosition().y-1));
-                gWhipSprite->setScale({facing ? -1.f : 1.f, 1.f});
+            updateAnimation(isOnGround, haciaDerecha, haciaIzquierda,atacando,ducking,duckttacking);
+            //gWhipAnimationManager->update( deltaTime);
+            gAnimationManager->update(deltaTime);
+            
+            if (Simonatacado) {
+                atacadoCooldown += deltaTime; // Increment the cooldown timer
+                std::cout << "Cooldown: " << atacadoCooldown << std::endl;
+                if (atacadoCooldown >= atacadoCooldownDuration) {
+                    Simonatacado = false; // Re-enable atacado after the cooldown
+                }
             }
-            else{
-                gWhipSprite->setPosition(sf::Vector2f(gSimonSprite->getPosition().x + (facing ? -16 : 16), gSimonSprite->getPosition().y-1));
-                gWhipSprite->setScale({facing ? 1.f : -1.f, 1.f});
+            
+            if (atacando || duckttacking) {
+                //gAnimationManager->update(deltaTime);
+                gWhipAnimationManager->update(deltaTime);
+                int currentFrame = gWhipAnimationManager->getCurrentFrameIndex();
+                if(currentFrame==2 || currentFrame==3){
+                    gWhipSprite->setPosition(sf::Vector2f(gSimonSprite->getPosition().x + (facing ? 24 : -16), gSimonSprite->getPosition().y-1));
+                    gWhipSprite->setScale({facing ? -1.f : 1.f, 1.f});
+                }
+                else{
+                    gWhipSprite->setPosition(sf::Vector2f(gSimonSprite->getPosition().x + (facing ? -16 : 16), gSimonSprite->getPosition().y-1));
+                    gWhipSprite->setScale({facing ? 1.f : -1.f, 1.f});
+                }
             }
+            
+            
+            // Resetear 'atacando' cuando la animación termine
+            if (atacando && gAnimationManager->isAnimationFinished()) {
+                atacando = false;
+                finataque = true;
+                
+            }
+            if (duckttacking && gAnimationManager->isAnimationFinished()) {
+                duckttacking = false;
+            }
+            if (facing)
+            {
+                gWhipSprite->setScale({-1.f, 1.f});
+            }
+            else
+            {
+                gWhipSprite->setScale({1.f, 1.f});
+            }
+            
+            //std::cout << "Posicion simon:" << gSimonSprite->getPosition().x << " " << gSimonSprite->getPosition().y << std::endl;
+            window.clear();
+            for (const auto& sprite : gSprites)
+            {
+                window.draw(sprite);
+            }
+            
+            if (enemigoVivo)
+            {
+                window.draw(*gEnemy.sprite);
+                window.draw(FloatRectToRectShape(gEnemy.sprite->getGlobalBounds()));
+            }
+            
+
         }
-        
-        
-        // Resetear 'atacando' cuando la animación termine
-        if (atacando && gAnimationManager->isAnimationFinished()) {
+        else if(gSimonSprite->getPosition().x < 730){
+
+            haciaDerecha = true;
+            haciaIzquierda = false;
+            haciaArriba = false;
+            ducking = false;
             atacando = false;
+            isOnGround = true;
+            duckttacking = false;
+            gSimonSprite->move({1.5f * deltaTime * gMovementSpeedSlow, 0.f});
+            gSimonSprite->setScale({-1.f, 1.f});
+            if (!gAnimationManager->isPlaying(walkSlowSimon) || gAnimationManager->isAnimationFinished())
+            {
+                gAnimationManager->playAnimation(walkSlowSimon);
+            }
+            
+            gAnimationManager->update(deltaTime*gMovementSpeedSlow);
+            /*if (gAnimationManager->isAnimationFinished())
+            {
+                limite = false;
+            }*/
+            window.clear();
+            for (const auto& sprite : gSprites)
+            {
+                window.draw(sprite);
+            }
             
         }
-        if (duckttacking && gAnimationManager->isAnimationFinished()) {
-            duckttacking = false;
-        }
-        if (facing)
-        {
-            gWhipSprite->setScale({-1.f, 1.f});
-        }
-        else
-        {
-            gWhipSprite->setScale({1.f, 1.f});
-        }
+        else{
+            if (!gTextures["bgEntrada"].loadFromFile("../assets/maps/level1Entrance.png", false))
+            {
+                std::cerr << "Error cargando la textura de fondo" << std::endl;
+                return false;
+            }
+            sf::Sprite bgSprite(gTextures["bgEntrada"]);
+            bgSprite.setTextureRect(sf::IntRect({774, 11}, {1542, 192}));
+            gSprites.push_back(bgSprite);
+            gSimonSprite->setPosition({10.f, 171.f});
+            //simonSprite.setPosition({245.f, 171.f});
+            window.clear();
+            for (const auto& sprite : gSprites)
+            {
+                window.draw(sprite);
+            }
         
-        
-        window.clear();
-        for (const auto& sprite : gSprites)
-        {
-            window.draw(sprite);
-        }
-        
-        if (enemigoVivo)
-        {
-            window.draw(*gEnemy.sprite);
         }
         window.draw(gFloor);
+        window.draw(FloatRectToRectShape(gFloor.getGlobalBounds()));
+        
+        
         window.draw(gWall);
+       // window.draw(FloatRectToRectShape(gWall.getGlobalBounds()));
         window.draw(*gSimonSprite);
+       // window.draw(FloatRectToRectShape(gSimonSprite->getGlobalBounds()));
         if (atacando || duckttacking) {
           window.draw(*gWhipSprite);
+          window.draw(FloatRectToRectShape(gWhipSprite->getGlobalBounds()));
         }
         window.display();
     }
+    
 
     delete gAnimationManager;
     //delete gWhipAnimationManager;

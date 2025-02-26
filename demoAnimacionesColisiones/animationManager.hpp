@@ -10,6 +10,7 @@ enum animationID{
     // Simon
     idleSimon,
     walkSimon,
+    walkSlowSimon,
     jumpSimon,
     stairUpSimon,
     stairDownSimon,

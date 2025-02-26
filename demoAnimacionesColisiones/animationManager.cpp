@@ -25,6 +25,7 @@ void AnimationManager::update( float deltaTime) {
     if (elapsedTime >= currentAnimation->frames[currentFrame].duration) {
         elapsedTime = 0.f;
         currentFrame++;
+        //std::cout << "Current frame: " << currentFrame << std::endl;
 
         if (currentFrame >= currentAnimation->frames.size()) {
             
