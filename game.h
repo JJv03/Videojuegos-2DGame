@@ -6,7 +6,7 @@
 bool Init();
 
 // Actualiza la lógica del programa en función del tiempo transcurrido
-void Update();
+void Update(sf::RenderWindow &window, float deltaTime);
 
 // Renderiza los elementos en la ventana
 void Render();

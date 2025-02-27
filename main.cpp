@@ -2,11 +2,31 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 bool gEnMovimiento{false};
 constexpr int escala{1};
 constexpr int gWindowWidth{800 * escala};
 constexpr int gWindowHeight{250 * escala};
+
+std::string formatFPSandTime(float deltaTime)
+{
+    std::ostringstream oss;
+
+    // Formatea FPS con 2 decimales
+    oss << std::fixed << std::setprecision(2) << (1.f / deltaTime);
+    std::string fps = oss.str();
+
+    // Limpia el flujo
+    oss.str("");
+    oss.clear();
+
+    // Formatea el tiempo en milisegundos con 2 decimales
+    oss << std::fixed << std::setprecision(2) << (deltaTime * 1000);
+    std::string ms = oss.str();
+
+    return fps + " FPS\n" + ms + " ms";
+}
 
 int main()
 {
