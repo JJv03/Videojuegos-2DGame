@@ -3,16 +3,14 @@
 
 int tileSize = 32;
 
-bool TileMap::load(const std::string& tileset, const int* tiles, unsigned int width, unsigned int height){
+
+bool TileMap::load(const std::string& tileset, const std::vector<int> tiles, unsigned int width, unsigned int height){
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
     m_vertices.resize(width * height * 6);
 
-    sf::Texture texture;
-    if (!texture.loadFromFile(tileset)) {
+    if (!m_tileset.loadFromFile(tileset)) {
         return false;
     }
-    
-    m_tileset = texture;
 
     int tilesPerRow = (m_tileset.getSize().x + 1) / (tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
