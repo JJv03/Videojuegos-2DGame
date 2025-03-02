@@ -9,4 +9,4 @@ bool Init();
 void Update(sf::RenderWindow &window, float deltaTime);
 
 // Renderiza los elementos en la ventana
-void Render();
+void Render(sf::RenderWindow &window, const sf::Text &text);

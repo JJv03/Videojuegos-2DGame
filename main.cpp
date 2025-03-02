@@ -3,11 +3,17 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "game.h"
+#include "camera.h"
+#include "resources.h"
 
+// Variables globales de configuración
 bool gEnMovimiento{false};
 constexpr int escala{1};
-constexpr int gWindowWidth{800 * escala};
+constexpr int gWindowWidth{768 * escala};
 constexpr int gWindowHeight{250 * escala};
+const sf::Vector2f gViewOrigin{0.f, 27.f};
+const sf::Vector2f gViewSize{256.f, 175.f};
 
 std::string formatFPSandTime(float deltaTime)
 {
@@ -34,120 +40,61 @@ int main()
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), nombreVentana, sf::Style::Default);
     window.setVerticalSyncEnabled(true);
 
-    sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("./assets/maps/level1Entrance.png", false))
+    sf::Clock deltaClock;
+
+    if (!Init())
     {
-        std::cerr << "Error cargando la textura" << std::endl;
+        std::cerr << "Error en la inicialización" << std::endl;
+        return -1;
     }
-    sf::Sprite bgSprite(bgTexture);
-    bgSprite.setTextureRect(sf::IntRect({1, 11}, {768, 192}));
 
-    sf::Image simonImage;
-    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    // Variables para controlar el movimiento de la cámara
+    Camera camera(sf::FloatRect(gViewOrigin, gViewSize));
+
+    // ESTO NO DEBERIA IR AQUI =========
+    float simonCurrentPositionX{0.0f};
+    float simonNewPositionX{camera.startVertex.x + camera.viewSize.x * 0.5f};
+
+    sf::Font font;
+    if (!font.openFromFile("../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
-        std::cerr << "Error cargando la imagen" << std::endl;
+        std::cerr << "Error en la carga de la fuente de texto" << std::endl;
+        return -1;
     }
-    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    sf::Texture simonTexture(simonImage, false);
-    sf::Sprite simonSprite(simonTexture);
-    simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 139.f});
 
-    bool haciaIzquierda{false};
-    bool haciaDerecha{false};
-    bool haciaArriba{false};
+    sf::Text text(font);
+    text.setString("60 FPS\n16.67 ms");
+    text.setCharacterSize(12);
+    text.setFillColor(sf::Color::White);
+    //====================================
 
-    // run the program as long as the window is open
+    // Bucle principal del juego
     while (window.isOpen())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
-                window.close();
-            }
-            else if (const auto *resized = event->getIf<sf::Event::Resized>())
-            {
-                std::cout << "new width: " << resized->size.x << std::endl;
-                std::cout << "new height: " << resized->size.y << std::endl;
-            }
-            else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
-            {
-                switch (keyPressed->scancode)
-                {
-                case sf::Keyboard::Scancode::Escape:
-                    window.close();
-                    break;
-                case sf::Keyboard::Scancode::Up:
-                    haciaArriba = true;
-                    simonSprite.move({0.f, -1.5f});
-                    break;
-                case sf::Keyboard::Scancode::Down:
-                    simonSprite.move({0.f, 1.5f});
-                    break;
-                case sf::Keyboard::Scancode::Left:
-                    haciaIzquierda = true;
-                    haciaDerecha = false;
-                    simonSprite.setScale({1.f, 1.f});
-                    break;
-                case sf::Keyboard::Scancode::Right:
-                    haciaDerecha = true;
-                    haciaIzquierda = false;
-                    simonSprite.setScale({-1.f, 1.f});
-                    break;
-                default:
-                    break;
-                }
-            }
-            else if (const auto *keyPressed = event->getIf<sf::Event::KeyReleased>())
-            {
-                switch (keyPressed->scancode)
-                {
-                case sf::Keyboard::Scancode::Up:
-                    haciaArriba = false;
-                    break;
-                case sf::Keyboard::Scancode::Left:
-                    haciaIzquierda = false;
-                    break;
-                case sf::Keyboard::Scancode::Right:
-                    haciaDerecha = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+        float deltaTime = deltaClock.restart().asSeconds(); // tiempo transcurrido entre fotograma
 
-        if (haciaArriba)
-        {
-            if (haciaDerecha)
-            {
-                simonSprite.move({1.f, -1.5f});
-            }
-            else if (haciaIzquierda)
-            {
-                simonSprite.move({-1.f, -1.5f});
-            }
-            else
-            {
-                simonSprite.move({0.f, -1.5f});
-            }
-        }
-        if (haciaIzquierda)
-        {
-            simonSprite.move({-1.5f, 0.f});
-        }
-        else if (haciaDerecha)
-        {
-            simonSprite.move({1.5f, 0.f});
-        }
+        // ESTO NO DEBERIA IR AQUI =========
+        text.setString(formatFPSandTime(deltaTime));
 
-        window.clear(sf::Color::Black); // obligatorio limpiar la ventana antes de dibujar SIEMPRE
+        simonCurrentPositionX = Resources::sprites["simon"].getPosition().x;
+        // =================================
 
-        window.draw(bgSprite);
-        window.draw(simonSprite);
+        Update(window, deltaTime);
 
-        window.display();
+        // ESTO NO DEBERIA IR AQUI =========
+
+        simonNewPositionX = Resources::sprites["simon"].getPosition().x;
+        if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f)
+        {
+            camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};
+            std::cout << "UpdateView: " << simonNewPositionX - simonCurrentPositionX << std::endl;
+        }
+        window.setView(camera.GetView(window.getSize()));
+        simonCurrentPositionX = simonNewPositionX;
+        // =================================
+
+        Render(window, text);
     }
+
+    return 0;
 }

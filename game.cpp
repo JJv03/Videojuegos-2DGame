@@ -8,9 +8,11 @@ constexpr float JUMP_FORCE{350.0f};    // velocidad inicial del salto (píxeles/
 constexpr float MOVEMENT_SPEED{50.0f}; // velocidad de movimiento base
 constexpr float ATACK_TIME{0.5f};      // tiempo entre ataques
 
+// HABRA QUE REORGANIZARLOS
 float verticalSpeed{0.0f};
 bool isOnGround{true};
 bool enemigoVivo{true};
+bool isAtacking = false;
 
 // LOS SPRITES DEBERAN IR ASOCIADOS A SU PROPIA CLASE NO EN UNA DICCIONARIO DE RECURSOS
 bool Init()
@@ -113,7 +115,6 @@ void Update(sf::RenderWindow &window, float deltaTime)
 {
 
     // ESTOS SERÁN ATRIBUTOS PROPIOS DE LA CLASE SIMON NO HARA FALTA PONERLOS AQUI Y ESTAR PASANDOLOS TODO EL RATO
-    bool isAtacking = false;
     bool goingUp = false;
     bool goingLeft = false;
     bool goingRight = false;
@@ -191,33 +192,39 @@ void Update(sf::RenderWindow &window, float deltaTime)
     CheckAllCollisions(isAtacking);
 }
 
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
+{
+    sf::RectangleShape rectShape(floatRect.size);
+    rectShape.setPosition(floatRect.position);
+
+    rectShape.setFillColor(sf::Color::Transparent);
+    rectShape.setOutlineColor(sf::Color::Red);
+    rectShape.setOutlineThickness(2.f);
+
+    return rectShape;
+}
+
 // EL RENDERIZADO SERA DE LOS SPRITES DE LAS CLASES, NO DE LOS DEL DICCIONARIO
-void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
+void Render(sf::RenderWindow &window, const sf::Text &text)
 {
     window.clear(sf::Color::Black);
-    for (const auto &sprite : gSprites)
+    window.draw(Resources::sprites["bgEntrada"]);
+    window.draw(Resources::rectangles["floor"]);
+    window.draw(FloatRectToRectShape(Resources::rectangles["floor"].getGlobalBounds()));
+    window.draw(Resources::rectangles["wallUp"]);
+    window.draw(FloatRectToRectShape(Resources::rectangles["wallUp"].getGlobalBounds()));
+    window.draw(Resources::rectangles["wallDown"]);
+    window.draw(FloatRectToRectShape(Resources::rectangles["wallDown"].getGlobalBounds()));
+    window.draw(Resources::sprites["simon"]);
+    window.draw(FloatRectToRectShape(Resources::sprites["simon"].getGlobalBounds()));
+    if (isAtacking)
     {
-        window.draw(sprite);
-    }
-    window.draw(gFloor);
-    window.draw(FloatRectToRectShape(gFloor.getGlobalBounds()));
-    window.draw(gWallUp);
-    window.draw(FloatRectToRectShape(gWallUp.getGlobalBounds()));
-    window.draw(gWallDown);
-    window.draw(FloatRectToRectShape(gWallDown.getGlobalBounds()));
-    if (gSimonSprite)
-    {
-        window.draw(*gSimonSprite);
-        window.draw(FloatRectToRectShape(gSimonSprite->getGlobalBounds()));
-    }
-    if (ataque)
-    {
-        window.draw(gVampireKiller);
+        window.draw(Resources::rectangles["vapireKiller"]);
     }
     if (enemigoVivo)
     {
-        window.draw(*gEnemy.sprite);
-        window.draw(FloatRectToRectShape(gEnemy.sprite->getGlobalBounds()));
+        window.draw(Resources::sprites["enemy"]);
+        window.draw(FloatRectToRectShape(Resources::sprites["enemy"].getGlobalBounds()));
     }
     window.draw(text);
     window.display();
