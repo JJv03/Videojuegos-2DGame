@@ -56,7 +56,7 @@ int main()
     float simonNewPositionX{camera.startVertex.x + camera.viewSize.x * 0.5f};
 
     sf::Font font;
-    if (!font.openFromFile("../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
+    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
         std::cerr << "Error en la carga de la fuente de texto" << std::endl;
         return -1;
@@ -76,14 +76,14 @@ int main()
         // ESTO NO DEBERIA IR AQUI =========
         text.setString(formatFPSandTime(deltaTime));
 
-        simonCurrentPositionX = Resources::sprites["simon"].getPosition().x;
+        simonCurrentPositionX = sprites["simon"]->getPosition().x;
         // =================================
 
         Update(window, deltaTime);
 
         // ESTO NO DEBERIA IR AQUI =========
 
-        simonNewPositionX = Resources::sprites["simon"].getPosition().x;
+        simonNewPositionX = sprites["simon"]->getPosition().x;
         if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f)
         {
             camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};

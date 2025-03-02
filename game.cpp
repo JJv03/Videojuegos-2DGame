@@ -19,17 +19,17 @@ bool Init()
 {
     // Fondo ----------------------------------------------------------------------------
     sf::Texture bgTexture;
-    if (!bgTexture.loadFromFile("../assets/maps/level1Entrance.png", false))
+    if (!bgTexture.loadFromFile("./assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
         return false;
     }
-    Resources::textures["bgEntrada"] = bgTexture;
+    textures["bgEntrada"] = bgTexture;
 
-    sf::Sprite bgSprite(Resources::textures["bgEntrada"]);
+    sf::Sprite bgSprite(textures["bgEntrada"]);
     bgSprite.setTextureRect(sf::IntRect({1, 11}, {768, 192}));
 
-    Resources::sprites["bgEntrada"] = bgSprite;
+    sprites["bgEntrada"] = &bgSprite;
 
     // Suelo ----------------------------------------------------------------------------
     sf::RectangleShape floor;
@@ -37,7 +37,7 @@ bool Init()
     floor.setFillColor(sf::Color(139, 69, 19));
     floor.setPosition({0.f, 171.f});
 
-    Resources::rectangles["floor"] = floor;
+    rectangles["floor"] = floor;
 
     // Pared Arriba ----------------------------------------------------------------------------
     sf::RectangleShape wallUp;
@@ -45,7 +45,7 @@ bool Init()
     wallUp.setFillColor(sf::Color(139, 69, 19));
     wallUp.setPosition({518.f, 75.f});
 
-    Resources::rectangles["wallUp"] = wallUp;
+    rectangles["wallUp"] = wallUp;
 
     // Pared Abajo ----------------------------------------------------------------------------
     sf::RectangleShape wallDown;
@@ -53,11 +53,11 @@ bool Init()
     wallDown.setFillColor(sf::Color(139, 69, 19));
     wallDown.setPosition({465.f, 125.f});
 
-    Resources::rectangles["wallDown"] = wallDown;
+    rectangles["wallDown"] = wallDown;
 
     // Simon ----------------------------------------------------------------------------
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
+    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
@@ -66,26 +66,26 @@ bool Init()
     sf::Texture simonTexture;
     simonTexture.loadFromImage(simonImage);
 
-    Resources::textures["simon"] = simonTexture;
+    textures["simon"] = simonTexture;
 
-    sf::Sprite simonSprite(Resources::textures["simon"]);
+    sf::Sprite simonSprite(textures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite.setPosition({100.f, 171.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
-    Resources::sprites["simon"] = simonSprite;
+    sprites["simon"] = &simonSprite;
 
     // Vampire Killer ----------------------------------------------------------------------------
     sf::RectangleShape vampireKiller;
     vampireKiller.setSize(sf::Vector2f(30.f, 5.f));
     vampireKiller.setFillColor(sf::Color::Red);
 
-    Resources::rectangles["vapireKiller"] = vampireKiller;
+    rectangles["vapireKiller"] = vampireKiller;
 
     // Enemigo ----------------------------------------------------------------------------
     sf::Image enemyImage;
-    if (!enemyImage.loadFromFile("../assets/sprites/enemies/enemies.png"))
+    if (!enemyImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
     {
         std::cerr << "Error cargando la imagen del enemigo" << std::endl;
         return false;
@@ -94,17 +94,199 @@ bool Init()
     sf::Texture enemyTexture;
     enemyTexture.loadFromImage(enemyImage);
 
-    Resources::textures["enemy"] = enemyTexture;
+    textures["enemy"] = enemyTexture;
 
-    sf::Sprite enemySprite(Resources::textures["enemy"]);
+    sf::Sprite enemySprite(textures["enemy"]);
     enemySprite.setTextureRect(sf::IntRect({1, 28}, {16, 32}));
     enemySprite.setPosition({345.f, 171.f});
     sf::FloatRect enemyBounds = enemySprite.getLocalBounds();
     enemySprite.setOrigin({enemyBounds.size.x / 2.f, enemyBounds.size.y});
 
-    Resources::sprites["enemy"] = enemySprite;
+    sprites["enemy"] = &enemySprite;
 
     return true;
+}
+
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
+{
+    sf::RectangleShape rectShape(floatRect.size);
+    rectShape.setPosition(floatRect.position);
+
+    rectShape.setFillColor(sf::Color::Transparent);
+    rectShape.setOutlineColor(sf::Color::Red);
+    rectShape.setOutlineThickness(2.f);
+
+    return rectShape;
+}
+
+// EL RENDERIZADO SERA DE LOS SPRITES DE LAS CLASES, NO DE LOS DEL DICCIONARIO
+void Render(sf::RenderWindow &window, const sf::Text &text)
+{
+    window.clear(sf::Color::Black);
+    window.draw(*sprites["bgEntrada"]);
+    window.draw(rectangles["floor"]);
+    window.draw(FloatRectToRectShape(rectangles["floor"].getGlobalBounds()));
+    window.draw(rectangles["wallUp"]);
+    window.draw(FloatRectToRectShape(rectangles["wallUp"].getGlobalBounds()));
+    window.draw(rectangles["wallDown"]);
+    window.draw(FloatRectToRectShape(rectangles["wallDown"].getGlobalBounds()));
+    window.draw(*sprites["simon"]);
+    window.draw(FloatRectToRectShape(sprites["simon"]->getGlobalBounds()));
+    if (isAtacking)
+    {
+        window.draw(rectangles["vapireKiller"]);
+    }
+    if (enemigoVivo)
+    {
+        window.draw(*sprites["enemy"]);
+        window.draw(FloatRectToRectShape(sprites["enemy"]->getGlobalBounds()));
+    }
+    window.draw(text);
+    window.display();
+}
+
+// ========================================
+// ========================================
+// ESTAS FUNCIONES HAY QUE REDISTRIBUIRLAS
+// ========================================
+// ========================================
+
+void updateMovement(const float deltaTime, const bool goingUp, const bool goingLeft, const bool goingRight)
+{
+
+    // Movimiento vertical con gravedad
+    verticalSpeed += GRAVITY * deltaTime;
+    sprites["simon"]->move({0.f, verticalSpeed * deltaTime});
+
+    if (goingUp)
+    {
+        if (goingRight)
+        {
+            // gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
+            sprites["simon"]->move({1.f * deltaTime * MOVEMENT_SPEED, 0.f});
+        }
+        else if (goingLeft)
+        {
+            // gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
+            sprites["simon"]->move({-1.f * deltaTime * MOVEMENT_SPEED, 0.f});
+        }
+    }
+    else if (goingLeft)
+    {
+        sprites["simon"]->move({-1.5f * deltaTime * MOVEMENT_SPEED, 0.f});
+    }
+    else if (goingRight)
+    {
+        sprites["simon"]->move({1.5f * deltaTime * MOVEMENT_SPEED, 0.f});
+    }
+}
+
+void updateEnemyRespawn(float deltaTime, float &timeActualEnemyRespawn)
+{
+    if (!enemigoVivo)
+    {
+        if (timeActualEnemyRespawn >= 2.0)
+        {
+            enemigoVivo = true;
+            timeActualEnemyRespawn = 0.0f;
+        }
+        else
+        {
+            timeActualEnemyRespawn += deltaTime;
+        }
+    }
+}
+
+void updateSimonAtaque(bool &ataque, float deltaTime, float &timeActualAtack)
+{
+    if (ataque)
+    {
+        if (timeActualAtack >= ATACK_TIME)
+        {
+            // gSimonSprite->setTextureRect(sf::IntRect({1, 53}, {16, 32}));
+            timeActualAtack = 0.0f;
+            ataque = false;
+        }
+        else
+        {
+            timeActualAtack += deltaTime;
+        }
+    }
+    sf::Vector2f position = sprites["simon"]->getPosition();
+    position.x += sprites["simon"]->getLocalBounds().size.x * 0.5f;
+    position.y -= sprites["simon"]->getLocalBounds().size.y * 0.5f;
+    rectangles["vapireKiller"].setPosition(position);
+}
+
+void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, const bool debug = false)
+{
+    // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
+    if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(objectBounds))
+    {
+        float overlapX{intersection->size.x};
+        float overlapY{intersection->size.y};
+
+        if (overlapX < overlapY) // Colisión horizontal
+        {
+            if ((simonBounds.position.x + simonBounds.size.x * 0.5f) < (objectBounds.position.x + objectBounds.size.x * 0.5f))
+            {
+                if (debug)
+                    std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
+                sprites["simon"]->move({-overlapX, 0.f});
+            }
+            else
+            {
+                if (debug)
+                    std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
+                sprites["simon"]->move({overlapX, 0.f});
+            }
+        }
+        else // Colisión vertical
+        {
+            if ((simonBounds.position.y + simonBounds.size.y * 0.5f) < (objectBounds.position.y + objectBounds.size.y * 0.5f))
+            {
+                if (debug)
+                    std::cout << "Colision con borde superior de objeto." << std::endl;
+                sprites["simon"]->move({0.f, -overlapY});
+                verticalSpeed = 0.0f; // Simon deja de caere
+                isOnGround = true;    // Indicamos que Simon está en el suelo
+            }
+            else
+            {
+                if (debug)
+                    std::cout << "Colision con borde inferior de objeto." << std::endl;
+                sprites["simon"]->move({0.f, overlapY});
+                verticalSpeed = 0.0f; // Simon pasará a estar cayendo
+            }
+        }
+    }
+}
+
+void CheckVampireKillerCollision(const bool ataque)
+{
+    if (enemigoVivo && ataque)
+    {
+        sf::FloatRect enemyBounds = sprites["simon"]->getGlobalBounds();
+        sf::FloatRect vkBounds = rectangles["vapireKiller"].getGlobalBounds();
+
+        if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(enemyBounds))
+        {
+            enemigoVivo = false;
+        }
+    }
+}
+
+void CheckAllCollisions(const bool ataque, const bool debug = false)
+{
+    sf::FloatRect simonBounds = sprites["simon"]->getGlobalBounds();
+    sf::FloatRect floorBounds = rectangles["floor"].getGlobalBounds();
+    sf::FloatRect wallUpBounds = rectangles["wallUp"].getGlobalBounds();
+    sf::FloatRect wallDownBounds = rectangles["wallDown"].getGlobalBounds();
+
+    CheckCollisions(simonBounds, floorBounds, debug);
+    CheckCollisions(simonBounds, wallUpBounds, debug);
+    CheckCollisions(simonBounds, wallDownBounds, debug);
+    CheckVampireKillerCollision(ataque);
 }
 
 // HAY QUE TENER EN CUENTA QUE TODO LO RELACIONADO CON SIMON VA EN LA CLASE PLAYER, POR EJ LA EXCRACCIÓN DEL SPRITE DEBERIA HACERSE DESDE AHI EN VEZ DEL DICCIONARIO
@@ -155,12 +337,12 @@ void Update(sf::RenderWindow &window, float deltaTime)
             case sf::Keyboard::Scancode::Left:
                 goingLeft = true;
                 goingRight = false;
-                Resources::sprites["simon"].setScale({1.f, 1.f});
+                sprites["simon"]->setScale({1.f, 1.f});
                 break;
             case sf::Keyboard::Scancode::Right:
                 goingRight = true;
                 goingLeft = false;
-                Resources::sprites["simon"].setScale({-1.f, 1.f});
+                sprites["simon"]->setScale({-1.f, 1.f});
                 break;
             default:
                 break;
@@ -190,186 +372,4 @@ void Update(sf::RenderWindow &window, float deltaTime)
     updateEnemyRespawn(deltaTime, timeActualEnemyRespawn);
     updateSimonAtaque(isAtacking, deltaTime, timeActualAtack);
     CheckAllCollisions(isAtacking);
-}
-
-sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
-{
-    sf::RectangleShape rectShape(floatRect.size);
-    rectShape.setPosition(floatRect.position);
-
-    rectShape.setFillColor(sf::Color::Transparent);
-    rectShape.setOutlineColor(sf::Color::Red);
-    rectShape.setOutlineThickness(2.f);
-
-    return rectShape;
-}
-
-// EL RENDERIZADO SERA DE LOS SPRITES DE LAS CLASES, NO DE LOS DEL DICCIONARIO
-void Render(sf::RenderWindow &window, const sf::Text &text)
-{
-    window.clear(sf::Color::Black);
-    window.draw(Resources::sprites["bgEntrada"]);
-    window.draw(Resources::rectangles["floor"]);
-    window.draw(FloatRectToRectShape(Resources::rectangles["floor"].getGlobalBounds()));
-    window.draw(Resources::rectangles["wallUp"]);
-    window.draw(FloatRectToRectShape(Resources::rectangles["wallUp"].getGlobalBounds()));
-    window.draw(Resources::rectangles["wallDown"]);
-    window.draw(FloatRectToRectShape(Resources::rectangles["wallDown"].getGlobalBounds()));
-    window.draw(Resources::sprites["simon"]);
-    window.draw(FloatRectToRectShape(Resources::sprites["simon"].getGlobalBounds()));
-    if (isAtacking)
-    {
-        window.draw(Resources::rectangles["vapireKiller"]);
-    }
-    if (enemigoVivo)
-    {
-        window.draw(Resources::sprites["enemy"]);
-        window.draw(FloatRectToRectShape(Resources::sprites["enemy"].getGlobalBounds()));
-    }
-    window.draw(text);
-    window.display();
-}
-
-// ========================================
-// ========================================
-// ESTAS FUNCIONES HAY QUE REDISTRIBUIRLAS
-// ========================================
-// ========================================
-
-void updateMovement(const float deltaTime, const bool goingUp, const bool goingLeft, const bool goingRight)
-{
-
-    // Movimiento vertical con gravedad
-    verticalSpeed += GRAVITY * deltaTime;
-    Resources::sprites["simon"].move({0.f, verticalSpeed * deltaTime});
-
-    if (goingUp)
-    {
-        if (goingRight)
-        {
-            // gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
-            Resources::sprites["simon"].move({1.f * deltaTime * MOVEMENT_SPEED, 0.f});
-        }
-        else if (goingLeft)
-        {
-            // gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
-            Resources::sprites["simon"].move({-1.f * deltaTime * MOVEMENT_SPEED, 0.f});
-        }
-    }
-    else if (goingLeft)
-    {
-        Resources::sprites["simon"].move({-1.5f * deltaTime * MOVEMENT_SPEED, 0.f});
-    }
-    else if (goingRight)
-    {
-        Resources::sprites["simon"].move({1.5f * deltaTime * MOVEMENT_SPEED, 0.f});
-    }
-}
-
-void updateEnemyRespawn(float deltaTime, float &timeActualEnemyRespawn)
-{
-    if (!enemigoVivo)
-    {
-        if (timeActualEnemyRespawn >= 2.0)
-        {
-            enemigoVivo = true;
-            timeActualEnemyRespawn = 0.0f;
-        }
-        else
-        {
-            timeActualEnemyRespawn += deltaTime;
-        }
-    }
-}
-
-void updateSimonAtaque(bool &ataque, float deltaTime, float &timeActualAtack)
-{
-    if (ataque)
-    {
-        if (timeActualAtack >= ATACK_TIME)
-        {
-            // gSimonSprite->setTextureRect(sf::IntRect({1, 53}, {16, 32}));
-            timeActualAtack = 0.0f;
-            ataque = false;
-        }
-        else
-        {
-            timeActualAtack += deltaTime;
-        }
-    }
-    sf::Vector2f position = Resources::sprites["simon"].getPosition();
-    position.x += Resources::sprites["simon"].getLocalBounds().size.x * 0.5f;
-    position.y -= Resources::sprites["simon"].getLocalBounds().size.y * 0.5f;
-    Resources::rectangles["vapireKiller"].setPosition(position);
-}
-
-void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, const bool debug = false)
-{
-    // Si esto da true, es porque la hitbox de Simon ha penetrado el objeto <objectBounds>
-    if (const std::optional<sf::FloatRect> intersection = simonBounds.findIntersection(objectBounds))
-    {
-        float overlapX{intersection->size.x};
-        float overlapY{intersection->size.y};
-
-        if (overlapX < overlapY) // Colisión horizontal
-        {
-            if ((simonBounds.position.x + simonBounds.size.x * 0.5f) < (objectBounds.position.x + objectBounds.size.x * 0.5f))
-            {
-                if (debug)
-                    std::cout << "Colision con borde lateral izquierdo de objeto." << std::endl;
-                Resources::sprites["simon"].move({-overlapX, 0.f});
-            }
-            else
-            {
-                if (debug)
-                    std::cout << "Colision con borde lateral derecho de objeto." << std::endl;
-                Resources::sprites["simon"].move({overlapX, 0.f});
-            }
-        }
-        else // Colisión vertical
-        {
-            if ((simonBounds.position.y + simonBounds.size.y * 0.5f) < (objectBounds.position.y + objectBounds.size.y * 0.5f))
-            {
-                if (debug)
-                    std::cout << "Colision con borde superior de objeto." << std::endl;
-                Resources::sprites["simon"].move({0.f, -overlapY});
-                verticalSpeed = 0.0f; // Simon deja de caere
-                isOnGround = true;    // Indicamos que Simon está en el suelo
-            }
-            else
-            {
-                if (debug)
-                    std::cout << "Colision con borde inferior de objeto." << std::endl;
-                Resources::sprites["simon"].move({0.f, overlapY});
-                verticalSpeed = 0.0f; // Simon pasará a estar cayendo
-            }
-        }
-    }
-}
-
-void CheckVampireKillerCollision(const bool ataque)
-{
-    if (enemigoVivo && ataque)
-    {
-        sf::FloatRect enemyBounds = Resources::sprites["simon"].getGlobalBounds();
-        sf::FloatRect vkBounds = Resources::rectangles["vapireKiller"].getGlobalBounds();
-
-        if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(enemyBounds))
-        {
-            enemigoVivo = false;
-        }
-    }
-}
-
-void CheckAllCollisions(const bool ataque, const bool debug = false)
-{
-    sf::FloatRect simonBounds = Resources::sprites["simon"].getGlobalBounds();
-    sf::FloatRect floorBounds = Resources::rectangles["floor"].getGlobalBounds();
-    sf::FloatRect wallUpBounds = Resources::rectangles["wallUp"].getGlobalBounds();
-    sf::FloatRect wallDownBounds = Resources::rectangles["wallDown"].getGlobalBounds();
-
-    CheckCollisions(simonBounds, floorBounds, debug);
-    CheckCollisions(simonBounds, wallUpBounds, debug);
-    CheckCollisions(simonBounds, wallDownBounds, debug);
-    CheckVampireKillerCollision(ataque);
 }
