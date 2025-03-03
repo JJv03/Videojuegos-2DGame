@@ -2,7 +2,7 @@
 #include "game.h"
 #include "resources.h"
 
-
+/* Creo que hay que quitarlo
 void gestionarEventos() {
     while (const std::optional<sf::Event> event = window.pollEvent())
     {
@@ -66,9 +66,9 @@ void gestionarEventos() {
     }
 }
 
-
+*/
 
 void Update(sf::RenderWindow &window, float deltaTime)
 {
-    gestionarEventos(window);
+    //gestionarEventos(window);
 }
