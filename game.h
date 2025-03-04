@@ -1,12 +1,9 @@
 #pragma once
+#include "gameStateMachine.h"
 
-#include <SFML/Graphics.hpp>
+class Game{
+public:
+    GameStateMachine states;
 
-// Inicializa los recursos y configuraciones necesarias
-bool Init();
-
-// Actualiza la lógica del programa en función del tiempo transcurrido
-void Update(sf::RenderWindow &window, float deltaTime);
-
-// Renderiza los elementos en la ventana
-void Render(sf::RenderWindow &window, const sf::Text &text);
+    void run();
+};
