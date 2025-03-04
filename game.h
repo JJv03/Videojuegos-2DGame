@@ -1,9 +1,7 @@
 #pragma once
-#include "gameStateMachine.h"
 
+// Aquí iría la lógica de una partida como tal (Simon, enemigos, stats, nivel actual, etc)
 class Game{
 public:
-    GameStateMachine states;
 
-    void run();
 };

@@ -1,7 +1,7 @@
-#include "game.h"
+#include "castlevania.h"
 
 int main(){
-    Game game;
-    game.run();
+    Castlevania castlevania;
+    castlevania.run();
     return 0
 }
