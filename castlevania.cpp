@@ -1,7 +1,10 @@
-#include <SFML/Graphics>
-#include <SFML/Window>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include "castlevania.h"
 #include "gameState.h"
+#include "camera.h"
+#include "game.h"
+#include "gameStateMachine.h"
 
 constexpr int escala { 1 };
 constexpr int gWindowWidth { 768 * escala };
@@ -16,7 +19,7 @@ void Castlevania::run(){
     states.addState(std::make_unique<MenuGS>());
     states.processStateChanges();
 
-    sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castlevania", sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
     window.setVerticalSyncEnabled(true);
     sf::Clock deltaClock;
 
@@ -24,17 +27,17 @@ void Castlevania::run(){
 
     while (window.isOpen())
     {
-        StateRef& currentState = stateMachine.getActiveState();
+        StateRef& currentState = states.getActiveState();
 
         float deltaTime = deltaClock.restart().asSeconds();
 
-        while (const std::optional<sf::Event> event = window.pollEvent())
+        while (auto eventOpt = window.pollEvent()) 
         {
-            currentState->handleInput(game, event);
+            currentState->handleInput(*eventOpt);
         }
 
-        currentState->update(game, deltatime);
-        currentState->draw(game, window);
+        currentState->update(deltaTime);
+        currentState->draw(window);
 
         states.processStateChanges();
     }

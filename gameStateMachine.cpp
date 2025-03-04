@@ -1,10 +1,9 @@
-#include "gameStateMachine.hpp"
+#include "gameStateMachine.h"
 
 
 GameStateMachine::GameStateMachine() {
-    this->addState(std::make_unique<State>());
+    this->addState(std::make_unique<GameState>());
 }
-
 
 void GameStateMachine::addState(StateRef newState)
 {

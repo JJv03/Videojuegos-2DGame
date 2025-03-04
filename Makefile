@@ -4,7 +4,7 @@ CXXFLAGS    := -I"./SFML/include" -g -Wall -std=c++20
 LDFLAGS     := -L"./SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
 
 # Lista de fuentes y objetos
-SRCS        := main.cpp camera.cpp game.cpp resources.cpp
+SRCS        := main.cpp camera.cpp game.cpp castlevania.cpp gameStateMachine.cpp #resources.cpp
 OBJ_DIR     := build
 OBJS        := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 EXEC        := $(OBJ_DIR)/game.exe
@@ -29,4 +29,4 @@ $(OBJ_DIR):
 
 # Limpieza de archivos generados
 clean:
-	del -f $(OBJS) $(EXEC)
+	del /Q $(OBJ_DIR)\*.o game.exe

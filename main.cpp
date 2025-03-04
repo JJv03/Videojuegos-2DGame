@@ -3,5 +3,5 @@
 int main(){
     Castlevania castlevania;
     castlevania.run();
-    return 0
+    return 0;
 }

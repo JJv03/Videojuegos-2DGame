@@ -1,4 +1,4 @@
-#include <SFML/Graphics>
+#include <SFML/Graphics.hpp>
 #pragma once
 
 class GameState{
@@ -13,7 +13,7 @@ public:
     virtual void update(float deltaTime) = 0;
 
     // Método que muestra en la ventana los gráficos
-    virtual void draw(sf::Window window) = 0;
+    virtual void draw(sf::RenderWindow& window) = 0;
 
     // Método que se llama al reemplazar un estado por otro.
     // Pausa las animaciones, enemigos, sonidos, músicas...
@@ -31,48 +31,48 @@ public:
 
 
 
-class GameGS{
+class GameGS : public GameState{
 public:
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime) override;
-    void draw(sf::Window window) override;
+    void draw(sf::RenderWindow& window) override;
     void pause() override;
     void resume() override;
     void close() override;
 };
 
 
-class MenuGS{
+class MenuGS : public GameState{
 public:
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime) override;
-    void draw(sf::Window window) override;
+    void draw(sf::RenderWindow& window) override;
     void pause() override;
     void resume() override;
     void close() override;
 };
 
 
-class PauseGS{
+class PauseGS : public GameState{
 public:
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime) override;
-    void draw(sf::Window window) override;
+    void draw(sf::RenderWindow& window) override;
     void pause() override;
     void resume() override;
     void close() override;
 };
 
 
-class ConfigGS{
+class ConfigGS : public GameState{
 public:
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime) override;
-    void draw(sf::Window window) override;
+    void draw(sf::RenderWindow& window) override;
     void pause() override;
     void resume() override;
     void close() override;
