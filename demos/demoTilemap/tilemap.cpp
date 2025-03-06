@@ -1,10 +1,45 @@
 #include "tilemap.h"
 #include <iostream>
 
-int tileSize = 32;
 
+sf::FloatRect TileMap::getHitboxForSolidTile(const int id) const
+{
+    switch (id) {
+        case 1:
+            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // No collision
+        case 2:
+            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize}); // Full collision
+        case 4:
+            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {m_tileSize, m_tileSize / 2.0f}); // Bottom half of the tile has collision
+        case 37:
+            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize / 2.0f}); // Top half of the tile has collision
+        case 6:
+            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {0.0f, m_tileSize / 2.0f}); // Bottom left of the tile has collision
+        case 7:
+            return sf::FloatRect({m_tileSize/2.0f, m_tileSize/2.0f}, {m_tileSize/2.0f, m_tileSize / 2.0f}); // Bottom right of the tile has collision
+        default:
+            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // Default: none collisionable hitbox
+    }
+}
 
-bool TileMap::load(const std::string& tileset, const std::vector<int> tiles, unsigned int width, unsigned int height){
+sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
+{
+    switch (id) {
+        case 2:
+            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize}); // Full collision
+        case 4:
+            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {m_tileSize, m_tileSize / 2.0f}); // Bottom half of the tile has collision
+        default:
+            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // Default: none collisionable hitbox
+    }
+}
+
+bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, unsigned int width, unsigned int height) {
+    m_solidTiles.resize(height);  // Redimensiona el vector de filas
+    for (auto& row : m_solidTiles) {
+        row.resize(width);  // Redimensiona cada fila para que tenga el tamaño adecuado
+    }
+
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
     m_vertices.resize(width * height * 6);
 
@@ -12,44 +47,47 @@ bool TileMap::load(const std::string& tileset, const std::vector<int> tiles, uns
         return false;
     }
 
-    int tilesPerRow = (m_tileset.getSize().x + 1) / (tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
+    int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
     for (unsigned int i = 0; i < width; ++i)
-            for (unsigned int j = 0; j < height; ++j)
-            {
-                int tileIndex = i + j * width;
-                int tileNumber = tiles[tileIndex];
+    {
+        for (unsigned int j = 0; j < height; ++j)
+        {
+            int tileIndex = i + j * width;
+            int tileNumber = tiles[tileIndex];
 
-                // Encontrar su posicion en el tileset
-                int tu = tileNumber % tilesPerRow;
-                int tv = tileNumber / tilesPerRow;
+            // Encontrar su posicion en el tileset
+            int tileset_row = tileNumber % tilesPerRow;
+            int tileset_column = tileNumber / tilesPerRow;
 
-                // Calcular las coordenadas en el tilemap **saltando el píxel vacío**
-                int texX = tu * (tileSize + 1); // Sumamos el 1px de separación
-                int texY = tv * (tileSize + 1);
+            // Calcular las coordenadas en el tilemap **saltando el píxel vacío**
+            int texX = tileset_row * (m_tileSize + 1); // Sumamos el 1px de separación
+            int texY = tileset_column * (m_tileSize + 1);
 
-                // Ir al primer vértice del tile
-                sf::Vertex* triangle = &m_vertices[tileIndex * 6];
+            // Ir al primer vértice del tile
+            sf::Vertex* triangle = &m_vertices[tileIndex * 6];
 
-                
-                // Asignar las posiciones
-                triangle[0].position = sf::Vector2f(i * tileSize, j * tileSize);
-                triangle[1].position = sf::Vector2f((i + 1) * tileSize, j * tileSize);
-                triangle[2].position = sf::Vector2f(i * tileSize, (j + 1) * tileSize);
-                triangle[3].position = sf::Vector2f(i * tileSize, (j + 1) * tileSize);
-                triangle[4].position = sf::Vector2f((i + 1) * tileSize, j * tileSize);
-                triangle[5].position = sf::Vector2f((i + 1) * tileSize, (j + 1) * tileSize);
+            // Asignar las posiciones
+            triangle[0].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
+            triangle[1].position = sf::Vector2f((i + 1) * m_tileSize, j * m_tileSize);
+            triangle[2].position = sf::Vector2f(i * m_tileSize, (j + 1) * m_tileSize);
+            triangle[3].position = sf::Vector2f(i * m_tileSize, (j + 1) * m_tileSize);
+            triangle[4].position = sf::Vector2f((i + 1) * m_tileSize, j * m_tileSize);
+            triangle[5].position = sf::Vector2f((i + 1) * m_tileSize, (j + 1) * m_tileSize);
 
-                // Asignar las coordenadas
-                triangle[0].texCoords = sf::Vector2f(texX, texY);
-                triangle[1].texCoords = sf::Vector2f(texX + tileSize, texY);
-                triangle[2].texCoords = sf::Vector2f(texX, texY + tileSize);
-                triangle[3].texCoords = sf::Vector2f(texX, texY + tileSize);
-                triangle[4].texCoords = sf::Vector2f(texX + tileSize, texY);
-                triangle[5].texCoords = sf::Vector2f(texX + tileSize, texY + tileSize);
-            }
+            // Asignar las coordenadas
+            triangle[0].texCoords = sf::Vector2f(texX, texY);
+            triangle[1].texCoords = sf::Vector2f(texX + m_tileSize, texY);
+            triangle[2].texCoords = sf::Vector2f(texX, texY + m_tileSize);
+            triangle[3].texCoords = sf::Vector2f(texX, texY + m_tileSize);
+            triangle[4].texCoords = sf::Vector2f(texX + m_tileSize, texY);
+            triangle[5].texCoords = sf::Vector2f(texX + m_tileSize, texY + m_tileSize);
 
-        return true;
+            // Set the hitbox for the solid tile
+            m_solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
+        }
+    }
+    return true;
 }
 
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const

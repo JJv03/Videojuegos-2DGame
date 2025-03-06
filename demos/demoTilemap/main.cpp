@@ -1,8 +1,41 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include "tilemap.h"
 #include <iostream>
 #include <fstream>
+#include <chrono>
+#include <thread>
+#include "tilemap.h"
+
+
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
+{
+    if (floatRect.size.x == 0.0f || floatRect.size.y == 0.0f)
+    {
+        return sf::RectangleShape();
+    }
+
+    sf::RectangleShape rectShape(floatRect.size);
+    rectShape.setPosition(floatRect.position);
+
+    rectShape.setFillColor(sf::Color::Transparent);
+    rectShape.setOutlineColor(sf::Color::Red);
+    rectShape.setOutlineThickness(2.f);
+
+    return rectShape;
+}
+
+void drawHitboxes(const std::vector<std::vector<TileMap::SolidTileAttributes>>& solidTiles, sf::RenderWindow& window, float tileSize)
+{
+    for (size_t i = 0; i < solidTiles.size(); ++i) {
+        for (size_t j = 0; j < solidTiles[i].size(); ++j) {
+            sf::RectangleShape rect = FloatRectToRectShape(solidTiles[i][j].hitbox);
+            rect.setPosition({static_cast<float>(j) * tileSize, static_cast<float>(i) * tileSize});
+            window.draw(rect);
+        }
+    }
+}
+
+
 
 void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros) {
     std::ifstream file(archivo);
@@ -54,7 +87,20 @@ int main() {
 
         window.clear(); 
         window.draw(tileMap);
+
+        /* for (size_t i = 0; i < tileMap.m_solidTiles.size(); ++i) {
+            for (size_t j = 0; j < tileMap.m_solidTiles[i].size(); ++j) {
+                sf::RectangleShape rect = FloatRectToRectShape(tileMap.m_solidTiles[i][j].hitbox);
+                rect.setPosition({static_cast<float>(j) * tileMap.m_tileSize, static_cast<float>(i) * tileMap.m_tileSize});
+                window.draw(rect);
+            }
+        } */
+
+       drawHitboxes(tileMap.m_solidTiles, window, tileMap.m_tileSize);
+
         window.display();
+
+        //std::this_thread::sleep_for(std::chrono::seconds(60));
     }
 
     return 0;
