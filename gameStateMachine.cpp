@@ -2,7 +2,9 @@
 
 
 GameStateMachine::GameStateMachine() {
-    this->addState(std::make_unique<GameState>());
+    this->isAdding = false;
+    this->isReplacing = false;
+    this->isRemoving = false;
 }
 
 void GameStateMachine::addState(StateRef newState)

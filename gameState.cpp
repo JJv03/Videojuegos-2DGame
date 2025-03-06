@@ -1,37 +1,56 @@
 #include "gameState.h"
+#include <iostream>
+#include "gameStateMachine.h"
 
+constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
+constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
+constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
+constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
+constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
+constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
+const bool debug = false;
 // ======================================================
 //                      GAME STATE 
 // ======================================================
 
 void GameGS::init(){
-
+    if(debug) std::cout << "ESTADO: Game" << std::endl;
 }
 
-void GameGS::handleInput(sf::Event event){
-
+void GameGS::handleInput(Game game, sf::Event event){
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == KEY_RIGHT) {    
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        }
+        else if (keyPressed->scancode == KEY_UP)
+        {    
+            stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
+        }
+    }
 }
 
-void GameGS::update(float deltaTime){
+void GameGS::update(Game game, float deltaTime){
     
 }
 
-void GameGS::draw(sf::Window window){
+void GameGS::draw(Game game, sf::RenderWindow& window){
     
 }
 
 void GameGS::pause(){
-    
+    if(debug) std::cout << "ESTADO: Game PAUSADO" << std::endl;
 }
 
 void GameGS::resume(){
-    
+    if(debug) std::cout << "ESTADO: Game REANUDADO" << std::endl;
 }
 
 void GameGS::close(){
-    
+    if(debug) std::cout << "ESTADO: Game CERRADO" << std::endl;
 }
+
+GameGS::~GameGS() {}
 
 
 
@@ -40,33 +59,39 @@ void GameGS::close(){
 // ======================================================
 
 void MenuGS::init(){
-
+    if(debug) std::cout << "ESTADO: Menu" << std::endl;
 }
 
-void MenuGS::handleInput(sf::Event event){
-
+void MenuGS::handleInput(Game game, sf::Event event){
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == KEY_RIGHT) {    
+            stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
+        }
+    }
 }
 
-void MenuGS::update(float deltaTime){
+void MenuGS::update(Game game, float deltaTime){
     
 }
 
-void MenuGS::draw(sf::Window window){
+void MenuGS::draw(Game game, sf::RenderWindow& window){
     
 }
 
 void MenuGS::pause(){
-    
+    if(debug) std::cout << "ESTADO: Menu PAUSADO" << std::endl;
 }
 
 void MenuGS::resume(){
-    
+    if(debug) std::cout << "ESTADO: Menu REANUDADO" << std::endl;
 }
 
 void MenuGS::close(){
-    
+    if(debug) std::cout << "ESTADO: Menu CERRADO" << std::endl;
 }
 
+
+MenuGS::~MenuGS() {}
 
 
 // ======================================================
@@ -74,33 +99,42 @@ void MenuGS::close(){
 // ======================================================
 
 void PauseGS::init(){
-
+    if(debug) std::cout << "ESTADO: Pause" << std::endl;
 }
 
-void PauseGS::handleInput(sf::Event event){
-
+void PauseGS::handleInput(Game game, sf::Event event){
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == KEY_RIGHT) {    
+            stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+        }
+        else if (keyPressed->scancode == KEY_DOWN)
+        {    
+            stateMachine->removeState();
+        }
+    }
 }
 
-void PauseGS::update(float deltaTime){
+void PauseGS::update(Game game, float deltaTime){
     
 }
 
-void PauseGS::draw(sf::Window window){
+void PauseGS::draw(Game game, sf::RenderWindow& window){
     
 }
 
 void PauseGS::pause(){
-    
+    if(debug) std::cout << "ESTADO: Pause PAUSADO" << std::endl;
 }
 
 void PauseGS::resume(){
-    
+    if(debug) std::cout << "ESTADO: Pause REANUDADO" << std::endl;
 }
 
 void PauseGS::close(){
-    
+    if(debug) std::cout << "ESTADO: Pause CERRADO" << std::endl;
 }
 
+PauseGS::~PauseGS() {}
 
 
 // ======================================================
@@ -108,29 +142,35 @@ void PauseGS::close(){
 // ======================================================
 
 void ConfigGS::init(){
-
+    if(debug) std::cout << "ESTADO: Config" << std::endl;
 }
 
-void ConfigGS::handleInput(sf::Event event){
-
+void ConfigGS::handleInput(Game game, sf::Event event){
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == KEY_RIGHT) {    
+            stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+        }
+    }
 }
 
-void ConfigGS::update(float deltaTime){
+void ConfigGS::update(Game game, float deltaTime){
     
 }
 
-void ConfigGS::draw(sf::Window window){
+void ConfigGS::draw(Game game, sf::RenderWindow& window){
     
 }
 
 void ConfigGS::pause(){
-    
+    if(debug) std::cout << "ESTADO: Config PAUSADO" << std::endl;
 }
 
 void ConfigGS::resume(){
-    
+    if(debug) std::cout << "ESTADO: Config REANUDADO" << std::endl;
 }
 
 void ConfigGS::close(){
-    
+    if(debug) std::cout << "ESTADO: Config CERRADO" << std::endl;
 }
+
+ConfigGS::~ConfigGS() {}
