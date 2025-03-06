@@ -16,7 +16,7 @@ Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
 void Castlevania::run(){
     Game game;
 
-    states.addState(std::make_unique<MenuGS>());
+    states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
 
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
@@ -33,11 +33,16 @@ void Castlevania::run(){
 
         while (auto eventOpt = window.pollEvent()) 
         {
-            currentState->handleInput(*eventOpt);
+            if (eventOpt->is<sf::Event::Closed>())
+            {
+                window.close();
+            } else {
+                currentState->handleInput(game, *eventOpt);
+            }
         }
 
-        currentState->update(deltaTime);
-        currentState->draw(window);
+        currentState->update(game, deltaTime);
+        currentState->draw(game, window);
 
         states.processStateChanges();
     }
