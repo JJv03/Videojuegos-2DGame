@@ -88,19 +88,9 @@ int main() {
         window.clear(); 
         window.draw(tileMap);
 
-        /* for (size_t i = 0; i < tileMap.m_solidTiles.size(); ++i) {
-            for (size_t j = 0; j < tileMap.m_solidTiles[i].size(); ++j) {
-                sf::RectangleShape rect = FloatRectToRectShape(tileMap.m_solidTiles[i][j].hitbox);
-                rect.setPosition({static_cast<float>(j) * tileMap.m_tileSize, static_cast<float>(i) * tileMap.m_tileSize});
-                window.draw(rect);
-            }
-        } */
-
-       drawHitboxes(tileMap.m_solidTiles, window, tileMap.m_tileSize);
+        drawHitboxes(tileMap.m_solidTiles, window, tileMap.m_tileSize);
 
         window.display();
-
-        //std::this_thread::sleep_for(std::chrono::seconds(60));
     }
 
     return 0;

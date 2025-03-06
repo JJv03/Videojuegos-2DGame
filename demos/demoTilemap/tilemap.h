@@ -8,6 +8,7 @@ class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
     struct SolidTileAttributes {
+        sf::Vector2f position;          // Position of the tile in global coord.
         bool hasCollision = false;      // If <true>, the tile has hitbox.
         sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
     };

@@ -35,9 +35,9 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
 }
 
 bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, unsigned int width, unsigned int height) {
-    m_solidTiles.resize(height);  // Redimensiona el vector de filas
+    m_solidTiles.resize(height);
     for (auto& row : m_solidTiles) {
-        row.resize(width);  // Redimensiona cada fila para que tenga el tamaño adecuado
+        row.resize(width);
     }
 
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
@@ -85,6 +85,7 @@ bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, un
 
             // Set the hitbox for the solid tile
             m_solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
+            m_solidTiles[j][i].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
         }
     }
     return true;
