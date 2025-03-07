@@ -144,12 +144,15 @@ void CheckVampireKillerCollision(const bool ataque)
 {
     if (gEnemy.sprite && enemigoVivo && ataque)
     {
-        sf::FloatRect enemyBounds = gEnemy.sprite->getGlobalBounds();
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
-        if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(enemyBounds))
+        for (const auto &hitbox : gEnemy.hitboxes)
         {
-            enemigoVivo = false;
+            if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
+            {
+                enemigoVivo = false;
+                break;
+            }
         }
     }
 }
@@ -263,10 +266,21 @@ bool init()
     sf::FloatRect bounds2 = gEnemy.sprite->getLocalBounds();
     // Ajusta el origen de las transformaciones al centro inferior
     gEnemy.sprite->setOrigin({bounds2.size.x / 2.f, bounds2.size.y});
-    /*
-    // Por lo que sea, hace que pete
-    gSprites.push_back(*gEnemy.sprite);
-    */
+
+    // LA DEFINICIÓN DE LAS HITBOX IRAN DENTRO DEL PROPIO ENEMIGO (el tamaño debe ser menor al del sprite)
+    float hitboxWidth = 12.f;
+    float hitboxHeight = 30.f;
+
+    gEnemy.hitboxes = {
+        sf::FloatRect(
+            {gEnemy.sprite->getPosition().x - (hitboxWidth / 2.f),
+             gEnemy.sprite->getPosition().y - hitboxHeight},
+            {hitboxWidth, hitboxHeight}),
+        // Para este enemigo esta no tiene sentido (aqui es de prueba)
+        sf::FloatRect(
+            {gEnemy.sprite->getPosition().x - (hitboxWidth / 2.f),
+             gEnemy.sprite->getPosition().y - hitboxHeight - 50.f},
+            {hitboxWidth, hitboxHeight})};
 
     return true;
 }
@@ -330,10 +344,15 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
     {
         window.draw(gVampireKiller);
     }
+
     if (gEnemy.sprite && enemigoVivo)
     {
         window.draw(*gEnemy.sprite);
-        window.draw(FloatRectToRectShape(gEnemy.sprite->getGlobalBounds()));
+
+        for (const auto &hitbox : gEnemy.hitboxes)
+        {
+            window.draw(FloatRectToRectShape(hitbox));
+        }
     }
     window.draw(text);
     window.display();
@@ -399,7 +418,6 @@ int main()
                     break;
                 case sf::Keyboard::Scancode::Z:
                     ataque = true;
-                    std::cout << "Ataque activado" << std::endl;
                     break;
                 case sf::Keyboard::Scancode::Up:
                     haciaArriba = true;
@@ -459,7 +477,6 @@ int main()
         if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f)
         {
             camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};
-            std::cout << "UpdateView: " << simonNewPositionX - simonCurrentPositionX << std::endl;
         }
         window.setView(camera.GetView(window.getSize()));
         simonCurrentPositionX = simonNewPositionX;

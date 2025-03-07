@@ -1,13 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 class Entity
 {
 public:
-    sf::Sprite* sprite;
-    sf::FloatRect hitbox;
+    sf::Sprite *sprite;
+    std::vector<sf::FloatRect> hitboxes;
 
     Entity() = default;
-    Entity(const sf::FloatRect& _hitbox, sf::Sprite& _sprite);
+    Entity(const std::vector<sf::FloatRect> &_hitboxes, sf::Sprite &_sprite);
 };
