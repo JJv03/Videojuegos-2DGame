@@ -58,8 +58,8 @@ public:
 
 class MenuGS : public GameState{
 private:
-    // sf::Texture menuTexture;
-    // sf::Sprite menuSprite;
+    // std::unordered_map<std::string, sf::Texture> menuTextures;
+    // std::vector<sf::Sprite> menuSprites;
     sf::Font font;
     std::vector<sf::Text> options;
 public:

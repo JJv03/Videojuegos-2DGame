@@ -62,10 +62,11 @@ std::vector<sf::Sprite> menuSprites;
 
 void MenuGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
-    // if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
-    //     throw std::runtime_error("No se pudo cargar la imagen del menú.");
-    // }
-    // menuSprite.setTexture(menuTexture);
+    if (!menuTextures["menu"].loadFromFile("./assets/sprites/menu/menu2.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite sprite(menuTextures["menu"]);
+    menuSprites.push_back(sprite);
 
     // Cargar la fuente 
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
@@ -107,19 +108,18 @@ void MenuGS::update(Game game, float deltaTime){
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
     //std::cout<<"Print"<<std::endl;
-    sf::Texture menuTexture;
-    if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
-        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    std::cout<<menuSprites.size()<<std::endl;
+    std::cout<<menuTextures.size()<<std::endl;
+    std::cout<<options.size()<<std::endl;
+    for (const auto& sprite : menuSprites) {
+        window.draw(sprite);
     }
-    sf::Sprite menuSprite(menuTexture);
-
-    window.draw(menuSprite);
     for (const auto& text : options) {
-        std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
         window.draw(text);
     }
 }
-
+ 
 void MenuGS::pause(){
     if(debug) std::cout << "ESTADO: Menu PAUSADO" << std::endl;
 }
@@ -130,6 +130,9 @@ void MenuGS::resume(){
 
 void MenuGS::close(){
     if(debug) std::cout << "ESTADO: Menu CERRADO" << std::endl;
+    menuSprites.clear();
+    menuTextures.clear();
+    options.clear();
 }
 
 
