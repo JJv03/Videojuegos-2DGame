@@ -10,6 +10,9 @@ constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 const bool debug = true;
+
+int screenWidth = 768;
+int screenHeight = 250;
 // ======================================================
 //                      GAME STATE 
 // ======================================================
@@ -66,6 +69,27 @@ void MenuGS::init(){
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite sprite(menuTextures["menu"]);
+    sf::FloatRect spriteBounds = sprite.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    // Calcular el factor de escala basado en la altura máxima (250 píxeles)
+    float scaleFactor = screenHeight / spriteHeight;
+
+    // Aplicar el factor de escala al sprite para mantener la relación de aspecto
+    sprite.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    // Obtener las nuevas dimensiones del sprite escalado
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    // Calcular la posición para centrar el sprite en la pantalla
+    float xPosition = (screenWidth - scaledWidth) / 2;
+    float yPosition = (screenHeight - scaledHeight) / 2;
+
+    // Establecer la posición del sprite
+    sprite.setPosition(sf::Vector2f(xPosition, yPosition));
+
     menuSprites.push_back(sprite);
 
     // Cargar la fuente 
@@ -84,8 +108,8 @@ void MenuGS::init(){
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Calcular posición centrada
-        float xPos = (768 - textBounds.size.x) / 2;
-        float yPos = 80.f + i * 40.f;
+        float xPos = (screenWidth - textBounds.size.x) / 2;
+        float yPos = 120.f + i * 32.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
         options.push_back(text);
