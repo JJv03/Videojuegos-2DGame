@@ -9,7 +9,7 @@ constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
 constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
-const bool debug = false;
+const bool debug = true;
 // ======================================================
 //                      GAME STATE 
 // ======================================================
@@ -57,9 +57,33 @@ GameGS::~GameGS() {}
 // ======================================================
 //                      MENU STATE 
 // ======================================================
+// std::unordered_map<std::string, sf::Texture> menuTextures;
+// std::vector<sf::Sprite> menuSprites;
+// sf::Font font;
+// std::vector<sf::Text> texts;
 
 void MenuGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
+    if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    menuSprite.setTexture(menuTexture);
+
+    // Cargar la fuente
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+    if(debug) std::cout<<"Tras font"<<std::endl;
+
+    // Definir opciones del menú
+    std::string textos[4] = {"HISTORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
+    for (int i = 0; i < 4; i++) {
+        options[i] = sf::Text(font, textos[i], 20); // Crear e inicializar directamente
+        options[i].setFillColor(sf::Color::White);
+        options[i].setPosition(sf::Vector2f(50.f, 120.f + i * 40.f));
+    }
+
+    if(debug) std::cout<<"Tras text"<<std::endl;
 }
 
 void MenuGS::handleInput(Game game, sf::Event event){
@@ -75,7 +99,11 @@ void MenuGS::update(Game game, float deltaTime){
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
-    
+    std::cout<<"Print"<<std::endl;
+    window.draw(menuSprite);
+    for (const auto& text : options) {
+        window.draw(text);
+    }
 }
 
 void MenuGS::pause(){

@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "game.h"
 #include "gameStateMachine.h"
+#include <iostream>
 
 constexpr int escala { 1 };
 constexpr int gWindowWidth { 768 * escala };
@@ -20,7 +21,18 @@ void Castlevania::run(){
     states.processStateChanges();
 
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
+    StateRef& currentState = states.getActiveState();
+    std::cout<<"Antes Init"<<std::endl;
     window.setVerticalSyncEnabled(true);
+
+    sf::Image icon;
+    if (!icon.loadFromFile("./assets/sprites/icon.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+        return;
+    }
+    window.setIcon(icon);
+
     sf::Clock deltaClock;
 
     // BUCLE PRINCIPAL DEL JUEGO
