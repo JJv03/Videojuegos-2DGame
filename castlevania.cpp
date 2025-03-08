@@ -54,7 +54,9 @@ void Castlevania::run(){
         }
 
         currentState->update(game, deltaTime);
+        window.clear();
         currentState->draw(game, window);
+        window.display();
 
         states.processStateChanges();
     }

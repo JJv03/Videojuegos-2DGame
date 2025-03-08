@@ -57,20 +57,19 @@ GameGS::~GameGS() {}
 // ======================================================
 //                      MENU STATE 
 // ======================================================
-// std::unordered_map<std::string, sf::Texture> menuTextures;
-// std::vector<sf::Sprite> menuSprites;
-// sf::Font font;
-// std::vector<sf::Text> texts;
+std::unordered_map<std::string, sf::Texture> menuTextures;
+std::vector<sf::Sprite> menuSprites;
 
 void MenuGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
-    if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
-        throw std::runtime_error("No se pudo cargar la imagen del menú.");
-    }
-    menuSprite.setTexture(menuTexture);
+    // if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
+    //     throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    // }
+    // menuSprite.setTexture(menuTexture);
 
-    // Cargar la fuente
+    // Cargar la fuente 
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
     if(debug) std::cout<<"Tras font"<<std::endl;
@@ -78,9 +77,17 @@ void MenuGS::init(){
     // Definir opciones del menú
     std::string textos[4] = {"HISTORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
     for (int i = 0; i < 4; i++) {
-        options[i] = sf::Text(font, textos[i], 20); // Crear e inicializar directamente
-        options[i].setFillColor(sf::Color::White);
-        options[i].setPosition(sf::Vector2f(50.f, 120.f + i * 40.f));
+        sf::Text text(font, textos[i], 20);
+        text.setFillColor(sf::Color::White);
+        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Calcular posición centrada
+        float xPos = (768 - textBounds.size.x) / 2;
+        float yPos = 80.f + i * 40.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        options.push_back(text);
     }
 
     if(debug) std::cout<<"Tras text"<<std::endl;
@@ -99,9 +106,16 @@ void MenuGS::update(Game game, float deltaTime){
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
-    std::cout<<"Print"<<std::endl;
+    //std::cout<<"Print"<<std::endl;
+    sf::Texture menuTexture;
+    if (!menuTexture.loadFromFile("./assets/sprites/menu/menu2.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite menuSprite(menuTexture);
+
     window.draw(menuSprite);
     for (const auto& text : options) {
+        std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
         window.draw(text);
     }
 }
