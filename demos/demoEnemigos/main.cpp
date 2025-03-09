@@ -41,7 +41,7 @@ sf::RectangleShape gVampireKiller;
 
 // Puntero global enemigo
 Entity gEnemy;
-bool enemigoVivo{true};
+bool enemyAlive{false};
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -59,20 +59,21 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
     return rectShape;
 }
 
-void updateEnemyRespawn(float deltaTime, float &tiempoEnemigoRespawnActual)
+void updateEnemyRespawn(float deltaTime)
 {
-    if (!enemigoVivo)
+    sf::FloatRect playerBounds = gSimonSprite->getGlobalBounds();
+    bool playerInside = gEnemy.activationZone.findIntersection(playerBounds).has_value();
+
+    if (playerInside && !gEnemy.playerWasNear)
     {
-        if (tiempoEnemigoRespawnActual >= tiempoEnemigoRespawn)
-        {
-            enemigoVivo = true;
-            tiempoEnemigoRespawnActual = 0.0f;
-        }
-        else
-        {
-            tiempoEnemigoRespawnActual += deltaTime;
-        }
+        enemyAlive = true;
     }
+    else if (!playerInside && gEnemy.playerWasNear)
+    {
+        enemyAlive = false;
+    }
+
+    gEnemy.playerWasNear = playerInside;
 }
 
 void updateSimonAtaque(bool &ataque, float deltaTime, float &tiempoAtaqueActual)
@@ -142,7 +143,7 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, cons
 
 void CheckVampireKillerCollision(const bool ataque)
 {
-    if (gEnemy.sprite && enemigoVivo && ataque)
+    if (gEnemy.sprite && enemyAlive && ataque)
     {
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
@@ -150,7 +151,7 @@ void CheckVampireKillerCollision(const bool ataque)
         {
             if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
             {
-                enemigoVivo = false;
+                enemyAlive = false;
                 break;
             }
         }
@@ -282,6 +283,13 @@ bool init()
              gEnemy.sprite->getPosition().y - hitboxHeight - 50.f},
             {hitboxWidth, hitboxHeight})};
 
+    float activationWidth = 250.f;
+    float activationHeight = 500.f;
+    gEnemy.activationZone = sf::FloatRect(
+        {gEnemy.sprite->getPosition().x - activationWidth / 2.f,
+         gEnemy.sprite->getPosition().y - activationHeight / 2.f},
+        {activationWidth, activationHeight});
+
     return true;
 }
 
@@ -345,7 +353,7 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         window.draw(gVampireKiller);
     }
 
-    if (gEnemy.sprite && enemigoVivo)
+    if (gEnemy.sprite && enemyAlive)
     {
         window.draw(*gEnemy.sprite);
 
@@ -354,6 +362,8 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
             window.draw(FloatRectToRectShape(hitbox));
         }
     }
+    window.draw(FloatRectToRectShape(gEnemy.activationZone)); // Zona de activacion del enemigo
+
     window.draw(text);
     window.display();
 }
@@ -377,7 +387,6 @@ int main()
     bool haciaArriba{false};
     bool ataque{false};
     float tiempoAtaqueActual{0.0f};
-    float tiempoEnemigoRespawnActual{0.0f};
 
     // Variables para controlar el movimiento de la cámara
     float simonCurrentPositionX{0.0f};
@@ -469,7 +478,7 @@ int main()
             return -1;
         }
 
-        updateEnemyRespawn(deltaTime, tiempoEnemigoRespawnActual);
+        updateEnemyRespawn(deltaTime);
         updateSimonAtaque(ataque, deltaTime, tiempoAtaqueActual);
         CheckAllCollisions(ataque); // check collisions and correct Simon's position
 
