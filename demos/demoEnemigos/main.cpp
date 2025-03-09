@@ -9,6 +9,7 @@
 #include <vector>
 #include "camera.h"
 #include "entity.h"
+#include "enemy.h"
 
 // Variables globales de configuración
 bool gEnMovimiento{false};
@@ -40,8 +41,7 @@ float verticalSpeed{0.0f}; // velocidad vertical actual
 sf::RectangleShape gVampireKiller;
 
 // Puntero global enemigo
-Entity gEnemy;
-bool enemyAlive{false};
+Enemy gEnemy; // ESTO DEBERA SER UN VECTOR CON LOS ENEMIGOS DEL NIVEL
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -66,11 +66,11 @@ void updateEnemyRespawn(float deltaTime)
 
     if (playerInside && !gEnemy.playerWasNear)
     {
-        enemyAlive = true;
+        gEnemy.isActive = true;
     }
     else if (!playerInside && gEnemy.playerWasNear)
     {
-        enemyAlive = false;
+        gEnemy.isActive = false;
     }
 
     gEnemy.playerWasNear = playerInside;
@@ -143,7 +143,7 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, cons
 
 void CheckVampireKillerCollision(const bool ataque)
 {
-    if (gEnemy.sprite && enemyAlive && ataque)
+    if (gEnemy.sprite && gEnemy.isActive && ataque)
     {
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
@@ -151,7 +151,7 @@ void CheckVampireKillerCollision(const bool ataque)
         {
             if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
             {
-                enemyAlive = false;
+                gEnemy.isActive = false;
                 break;
             }
         }
@@ -261,18 +261,19 @@ bool init()
     enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
     gTextures["enemy"] = sf::Texture(enemyImage, false);
 
+    // Crear el sprite del enemigo
     gEnemy.sprite = new sf::Sprite(gTextures["enemy"]);
     gEnemy.sprite->setTextureRect(sf::IntRect({1, 28}, {16, 32}));
     gEnemy.sprite->setPosition({345.f, 171.f});
+
+    // Ajustar el origen al centro inferior del sprite
     sf::FloatRect bounds2 = gEnemy.sprite->getLocalBounds();
-    // Ajusta el origen de las transformaciones al centro inferior
     gEnemy.sprite->setOrigin({bounds2.size.x / 2.f, bounds2.size.y});
 
     // LA DEFINICIÓN DE LAS HITBOX IRAN DENTRO DEL PROPIO ENEMIGO (el tamaño debe ser menor al del sprite)
     float hitboxWidth = 12.f;
     float hitboxHeight = 30.f;
-
-    gEnemy.hitboxes = {
+    gEnemy.hitboxes = std::vector<sf::FloatRect>{
         sf::FloatRect(
             {gEnemy.sprite->getPosition().x - (hitboxWidth / 2.f),
              gEnemy.sprite->getPosition().y - hitboxHeight},
@@ -353,7 +354,7 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         window.draw(gVampireKiller);
     }
 
-    if (gEnemy.sprite && enemyAlive)
+    if (gEnemy.sprite && gEnemy.isActive)
     {
         window.draw(*gEnemy.sprite);
 
