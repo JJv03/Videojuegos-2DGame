@@ -213,22 +213,6 @@ void MenuGS::update(Game game, float deltaTime){
 
     sprite.setPosition(sf::Vector2f(xPosition, yPosition));
 
-    if (!menuSprites.empty()) {
-        sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
-        menuSprites.pop_back();                 // Eliminarlo del vector
-
-        torch.setScale(sf::Vector2f(windowScaleFactor*1.1, windowScaleFactor*1.1));
-
-        std::cout << windowScaleFactor << std::endl;
-
-        //torch.setScale(sf::Vector2f(torch.getScale().x, torch.getScale().y));
-        float torchX = options[position].getPosition().x - 25.f * windowScaleFactor;
-        float torchY = options[position].getPosition().y + 2.f * windowScaleFactor;
-        torch.setPosition(sf::Vector2f(torchX, torchY));
-
-        menuSprites.push_back(torch);
-    }
-
     // Mantener la posición centrada de los textos
     for (int i = 0; i < 4; i++) {
         auto& text = options[i];
@@ -238,6 +222,20 @@ void MenuGS::update(Game game, float deltaTime){
         float yPos = gWindowHeight / 2 + 32.f * i * windowScaleFactor; // Ajustar la posición vertical
         text.setPosition(sf::Vector2f(xPos, yPos));
     }
+
+    sf::Sprite& torch = menuSprites.back();  // Obtener el último sprite
+    //menuSprites.pop_back();                 // Eliminarlo del vector
+
+    torch.setScale(sf::Vector2f(windowScaleFactor*1.1, windowScaleFactor*1.1));
+
+    // std::cout << windowScaleFactor << std::endl;
+
+    //torch.setScale(sf::Vector2f(torch.getScale().x, torch.getScale().y));
+    float torchX = options[position].getPosition().x - 25.f * windowScaleFactor;
+    float torchY = options[position].getPosition().y + 2.f * windowScaleFactor;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    // menuSprites.push_back(torch);
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
