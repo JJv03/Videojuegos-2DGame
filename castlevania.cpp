@@ -21,8 +21,6 @@ void Castlevania::run(){
     states.processStateChanges();
 
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
-    StateRef& currentState = states.getActiveState();
-    std::cout<<"Antes Init"<<std::endl;
     window.setVerticalSyncEnabled(true);
 
     sf::Image icon;
@@ -49,7 +47,7 @@ void Castlevania::run(){
             {
                 window.close();
             } else {
-                currentState->handleInput(game, *eventOpt);
+                currentState->handleInput(game, *eventOpt, window);
             }
         }
 

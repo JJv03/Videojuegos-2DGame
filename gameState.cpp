@@ -6,6 +6,7 @@ constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
 constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
 constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
 constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
+constexpr auto KEY_ENTER = sf::Keyboard::Scancode::Enter;
 constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
@@ -21,7 +22,7 @@ void GameGS::init(){
     if(debug) std::cout << "ESTADO: Game" << std::endl;
 }
 
-void GameGS::handleInput(Game game, sf::Event event){
+void GameGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT) {    
             stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
@@ -65,11 +66,13 @@ std::vector<sf::Sprite> menuSprites;
 
 void MenuGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
+    position = 0;
     if (!menuTextures["menu"].loadFromFile("./assets/sprites/menu/menu2.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
-    sf::Sprite sprite(menuTextures["menu"]);
-    sf::FloatRect spriteBounds = sprite.getLocalBounds();
+    sf::Sprite menu(menuTextures["menu"]);
+
+    sf::FloatRect spriteBounds = menu.getLocalBounds();
     float spriteWidth = spriteBounds.size.x;
     float spriteHeight = spriteBounds.size.y;
 
@@ -77,7 +80,7 @@ void MenuGS::init(){
     float scaleFactor = screenHeight / spriteHeight;
 
     // Aplicar el factor de escala al sprite para mantener la relación de aspecto
-    sprite.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+    menu.setScale(sf::Vector2f(scaleFactor, scaleFactor));
 
     // Obtener las nuevas dimensiones del sprite escalado
     float scaledWidth = spriteWidth * scaleFactor;
@@ -88,16 +91,15 @@ void MenuGS::init(){
     float yPosition = (screenHeight - scaledHeight) / 2;
 
     // Establecer la posición del sprite
-    sprite.setPosition(sf::Vector2f(xPosition, yPosition));
+    menu.setPosition(sf::Vector2f(xPosition, yPosition));
 
-    menuSprites.push_back(sprite);
+    menuSprites.push_back(menu);
 
     // Cargar la fuente 
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
-    if(debug) std::cout<<"Tras font"<<std::endl;
 
     // Definir opciones del menú
     std::string textos[4] = {"HISTORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
@@ -115,13 +117,71 @@ void MenuGS::init(){
         options.push_back(text);
     }
 
-    if(debug) std::cout<<"Tras text"<<std::endl;
+    if (!menuTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(menuTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.1f, torch.getScale().y * 1.1f));
+
+    float torchX = options[0].getPosition().x - 25.f;
+    float torchY = options[0].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    menuSprites.push_back(torch);
 }
 
-void MenuGS::handleInput(Game game, sf::Event event){
+void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {    
-            stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
+        if (keyPressed->scancode == KEY_DOWN && position < 3) {    
+            if (!menuSprites.empty()) {
+                sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
+                menuSprites.pop_back();                 // Eliminarlo del vector
+
+                position += 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = options[position].getPosition().x - 25.f;
+                float torchY = options[position].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                menuSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == KEY_UP && position > 0) {    
+            if (!menuSprites.empty()) {
+                sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
+                menuSprites.pop_back();                 // Eliminarlo del vector
+
+                position -= 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = options[position].getPosition().x - 25.f;
+                float torchY = options[position].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                menuSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == KEY_ENTER) {
+            switch (position) {
+                case 0:
+                    stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+                    break;
+                case 1:
+                    std::cout<<"Not implemented yet :P"<<std::endl;
+                    break;
+                case 2:
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                    break;
+                case 3:
+                    std::cout<<"Bye bye :)"<<std::endl;
+                    window.close();
+                    break;
+            }
+            //stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
         }
     }
 }
@@ -131,10 +191,10 @@ void MenuGS::update(Game game, float deltaTime){
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
-    //std::cout<<"Print"<<std::endl;
-    std::cout<<menuSprites.size()<<std::endl;
-    std::cout<<menuTextures.size()<<std::endl;
-    std::cout<<options.size()<<std::endl;
+    // std::cout<<"Print"<<std::endl;
+    // std::cout<<menuSprites.size()<<std::endl;
+    // std::cout<<menuTextures.size()<<std::endl;
+    // std::cout<<options.size()<<std::endl;
     for (const auto& sprite : menuSprites) {
         window.draw(sprite);
     }
@@ -171,7 +231,7 @@ void PauseGS::init(){
     if(debug) std::cout << "ESTADO: Pause" << std::endl;
 }
 
-void PauseGS::handleInput(Game game, sf::Event event){
+void PauseGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT) {    
             stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
@@ -214,7 +274,7 @@ void ConfigGS::init(){
     if(debug) std::cout << "ESTADO: Config" << std::endl;
 }
 
-void ConfigGS::handleInput(Game game, sf::Event event){
+void ConfigGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT) {    
             stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));

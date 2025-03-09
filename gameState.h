@@ -18,7 +18,7 @@ public:
     virtual void init() = 0;
 
     // Método que gestiona los inputs del usuario
-    virtual void handleInput(Game game, sf::Event event) = 0;
+    virtual void handleInput(Game game, sf::Event event, sf::RenderWindow& window) = 0;
 
     // Método que gestiona la lógica del juego en cada frame
     virtual void update(Game game, float deltaTime) = 0;
@@ -47,7 +47,7 @@ public:
     explicit GameGS(GameStateMachine* machine) : GameState(machine) {}
     ~GameGS() override;
     void init() override;
-    void handleInput(Game game, sf::Event event) override;
+    void handleInput(Game game, sf::Event event, sf::RenderWindow& window) override;
     void update(Game game, float deltaTime) override;
     void draw(Game game, sf::RenderWindow& window) override;
     void pause() override;
@@ -62,11 +62,12 @@ private:
     // std::vector<sf::Sprite> menuSprites;
     sf::Font font;
     std::vector<sf::Text> options;
+    int position;
 public:
     explicit MenuGS(GameStateMachine* machine) : GameState(machine) {}
     ~MenuGS() override;
     void init() override;
-    void handleInput(Game game, sf::Event event) override;
+    void handleInput(Game game, sf::Event event, sf::RenderWindow& window) override;
     void update(Game game, float deltaTime) override;
     void draw(Game game, sf::RenderWindow& window) override;
     void pause() override;
@@ -80,7 +81,7 @@ public:
     explicit PauseGS(GameStateMachine* machine) : GameState(machine) {}
     ~PauseGS() override;
     void init() override;
-    void handleInput(Game game, sf::Event event) override;
+    void handleInput(Game game, sf::Event event, sf::RenderWindow& window) override;
     void update(Game game, float deltaTime) override;
     void draw(Game game, sf::RenderWindow& window) override;
     void pause() override;
@@ -94,7 +95,7 @@ public:
     explicit ConfigGS(GameStateMachine* machine) : GameState(machine) {}
     ~ConfigGS() override;
     void init() override;
-    void handleInput(Game game, sf::Event event) override;
+    void handleInput(Game game, sf::Event event, sf::RenderWindow& window) override;
     void update(Game game, float deltaTime) override;
     void draw(Game game, sf::RenderWindow& window) override;
     void pause() override;
