@@ -217,7 +217,7 @@ void MenuGS::update(Game game, float deltaTime){
         sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
         menuSprites.pop_back();                 // Eliminarlo del vector
 
-        torch.setScale(sf::Vector2f(windowScaleFactor, windowScaleFactor));
+        torch.setScale(sf::Vector2f(windowScaleFactor*1.1, windowScaleFactor*1.1));
 
         std::cout << windowScaleFactor << std::endl;
 
