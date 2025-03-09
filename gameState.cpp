@@ -3,13 +3,13 @@
 #include "gameStateMachine.h"
 #include "globals.h" 
 
-constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
-constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
-constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
-constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
-constexpr auto KEY_ENTER = sf::Keyboard::Scancode::Enter;
-constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
-constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
+constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
+constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
+constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
+constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
+constexpr sf::Keyboard::Scancode KEY_ENTER = sf::Keyboard::Scancode::Enter;
+constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
+constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 const bool debug = true;
 
