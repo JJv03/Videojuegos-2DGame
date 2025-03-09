@@ -59,23 +59,6 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
     return rectShape;
 }
 
-void updateEnemyRespawn(float deltaTime)
-{
-    sf::FloatRect playerBounds = gSimonSprite->getGlobalBounds();
-    bool playerInside = gEnemy.activationZone.findIntersection(playerBounds).has_value();
-
-    if (playerInside && !gEnemy.playerWasNear)
-    {
-        gEnemy.isActive = true;
-    }
-    else if (!playerInside && gEnemy.playerWasNear)
-    {
-        gEnemy.isActive = false;
-    }
-
-    gEnemy.playerWasNear = playerInside;
-}
-
 void updateSimonAtaque(bool &ataque, float deltaTime, float &tiempoAtaqueActual)
 {
     if (ataque)
@@ -152,6 +135,7 @@ void CheckVampireKillerCollision(const bool ataque)
             if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
             {
                 gEnemy.isActive = false;
+                gEnemy.resetPosition();
                 break;
             }
         }
@@ -270,6 +254,9 @@ bool init()
     sf::FloatRect bounds2 = gEnemy.sprite->getLocalBounds();
     gEnemy.sprite->setOrigin({bounds2.size.x / 2.f, bounds2.size.y});
 
+    // Guarda la posición inicial
+    gEnemy.originalPosition = gEnemy.sprite->getPosition();
+
     // LA DEFINICIÓN DE LAS HITBOX IRAN DENTRO DEL PROPIO ENEMIGO (el tamaño debe ser menor al del sprite)
     float hitboxWidth = 12.f;
     float hitboxHeight = 30.f;
@@ -286,10 +273,18 @@ bool init()
 
     float activationWidth = 250.f;
     float activationHeight = 500.f;
+    float deactivationWidth = 400.f;
+    float deactivationHeight = activationHeight;
+
     gEnemy.activationZone = sf::FloatRect(
         {gEnemy.sprite->getPosition().x - activationWidth / 2.f,
          gEnemy.sprite->getPosition().y - activationHeight / 2.f},
         {activationWidth, activationHeight});
+
+    gEnemy.deactivationZone = sf::FloatRect(
+        {gEnemy.sprite->getPosition().x - deactivationWidth / 2.f,
+         gEnemy.sprite->getPosition().y - deactivationHeight / 2.f},
+        {deactivationWidth, deactivationHeight});
 
     return true;
 }
@@ -328,6 +323,8 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
     }
 
+    gEnemy.update(deltaTime);
+
     return true;
 }
 
@@ -364,6 +361,7 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         }
     }
     window.draw(FloatRectToRectShape(gEnemy.activationZone)); // Zona de activacion del enemigo
+    window.draw(FloatRectToRectShape(gEnemy.deactivationZone));
 
     window.draw(text);
     window.display();
@@ -479,7 +477,7 @@ int main()
             return -1;
         }
 
-        updateEnemyRespawn(deltaTime);
+        gEnemy.updateEnemyRespawn(deltaTime, gSimonSprite);
         updateSimonAtaque(ataque, deltaTime, tiempoAtaqueActual);
         CheckAllCollisions(ataque); // check collisions and correct Simon's position
 
