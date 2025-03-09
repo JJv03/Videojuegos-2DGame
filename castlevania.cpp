@@ -5,14 +5,19 @@
 #include "camera.h"
 #include "game.h"
 #include "gameStateMachine.h"
+#include "globals.h" 
 #include <iostream>
+#include <string>
+#include <cmath>
+#include <algorithm>
 
 constexpr int escala { 1 };
-constexpr int gWindowWidth { 768 * escala };
-constexpr int gWindowHeight { 250 * escala };
+int minWindowWidth = 400;
+int minWindowHeight = 400;
 
 // Cámara
 Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
+sf::View view(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
 
 void Castlevania::run(){
     Game game;
@@ -43,17 +48,40 @@ void Castlevania::run(){
 
         while (auto eventOpt = window.pollEvent()) 
         {
-            if (eventOpt->is<sf::Event::Closed>())
-            {
+            if (eventOpt->is<sf::Event::Closed>()){
                 window.close();
-            } else {
+            } 
+            else if (const auto* resized = eventOpt->getIf<sf::Event::Resized>()) {                
+                float newResizedWidth = std::max(static_cast<int>(resized->size.x), minWindowWidth);
+                float newResizedHeight = std::max(static_cast<int>(resized->size.y), minWindowHeight);
+
+                scaleX = static_cast<float>(newResizedWidth) / gWindowWidth;
+                scaleY = static_cast<float>(newResizedHeight) / gWindowHeight;
+                
+                gWindowWidth = static_cast<float>(newResizedWidth);
+                gWindowHeight = static_cast<float>(newResizedHeight);
+
+                std::cout << "Resized to: " << gWindowWidth << "x" << gWindowHeight << std::endl;
+
+                windowScaleFactor = std::min(
+                    static_cast<float>(gWindowWidth) / originalWindowWidth,
+                    static_cast<float>(gWindowHeight) / originalWindowHeight
+                );
+                
+                view.setSize(sf::Vector2f(gWindowWidth, gWindowHeight));
+                view.setCenter(sf::Vector2f(gWindowWidth / 2, gWindowHeight / 2));
+                window.setView(view);
+                window.setSize({gWindowWidth, gWindowHeight});
+            }
+            else {
                 currentState->handleInput(game, *eventOpt, window);
             }
         }
 
         currentState->update(game, deltaTime);
         window.clear();
-        currentState->draw(game, window);
+        window.setView(view);
+        currentState->draw(game, window); // Pasar windowScaleFactor
         window.display();
 
         states.processStateChanges();

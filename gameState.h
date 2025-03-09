@@ -13,7 +13,6 @@ public:
     explicit GameState(GameStateMachine* stateMachine) : stateMachine(stateMachine) {}
     virtual ~GameState() = default;
 
-
     // Método que se llama al iniciarse el estado, es donde se inicializa todo
     virtual void init() = 0;
 
@@ -39,7 +38,6 @@ public:
     // No es virtual pura por si algún estado más simple no necesita hacer nada al cerrarse
     virtual void close(){}
 };
-
 
 
 class GameGS : public GameState{

@@ -1,6 +1,7 @@
 #include "gameState.h"
 #include <iostream>
 #include "gameStateMachine.h"
+#include "globals.h" 
 
 constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
 constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
@@ -12,8 +13,7 @@ constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 const bool debug = true;
 
-int screenWidth = 768;
-int screenHeight = 250;
+
 // ======================================================
 //                      GAME STATE 
 // ======================================================
@@ -77,7 +77,7 @@ void MenuGS::init(){
     float spriteHeight = spriteBounds.size.y;
 
     // Calcular el factor de escala basado en la altura máxima (250 píxeles)
-    float scaleFactor = screenHeight / spriteHeight;
+    float scaleFactor = gWindowHeight  / spriteHeight;
 
     // Aplicar el factor de escala al sprite para mantener la relación de aspecto
     menu.setScale(sf::Vector2f(scaleFactor, scaleFactor));
@@ -87,8 +87,8 @@ void MenuGS::init(){
     float scaledHeight = spriteHeight * scaleFactor;
 
     // Calcular la posición para centrar el sprite en la pantalla
-    float xPosition = (screenWidth - scaledWidth) / 2;
-    float yPosition = (screenHeight - scaledHeight) / 2;
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
 
     // Establecer la posición del sprite
     menu.setPosition(sf::Vector2f(xPosition, yPosition));
@@ -102,18 +102,17 @@ void MenuGS::init(){
     }
 
     // Definir opciones del menú
-    std::string textos[4] = {"HISTORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
+    std::string textos[4] = {"STORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
     for (int i = 0; i < 4; i++) {
-        sf::Text text(font, textos[i], 20);
-        text.setFillColor(sf::Color::White);
-        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
+        float size = 20 * windowScaleFactor;
+        sf::Text text(font, textos[i], size);
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Calcular posición centrada
-        float xPos = (screenWidth - textBounds.size.x) / 2;
-        float yPos = 120.f + i * 32.f;
-
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = gWindowHeight / 2 + 32.f * i * windowScaleFactor; // Ajustar la posición vertical
         text.setPosition(sf::Vector2f(xPos, yPos));
+
         options.push_back(text);
     }
 
@@ -187,7 +186,40 @@ void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
 }
 
 void MenuGS::update(Game game, float deltaTime){
-    
+    // Mantener la posición centrada de los sprites
+    sf::Sprite& sprite = menuSprites.front();
+    sf::FloatRect spriteBounds = sprite.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    // Calcular el factor de escala basado en la altura máxima (250 píxeles)
+    float scaleFactor = gWindowHeight / spriteHeight;
+    //std::cout << scaleFactor << std::endl;
+
+    // Aplicar el factor de escala al sprite para mantener la relación de aspecto
+    sprite.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    // Obtener las nuevas dimensiones del sprite escalado
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    // Calcular la posición para centrar el sprite en la pantalla
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    sprite.setPosition(sf::Vector2f(xPosition, yPosition));
+    // for (auto& sprite : menuSprites) {
+    // }
+
+    // Mantener la posición centrada de los textos
+    for (int i = 0; i < 4; i++) {
+        auto& text = options[i];
+        text.setCharacterSize(20 * windowScaleFactor); // Ajustar el tamaño del texto
+        sf::FloatRect textBounds = text.getLocalBounds();
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = gWindowHeight / 2 + 32.f * i * windowScaleFactor; // Ajustar la posición vertical
+        text.setPosition(sf::Vector2f(xPos, yPos));
+    }
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){
