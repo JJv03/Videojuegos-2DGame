@@ -1,10 +1,68 @@
 #include "enemy.h"
 #include <iostream>
 
-Enemy::Enemy(sf::Sprite &_sprite, std::vector<sf::FloatRect> &_hitboxes, sf::FloatRect _activationZone)
-    : Entity(_sprite, _hitboxes), activationZone(_activationZone)
+Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, sf::FloatRect _activationZone, sf::FloatRect _deactivationZone)
+    : Entity(_sprite, _hitboxes), activationZone(_activationZone), deactivationZone(_deactivationZone)
 {
-    deactivationZone = _activationZone;
+    // Guarda la posición inicial
+    originalPosition = sprite->getPosition();
+}
+
+Enemy Enemy::createEnemy(const sf::Vector2f &position)
+{
+    // ESTO SERÁN CONSTANTES DE LA CLASE EN ESPECÍFICO DEL ENEMIGO
+    const sf::IntRect spriteRegion = {{1, 28}, {16, 32}};
+    const float hitboxWidth = 12.f;
+    const float hitboxHeight = 30.f;
+    const float activationWidth = 250.f;
+    const float activationHeight = 500.f;
+    const float deactivationWidth = 400.f;
+    const float deactivationHeight = 500.f;
+
+    // Crear la textura
+    sf::Image enemyImage;
+    if (!enemyImage.loadFromFile("../../assets/sprites/enemies/enemies.png"))
+    {
+        std::cerr << "Error cargando la imagen del enemigo" << std::endl;
+        throw std::runtime_error("Error cargando la imagen del enemigo");
+    }
+    enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+
+    sf::Texture *enemyTexture = new sf::Texture();
+    if (!enemyTexture->loadFromImage(enemyImage))
+    {
+        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
+        delete enemyTexture;
+        throw std::runtime_error("Error cargando la textura desde la imagen");
+    }
+
+    // Crear el sprite
+    auto enemySprite = std::make_shared<sf::Sprite>(*enemyTexture);
+    enemySprite->setTextureRect(spriteRegion);
+    enemySprite->setPosition(position);
+
+    // Ajustar el origen al centro inferior del sprite
+    sf::FloatRect bounds = enemySprite->getLocalBounds();
+    enemySprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Crear las hitboxes
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (hitboxWidth / 2.f), position.y - hitboxHeight},
+            {hitboxWidth, hitboxHeight}),
+    };
+
+    // Crear las zonas de activación y desactivación
+    sf::FloatRect activationZone(
+        {position.x - activationWidth / 2.f, position.y - activationHeight / 2.f},
+        {activationWidth, activationHeight});
+
+    sf::FloatRect deactivationZone(
+        {position.x - deactivationWidth / 2.f, position.y - deactivationHeight / 2.f},
+        {deactivationWidth, deactivationHeight});
+
+    // Crear y retornar el enemigo
+    return Enemy(enemySprite, hitboxes, activationZone, deactivationZone);
 }
 
 void Enemy::updateEnemyRespawn(float deltaTime, sf::Sprite *gSimonSprite)
@@ -137,7 +195,7 @@ bool Enemy::checkHitByEnemy(const sf::FloatRect simonBounds)
     {
         if (hitbox.findIntersection(simonBounds))
         {
-            std::cout << "El jugador ha sido golpeado por el enemigo!" << std::endl;
+            std::cout << "Contacto con enemigo" << std::endl;
             return true;
         }
     }

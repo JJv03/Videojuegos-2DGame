@@ -40,8 +40,8 @@ float verticalSpeed{0.0f}; // velocidad vertical actual
 
 sf::RectangleShape gVampireKiller;
 
-// Puntero global enemigo
-Enemy gEnemy; // ESTO DEBERA SER UN VECTOR CON LOS ENEMIGOS DEL NIVEL
+// Vector de enemigos
+std::vector<Enemy> gEnemies;
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -126,17 +126,23 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, cons
 
 void CheckVampireKillerCollision(const bool ataque)
 {
-    if (gEnemy.sprite && gEnemy.isActive && ataque)
+    if (ataque)
     {
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
-        for (const auto &hitbox : gEnemy.hitboxes)
+        for (auto &enemy : gEnemies)
         {
-            if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
+            if (enemy.sprite && enemy.isActive)
             {
-                gEnemy.isActive = false;
-                gEnemy.resetPosition();
-                break;
+                for (const auto &hitbox : enemy.hitboxes)
+                {
+                    if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
+                    {
+                        enemy.isActive = false;
+                        enemy.resetPosition();
+                        break;
+                    }
+                }
             }
         }
     }
@@ -153,10 +159,13 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
     CheckVampireKillerCollision(ataque);
-    if (gEnemy.isActive)
+    for (auto &enemy : gEnemies)
     {
-        gEnemy.checkCollisions({floorBounds, wallUpBounds, wallDownBounds});
-        gEnemy.checkHitByEnemy(simonBounds);
+        if (enemy.isActive)
+        {
+            enemy.checkCollisions({floorBounds, wallUpBounds, wallDownBounds});
+            enemy.checkHitByEnemy(simonBounds);
+        }
     }
 }
 
@@ -178,11 +187,6 @@ std::string formatFPSandTime(float deltaTime)
 
     return fps + " FPS\n" + ms + " ms";
 }
-
-// Prototipos de funciones
-bool init();
-bool UpdateMovement(float deltaTime, bool haciaArriba, bool haciaIzquierda, bool haciaDerecha);
-void render(sf::RenderWindow &window, const sf::Text &text);
 
 bool init()
 {
@@ -241,55 +245,12 @@ bool init()
     gVampireKiller.setFillColor(sf::Color::Red);
 
     // Enemigo ----------------------------------------------------------------------------
-    sf::Image enemyImage;
-    if (!enemyImage.loadFromFile("../../assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del enemigo" << std::endl;
-        return false;
-    }
-    enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    gTextures["enemy"] = sf::Texture(enemyImage, false);
 
-    // Crear el sprite del enemigo
-    gEnemy.sprite = new sf::Sprite(gTextures["enemy"]);
-    gEnemy.sprite->setTextureRect(sf::IntRect({1, 28}, {16, 32}));
-    gEnemy.sprite->setPosition({345.f, 171.f});
+    const sf::Vector2f ENEMY_POSITION = {345.f, 171.f};
 
-    // Ajustar el origen al centro inferior del sprite
-    sf::FloatRect bounds2 = gEnemy.sprite->getLocalBounds();
-    gEnemy.sprite->setOrigin({bounds2.size.x / 2.f, bounds2.size.y});
+    gEnemies.push_back(Enemy::createEnemy(ENEMY_POSITION));
 
-    // Guarda la posición inicial
-    gEnemy.originalPosition = gEnemy.sprite->getPosition();
-
-    // LA DEFINICIÓN DE LAS HITBOX IRAN DENTRO DEL PROPIO ENEMIGO (el tamaño debe ser menor al del sprite)
-    float hitboxWidth = 12.f;
-    float hitboxHeight = 30.f;
-    gEnemy.hitboxes = std::vector<sf::FloatRect>{
-        sf::FloatRect(
-            {gEnemy.sprite->getPosition().x - (hitboxWidth / 2.f),
-             gEnemy.sprite->getPosition().y - hitboxHeight},
-            {hitboxWidth, hitboxHeight}),
-        // Para este enemigo esta no tiene sentido (aqui es de prueba)
-        sf::FloatRect(
-            {gEnemy.sprite->getPosition().x - (hitboxWidth / 2.f),
-             gEnemy.sprite->getPosition().y - hitboxHeight - 50.f},
-            {hitboxWidth, hitboxHeight})};
-
-    float activationWidth = 250.f;
-    float activationHeight = 500.f;
-    float deactivationWidth = 400.f;
-    float deactivationHeight = activationHeight;
-
-    gEnemy.activationZone = sf::FloatRect(
-        {gEnemy.sprite->getPosition().x - activationWidth / 2.f,
-         gEnemy.sprite->getPosition().y - activationHeight / 2.f},
-        {activationWidth, activationHeight});
-
-    gEnemy.deactivationZone = sf::FloatRect(
-        {gEnemy.sprite->getPosition().x - deactivationWidth / 2.f,
-         gEnemy.sprite->getPosition().y - deactivationHeight / 2.f},
-        {deactivationWidth, deactivationHeight});
+    gEnemies.push_back(Enemy::createEnemy({ENEMY_POSITION.x + 100.f, ENEMY_POSITION.y}));
 
     return true;
 }
@@ -310,12 +271,10 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     {
         if (haciaDerecha)
         {
-            // gSimonSprite->move({1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
             gSimonSprite->move({1.f * deltaTime * gMovementSpeed, 0.f});
         }
         else if (haciaIzquierda)
         {
-            // gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, -1.5f * deltaTime * gMovementSpeed});
             gSimonSprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
         }
     }
@@ -328,7 +287,10 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
     }
 
-    gEnemy.update(deltaTime);
+    for (auto &enemy : gEnemies)
+    {
+        enemy.update(deltaTime);
+    }
 
     return true;
 }
@@ -356,17 +318,19 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         window.draw(gVampireKiller);
     }
 
-    if (gEnemy.sprite && gEnemy.isActive)
+    for (const auto &enemy : gEnemies)
     {
-        window.draw(*gEnemy.sprite);
-
-        for (const auto &hitbox : gEnemy.hitboxes)
+        if (enemy.sprite && enemy.isActive)
         {
-            window.draw(FloatRectToRectShape(hitbox));
+            window.draw(*enemy.sprite);
+            for (const auto &hitbox : enemy.hitboxes)
+            {
+                window.draw(FloatRectToRectShape(hitbox));
+            }
         }
+
+        window.draw(FloatRectToRectShape(enemy.activationZone));
     }
-    window.draw(FloatRectToRectShape(gEnemy.activationZone)); // Zona de activacion del enemigo
-    window.draw(FloatRectToRectShape(gEnemy.deactivationZone));
 
     window.draw(text);
     window.display();
@@ -476,13 +440,15 @@ int main()
             }
         }
 
+        for (auto &enemy : gEnemies)
+        {
+            enemy.updateEnemyRespawn(deltaTime, gSimonSprite);
+        }
         if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
         {
             std::cerr << "Error en el update" << std::endl;
             return -1;
         }
-
-        gEnemy.updateEnemyRespawn(deltaTime, gSimonSprite);
         updateSimonAtaque(ataque, deltaTime, tiempoAtaqueActual);
         CheckAllCollisions(ataque); // check collisions and correct Simon's position
 

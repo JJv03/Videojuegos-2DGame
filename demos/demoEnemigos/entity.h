@@ -6,9 +6,9 @@
 class Entity
 {
 public:
-    sf::Sprite *sprite;
+    std::shared_ptr<sf::Sprite> sprite;
     std::vector<sf::FloatRect> hitboxes;
 
     Entity() = default;
-    Entity(sf::Sprite &_sprite, std::vector<sf::FloatRect> &_hitboxes);
+    Entity(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
 };
