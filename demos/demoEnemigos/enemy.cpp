@@ -31,16 +31,104 @@ void Enemy::update(float deltaTime)
 {
     if (isActive)
     {
-        sf::Vector2f movement = speed * deltaTime;
-        sprite->move(movement);
+        applyGravity(deltaTime);
+
+        sf::Vector2f horizontalMovement = {speed.x * deltaTime, 0.f};
+        sprite->move(horizontalMovement);
 
         for (auto &hitbox : hitboxes)
         {
-            hitbox.position += movement;
+            hitbox.position.x += horizontalMovement.x;
         }
 
-        deactivationZone.position += movement;
+        deactivationZone.position.x += horizontalMovement.x;
     }
+}
+
+void Enemy::applyGravity(float deltaTime)
+{
+    if (!isOnGround)
+    {
+        sf::Vector2f verticalMovement = {0.f, (VERTICAL_SPEED * deltaTime)};
+        sprite->move(verticalMovement);
+
+        for (auto &hitbox : hitboxes)
+        {
+            hitbox.position.y += verticalMovement.y;
+        }
+
+        deactivationZone.position.y += verticalMovement.y;
+    }
+}
+
+void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
+{
+    if (!isActive || !sprite)
+        return;
+
+    bool onGround = false;
+
+    for (auto &hitbox : hitboxes)
+    {
+        for (const auto &bounds : boundsList)
+        {
+            if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(bounds))
+            {
+                float overlapX = intersection->size.x;
+                float overlapY = intersection->size.y;
+
+                if (&bounds == &boundsList[0]) // Suelo
+                {
+                    sprite->move({0.f, -overlapY});
+                    for (auto &h : hitboxes)
+                        h.position.y -= overlapY;
+                    deactivationZone.position.y -= overlapY;
+                    onGround = true;
+                }
+                else if (overlapX < overlapY) // Colisión horizontal
+                {
+                    if (hitbox.position.x < bounds.position.x + bounds.size.x / 2.f)
+                    {
+                        // Colisión desde la izquierda
+                        sprite->move({-overlapX, 0.f});
+                        for (auto &h : hitboxes)
+                            h.position.x -= overlapX;
+                        deactivationZone.position.x -= overlapX;
+                    }
+                    else
+                    {
+                        // Colisión desde la derecha
+                        sprite->move({overlapX, 0.f});
+                        for (auto &h : hitboxes)
+                            h.position.x += overlapX;
+                        deactivationZone.position.x += overlapX;
+                    }
+                    speed.x = -speed.x;
+                }
+                else // Colisión vertical
+                {
+                    if (hitbox.position.y < bounds.position.y + bounds.size.y / 2.f)
+                    {
+                        // Colisión desde arriba
+                        sprite->move({0.f, -overlapY});
+                        for (auto &h : hitboxes)
+                            h.position.y -= overlapY;
+                        deactivationZone.position.y -= overlapY;
+                        onGround = true;
+                    }
+                    else
+                    {
+                        // Colisión desde abajo
+                        sprite->move({0.f, overlapY});
+                        for (auto &h : hitboxes)
+                            h.position.y += overlapY;
+                        deactivationZone.position.y += overlapY;
+                    }
+                }
+            }
+        }
+    }
+    isOnGround = onGround;
 }
 
 void Enemy::resetPosition()
@@ -55,4 +143,6 @@ void Enemy::resetPosition()
     }
 
     deactivationZone.position += offset;
+
+    speed = ORIGINAL_SPEED;
 }

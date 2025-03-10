@@ -153,6 +153,10 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
     CheckVampireKillerCollision(ataque);
+    if (gEnemy.isActive)
+    {
+        gEnemy.checkCollisions({floorBounds, wallUpBounds, wallDownBounds});
+    }
 }
 
 std::string formatFPSandTime(float deltaTime)

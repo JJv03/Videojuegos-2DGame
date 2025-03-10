@@ -6,7 +6,11 @@
 class Enemy : public Entity
 {
 private:
+    const float VERTICAL_SPEED = 750.0f;
+    const sf::Vector2f ORIGINAL_SPEED = {-75.0f, 0.0f};
+
     sf::Vector2f speed = {-75.0f, 0.0f};
+    bool isOnGround = false;
 
 public:
     sf::FloatRect activationZone;
@@ -21,5 +25,7 @@ public:
 
     void updateEnemyRespawn(float deltaTime, sf::Sprite *gSimonSprite);
     void update(float deltaTime);
+    void applyGravity(float deltaTime);
+    void checkCollisions(const std::vector<sf::FloatRect> &boundsList);
     void resetPosition();
 };
