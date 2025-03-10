@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include <iostream>
 
 Enemy::Enemy(sf::Sprite &_sprite, std::vector<sf::FloatRect> &_hitboxes, sf::FloatRect _activationZone)
     : Entity(_sprite, _hitboxes), activationZone(_activationZone)
@@ -66,7 +67,7 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
     if (!isActive || !sprite)
         return;
 
-    bool onGround = false;
+    isOnGround = false;
 
     for (auto &hitbox : hitboxes)
     {
@@ -83,7 +84,7 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                     for (auto &h : hitboxes)
                         h.position.y -= overlapY;
                     deactivationZone.position.y -= overlapY;
-                    onGround = true;
+                    isOnGround = true;
                 }
                 else if (overlapX < overlapY) // Colisión horizontal
                 {
@@ -114,7 +115,7 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                         for (auto &h : hitboxes)
                             h.position.y -= overlapY;
                         deactivationZone.position.y -= overlapY;
-                        onGround = true;
+                        isOnGround = true;
                     }
                     else
                     {
@@ -128,7 +129,19 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
             }
         }
     }
-    isOnGround = onGround;
+}
+
+bool Enemy::checkHitByEnemy(const sf::FloatRect simonBounds)
+{
+    for (const auto &hitbox : hitboxes)
+    {
+        if (hitbox.findIntersection(simonBounds))
+        {
+            std::cout << "El jugador ha sido golpeado por el enemigo!" << std::endl;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Enemy::resetPosition()

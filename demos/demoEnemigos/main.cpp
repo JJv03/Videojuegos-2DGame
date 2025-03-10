@@ -156,6 +156,7 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     if (gEnemy.isActive)
     {
         gEnemy.checkCollisions({floorBounds, wallUpBounds, wallDownBounds});
+        gEnemy.checkHitByEnemy(simonBounds);
     }
 }
 

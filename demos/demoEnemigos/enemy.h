@@ -27,5 +27,6 @@ public:
     void update(float deltaTime);
     void applyGravity(float deltaTime);
     void checkCollisions(const std::vector<sf::FloatRect> &boundsList);
+    bool checkHitByEnemy(const sf::FloatRect simonBounds);
     void resetPosition();
 };
