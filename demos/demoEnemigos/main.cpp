@@ -8,8 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
-#include "entity.h"
-#include "enemy.h"
+#include "zombie.h"
 
 // Variables globales de configuración
 bool gEnMovimiento{false};
@@ -40,8 +39,8 @@ float verticalSpeed{0.0f}; // velocidad vertical actual
 
 sf::RectangleShape gVampireKiller;
 
-// Vector de enemigos
-std::vector<Enemy> gEnemies;
+// Vector de zombies
+std::vector<Zombie> gZombies;
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -130,7 +129,7 @@ void CheckVampireKillerCollision(const bool ataque)
     {
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
-        for (auto &enemy : gEnemies)
+        for (auto &enemy : gZombies)
         {
             if (enemy.sprite && enemy.isActive)
             {
@@ -159,7 +158,7 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
     CheckVampireKillerCollision(ataque);
-    for (auto &enemy : gEnemies)
+    for (auto &enemy : gZombies)
     {
         if (enemy.isActive)
         {
@@ -248,9 +247,9 @@ bool init()
 
     const sf::Vector2f ENEMY_POSITION = {345.f, 171.f};
 
-    gEnemies.push_back(Enemy::createEnemy(ENEMY_POSITION));
+    gZombies.push_back(Zombie::createZombie(ENEMY_POSITION));
 
-    gEnemies.push_back(Enemy::createEnemy({ENEMY_POSITION.x + 100.f, ENEMY_POSITION.y}));
+    gZombies.push_back(Zombie::createZombie({ENEMY_POSITION.x + 100.f, ENEMY_POSITION.y}));
 
     return true;
 }
@@ -287,7 +286,7 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
     }
 
-    for (auto &enemy : gEnemies)
+    for (auto &enemy : gZombies)
     {
         enemy.update(deltaTime);
     }
@@ -318,7 +317,7 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         window.draw(gVampireKiller);
     }
 
-    for (const auto &enemy : gEnemies)
+    for (const auto &enemy : gZombies)
     {
         if (enemy.sprite && enemy.isActive)
         {
@@ -440,7 +439,7 @@ int main()
             }
         }
 
-        for (auto &enemy : gEnemies)
+        for (auto &enemy : gZombies)
         {
             enemy.updateEnemyRespawn(deltaTime, gSimonSprite);
         }
