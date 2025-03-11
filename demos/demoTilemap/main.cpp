@@ -75,8 +75,8 @@ int main() {
     TileMap tileMap;
 
     // Variables para controlar el movimiento de la cámara
-    float simonCurrentPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
-    float simonNewPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
+    float simonCurrentPositionX {camera.startVertex.x + (camera.GetView(window.getSize()).getSize().x / 2.f)};
+    float simonNewPositionX {camera.startVertex.x + (camera.GetView(window.getSize()).getSize().x / 2.f)};
     
     // Variables para controlar el movimiento
     bool haciaIzquierda { false };
@@ -100,13 +100,13 @@ int main() {
     gTextures["simon"] = sf::Texture(simonImage, false);
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    float simonStartX = camera.startVertex.x + (camera.viewSize.x / 2.f);
+    float simonStartX = camera.startVertex.x + (camera.GetView(window.getSize()).getSize().x / 2.f);
     float simonStartY = 160.f;  // Mantén la altura como antes
     simonSprite.setPosition({simonStartX, simonStartY});
 
     
     // Ajustar la cámara a la posición inicial de Simón
-    camera.startVertex.x = simonStartX - (camera.viewSize.x / 2.f);
+    camera.startVertex.x = simonStartX - (camera.GetView(window.getSize()).getSize().x / 2.f);
 
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
@@ -177,8 +177,7 @@ int main() {
         
         simonNewPositionX = gSimonSprite->getPosition().x;
 
-        // 💡 Siempre centra la cámara en Simón
-        camera.startVertex.x = simonNewPositionX - (gViewSize.x * 0.5f);
+        camera.startVertex.x = simonNewPositionX - (camera.GetView(window.getSize()).getSize().x / 2.f);
 
         // Actualiza la vista
         window.setView(camera.GetView(window.getSize()));
