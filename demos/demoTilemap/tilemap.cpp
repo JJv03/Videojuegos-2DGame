@@ -1,6 +1,6 @@
 #include "tilemap.h"
 #include <iostream>
-
+#include <fstream>
 
 sf::FloatRect TileMap::getHitboxForSolidTile(const int id) const
 {
@@ -34,7 +34,12 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
     }
 }
 
-bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, unsigned int width, unsigned int height) {
+
+
+bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height) {
+    std::vector<int> tilemap;
+    leerNumeros(tilemap_path, tilemap);
+    
     m_solidTiles.resize(height);
     for (auto& row : m_solidTiles) {
         row.resize(width);
@@ -43,7 +48,7 @@ bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, un
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
     m_vertices.resize(width * height * 6);
 
-    if (!m_tileset.loadFromFile(tileset)) {
+    if (!m_tileset.loadFromFile(tileset_path)) {
         return false;
     }
 
@@ -54,7 +59,7 @@ bool TileMap::load(const std::string& tileset, const std::vector<int>& tiles, un
         for (unsigned int j = 0; j < height; ++j)
         {
             int tileIndex = i + j * width;
-            int tileNumber = tiles[tileIndex];
+            int tileNumber = tilemap[tileIndex];
 
             // Encontrar su posicion en el tileset
             int tileset_row = tileNumber % tilesPerRow;
@@ -101,4 +106,35 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     // draw the vertex array
     target.draw(m_vertices, states);
+}
+
+
+
+
+void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros) {
+    std::ifstream file(archivo);
+    std::string linea;
+    
+    if (!file.is_open()) {
+        std::cerr << "Error al abrir el archivo." << std::endl;
+        return;
+    }
+
+    while (std::getline(file, linea)) {
+        std::stringstream ss(linea);
+        std::string numeroStr;
+        
+        // Procesar cada número separado por coma
+        while (std::getline(ss, numeroStr, ',')) {
+            try {
+                int numero = std::stoi(numeroStr); // Convertir de string a int
+                listaNumeros.push_back(numero); // Añadir el número a la lista
+            } catch (const std::invalid_argument&) {
+                // Si no se puede convertir el número, lo ignoramos
+                std::cerr << "Número inválido en el archivo: " << numeroStr << std::endl;
+            }
+        }
+    }
+
+    file.close();
 }

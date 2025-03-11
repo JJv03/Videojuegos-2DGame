@@ -1,7 +1,7 @@
 # Variables del compilador y banderas
 CXX         := g++
-CXXFLAGS    := -I"../SFML/include" -g -Wall -std=c++20
-LDFLAGS     := -L"../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
+CXXFLAGS    := -I"../../SFML/include" -g -Wall -std=c++20
+LDFLAGS     := -L"../../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
 
 # Lista de fuentes y objetos
 SRCS        := main.cpp tilemap.cpp
