@@ -193,7 +193,7 @@ void CheckAllCollisions(const bool ataque)
 bool init()
 {
     // Mundo
-    if (!gTextures["bgEntrada"].loadFromFile("../assets/maps/level1Entrance.png", false))
+    if (!gTextures["bgEntrada"].loadFromFile("../../assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
         return false;
@@ -204,7 +204,7 @@ bool init()
 
     // Simon
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
+    if (!simonImage.loadFromFile("../../assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
@@ -299,7 +299,7 @@ bool init()
 
     // Whip
     sf::Image whipImage;
-    if (!whipImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
+    if (!whipImage.loadFromFile("../../assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
@@ -338,7 +338,7 @@ bool init()
 
     // Enemigo ----------------------------------------------------------------------------
     sf::Image enemyImage;
-    if (!enemyImage.loadFromFile("C:/Users/srgsa/Downloads/Videojuegos-2DGame-main1/Videojuegos-2DGame-main/assets/sprites/enemies/enemies.png"))
+    if (!enemyImage.loadFromFile("../../assets/sprites/enemies/enemies.png"))
     {
         std::cerr << "Error cargando la imagen del enemigo" << std::endl;
         return false;
@@ -710,7 +710,7 @@ int main()
             
         }
         else{
-            if (!gTextures["bgEntrada"].loadFromFile("../assets/maps/level1Entrance.png", false))
+            if (!gTextures["bgEntrada"].loadFromFile("../../assets/maps/level1Entrance.png", false))
             {
                 std::cerr << "Error cargando la textura de fondo" << std::endl;
                 return false;

@@ -194,7 +194,7 @@ void render(sf::RenderWindow& window, const sf::Text& text);
 bool init()
 {
     // Fondo ----------------------------------------------------------------------------
-    if (!gTextures["bgEntrada"].loadFromFile("../assets/maps/level1Entrance.png", false))
+    if (!gTextures["bgEntrada"].loadFromFile("../../assets/maps/level1Entrance.png", false))
     {
         std::cerr << "Error cargando la textura de fondo" << std::endl;
         return false;
@@ -225,7 +225,7 @@ bool init()
 
     // Cargar imagen y configurar textura de Simon (aplicando color key)
     sf::Image simonImage;
-    if (!simonImage.loadFromFile("../assets/sprites/player/simonBelmont.png"))
+    if (!simonImage.loadFromFile("../../assets/sprites/player/simonBelmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
         return false;
@@ -249,7 +249,7 @@ bool init()
 
     // Enemigo ----------------------------------------------------------------------------
     sf::Image enemyImage;
-    if (!enemyImage.loadFromFile("../assets/sprites/enemies/enemies.png"))
+    if (!enemyImage.loadFromFile("../../assets/sprites/enemies/enemies.png"))
     {
         std::cerr << "Error cargando la imagen del enemigo" << std::endl;
         return false;
@@ -365,7 +365,7 @@ int main()
     float simonNewPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
 
     sf::Font font;
-    if (!font.openFromFile("../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
+    if (!font.openFromFile("../../assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
         std::cerr << "Error en la carga de la fuente de texto" << std::endl;
         return -1;

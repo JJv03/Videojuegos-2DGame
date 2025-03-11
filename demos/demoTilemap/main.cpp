@@ -8,9 +8,13 @@
 
 
 // Cámara
-const sf::Vector2f gViewOrigin {0.f, 27.f};
+const sf::Vector2f gViewOrigin {0.f, 0.f};
 const sf::Vector2f gViewSize { 256.f, 175.f };
 Camera camera(sf::FloatRect(gViewOrigin, gViewSize));
+std::unordered_map<std::string, sf::Texture> gTextures;
+
+constexpr float gMovementSpeed { 50.0f };
+
 
 sf::Sprite* gSimonSprite { nullptr };
 
@@ -44,37 +48,150 @@ void drawHitboxes(const std::vector<std::vector<TileMap::SolidTileAttributes>>& 
 }
 
 
+
+bool updateMovement(const float deltaTime, const bool haciaIzquierda, const bool haciaDerecha)
+{
+    if (!gSimonSprite)
+    {
+        std::cerr << "Error: sprite de Simon no inicializado" << std::endl;
+        return false;
+    }
+    
+    if (haciaIzquierda)
+    {
+        gSimonSprite->move({-1.5f * deltaTime * gMovementSpeed, 0.f});
+    }
+    else if (haciaDerecha)
+    {
+        gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
+    }
+
+    return true;
+}
+
+
 int main() {
     sf::RenderWindow window(sf::VideoMode({1000, 500}), "Tilemap", sf::Style::Default);
     TileMap tileMap;
 
     // Variables para controlar el movimiento de la cámara
-    float simonCurrentPositionX {0.0f};
+    float simonCurrentPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
     float simonNewPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
     
+    // Variables para controlar el movimiento
+    bool haciaIzquierda { false };
+    bool haciaDerecha { false };
+
+    sf::Clock deltaClock;
 
     // Cargar el mapa de tiles
     if (!tileMap.load("../../assets/tilesets/tileset_1.png", "../../assets/tilesets/tilemap_1_1.txt", 24, 7)){
         return -1;
     }
 
+    // Cargar imagen y configurar textura de Simon (aplicando color key)
+    sf::Image simonImage;
+    if (!simonImage.loadFromFile("../../assets/sprites/player/simonBelmont.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+        return false;
+    }
+    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
+    gTextures["simon"] = sf::Texture(simonImage, false);
+    sf::Sprite simonSprite(gTextures["simon"]);
+    simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
+    float simonStartX = camera.startVertex.x + (camera.viewSize.x / 2.f);
+    float simonStartY = 160.f;  // Mantén la altura como antes
+    simonSprite.setPosition({simonStartX, simonStartY});
+
+    
+    // Ajustar la cámara a la posición inicial de Simón
+    camera.startVertex.x = simonStartX - (camera.viewSize.x / 2.f);
+
+    sf::FloatRect bounds = simonSprite.getLocalBounds();
+    
+    // Ajusta el origen de las transformaciones al centro inferior
+    simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    gSimonSprite = &simonSprite;
+
     while (window.isOpen()) {
-        while (const std::optional event = window.pollEvent()){
+        float deltaTime = deltaClock.restart().asSeconds(); // tiempo transcurrido entre fotograma
+        simonCurrentPositionX = gSimonSprite->getPosition().x;
+
+    
+        while (const std::optional<sf::Event> event = window.pollEvent())
+        {
+           
             if (event->is<sf::Event::Closed>())
             {
                 window.close();
             }
+            else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                switch (keyPressed->scancode)
+                {
+                    case sf::Keyboard::Scancode::Escape:
+                        window.close();
+                        break;
+                    case sf::Keyboard::Scancode::Z:
+                        std::cout << "Ataque activado" << std::endl;
+                        break;
+                    case sf::Keyboard::Scancode::Left:
+                        haciaIzquierda = true;
+                        haciaDerecha = false;
+                        gSimonSprite->setScale({1.f, 1.f});
+                        break;
+                    case sf::Keyboard::Scancode::Right:
+                        haciaDerecha = true;
+                        haciaIzquierda = false;
+                        gSimonSprite->setScale({-1.f, 1.f});
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
+            {
+                switch (keyReleased->scancode)
+                {
+                    case sf::Keyboard::Scancode::Left:
+                        haciaIzquierda = false;
+                        break;
+                    case sf::Keyboard::Scancode::Right:
+                        haciaDerecha = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+           
+
         }
 
-        if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f) {
-            camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};
-            //std::cout << "UpdateView: " << simonNewPositionX - simonCurrentPositionX << std::endl;
+        if (!updateMovement(deltaTime, haciaIzquierda, haciaDerecha))
+        {
+            std::cerr << "Error en el update" << std::endl;
+            return -1;
         }
+        
+        simonNewPositionX = gSimonSprite->getPosition().x;
+
+        // 💡 Siempre centra la cámara en Simón
+        camera.startVertex.x = simonNewPositionX - (gViewSize.x * 0.5f);
+
+        // Actualiza la vista
         window.setView(camera.GetView(window.getSize()));
 
+        simonCurrentPositionX = simonNewPositionX;
+ 
         window.clear(); 
-        window.draw(tileMap);
 
+        window.draw(tileMap);
+        if (gSimonSprite)
+        {
+            window.draw(*gSimonSprite);
+        }
         drawHitboxes(tileMap.m_solidTiles, window, tileMap.m_tileSize);
 
         window.display();
