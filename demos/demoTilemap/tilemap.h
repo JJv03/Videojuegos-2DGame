@@ -47,7 +47,7 @@ public:
     std::vector<SpecialTileAttributes> m_specialTiles;
     
     // Carga el tilemap con los tiles dados
-    bool load(const std::string& tileset, const std::vector<int>& tiles, unsigned int width, unsigned int height);
+    bool load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height);
 
     // Function to get the hitbox for a solid tile based on its ID
     sf::FloatRect getHitboxForSolidTile(const int id) const;
@@ -55,3 +55,6 @@ public:
     // Function to get the hitbox for a special tile based on its ID
     sf::FloatRect getHitboxForSpecialTile(const int id) const;
 };
+
+
+void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros);
