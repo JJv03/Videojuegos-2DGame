@@ -4,6 +4,15 @@
 #include <chrono>
 #include <thread>
 #include "tilemap.h"
+#include "camera.h"
+
+
+// Cámara
+const sf::Vector2f gViewOrigin {0.f, 27.f};
+const sf::Vector2f gViewSize { 256.f, 175.f };
+Camera camera(sf::FloatRect(gViewOrigin, gViewSize));
+
+sf::Sprite* gSimonSprite { nullptr };
 
 
 sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
@@ -39,6 +48,9 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({1000, 500}), "Tilemap", sf::Style::Default);
     TileMap tileMap;
 
+    // Variables para controlar el movimiento de la cámara
+    float simonCurrentPositionX {0.0f};
+    float simonNewPositionX {camera.startVertex.x + camera.viewSize.x * 0.5f};
     
 
     // Cargar el mapa de tiles
@@ -53,6 +65,12 @@ int main() {
                 window.close();
             }
         }
+
+        if (abs(simonNewPositionX - simonCurrentPositionX) > 0.01f) {
+            camera.startVertex += sf::Vector2f{simonNewPositionX - simonCurrentPositionX, 0.f};
+            //std::cout << "UpdateView: " << simonNewPositionX - simonCurrentPositionX << std::endl;
+        }
+        window.setView(camera.GetView(window.getSize()));
 
         window.clear(); 
         window.draw(tileMap);
