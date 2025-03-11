@@ -23,12 +23,12 @@ public:
     Enemy() = default;
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, sf::FloatRect _activationZone, sf::FloatRect _deactivationZone);
 
-    static Enemy createEnemy(const sf::Vector2f &position);
-
     void updateEnemyRespawn(float deltaTime, sf::Sprite *gSimonSprite);
-    void update(float deltaTime);
     void applyGravity(float deltaTime);
     void checkCollisions(const std::vector<sf::FloatRect> &boundsList);
     bool checkHitByEnemy(const sf::FloatRect simonBounds);
     void resetPosition();
+
+    // Getter para la velocidad
+    sf::Vector2f getSpeed() const { return speed; }
 };
