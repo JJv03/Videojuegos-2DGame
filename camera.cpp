@@ -1,12 +1,11 @@
 #include "camera.h"
 
+Camera::Camera(sf::Vector2f _viewSize) : viewSize(_viewSize), startVertex(0.f, 0.f) {}
 
-Camera::Camera(sf::Vector2f _viewSize) : startVertex(0.f, 0.f), viewSize(_viewSize) {}
-
-Camera::Camera(sf::FloatRect _viewRect) : startVertex(_viewRect.position), viewSize(_viewRect.size) {}
+Camera::Camera(sf::FloatRect _viewRect) : viewSize(_viewRect.size), startVertex(_viewRect.position) {}
 
 Camera::Camera(sf::Vector2f _startVertex, sf::Vector2f _viewSize) :
-                startVertex(_startVertex), viewSize(_viewSize) {}
+                viewSize(_viewSize), startVertex(_startVertex) {}
 
 
 sf::View Camera::GetView(const sf::Vector2u& windowSize) {

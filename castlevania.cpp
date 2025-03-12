@@ -11,12 +11,12 @@
 #include <cmath>
 #include <algorithm>
 
-constexpr int escala { 1 };
-int minWindowWidth = 400;
-int minWindowHeight = 400;
+// constexpr int escala { 1 };
+// int minWindowWidth = 400;
+// int minWindowHeight = 400;
 
 // Cámara
-Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
+Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gWindowWidth, gWindowHeight)));
 
 void Castlevania::run(){
     Game game;
@@ -24,7 +24,7 @@ void Castlevania::run(){
     states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
 
-    sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castleveina", sf::Style::Default);
     //sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default, sf::State::Fullscreen);
     window.setVerticalSyncEnabled(true);
 
@@ -60,7 +60,7 @@ void Castlevania::run(){
         window.clear();
         sf::View view = camera.GetView(window.getSize());
         window.setView(view);
-        currentState->draw(game, window); // Pasar windowScaleFactor
+        currentState->draw(game, window);
         window.display();
 
         states.processStateChanges();
