@@ -28,6 +28,7 @@ sf::View Camera::GetView(const sf::Vector2u& windowSize) {
         // La ventana es más estrecha: fijamos el ancho
         adjustedSize.x = this->viewSize.x;
         adjustedSize.y = this->viewSize.x / windowAspect;
+        this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
 
     return sf::View(sf::FloatRect(this->startVertex, adjustedSize));
