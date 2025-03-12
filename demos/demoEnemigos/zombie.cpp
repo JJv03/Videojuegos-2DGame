@@ -1,9 +1,8 @@
 #include "zombie.h"
 #include <iostream>
 
-Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-               sf::FloatRect _activationZone, sf::FloatRect _deactivationZone)
-    : Enemy(_sprite, _hitboxes, _activationZone, _deactivationZone) {}
+Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
+    : Enemy(_sprite, _hitboxes) {}
 
 Zombie Zombie::createZombie(const sf::Vector2f &position)
 {
@@ -40,17 +39,8 @@ Zombie Zombie::createZombie(const sf::Vector2f &position)
             {12.f, 30.f}),
     };
 
-    // Crear las zonas de activación y desactivación
-    sf::FloatRect activationZone(
-        {position.x - 250.f / 2.f, position.y - 500.f / 2.f},
-        {250.f, 500.f});
-
-    sf::FloatRect deactivationZone(
-        {position.x - 400.f / 2.f, position.y - 500.f / 2.f},
-        {400.f, 500.f});
-
     // Crear y retornar el zombie
-    return Zombie(zombieSprite, hitboxes, activationZone, deactivationZone);
+    return Zombie(zombieSprite, hitboxes);
 }
 
 void Zombie::update(float deltaTime)
@@ -66,8 +56,6 @@ void Zombie::update(float deltaTime)
         {
             hitbox.position.x += horizontalMovement.x;
         }
-
-        deactivationZone.position.x += horizontalMovement.x;
 
         updateAnimation(deltaTime);
     }

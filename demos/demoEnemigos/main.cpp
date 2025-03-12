@@ -46,6 +46,33 @@ sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
 sf::RectangleShape gWallDown;
 
+// ESTO DEBERÁ IR EN LA CLASE PLAYER
+sf::FloatRect gPlayerActivationZone;
+sf::FloatRect gPlayerDeactivationZone;
+const float ACTIVATION_WIDTH = 250.f;
+const float ACTIVATION_HEIGHT = 500.f;
+const float DEACTIVATION_WIDTH = 400.f;
+const float DEACTIVATION_HEIGHT = 500.f;
+
+// Función para actualizar las zonas de activación/desactivación del jugador
+void updatePlayerZones()
+{
+    if (!gSimonSprite)
+        return;
+
+    sf::Vector2f playerPos = gSimonSprite->getPosition();
+
+    gPlayerActivationZone = sf::FloatRect(
+        {playerPos.x - ACTIVATION_WIDTH / 2.0f,
+         playerPos.y - ACTIVATION_HEIGHT / 2.0f},
+        {ACTIVATION_WIDTH, ACTIVATION_HEIGHT});
+
+    gPlayerDeactivationZone = sf::FloatRect(
+        {playerPos.x - DEACTIVATION_WIDTH / 2.0f,
+         playerPos.y - DEACTIVATION_HEIGHT / 2.0f},
+        {DEACTIVATION_WIDTH, DEACTIVATION_HEIGHT});
+}
+
 sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect)
 {
     sf::RectangleShape rectShape(floatRect.size);
@@ -291,6 +318,8 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         enemy.update(deltaTime);
     }
 
+    updatePlayerZones();
+
     return true;
 }
 
@@ -317,6 +346,10 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
         window.draw(gVampireKiller);
     }
 
+    window.draw(FloatRectToRectShape(gPlayerActivationZone));
+
+    window.draw(FloatRectToRectShape(gPlayerDeactivationZone));
+
     for (const auto &enemy : gZombies)
     {
         if (enemy.sprite && enemy.isActive)
@@ -327,8 +360,6 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
                 window.draw(FloatRectToRectShape(hitbox));
             }
         }
-
-        window.draw(FloatRectToRectShape(enemy.activationZone));
     }
 
     window.draw(text);
@@ -441,7 +472,7 @@ int main()
 
         for (auto &enemy : gZombies)
         {
-            enemy.updateEnemyRespawn(deltaTime, gSimonSprite);
+            enemy.updateEnemyRespawn(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
         }
         if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
         {

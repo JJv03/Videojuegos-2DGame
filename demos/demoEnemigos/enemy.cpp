@@ -1,32 +1,50 @@
 #include "enemy.h"
 #include <iostream>
 
-Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, sf::FloatRect _activationZone, sf::FloatRect _deactivationZone)
-    : Entity(_sprite, _hitboxes), activationZone(_activationZone), deactivationZone(_deactivationZone)
+Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
+    : Entity(_sprite, _hitboxes)
 {
     // Guarda la posición inicial
     originalPosition = sprite->getPosition();
 }
 
-void Enemy::updateEnemyRespawn(float deltaTime, sf::Sprite *gSimonSprite)
+void Enemy::updateEnemyRespawn(float deltaTime, const sf::FloatRect &gPlayerActivationZone, const sf::FloatRect &gPlayerDeactivationZone)
 {
-    sf::FloatRect playerBounds = gSimonSprite->getGlobalBounds();
+    bool enemyInsideActivationZone = false;
+    bool enemyInsideDeactivationZone = false;
 
-    bool playerInsideActivationZone = activationZone.findIntersection(playerBounds).has_value();
-    bool playerInsideDeactivationZone = deactivationZone.findIntersection(playerBounds).has_value();
-
-    if (playerInsideActivationZone && !playerWasNearActivation && !isActive)
+    for (const auto &hitbox : hitboxes)
     {
+        if (gPlayerActivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideActivationZone = true;
+        }
+        if (gPlayerDeactivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideDeactivationZone = true;
+        }
+    }
+
+    // Si el jugador está fuera de la zona de activación, se permite que el enemigo se reactive en el futuro
+    if (!enemyInsideActivationZone)
+    {
+        needsPlayerToLeaveZone = false;
+    }
+
+    // Solo activamos si el jugador está en la zona, el enemigo no está activo y el jugador se alejó previamente
+    if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
+    {
+        std::cout << "activo" << std::endl;
         isActive = true;
     }
 
-    if (isActive && !playerInsideDeactivationZone)
+    // Se desactiva si el enemigo está activo y salió de la zona de desactivación
+    if (isActive && !enemyInsideDeactivationZone)
     {
+        std::cout << "desactivo" << std::endl;
         isActive = false;
         resetPosition();
     }
-
-    playerWasNearActivation = playerInsideActivationZone;
 }
 
 void Enemy::applyGravity(float deltaTime)
@@ -40,8 +58,6 @@ void Enemy::applyGravity(float deltaTime)
         {
             hitbox.position.y += verticalMovement.y;
         }
-
-        deactivationZone.position.y += verticalMovement.y;
     }
 }
 
@@ -66,7 +82,6 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                     sprite->move({0.f, -overlapY});
                     for (auto &h : hitboxes)
                         h.position.y -= overlapY;
-                    deactivationZone.position.y -= overlapY;
                     isOnGround = true;
                 }
                 else if (overlapX < overlapY) // Colisión horizontal
@@ -77,7 +92,6 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                         sprite->move({-overlapX, 0.f});
                         for (auto &h : hitboxes)
                             h.position.x -= overlapX;
-                        deactivationZone.position.x -= overlapX;
                     }
                     else
                     {
@@ -85,7 +99,6 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                         sprite->move({overlapX, 0.f});
                         for (auto &h : hitboxes)
                             h.position.x += overlapX;
-                        deactivationZone.position.x += overlapX;
                     }
                     speed.x = -speed.x;
                 }
@@ -97,7 +110,6 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                         sprite->move({0.f, -overlapY});
                         for (auto &h : hitboxes)
                             h.position.y -= overlapY;
-                        deactivationZone.position.y -= overlapY;
                         isOnGround = true;
                     }
                     else
@@ -106,7 +118,6 @@ void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
                         sprite->move({0.f, overlapY});
                         for (auto &h : hitboxes)
                             h.position.y += overlapY;
-                        deactivationZone.position.y += overlapY;
                     }
                 }
             }
@@ -131,14 +142,14 @@ void Enemy::resetPosition()
 {
     sf::Vector2f offset = originalPosition - sprite->getPosition();
 
+    needsPlayerToLeaveZone = true;
+
     sprite->setPosition(originalPosition);
 
     for (auto &hitbox : hitboxes)
     {
         hitbox.position += offset;
     }
-
-    deactivationZone.position += offset;
 
     speed = ORIGINAL_SPEED;
 }
