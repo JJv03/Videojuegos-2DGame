@@ -26,6 +26,7 @@ void Castlevania::run(){
     states.processStateChanges();
 
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default);
+    //sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default, sf::State::Fullscreen);
     window.setVerticalSyncEnabled(true);
 
     sf::Image icon;
@@ -50,28 +51,6 @@ void Castlevania::run(){
         {
             if (eventOpt->is<sf::Event::Closed>()){
                 window.close();
-            } 
-            else if (const auto* resized = eventOpt->getIf<sf::Event::Resized>()) {                
-                float newResizedWidth = std::max(static_cast<int>(resized->size.x), minWindowWidth);
-                float newResizedHeight = std::max(static_cast<int>(resized->size.y), minWindowHeight);
-
-                scaleX = static_cast<float>(newResizedWidth) / gWindowWidth;
-                scaleY = static_cast<float>(newResizedHeight) / gWindowHeight;
-                
-                gWindowWidth = static_cast<float>(newResizedWidth);
-                gWindowHeight = static_cast<float>(newResizedHeight);
-
-                std::cout << "Resized to: " << gWindowWidth << "x" << gWindowHeight << std::endl;
-
-                windowScaleFactor = std::min(
-                    static_cast<float>(gWindowWidth) / originalWindowWidth,
-                    static_cast<float>(gWindowHeight) / originalWindowHeight
-                );
-                
-                view.setSize(sf::Vector2f(gWindowWidth, gWindowHeight));
-                view.setCenter(sf::Vector2f(gWindowWidth / 2, gWindowHeight / 2));
-                window.setView(view);
-                window.setSize({gWindowWidth, gWindowHeight});
             }
             else {
                 currentState->handleInput(game, *eventOpt, window);
@@ -80,7 +59,7 @@ void Castlevania::run(){
 
         currentState->update(game, deltaTime);
         window.clear();
-        window.setView(view);
+        window.setView(camera.GetView(window.getSize()));
         currentState->draw(game, window); // Pasar windowScaleFactor
         window.display();
 
