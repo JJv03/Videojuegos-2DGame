@@ -18,24 +18,36 @@ void SoundManager::loadSound(const std::string& id, const std::string& filepath)
     }
 
     soundBuffers[id] = std::move(buffer);
-    sounds[id] = std::make_unique<sf::Sound>(soundBuffers[id]);  // PASANDO EL BUFFER AQUÍ
+    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));  // Agregamos la primera instancia
 }
 
-
 void SoundManager::playSound(const std::string& id, float volume) {
-    if (sounds.find(id) == sounds.end()) {
-        std::cerr << "Sound " << id << " not found.\n";
+    if (soundBuffers.find(id) == soundBuffers.end()) {
+        std::cerr << "Sound " << id << " not loaded.\n";
         return;
     }
 
-    sounds[id]->setVolume(volume);
-    sounds[id]->play();
+    // Buscar una instancia de sonido que no esté reproduciéndose
+    for (const auto& sound : sounds[id]) {
+        if (sound->getStatus() != sf::Sound::Status::Playing) {
+            sound->setVolume(volume);
+            sound->play();
+            return;
+        }
+    }
+
+    // Si todas las instancias están ocupadas, creamos una nueva
+    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));
+    sounds[id].back()->setVolume(volume);
+    sounds[id].back()->play();
 }
 
 void SoundManager::stopAllSounds() {
-    for (auto& [id, sound] : sounds) {
-        if (sound) {
-            sound->stop();
+    for (auto& [id, soundList] : sounds) {
+        for (auto& sound : soundList) {
+            if (sound) {
+                sound->stop();
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 /**
  * @brief Manages the loading and playing of sound and music assets.
@@ -65,7 +66,7 @@ public:
 
 private:
     std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
-    std::unordered_map<std::string, std::unique_ptr<sf::Sound>> sounds;
+    std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;
     std::unordered_map<std::string, sf::Music> musicTracks;
 };
 
