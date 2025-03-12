@@ -1,7 +1,7 @@
 #include "gameState.h"
 #include <iostream>
 #include "gameStateMachine.h"
-#include "globals.h" 
+#include "globals.h"
 
 constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
 constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
@@ -12,8 +12,6 @@ constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 const bool debug = true;
-
-
 // ======================================================
 //                      GAME STATE 
 // ======================================================
@@ -77,7 +75,7 @@ void MenuGS::init(){
     float spriteHeight = spriteBounds.size.y;
 
     // Calcular el factor de escala basado en la altura máxima (250 píxeles)
-    float scaleFactor = gWindowHeight  / spriteHeight;
+    float scaleFactor = gWindowHeight / spriteHeight;
 
     // Aplicar el factor de escala al sprite para mantener la relación de aspecto
     menu.setScale(sf::Vector2f(scaleFactor, scaleFactor));
@@ -104,15 +102,16 @@ void MenuGS::init(){
     // Definir opciones del menú
     std::string textos[4] = {"STORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
     for (int i = 0; i < 4; i++) {
-        float size = 20 * windowScaleFactor;
-        sf::Text text(font, textos[i], size);
+        sf::Text text(font, textos[i], 30);
+        text.setFillColor(sf::Color::White);
+        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Calcular posición centrada
         float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = gWindowHeight / 2 + 32.f * i * windowScaleFactor; // Ajustar la posición vertical
-        text.setPosition(sf::Vector2f(xPos, yPos));
+        float yPos = 200.f + i * 45.f;
 
+        text.setPosition(sf::Vector2f(xPos, yPos));
         options.push_back(text);
     }
 
@@ -121,11 +120,7 @@ void MenuGS::init(){
     }
     sf::Sprite torch(menuTextures["torch"]);
 
-    std::cout << torch.getScale().x << std::endl;
-
-    torch.setScale(sf::Vector2f(torch.getScale().x * 1.1f, torch.getScale().y * 1.1f));
-
-    std::cout << torch.getScale().x << std::endl;
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
 
     float torchX = options[0].getPosition().x - 25.f;
     float torchY = options[0].getPosition().y + 2.f;
@@ -190,52 +185,7 @@ void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
 }
 
 void MenuGS::update(Game game, float deltaTime){
-    // Mantener la posición centrada de los sprites
-    sf::Sprite& sprite = menuSprites.front();
-    sf::FloatRect spriteBounds = sprite.getLocalBounds();
-    float spriteWidth = spriteBounds.size.x;
-    float spriteHeight = spriteBounds.size.y;
-
-    // Calcular el factor de escala basado en la altura máxima (250 píxeles)
-    float scaleFactor = gWindowHeight / spriteHeight;
-    //std::cout << scaleFactor << std::endl;
-
-    // Aplicar el factor de escala al sprite para mantener la relación de aspecto
-    sprite.setScale(sf::Vector2f(scaleFactor, scaleFactor));
-
-    // Obtener las nuevas dimensiones del sprite escalado
-    float scaledWidth = spriteWidth * scaleFactor;
-    float scaledHeight = spriteHeight * scaleFactor;
-
-    // Calcular la posición para centrar el sprite en la pantalla
-    float xPosition = (gWindowWidth - scaledWidth) / 2;
-    float yPosition = (gWindowHeight - scaledHeight) / 2;
-
-    sprite.setPosition(sf::Vector2f(xPosition, yPosition));
-
-    // Mantener la posición centrada de los textos
-    for (int i = 0; i < 4; i++) {
-        auto& text = options[i];
-        text.setCharacterSize(20 * windowScaleFactor); // Ajustar el tamaño del texto
-        sf::FloatRect textBounds = text.getLocalBounds();
-        float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = gWindowHeight / 2 + 32.f * i * windowScaleFactor; // Ajustar la posición vertical
-        text.setPosition(sf::Vector2f(xPos, yPos));
-    }
-
-    sf::Sprite& torch = menuSprites.back();  // Obtener el último sprite
-    //menuSprites.pop_back();                 // Eliminarlo del vector
-
-    torch.setScale(sf::Vector2f(windowScaleFactor*1.1, windowScaleFactor*1.1));
-
-    // std::cout << windowScaleFactor << std::endl;
-
-    //torch.setScale(sf::Vector2f(torch.getScale().x, torch.getScale().y));
-    float torchX = options[position].getPosition().x - 25.f * windowScaleFactor;
-    float torchY = options[position].getPosition().y + 2.f * windowScaleFactor;
-    torch.setPosition(sf::Vector2f(torchX, torchY));
-
-    // menuSprites.push_back(torch);
+    
 }
 
 void MenuGS::draw(Game game, sf::RenderWindow& window){

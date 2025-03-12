@@ -17,7 +17,6 @@ int minWindowHeight = 400;
 
 // Cámara
 Camera camera(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
-sf::View view(sf::FloatRect({0.f, 0.f}, {gWindowWidth, gWindowHeight}));
 
 void Castlevania::run(){
     Game game;
@@ -59,7 +58,8 @@ void Castlevania::run(){
 
         currentState->update(game, deltaTime);
         window.clear();
-        window.setView(camera.GetView(window.getSize()));
+        sf::View view = camera.GetView(window.getSize());
+        window.setView(view);
         currentState->draw(game, window); // Pasar windowScaleFactor
         window.display();
 
