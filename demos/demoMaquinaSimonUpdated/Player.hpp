@@ -24,6 +24,7 @@ public:
     StateRef activeState;
     sf::Texture texture;
     sf::Sprite* sprite;
+    
 
     PlayerDirection dir;
 
@@ -37,10 +38,20 @@ public:
     bool isDead;
     bool isBeingHurt;
     bool hasToPressAgain;
+
     
     float verticalSpeed;
+    float horizontalSpeed;
+
+
+    // Whip 
+    sf::Texture whipTexture;
+    sf::Sprite* whipSprite;
+    int whipState;
+    int whipFrames;
 
     AnimationManager* gAnimationManager { nullptr };
+    AnimationManager* gWhipAnimationManager { nullptr };
 
 
 
@@ -83,7 +94,7 @@ public:
     };
 
     std::vector<AnimationManager::Frame> attackFloorFrames {
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 32)), 0.01f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 32)), 0.1f},
@@ -92,12 +103,10 @@ public:
     };
 
     std::vector<AnimationManager::Frame> whipLvl1Frames {
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(17, 135), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(50, 135), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(67, 135), sf::Vector2(26, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(112, 134), sf::Vector2(28, 17)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(123, 25), sf::Vector2(16, 31)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(123, 25), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 477), sf::Vector2(26, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 477), sf::Vector2(26, 16)), 0.1f},
     };
     
 

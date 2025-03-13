@@ -39,29 +39,30 @@ PlayerIdleState::PlayerIdleState() : PlayerState()
 
 void PlayerIdleState::init(Player& player)
 {
+    printf("init");
     player.isDucking = false;
     player.isJumping = false;
     player.isWalking = false;
-    
+    player.isAttacking = false;
+    player.isOnStairs = false;
+    player.isOnGround = true;
+    player.hasToPressAgain = true;
+    player.attackedFinished = false;
+    player.isBeingHurt = false;
+    player.isDead = false;    
 }
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT) {    
-            if(player.dir == LEFT){
-                player.dir = RIGHT;
-            }
-
+            player.dir = RIGHT;
             player.isWalking = true;
             player.setState(state<Walk>());
         }
         
         if (keyPressed->scancode == KEY_LEFT) {
-            if(player.dir == RIGHT){
-                player.dir = LEFT;
-            }
-            
+            player.dir = LEFT;
             player.isWalking = true;
             player.setState(state<Walk>());
         }
@@ -73,12 +74,14 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
     
         if (keyPressed->scancode == KEY_JUMP) {
             player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
             player.setState(state<Jump>());
         }
     
-        if (keyPressed->scancode == KEY_ATTACK) {
+        if (keyPressed->scancode == KEY_ATTACK && player.hasToPressAgain) {
             player.isAttacking = true;
-            
+            player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
         }
     }
@@ -90,14 +93,6 @@ void PlayerIdleState::update(Player& player, float deltaTime)
     // Implementar logica (actualizar fisicas, animaciones, etc)
     player.currentAnimation = idleSimon;
     
-    /*
-    if (player.gAnimationManager) {
-        player.gAnimationManager->playAnimation(player.currentAnimation);
-    } else {
-        // Handle the error, e.g., log an error message or throw an exception
-        std::cerr << "AnimationManager is null!" << std::endl;
-    }
-    
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
         
         player.gAnimationManager->playAnimation(player.currentAnimation);
@@ -105,16 +100,21 @@ void PlayerIdleState::update(Player& player, float deltaTime)
     }
     
     player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
-    {
-        player.isAttacking = false;
-        player.attackedFinished = true;
-    }*/
 }
 
 void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
 {
     // Pintar en window (tener en cuenta animaciones, etc)
+    if (player.dir == RIGHT)
+    {
+        player.sprite->setScale({-1.f, 1.f});
+    }
+    else
+    {
+        player.sprite->setScale({1.f, 1.f});
+    }
+    
+    
     window.draw(*player.sprite);
 }
 
@@ -130,9 +130,6 @@ PlayerWalkState::PlayerWalkState() : PlayerState()
 
 void PlayerWalkState::init(Player& player)
 {
-    if(!player.isWalking){
-        player.isWalking = true;
-    }
 }
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
@@ -154,12 +151,15 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
     
         if (keyPressed->scancode == KEY_JUMP) {
             player.isJumping = true;
+            //player.wasWalking = true;
+            player.isOnGround = false;
+            player.verticalSpeed = -JUMP_FORCE;
             player.setState(state<Jump>());
         }
     
-        if (keyPressed->scancode == KEY_ATTACK) {
-            player.isWalking = false;
+        if (keyPressed->scancode == KEY_ATTACK && player.hasToPressAgain) {
             player.isAttacking = true;
+            player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
         }
     }
@@ -168,7 +168,6 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         if ((keyReleased->scancode == KEY_RIGHT && player.dir == RIGHT) || 
             (keyReleased->scancode == KEY_LEFT && player.dir == LEFT)) {
             player.isWalking = false;
-            
             player.setState(state<Idle>());
         }
     }
@@ -178,26 +177,26 @@ void PlayerWalkState::update(Player& player, float deltaTime)
 {
     
     if(player.dir == RIGHT){
-        player.sprite->move({1.f * deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({0.5f * deltaTime * gMovementSpeed, 0.f});
         player.sprite->setScale({-1.f, 1.f});
     } else {
-        player.sprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({-0.5f * deltaTime * gMovementSpeed, 0.f});
         player.sprite->setScale({1.f, 1.f});
     }
     player.currentAnimation = walkSimon;
-    cout << "Walkiwng" << endl;
-    /*
+    
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
         
         player.gAnimationManager->playAnimation(player.currentAnimation);
 
     }
     player.gAnimationManager->update(deltaTime);
+    
     if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-    }*/
+    }
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
@@ -218,8 +217,10 @@ PlayerJumpState::PlayerJumpState() : PlayerState()
 
 void PlayerJumpState::init(Player& player)
 {
-    if(!player.isJumping && player.isOnGround){
-        player.isJumping = true;
+    if (player.isWalking) {
+        player.horizontalSpeed = (player.dir == RIGHT) ? gMovementSpeed : -gMovementSpeed;
+    } else {
+        player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
 }
 
@@ -228,56 +229,74 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_ATTACK) {
             player.isAttacking = true;
+            player.attackedFinished = false;
             player.setState(state<AttackJump>());
         }
-        if (keyPressed->scancode == KEY_RIGHT) {
-            player.dir = RIGHT;
-            player.isWalking = true;
-        }
-        else if (keyPressed->scancode == KEY_LEFT) {
-            player.dir = LEFT;
-            player.isWalking = true;
-            
-        }
-        else if (keyPressed->scancode == KEY_DOWN)
+
+    }
+    if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (keyReleased->scancode == KEY_LEFT || keyReleased->scancode == KEY_RIGHT)
         {
-            player.isDucking = true;
-            player.setState(state<Duck>());
+            player.horizontalSpeed = 0.0f;
+            player.isWalking = false;
         }
         
     }
+    
+
+    
 }
 
 void PlayerJumpState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = jumpSimon;
-    if (!player.isOnGround)
-    {
-        player.verticalSpeed += GRAVITY * deltaTime;
-        player.sprite->move({0.f, player.verticalSpeed * deltaTime});
-    }
+    bool wasWalking;
+    // Apply gravity
+    player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
     
-    if(player.isJumping && player.isOnGround){
-        player.isOnGround = false;
-        player.verticalSpeed = -JUMP_FORCE;
-        player.setState(state<Idle>());
-    }
-    /*
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
-        
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+    // Move the player vertically
+    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
+    // If Simon was walking before jumping, move in the x direction
+    if (player.isWalking)
+    {
+        wasWalking = true;
+        player.horizontalSpeed = 50.0f ;  // Adjust as needed
+        if (player.dir == RIGHT)
+        {
+            player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
+        }
+        else
+        {
+            player.horizontalSpeed = -player.horizontalSpeed;
+            player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
+        }
+    }
+
+    // Play jump animation if not already playing
+    if (!player.gAnimationManager->isPlaying(player.currentAnimation))
+    {
+        player.gAnimationManager->playAnimation(player.currentAnimation);
     }
     player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
+
+    // Check if landed
+    if (player.isOnGround)
     {
-        player.isAttacking = false;
-        player.attackedFinished = true;
-    }*/
-    
-    
-    // Implementar logica (actualizar fisicas, animaciones, etc)
+        player.isJumping = false;
+        if (wasWalking)
+        {
+            wasWalking = false;
+            player.setState(state<Walk>());
+        }else{
+            player.setState(state<Idle>());
+        }
+        
+        
+    }
 }
+
 
 void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 {
@@ -335,18 +354,14 @@ void PlayerDuckState::update(Player& player, float deltaTime)
     player.sprite->move({0.f, 3.0f});
     player.currentAnimation = duckSimon;
 
-    /*
+    
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
         
         player.gAnimationManager->playAnimation(player.currentAnimation);
 
     }
     player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
-    {
-        player.isAttacking = false;
-        player.attackedFinished = true;
-    }*/
+
 }
 
 void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
@@ -497,9 +512,13 @@ void PlayerAttackIdleState::init(Player& player)
     if(!player.isAttacking){
         player.isAttacking = true;
         
-        
     }
+    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+    player.gAnimationManager->playAnimation(attackSimon);
+    player.isAttacking = true;
     player.attackedFinished = false;
+    player.whipState = player.gAnimationManager->getCurrentFrameIndex();
+    player.hasToPressAgain = false;
 }
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
@@ -511,7 +530,12 @@ void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
         {
             player.hasToPressAgain = true;
         }
-   
+        if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
+            if ((keyReleased->scancode == KEY_RIGHT && player.dir == RIGHT) || 
+                (keyReleased->scancode == KEY_LEFT && player.dir == LEFT)) {
+                player.isWalking = false;
+            }
+        }
     }
     
 }
@@ -520,31 +544,76 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 {
     // Implementar logica (actualizar fisicas, animaciones, etc)
     player.currentAnimation = attackSimon;
-    if (player.attackedFinished)
-        {
-            player.isAttacking = false;
-            player.currentAnimation = idleSimon;
-            player.setState(state<Idle>());
-        }
 
-    /*
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
     
         player.gAnimationManager->playAnimation(player.currentAnimation);
 
     }
+    if (!player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping)){
+    
+        player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+
+    }
     player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
+    player.gWhipAnimationManager->update(deltaTime*2.1);
+    if (player.gAnimationManager->getCurrentFrameIndex() == 2 || player.gAnimationManager->getCurrentFrameIndex() == 3) {
+        
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    } else {
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    }
+   
+    
+    
+    if (player.gAnimationManager->isPlaying(player.currentAnimation) && player.gAnimationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-    }*/
+        player.gAnimationManager->setAnimationSpeed(1.0f); // 2x speed
+
+        if (player.isWalking)
+        {
+            player.currentAnimation = walkSimon;
+            player.setState(state<Walk>());
+        }else{
+            player.currentAnimation = idleSimon;
+            player.setState(state<Idle>());
+        }
+        
+        
+    }
 }
 
 void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 {
     // Pintar en window (tener en cuenta animaciones, etc)
     window.draw(*player.sprite);
+    window.draw(*player.whipSprite);
 }
 
 // --------------------------------------------------------------
@@ -555,34 +624,111 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 {
-    printf("Attacking\n");
+    printf("AttackingJ\n");
 }
 
 void PlayerAttackJumpState::init(Player& player)
 {
-    if(!player.isAttacking){
-        player.isAttacking = true;
-    }
+    // Start the whip and attack animations
+    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+    player.gAnimationManager->playAnimation(attackSimon);
 
-    if(!player.isJumping){
-        player.isJumping = true;
+    // Store the horizontal speed if the player was walking
+    if (player.isWalking) {
+        player.horizontalSpeed = (player.dir == RIGHT) ? gMovementSpeed : -gMovementSpeed;
+    } else {
+        player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
 }
 
 void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
     // Nada, solo espera a que termine la animación de ataque
+    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (KeyReleased->scancode == KEY_LEFT || KeyReleased->scancode == KEY_RIGHT)
+        {
+            player.isWalking = false;
+        }
+        if (KeyReleased->scancode == KEY_ATTACK)
+        {
+            player.hasToPressAgain = true;
+        }
+    }
 }
 
 void PlayerAttackJumpState::update(Player& player, float deltaTime)
 {
-    if(player.isOnGround){
-        player.isJumping = false;
-        player.setState(state<AttackIdle>());
+    player.currentAnimation = attackSimon;
+   
+    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    
+        player.gAnimationManager->playAnimation(player.currentAnimation);
+
+    }
+    player.gAnimationManager->setAnimationSpeed(2.0f); // 2x speed
+    player.gWhipAnimationManager->setAnimationSpeed(2.0f); // 2x speed
+    player.gAnimationManager->update(deltaTime);
+    player.gWhipAnimationManager->update(deltaTime*2.1f);
+
+    // Apply gravity
+    player.verticalSpeed += GRAVITY * deltaTime;
+    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
+
+    // Apply horizontal movement if the player was walking
+    if (player.horizontalSpeed != 0.0f) {
+        player.sprite->move({player.horizontalSpeed * deltaTime, 0.f});
+    }
+    
+    if (player.gAnimationManager->getCurrentFrameIndex() == 2 || player.gAnimationManager->getCurrentFrameIndex() == 3) {
+        
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    } else {
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
     }
 
-    if(!player.isAttacking){
-        player.setState(state<Jump>());
+    if (player.gAnimationManager->isPlaying(attackSimon) && player.gAnimationManager->isAnimationFinished() && 
+        player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping) && player.gWhipAnimationManager->isAnimationFinished())
+    {
+        player.isAttacking = false;
+        player.attackedFinished = true;
+        
+        player.isJumping = false;
+        player.gAnimationManager->setAnimationSpeed(1.0f); // 2x speed
+        if(player.horizontalSpeed != 0.0f){
+            player.currentAnimation = walkSimon;
+            
+            player.setState(state<Walk>());
+        }
+        else{
+            player.currentAnimation = idleSimon;
+            player.setState(state<Idle>());
+        }
+        
     }
 
     // Implementar logica (actualizar fisicas, animaciones, etc)
@@ -592,6 +738,7 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 {
     // Pintar en window (tener en cuenta animaciones, etc)
     window.draw(*player.sprite);
+    window.draw(*player.whipSprite);
 }
 
 // --------------------------------------------------------------
@@ -602,7 +749,7 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 {
-    printf("Attacking\n");
+    printf("AttackingDUCK\n");
 }
 
 void PlayerAttackDuckState::init(Player& player)
@@ -614,6 +761,8 @@ void PlayerAttackDuckState::init(Player& player)
     if(!player.isDucking){
         player.isDucking = true;
     }
+    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+    player.gAnimationManager->playAnimation(attackSimon);
 }
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
@@ -625,6 +774,12 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
         {
             player.hasToPressAgain = true;
         }
+        if (KeyReleased->scancode == KEY_DOWN)
+        {
+            player.isDucking = false;
+            player.setState(state<Idle>());
+        }
+        
    
     }
 }
@@ -633,24 +788,56 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
 {
     
     player.currentAnimation = attackFloorSimon;
-    if (player.attackedFinished)
-        {
-            player.isAttacking = false;
-            player.currentAnimation = duckSimon;
-            player.setState(state<Duck>());
-        }
-    /*
+   
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
     
         player.gAnimationManager->playAnimation(player.currentAnimation);
 
     }
     player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
+    player.gWhipAnimationManager->update(deltaTime*2.1f);
+
+    if (player.gAnimationManager->getCurrentFrameIndex() == 2 || player.gAnimationManager->getCurrentFrameIndex() == 3) {
+        
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y-1)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    } else {
+        if (player.dir == RIGHT) {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whipSprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
+                             player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    }
+
+    if (player.gAnimationManager->isPlaying(attackFloorSimon) && player.gAnimationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-    }*/
+        player.currentAnimation = duckSimon;
+        player.gAnimationManager->setAnimationSpeed(1.0f); // 2x speed
+
+        player.setState(state<Duck>());
+    }
+
     // Implementar logica (actualizar fisicas, animaciones, etc)
 }
 
@@ -658,6 +845,7 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 {
     // Pintar en window (tener en cuenta animaciones, etc)
     window.draw(*player.sprite);
+    window.draw(*player.whipSprite);
 }
 
 // --------------------------------------------------------------
@@ -699,6 +887,7 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 {
     // Pintar en window (tener en cuenta animaciones, etc)
     window.draw(*player.sprite);
+    window.draw(*player.whipSprite);
 }
 
 // --------------------------------------------------------------
@@ -769,7 +958,6 @@ void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 }
 
 // --------------------------------------------------------------
-
 
 
 

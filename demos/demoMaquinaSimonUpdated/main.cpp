@@ -11,6 +11,8 @@ constexpr int gWindowHeight{ 250 * escala};
 
 // NUEVO
 AnimationManager* gAnimationManager { nullptr };
+AnimationManager* gWhipAnimationManager { nullptr };
+
 animationID currentAnimation;
 
 sf::RectangleShape gFloor;
@@ -117,9 +119,6 @@ bool init()
     gSprites.push_back(simonSprite);
     player.sprite = &gSprites.back();
 
-    // AÑADIDO NUEVO POR SERGIO, INTENTANDO JUNTAR LA MÁQUINA DE ESTADOS PARA Q
-    // TENGA TODOS, USANDO LA CLASE PLAYER Y LA DE ANIMATION MANAGER
-    // Inicializar AnimationManager
     gAnimationManager = new AnimationManager(*player.sprite);
     
     gAnimationManager->addAnimation(idleSimon, player.idleFrames);
@@ -133,6 +132,40 @@ bool init()
 
     gAnimationManager->playAnimation(idleSimon);
     currentAnimation = idleSimon;
+
+    // Whip
+    sf::Image whipImage;
+    if (!whipImage.loadFromFile("../../assets/sprites/player/simonBelmont.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+        return false;
+    }
+    whipImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
+    whipImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
+    gTextures["whip"] = sf::Texture(whipImage, false);
+
+    sf::Sprite whipSprite(gTextures["whip"]);
+    whipSprite.setTextureRect(sf::IntRect({1, 477}, {8, 32}));
+    whipSprite.setPosition({245.f, 171.f});
+    
+    whipSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    
+    
+    player.whipSprite =  new sf::Sprite(whipSprite);
+    
+    // Inicializar AnimationManager
+    gWhipAnimationManager = new AnimationManager(*player.whipSprite);
+
+    if (!gWhipAnimationManager) {
+        std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
+        return false;
+    }
+    gWhipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whipLvl1Frames, false);
+
+    // Se pasa a player y así toda la animación no se tiene que gestionar en el main
+    player.gAnimationManager = gAnimationManager;
+    player.gWhipAnimationManager = gWhipAnimationManager;
+    
     return true;
 }
 

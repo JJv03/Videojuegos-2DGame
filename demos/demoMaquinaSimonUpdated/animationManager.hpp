@@ -100,13 +100,15 @@ public:
 
     int getCurrentFrameIndex();
 
-
+    void setAnimationSpeed(float multiplier);
 private:
     sf::Sprite& sprite;
     std::unordered_map<animationID, Animation> animations;
     Animation* currentAnimation;
     float elapsedTime;
+    
     std::size_t currentFrame;
+    float speedMultiplier;
 };
 
 #endif // ANIMATION_MANAGER_HPP

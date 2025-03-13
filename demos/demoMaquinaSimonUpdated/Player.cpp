@@ -5,7 +5,6 @@
 Player::Player(){
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
-
     isOnGround = true;
     isOnStairs = false;
     hasToPressAgain = true;
@@ -17,6 +16,10 @@ Player::Player(){
     isBeingHurt = false;
     attackedFinished = false;
     verticalSpeed = 0.0f;
+    horizontalSpeed = 0.0f;
+    whipState = 0;
+    whipFrames = 6;
+
 
 }
 

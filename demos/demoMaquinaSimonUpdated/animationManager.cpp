@@ -1,10 +1,14 @@
 #include "animationManager.hpp"
 #include <iostream>
 AnimationManager::AnimationManager(sf::Sprite& sprite)
-    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0) {}
+    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f) {}
 
 void AnimationManager::addAnimation(animationID id, const std::vector<Frame>& frames, bool loop) {
     animations[id] = { id, frames, loop };
+}
+
+void AnimationManager::setAnimationSpeed(float multiplier) {
+    speedMultiplier = multiplier;
 }
 
 void AnimationManager::playAnimation(animationID id) {
@@ -21,7 +25,7 @@ void AnimationManager::playAnimation(animationID id) {
 void AnimationManager::update( float deltaTime) {
     if (!currentAnimation || currentAnimation->frames.empty()) return;
 
-    elapsedTime += deltaTime;
+    elapsedTime += deltaTime*speedMultiplier;
     if (elapsedTime >= currentAnimation->frames[currentFrame].duration) {
         elapsedTime = 0.f;
         currentFrame++;
@@ -37,7 +41,6 @@ void AnimationManager::update( float deltaTime) {
             }
         }
 
-        
         sprite.setTextureRect(currentAnimation->frames[currentFrame].rect);
 
     }
@@ -58,5 +61,5 @@ void AnimationManager::resetAnimation() {
 
 int AnimationManager::getCurrentFrameIndex() {
     // Assuming you have a method to get the current frame index
-    return currentFrame;
+    return currentFrame % currentAnimation->frames.size();
 }
