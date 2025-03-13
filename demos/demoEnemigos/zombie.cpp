@@ -2,7 +2,10 @@
 #include <iostream>
 
 Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : Enemy(_sprite, _hitboxes) {}
+    : Enemy(_sprite, _hitboxes)
+{
+    setSpeed(ZOMBIE_SPEED);
+}
 
 Zombie Zombie::createZombie(const sf::Vector2f &position)
 {
@@ -61,6 +64,21 @@ void Zombie::update(float deltaTime)
     }
 }
 
+void Zombie::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
+{
+    Enemy::checkCollisions(boundsList);
+}
+
+void Zombie::resetPosition()
+{
+    Enemy::resetPosition();
+
+    setSpeed(ZOMBIE_SPEED);
+
+    animTimer = 0.0f;
+    currentFrame = 0;
+}
+
 void Zombie::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
@@ -73,17 +91,10 @@ void Zombie::updateAnimation(float deltaTime)
         animTimer = 0.0f;
         currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
 
-        /*switch (currentFrame)
-        {
-        case 0:
+        /*if (currentFrame == 0) {
 
-            break;
-        case 1:
+        } else {
 
-            break;
-        case 2:
-
-            break;
         }*/
     }
 

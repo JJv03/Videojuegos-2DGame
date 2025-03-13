@@ -61,6 +61,7 @@ void Enemy::applyGravity(float deltaTime)
     }
 }
 
+// SEGURAMENTE HAYA QUE CAMBIAR COSAS Y DEJAR LO ÚNICO QUE ES COMÚN PARA TODOS
 void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
 {
     if (!isActive || !sprite)
@@ -151,5 +152,5 @@ void Enemy::resetPosition()
         hitbox.position += offset;
     }
 
-    speed = ORIGINAL_SPEED;
+    speed = {-75.0f, 0.0f};
 }
