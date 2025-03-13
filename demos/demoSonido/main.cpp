@@ -44,7 +44,7 @@ int main() {
                         break;
                     case sf::Keyboard::Scancode::M:
                         std::cout << "M\n";
-                        soundManager.playMusic("background", true);
+                        soundManager.playMusic("background");
                         break;
                     case sf::Keyboard::Scancode::S:
                         std::cout << "S\n";

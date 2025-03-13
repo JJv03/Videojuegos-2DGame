@@ -1,6 +1,7 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "game.h"
-#pragma once
+#include "soundManager.h"
 
 // Para evitar dependencias cíclicas
 class GameStateMachine;
@@ -61,6 +62,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> options;
     int position;
+    SoundManager menuSoundManager;
 public:
     explicit MenuGS(GameStateMachine* machine) : GameState(machine) {}
     ~MenuGS() override;

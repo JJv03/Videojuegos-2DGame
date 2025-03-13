@@ -127,6 +127,14 @@ void MenuGS::init(){
     torch.setPosition(sf::Vector2f(torchX, torchY));
 
     menuSprites.push_back(torch);
+
+    // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
+
+    // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
+    menuSoundManager.loadSound("menuEnter", "./assets/sounds/17.wav");
+    
+    menuSoundManager.loadMusic("menuMusic", "./assets/music/12Voyager.mp3");
+    menuSoundManager.playMusic("menuMusic", gMusicVolume);
 }
 
 void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
@@ -164,6 +172,7 @@ void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
         }
 
         if (keyPressed->scancode == KEY_ENTER) {
+            menuSoundManager.playSound("menuEnter", gSoundVolume);
             switch (position) {
                 case 0:
                     stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
