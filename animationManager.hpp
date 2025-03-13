@@ -1,0 +1,114 @@
+#ifndef ANIMATION_MANAGER_HPP
+#define ANIMATION_MANAGER_HPP
+
+#include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <vector>
+#include <string>
+
+enum animationID{
+    // Simon
+    idleSimon,
+    walkSimon,
+    walkSlowSimon,
+    jumpSimon,
+    stairUpSimon,
+    stairDownSimon,
+    hurtSimon,
+    deathSimon,
+    attackSimon,
+    duckSimon,
+    attackFloorSimon,
+    
+    //Whip
+    whipLvl1StandingJumping,
+    // Enemies
+    walkZombie,
+    idleLeopard,
+    walkLeopard,
+    flyRedBat,
+    sleepBat,
+    flyBat,
+
+    // Bosses
+    sleepPhantomBat,
+    flyPhantomBat
+};
+
+
+class AnimationManager {
+public:
+    /**
+     * @struct Frame
+     * @brief Represents a single frame of an animation
+     *
+     * Each frame consists of a texture rectangle and a duration for how long it should be displayed
+     */
+    struct Frame {
+        sf::IntRect rect;
+        float duration; // Duration of the frame in seconds
+    };
+
+    /**
+     * @struct Animation
+     * @brief Represents an animation sequence
+     *
+     * An animation consists of multiple frames and a loop flag
+     */
+    struct Animation {
+        animationID id;
+        std::vector<Frame> frames;
+        bool loop;
+    };
+
+    /**
+     * @brief Constructs an AnimationManager
+     * @param sprite The sprite to which animations will be applied
+     */
+    AnimationManager(sf::Sprite& sprite);
+
+    /**
+     * @brief Adds a new animation to the manager.
+     * @param name The name of the animation.
+     * @param frames The frames that make up the animation.
+     * @param loop Whether the animation should loop (default: true).
+     */
+    void addAnimation(animationID id, const std::vector<Frame>& frames, bool loop = true);
+    
+    /**
+     * @brief Starts playing an animation.
+     * @param name The name of the animation to play.
+     */
+    void playAnimation(animationID id);
+
+    /**
+     * @brief Updates the animation based on elapsed time.
+     * @param deltaTime Time elapsed since the last update (in seconds).
+     */
+    void update(float deltaTime);
+    
+    /**
+     * @brief Checks if a specific animation is currently playing.
+     * @param name The name of the animation.
+     * @return True if the animation is playing, false otherwise.
+     */
+    bool isPlaying(animationID id);
+
+    bool isAnimationFinished() const;
+
+    void resetAnimation();
+
+    int getCurrentFrameIndex();
+
+    void setAnimationSpeed(float multiplier);
+private:
+    sf::Sprite& sprite;
+    std::unordered_map<animationID, Animation> animations;
+    Animation* currentAnimation;
+    float elapsedTime;
+    
+    std::size_t currentFrame;
+    float speedMultiplier;
+};
+
+#endif // ANIMATION_MANAGER_HPP
