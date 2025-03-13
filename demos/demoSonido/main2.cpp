@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
-#include "soundManager.hpp"
+#include "soundManager.h"
 
 // Variables globales de configuración
 bool gEnMovimiento { false };

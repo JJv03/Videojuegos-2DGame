@@ -1,5 +1,4 @@
-#ifndef ANIMATION_MANAGER_HPP
-#define ANIMATION_MANAGER_HPP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
@@ -94,5 +93,3 @@ private:
     float elapsedTime;
     std::size_t currentFrame;
 };
-
-#endif // ANIMATION_MANAGER_HPP

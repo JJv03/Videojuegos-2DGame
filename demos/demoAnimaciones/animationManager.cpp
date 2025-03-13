@@ -1,4 +1,4 @@
-#include "animationManager.hpp"
+#include "animationManager.h"
 
 AnimationManager::AnimationManager(sf::Sprite& sprite)
     : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0) {}

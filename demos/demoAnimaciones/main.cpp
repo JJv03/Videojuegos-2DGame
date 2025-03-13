@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
-#include "animationManager.hpp"
+#include "animationManager.h"
 
 // Variables globales de configuración
 bool gEnMovimiento { false };

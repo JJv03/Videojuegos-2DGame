@@ -1,4 +1,4 @@
-#include "soundManager.hpp"
+#include "soundManager.h"
 
 #include <iostream>
 #include <thread>

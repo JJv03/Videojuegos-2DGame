@@ -1,5 +1,4 @@
-#ifndef SOUND_MANAGER_HPP
-#define SOUND_MANAGER_HPP
+#pragma once
 
 #include <SFML/Audio.hpp>
 #include <unordered_map>
@@ -69,5 +68,3 @@ private:
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;
     std::unordered_map<std::string, sf::Music> musicTracks;
 };
-
-#endif
