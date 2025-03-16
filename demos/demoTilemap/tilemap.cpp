@@ -55,6 +55,20 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
         return false;
     }
 
+    // Luego se hace bien
+    sf::Image hoguera;
+    if (!hoguera.loadFromFile("../../assets/sprites/items/itemsObjects.png")) {
+        return false;
+    }
+    hoguera.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
+    m_hoguera = sf::Texture(hoguera, false, sf::IntRect({175, 2}, {16, 31}));
+    vectHoguera.push_back(sf::Sprite(m_hoguera));
+    //vectHoguera[0].setPosition({88, 143});
+    vectHoguera[0].setPosition({88, 133});
+    m_specialTiles.push_back({{88, 143}, sf::FloatRect({0, 0} , {16, 31}), true, false, SpecialTileAttributes::Type::Bonfire});
+
+
+
     int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
     for (unsigned int i = 0; i < width; ++i)
@@ -148,6 +162,18 @@ void TileMap::drawScene(sf::RenderWindow& window, const Camera& camera){
         if (tileVisible) {
             // Establecer la textura y dibujar el tile
             window.draw(&m_vertices[i], 6, sf::PrimitiveType::Triangles, &m_tileset);
+        }
+    }
+
+    for (auto& hoguera : vectHoguera) {
+        // Obtener la posición de la hoguera
+        sf::Vector2f hogueraPos = hoguera.getPosition();
+
+        // Comprobar si la hoguera está dentro de la vista de la cámara
+        if (hogueraPos.x >= left && hogueraPos.x <= right &&
+            hogueraPos.y >= top && hogueraPos.y <= bottom) {
+            // Si está dentro, dibujamos la hoguera
+            window.draw(hoguera);
         }
     }
     

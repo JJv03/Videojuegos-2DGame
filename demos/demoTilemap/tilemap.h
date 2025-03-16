@@ -16,7 +16,8 @@ public:
     struct SpecialTileAttributes {
         enum class Type {   // Types of special tiles. Only in this scope
             Candelabrum,
-            BreakableWall
+            BreakableWall,
+            Bonfire
         };
 
         sf::Vector2f position;          // Position of the tile in global coord.
@@ -41,6 +42,9 @@ private:
     // Guarda la textura del tilemap entero
     sf::Texture m_tileset;
 
+    
+    sf::Texture m_hoguera;
+
     // Permite hacer window.draw(tilemap) directamente
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -50,6 +54,8 @@ public:
 
     // Vector with the properties of each special tile
     std::vector<SpecialTileAttributes> m_specialTiles;
+
+    std::vector<sf::Sprite> vectHoguera;
     
     // Loads the tilemap with the given tiles
     bool load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height);
