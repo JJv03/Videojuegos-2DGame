@@ -8,6 +8,7 @@ constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
 constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
 constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
 constexpr sf::Keyboard::Scancode KEY_ENTER = sf::Keyboard::Scancode::Enter;
+constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
 constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
@@ -18,26 +19,27 @@ const bool debug = true;
 
 void GameGS::init(){
     if(debug) std::cout << "ESTADO: Game" << std::endl;
+
+    game.init();
 }
 
-void GameGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
+void GameGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {    
-            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
-        }
-        else if (keyPressed->scancode == KEY_UP)
+        if (keyPressed->scancode == KEY_ESC)
         {    
             stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
+        } else {
+            game.handleInput(event);
         }
     }
 }
 
-void GameGS::update(Game game, float deltaTime){
-    
+void GameGS::update(float deltaTime){
+    game.update(deltaTime);
 }
 
-void GameGS::draw(Game game, sf::RenderWindow& window){
-    
+void GameGS::draw(sf::RenderWindow& window, Camera& camera){
+    game.draw(window, camera);
 }
 
 void GameGS::pause(){
@@ -137,7 +139,7 @@ void MenuGS::init(){
     menuSoundManager.playMusic("menuMusic", gMusicVolume);
 }
 
-void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
+void MenuGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_DOWN && position < 3) {    
             if (!menuSprites.empty()) {
@@ -185,7 +187,7 @@ void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
                     break;
                 case 3:
                     std::cout<<"Bye bye :)"<<std::endl;
-                    window.close();
+                    //window.close();
                     break;
             }
             //stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
@@ -193,11 +195,11 @@ void MenuGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
     }
 }
 
-void MenuGS::update(Game game, float deltaTime){
+void MenuGS::update(float deltaTime){
     
 }
 
-void MenuGS::draw(Game game, sf::RenderWindow& window){
+void MenuGS::draw(sf::RenderWindow& window, Camera& camera){
     // std::cout<<"Print"<<std::endl;
     // std::cout<<menuSprites.size()<<std::endl;
     // std::cout<<menuTextures.size()<<std::endl;
@@ -238,23 +240,20 @@ void PauseGS::init(){
     if(debug) std::cout << "ESTADO: Pause" << std::endl;
 }
 
-void PauseGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
+void PauseGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {    
-            stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
-        }
-        else if (keyPressed->scancode == KEY_DOWN)
+        if (keyPressed->scancode == KEY_ESC)
         {    
-            stateMachine->removeState();
+            stateMachine->removeState(); 
         }
     }
 }
 
-void PauseGS::update(Game game, float deltaTime){
+void PauseGS::update(float deltaTime){
     
 }
 
-void PauseGS::draw(Game game, sf::RenderWindow& window){
+void PauseGS::draw(sf::RenderWindow& window, Camera& camera){
     
 }
 
@@ -281,7 +280,7 @@ void ConfigGS::init(){
     if(debug) std::cout << "ESTADO: Config" << std::endl;
 }
 
-void ConfigGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window){
+void ConfigGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT) {    
             stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
@@ -289,11 +288,11 @@ void ConfigGS::handleInput(Game game, sf::Event event, sf::RenderWindow& window)
     }
 }
 
-void ConfigGS::update(Game game, float deltaTime){
+void ConfigGS::update(float deltaTime){
     
 }
 
-void ConfigGS::draw(Game game, sf::RenderWindow& window){
+void ConfigGS::draw(sf::RenderWindow& window, Camera& camera){
     
 }
 

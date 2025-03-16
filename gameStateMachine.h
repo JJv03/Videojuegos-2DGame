@@ -4,7 +4,7 @@
 #include <stack>
 #include "gameState.h"
 
-typedef std::unique_ptr<GameState> StateRef;
+typedef std::unique_ptr<GameState> GameStateRef;
 
 class GameStateMachine
 {
@@ -12,17 +12,17 @@ class GameStateMachine
         GameStateMachine();
         virtual ~GameStateMachine() = default;
 
-        void addState(StateRef newState);
-        void replaceState(StateRef newState);
+        void addState(GameStateRef newState);
+        void replaceState(GameStateRef newState);
         void removeState();
 
         void processStateChanges();
 
-        StateRef& getActiveState();
+        GameStateRef& getActiveState();
 
     private:
-        std::stack<StateRef> states;
-        StateRef newState;
+        std::stack<GameStateRef> states;
+        GameStateRef newState;
 
         bool isRemoving;
         bool isAdding;

@@ -7,13 +7,13 @@ GameStateMachine::GameStateMachine() {
     this->isRemoving = false;
 }
 
-void GameStateMachine::addState(StateRef newState)
+void GameStateMachine::addState(GameStateRef newState)
 {
     this->isAdding = true;
     this->newState = std::move(newState);
 }
 
-void GameStateMachine::replaceState(StateRef newState)
+void GameStateMachine::replaceState(GameStateRef newState)
 {
     this->isReplacing = true;
     this->newState = std::move(newState);
@@ -66,7 +66,7 @@ void GameStateMachine::processStateChanges()
     }
 }
 
-StateRef& GameStateMachine::getActiveState()
+GameStateRef& GameStateMachine::getActiveState()
 {
     return this->states.top();
 }

@@ -1,5 +1,5 @@
 #include "player.h"
-
+#include <iostream>
 
 
 Player::Player(){
@@ -20,7 +20,7 @@ Player::Player(){
     whipState = 0;
     whipFrames = 6;
 
-
+    // FALTA INICIALIZAR SPRITE
 }
 
 void Player::handleInput(sf::Event event)
@@ -38,7 +38,7 @@ void Player::draw(sf::RenderWindow &window)
     getActiveState()->draw(*this, window);
 }
 
-void Player::setState(StateRef newState)
+void Player::setState(PlayerStateRef newState)
 {
     // Cancelar animaciones etc automáticamente?
     //this->activeState->pause(*this);
@@ -47,7 +47,7 @@ void Player::setState(StateRef newState)
 }
 
 /*
-void Player::addState(StateRef newState)
+void Player::addState(PlayerStateRef newState)
 {
     replaceState(std::move(newState));
 }
@@ -58,7 +58,7 @@ void Player::removeState()
 }
 */
 
-StateRef& Player::getActiveState()
+PlayerStateRef& Player::getActiveState()
 {
     return activeState;
 }

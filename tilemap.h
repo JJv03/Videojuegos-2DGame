@@ -61,7 +61,7 @@ public:
     sf::FloatRect getHitboxForSpecialTile(const int id) const;
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
-    void drawScene(sf::RenderWindow& window, const Camera& camera);
+    void drawScene(sf::RenderWindow& window, Camera& camera);
 };
 
 

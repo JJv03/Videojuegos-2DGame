@@ -19,8 +19,6 @@
 Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gWindowWidth, gWindowHeight)));
 
 void Castlevania::run(){
-    Game game;
-
     states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
 
@@ -42,7 +40,7 @@ void Castlevania::run(){
 
     while (window.isOpen())
     {
-        StateRef& currentState = states.getActiveState();
+        GameStateRef& currentState = states.getActiveState();
 
         float deltaTime = deltaClock.restart().asSeconds();
 
@@ -52,15 +50,15 @@ void Castlevania::run(){
                 window.close();
             }
             else {
-                currentState->handleInput(game, *eventOpt, window);
+                currentState->handleInput(*eventOpt);
             }
         }
 
-        currentState->update(game, deltaTime);
+        currentState->update(deltaTime);
         window.clear();
-        sf::View view = camera.GetView(window.getSize());
+        sf::View view = camera.getView(window.getSize());
         window.setView(view);
-        currentState->draw(game, window);
+        currentState->draw(window, camera);
         window.display();
 
         states.processStateChanges();

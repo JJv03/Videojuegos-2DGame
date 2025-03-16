@@ -8,7 +8,7 @@ Camera::Camera(sf::Vector2f _startVertex, sf::Vector2f _viewSize) :
                 viewSize(_viewSize), startVertex(_startVertex) {}
 
 
-sf::View Camera::GetView(const sf::Vector2u& windowSize) {
+sf::View Camera::getView(const sf::Vector2u& windowSize) {
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
     const float viewAspect = this->viewSize.x / this->viewSize.y;
     sf::Vector2f adjustedSize;

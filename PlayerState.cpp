@@ -114,7 +114,7 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
         player.sprite->setScale({1.f, 1.f});
     }
     
-    
+
     window.draw(*player.sprite);
 }
 

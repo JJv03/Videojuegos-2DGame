@@ -15,13 +15,13 @@ enum PlayerDirection
     RIGHT,
 };
 
-typedef std::unique_ptr<PlayerState> StateRef;
+typedef std::unique_ptr<PlayerState> PlayerStateRef;
 
 class Player
 {
 public:
     animationID currentAnimation;
-    StateRef activeState;
+    PlayerStateRef activeState;
     sf::Texture texture;
     sf::Sprite* sprite;
     
@@ -118,11 +118,11 @@ public:
     void update(float deltaTime); // Actualiza lógica
     void draw(sf::RenderWindow &window); // Renderiza
 
-    void setState(StateRef newState);
-    //void addState(StateRef newState);
+    void setState(PlayerStateRef newState);
+    //void addState(PlayerStateRef newState);
     //void removeState();
 
-    StateRef& getActiveState();
+    PlayerStateRef& getActiveState();
 
 
     

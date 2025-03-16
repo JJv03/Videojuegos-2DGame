@@ -112,8 +112,8 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-void TileMap::drawScene(sf::RenderWindow& window, const Camera& camera){
-    sf::View view = camera.GetView(window.getSize());
+void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
+    sf::View view = camera.getView(window.getSize());
 
     sf::Vector2f center = view.getCenter();
     sf::Vector2f size = view.getSize();

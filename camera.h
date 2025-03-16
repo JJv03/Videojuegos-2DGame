@@ -14,5 +14,5 @@ public:
     Camera(sf::Vector2f _startVertex, sf::Vector2f _viewSize);
 
     // Devuelve la vista ajustada según el tamaño de la ventana
-    sf::View GetView(const sf::Vector2u& windowSize);
+    sf::View getView(const sf::Vector2u& windowSize);
 };
