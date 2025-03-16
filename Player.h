@@ -2,7 +2,7 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include "PlayerState.h"
+#include "playerState.h"
 #include "animationManager.h"
 
 constexpr float gMovementSpeed { 75.0f };
