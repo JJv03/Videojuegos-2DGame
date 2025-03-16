@@ -5,7 +5,7 @@
 #include <thread>
 #include "tilemap.h"
 #include "camera.h"
-
+#include <cmath>
 
 // Cámara
 const sf::Vector2f gViewOrigin {0.f, 0.f};
@@ -178,9 +178,17 @@ int main() {
         simonNewPositionX = gSimonSprite->getPosition().x;
 
         camera.startVertex.x = simonNewPositionX - (camera.GetView(window.getSize()).getSize().x / 2.f);
+        
+        sf::View view = camera.GetView(window.getSize());
 
-        // Actualiza la vista
-        window.setView(camera.GetView(window.getSize()));
+        sf::Vector2f roundedCenter(
+            static_cast<float>(floor(view.getCenter().x * 100) / 100), 
+            static_cast<float>(floor(view.getCenter().y * 100) / 100)
+        );
+
+        view.setCenter(roundedCenter);
+
+        window.setView(view);
 
         simonCurrentPositionX = simonNewPositionX;
  
