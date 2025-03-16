@@ -112,7 +112,51 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
+void TileMap::drawScene(sf::RenderWindow& window, const Camera& camera){
+    sf::View view = camera.GetView(window.getSize());
 
+    sf::Vector2f center = view.getCenter();
+    sf::Vector2f size = view.getSize();
+
+    float left   = center.x - size.x / 2.f; // Adding a 100.f offset will show how it works
+    float right  = center.x + size.x / 2.f; // Subtracting a 100.f offset will show how it works
+    float top    = center.y - size.y / 2.f;
+    float bottom = center.y + size.y / 2.f;
+
+    // Show coords
+    //std::cout << "Left: " << left << ", Right: " << right << ", Top: " << top << ", Bottom: " << bottom << std::endl;
+    
+    // Draw only the tiles that are inside the camera
+    for (size_t i = 0; i < m_vertices.getVertexCount(); i += 6) {  // Avanza de 6 en 6, ya que cada tile tiene 6 vértices
+        bool tileVisible = false;
+        
+        // Going through each of the 6 vertices of the tile
+        for (size_t j = 0; j < 6; ++j) {
+            if(j == 3 || j == 4) continue; // Only needs to check 4 vertices, 2 of them are repeated
+            sf::Vertex& vertex = m_vertices[i + j];
+            float x = vertex.position.x;
+            float y = vertex.position.y;
+
+            // Verifica si el vértice está dentro de la vista
+            if (x >= left && x <= right && y >= top && y <= bottom) {
+                tileVisible = true;
+                break;  // No necesitamos seguir comprobando los otros vértices si ya encontramos uno dentro de la vista
+            }
+        }
+
+        // Si el tile está visible, dibújalo
+        if (tileVisible) {
+            // Establecer la textura y dibujar el tile
+            window.draw(&m_vertices[i], 6, sf::PrimitiveType::Triangles, &m_tileset);
+        }
+    }
+    
+}
+
+
+
+
+// ------------------------ Auxiliar functions ------------------------
 
 void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros) {
     std::ifstream file(archivo);

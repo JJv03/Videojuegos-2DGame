@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-
+#include "camera.h"
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
@@ -29,6 +29,11 @@ public:
     // Size of each tile (square) in pixels
     int m_tileSize = 32;
 
+    // Number of tiles in the tilemap
+    int m_tilesPerRow;
+    int m_tilesPerColumn;
+
+
 private:
     // Guarda las posiciones de los vertices del tilemap
     sf::VertexArray m_vertices;
@@ -46,7 +51,7 @@ public:
     // Vector with the properties of each special tile
     std::vector<SpecialTileAttributes> m_specialTiles;
     
-    // Carga el tilemap con los tiles dados
+    // Loads the tilemap with the given tiles
     bool load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height);
 
     // Function to get the hitbox for a solid tile based on its ID
@@ -54,6 +59,9 @@ public:
 
     // Function to get the hitbox for a special tile based on its ID
     sf::FloatRect getHitboxForSpecialTile(const int id) const;
+
+    // Function that draws on the window the section of the tilemap that is visible through the camera
+    void drawScene(sf::RenderWindow& window, const Camera& camera);
 };
 
 

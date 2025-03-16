@@ -194,7 +194,9 @@ int main() {
  
         window.clear(); 
 
-        window.draw(tileMap);
+        //window.draw(tileMap);
+        tileMap.drawScene(window, camera);
+
         if (gSimonSprite)
         {
             window.draw(*gSimonSprite);
