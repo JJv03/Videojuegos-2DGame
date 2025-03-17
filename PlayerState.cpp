@@ -555,8 +555,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 
     }
     player.gAnimationManager->update(deltaTime);
-    player.gWhipAnimationManager->update(deltaTime*2.1);
-    if (player.gAnimationManager->getCurrentFrameIndex() == 2 || player.gAnimationManager->getCurrentFrameIndex() == 3) {
+    player.gWhipAnimationManager->update(deltaTime);
+    if (player.gWhipAnimationManager->getCurrentFrameIndex() == 2 || player.gWhipAnimationManager->getCurrentFrameIndex() == 3) {
         
         if (player.dir == RIGHT) {
             player.whipSprite->setPosition(
@@ -665,10 +665,10 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.gAnimationManager->playAnimation(player.currentAnimation);
 
     }
-    player.gAnimationManager->setAnimationSpeed(2.0f); // 2x speed
-    player.gWhipAnimationManager->setAnimationSpeed(2.0f); // 2x speed
+    //player.gAnimationManager->setAnimationSpeed(2.0f); // 2x speed
+    //player.gWhipAnimationManager->setAnimationSpeed(2.0f); // 2x speed
     player.gAnimationManager->update(deltaTime);
-    player.gWhipAnimationManager->update(deltaTime*2.1f);
+    player.gWhipAnimationManager->update(deltaTime);
 
     // Apply gravity
     player.verticalSpeed += GRAVITY * deltaTime;

@@ -1,6 +1,11 @@
 #include "game.h"
 #include <iostream>
 
+AnimationManager* gAnimationManager { nullptr };
+AnimationManager* gWhipAnimationManager { nullptr };
+std::unordered_map<std::string, sf::Texture> gTextures;
+std::vector<sf::Sprite> gSprites;
+
 // Constructor, destructor
 Game::Game(){
     player = Player();
@@ -14,8 +19,7 @@ void Game::init(){
         return;
     }
 
-
-    // Simon ----------------------------------------------------------------------------
+// Simon ----------------------------------------------------------------------------
     
     // Cargar imagen y configurar textura de Simon (aplicando color key)
     sf::Image simonImage;
@@ -26,18 +30,19 @@ void Game::init(){
     simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
     simonImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
 
-    player.texture = sf::Texture(simonImage, false);
+    gTextures["simon"] = sf::Texture(simonImage, false);
 
-    sf::Sprite simonSprite(player.texture);
+    sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite.setPosition({245.f, 171.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    player.sprite = &simonSprite;
+    gSprites.push_back(simonSprite);
+    player.sprite = &gSprites.back();
 
-    AnimationManager* gAnimationManager = new AnimationManager(*player.sprite);
+    gAnimationManager = new AnimationManager(*player.sprite);
     
     gAnimationManager->addAnimation(idleSimon, player.idleFrames);
     gAnimationManager->addAnimation(jumpSimon, player.jumpFrames);
@@ -59,10 +64,9 @@ void Game::init(){
     }
     whipImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
     whipImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
+    gTextures["whip"] = sf::Texture(whipImage, false);
 
-    sf::Texture whipTexture(whipImage);
-
-    sf::Sprite whipSprite(whipTexture);
+    sf::Sprite whipSprite(gTextures["whip"]);
     whipSprite.setTextureRect(sf::IntRect({1, 477}, {8, 32}));
     whipSprite.setPosition({245.f, 171.f});
     
@@ -72,7 +76,7 @@ void Game::init(){
     player.whipSprite =  new sf::Sprite(whipSprite);
     
     // Inicializar AnimationManager
-    AnimationManager* gWhipAnimationManager = new AnimationManager(*player.whipSprite);
+    gWhipAnimationManager = new AnimationManager(*player.whipSprite);
 
     if (!gWhipAnimationManager) {
         std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
@@ -81,7 +85,8 @@ void Game::init(){
 
     // Se pasa a player y así toda la animación no se tiene que gestionar en el main
     player.gAnimationManager = gAnimationManager;
-    player.gWhipAnimationManager = gWhipAnimationManager;    
+    player.gWhipAnimationManager = gWhipAnimationManager;
+        
 }
 
 // Effects changes depending on the input of the player
