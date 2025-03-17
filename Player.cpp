@@ -20,32 +20,6 @@ Player::Player(){
     whipState = 0;
     whipFrames = 6;
 
-    gAnimationManager = new AnimationManager(*sprite);
-    currentAnimation = idleSimon;
-
-    gAnimationManager->addAnimation(idleSimon, idleFrames);
-    gAnimationManager->addAnimation(jumpSimon, jumpFrames);
-    gAnimationManager->addAnimation(walkSimon, walkFrames);
-    gAnimationManager->addAnimation(walkSlowSimon, walkSlowFrames, false);
-    gAnimationManager->addAnimation(duckSimon, duckFrames);
-    gAnimationManager->addAnimation(attackSimon, attackFrames, false);
-    gAnimationManager->addAnimation(attackFloorSimon, attackFloorFrames, false);
-
-    //animationManager->playAnimation(idleSimon);
-    currentAnimation = idleSimon;
-
-    sf::Image simonImage;
-    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
-    {
-        std::cerr << "Error cargando la imagen de Simon" << std::endl;
-    }
-    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    simonImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
-    texture = sf::Texture(simonImage, false);
-
-    sprite = new sf::Sprite(texture);
-    sprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    sprite->setPosition({245.f, 171.f});
 }
 
 void Player::handleInput(sf::Event event)
