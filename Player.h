@@ -25,7 +25,6 @@ public:
     sf::Texture texture;
     sf::Sprite* sprite;
     
-
     PlayerDirection dir;
 
     bool isOnGround;

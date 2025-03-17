@@ -28,10 +28,11 @@ void GameGS::handleInput(sf::Event event){
         if (keyPressed->scancode == KEY_ESC)
         {    
             stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
-        } else {
-            game.handleInput(event);
+            return;
         }
     }
+
+    game.handleInput(event);
 }
 
 void GameGS::update(float deltaTime){

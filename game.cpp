@@ -17,7 +17,7 @@ void Game::init(){
 
 // Effects changes depending on the input of the player
 void Game::handleInput(sf::Event event){
-
+    player.handleInput(event);
 }
 
 // Updates the game (logic, graphics, etc)
