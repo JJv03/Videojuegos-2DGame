@@ -6,19 +6,19 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int id) const
 {
     switch (id) {
         case 1:
-            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // No collision
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // No collision
         case 2:
-            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize}); // Full collision
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize)); // Full collision
         case 4:
-            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {m_tileSize, m_tileSize / 2.0f}); // Bottom half of the tile has collision
+            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Bottom half of the tile has collision
         case 37:
-            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize / 2.0f}); // Top half of the tile has collision
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Top half of the tile has collision
         case 6:
-            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {0.0f, m_tileSize / 2.0f}); // Bottom left of the tile has collision
+            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(0.0f, m_tileSize / 2.0f)); // Bottom left of the tile has collision
         case 7:
-            return sf::FloatRect({m_tileSize/2.0f, m_tileSize/2.0f}, {m_tileSize/2.0f, m_tileSize / 2.0f}); // Bottom right of the tile has collision
+            return sf::FloatRect(sf::Vector2f(m_tileSize/2.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize/2.0f, m_tileSize / 2.0f)); // Bottom right of the tile has collision
         default:
-            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // Default: none collisionable hitbox
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // Default: none collisionable hitbox
     }
 }
 
@@ -26,11 +26,11 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
 {
     switch (id) {
         case 2:
-            return sf::FloatRect({0.0f, 0.0f}, {m_tileSize, m_tileSize}); // Full collision
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize)); // Full collision
         case 4:
-            return sf::FloatRect({0.0f, m_tileSize/2.0f}, {m_tileSize, m_tileSize / 2.0f}); // Bottom half of the tile has collision
+            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Bottom half of the tile has collision
         default:
-            return sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}); // Default: none collisionable hitbox
+            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // Default: none collisionable hitbox
     }
 }
 
