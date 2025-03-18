@@ -62,6 +62,9 @@ public:
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow& window, Camera& camera);
+
+    // Function that return the limit coordinates of the map
+    sf::FloatRect getMapBounds() const;
 };
 
 

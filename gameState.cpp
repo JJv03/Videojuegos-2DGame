@@ -12,6 +12,12 @@ constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
 constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
+sf::View GameState::getView(sf::RenderWindow& window, Camera& camera){
+    return camera.getView(window.getSize());
+}
+
+
+
 const bool debug = true;
 // ======================================================
 //                      GAME STATE 
@@ -57,6 +63,9 @@ void GameGS::close(){
 
 GameGS::~GameGS() {}
 
+sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera){
+    return game.getView(window, camera);
+}
 
 
 // ======================================================

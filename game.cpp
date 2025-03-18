@@ -1,5 +1,6 @@
 #include "game.h"
 #include <iostream>
+#include <cmath>
 
 AnimationManager* gAnimationManager { nullptr };
 AnimationManager* gWhipAnimationManager { nullptr };
@@ -101,6 +102,42 @@ void Game::update(float deltaTime){
 
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow& window, Camera& camera){
+    //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
     tileMap.drawScene(window, camera);
     player.draw(window);
+}
+
+sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
+    float verticalMargin = 100.f;
+    sf::View view = camera.getView(window.getSize());
+
+    sf::Vector2f playerPos = player.sprite->getPosition();
+    sf::Vector2f viewCenter = view.getCenter();
+    sf::FloatRect mapBounds = tileMap.getMapBounds();
+
+    // Nueva posición de la vista, centrándose en el jugador (horizontalmente)
+    float newX = playerPos.x;
+
+    // Limitar la posición vertical si el jugador se mueve dentro del margen permitido
+    float minY = mapBounds.position.y + verticalMargin;
+    float maxY = mapBounds.position.y + mapBounds.size.y - verticalMargin;
+    
+    float newY = viewCenter.y; // Mantener la altura por defecto
+    if (playerPos.y < minY) {
+        newY = minY;
+    } else if (playerPos.y > maxY) {
+        newY = maxY;
+    }
+
+    // Evitar que la cámara se salga de los límites del mapa
+    float halfWidth = view.getSize().x / 2.0f;
+    float halfHeight = view.getSize().y / 2.0f;
+
+    newX = std::max(mapBounds.position.x + halfWidth, std::min(newX, mapBounds.position.x + mapBounds.size.x - halfWidth));
+    newY = std::max(mapBounds.position.x + halfHeight, std::min(newY, mapBounds.position.x + mapBounds.size.y - halfHeight));
+
+    // Aplicar nueva posición de la vista
+    view.setCenter(sf::Vector2f(newX, newY));
+
+    return view;
 }

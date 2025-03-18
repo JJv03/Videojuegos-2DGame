@@ -154,6 +154,11 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
 }
 
 
+sf::FloatRect TileMap::getMapBounds() const{
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(m_tileSize * m_tilesPerRow, m_tileSize * m_tilesPerColumn));
+}
+
+
 
 
 // ------------------------ Auxiliar functions ------------------------

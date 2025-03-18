@@ -24,4 +24,5 @@ public:
     // Renders the game
     void draw(sf::RenderWindow& window, Camera& camera);
     
+    sf::View getView(sf::RenderWindow& window, Camera& camera);
 };

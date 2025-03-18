@@ -56,7 +56,7 @@ void Castlevania::run(){
 
         currentState->update(deltaTime);
         window.clear();
-        sf::View view = camera.getView(window.getSize());
+        sf::View view = currentState->getView(window, camera);
         window.setView(view);
         currentState->draw(window, camera);
         window.display();

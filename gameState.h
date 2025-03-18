@@ -38,6 +38,9 @@ public:
     // que ocupan memoria, se detienen músicas/sonidos, etc.
     // No es virtual pura por si algún estado más simple no necesita hacer nada al cerrarse
     virtual void close(){}
+
+    // Function that returns the camera's view
+    virtual sf::View getView(sf::RenderWindow& window, Camera& camera);
 };
 
 
@@ -54,6 +57,7 @@ public:
     void pause() override;
     void resume() override;
     void close() override;
+    sf::View getView(sf::RenderWindow& window, Camera& camera) override;
 };
 
 
