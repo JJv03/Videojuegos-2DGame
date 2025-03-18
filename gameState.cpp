@@ -3,6 +3,9 @@
 #include "gameStateMachine.h"
 #include "globals.h"
 
+#include <thread> // Necesario para sleep_for
+#include <chrono>
+
 constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
 constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
 constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
@@ -143,9 +146,9 @@ void MenuGS::init(){
     // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
 
     // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
-    menuSoundManager.loadSound("menuEnter", "./assets/sounds/17.wav");
+    menuSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
-    menuSoundManager.loadMusic("menuMusic", "./assets/music/12Voyager.mp3");
+    menuSoundManager.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
     menuSoundManager.playMusic("menuMusic", gMusicVolume);
 }
 
@@ -153,8 +156,8 @@ void MenuGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_DOWN && position < 3) {    
             if (!menuSprites.empty()) {
-                sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
-                menuSprites.pop_back();                 // Eliminarlo del vector
+                sf::Sprite torch = menuSprites.back();
+                menuSprites.pop_back();
 
                 position += 1;
                 std::cout<<position<<std::endl;
@@ -169,8 +172,8 @@ void MenuGS::handleInput(sf::Event event){
 
         if (keyPressed->scancode == KEY_UP && position > 0) {    
             if (!menuSprites.empty()) {
-                sf::Sprite torch = menuSprites.back();  // Obtener el último sprite
-                menuSprites.pop_back();                 // Eliminarlo del vector
+                sf::Sprite torch = menuSprites.back();
+                menuSprites.pop_back();
 
                 position -= 1;
                 std::cout<<position<<std::endl;
@@ -185,6 +188,7 @@ void MenuGS::handleInput(sf::Event event){
 
         if (keyPressed->scancode == KEY_ENTER) {
             menuSoundManager.playSound("menuEnter", gSoundVolume);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
                 case 0:
                     stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
