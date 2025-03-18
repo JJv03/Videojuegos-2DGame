@@ -108,36 +108,10 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
 }
 
 sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
-    float verticalMargin = 100.f;
-    sf::View view = camera.getView(window.getSize());
-
-    sf::Vector2f playerPos = player.sprite->getPosition();
-    sf::Vector2f viewCenter = view.getCenter();
-    sf::FloatRect mapBounds = tileMap.getMapBounds();
-
-    // Nueva posición de la vista, centrándose en el jugador (horizontalmente)
-    float newX = playerPos.x;
-
-    // Limitar la posición vertical si el jugador se mueve dentro del margen permitido
-    float minY = mapBounds.position.y + verticalMargin;
-    float maxY = mapBounds.position.y + mapBounds.size.y - verticalMargin;
+    sf::View view = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
     
-    float newY = viewCenter.y; // Mantener la altura por defecto
-    if (playerPos.y < minY) {
-        newY = minY;
-    } else if (playerPos.y > maxY) {
-        newY = maxY;
-    }
-
-    // Evitar que la cámara se salga de los límites del mapa
-    float halfWidth = view.getSize().x / 2.0f;
-    float halfHeight = view.getSize().y / 2.0f;
-
-    newX = std::max(mapBounds.position.x + halfWidth, std::min(newX, mapBounds.position.x + mapBounds.size.x - halfWidth));
-    newY = std::max(mapBounds.position.x + halfHeight, std::min(newY, mapBounds.position.x + mapBounds.size.y - halfHeight));
-
-    // Aplicar nueva posición de la vista
-    view.setCenter(sf::Vector2f(newX, newY));
-
+    sf::Vector2f playerPosition = player.sprite->getPosition();
+    view.setCenter(sf::Vector2f(playerPosition.x, view.getCenter().y)); // Centrar la vista horizontalmente en la posición del jugador
+    
     return view;
 }
