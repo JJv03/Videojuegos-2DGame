@@ -19,6 +19,22 @@ Player::Player(){
     horizontalSpeed = 0.0f;
     whipState = 0;
     whipFrames = 6;
+    whipDmg = 1;
+    whipLvl = 1;
+
+    // Secondary weapon
+    secondaryWeapon = 0;
+
+    //Stats
+    health=16;
+    lives=3;
+    score=0;
+    hearts=5;
+
+    //Interactions
+    isInvulnerable = false;
+    invulnerableTime = 3.0f; //3 segs
+    isPassingObject = false;
 }
 
 void Player::handleInput(sf::Event event)
