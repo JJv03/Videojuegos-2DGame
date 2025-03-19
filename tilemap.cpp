@@ -38,6 +38,9 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
 
 bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height) {
 
+    m_tilesPerRow = width;
+    m_tilesPerColumn = height;
+
     std::vector<int> tilemap;
     leerNumeros(tilemap_path, tilemap);
     
@@ -126,9 +129,22 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
     // Show coords
     //std::cout << "Left: " << left << ", Right: " << right << ", Top: " << top << ", Bottom: " << bottom << std::endl;
     
+    
     // Draw only the tiles that are inside the camera
     for (size_t i = 0; i < m_vertices.getVertexCount(); i += 6) {  // Avanza de 6 en 6, ya que cada tile tiene 6 vértices
+
         bool tileVisible = false;
+
+        // Obtain the tile index
+        size_t tileIndex = i / 6;
+
+        size_t row = tileIndex / m_tilesPerRow;
+
+        size_t col = tileIndex % m_tilesPerRow;
+
+        //std::cout << "index: " << i << ", Row: " << row << ", Col: " << col << std::endl;
+        // Obtain the tile reference
+        SolidTileAttributes& tile = m_solidTiles[row][col];
         
         // Going through each of the 6 vertices of the tile
         for (size_t j = 0; j < 6; ++j) {
@@ -137,20 +153,22 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
             float x = vertex.position.x;
             float y = vertex.position.y;
 
-            // Verifica si el vértice está dentro de la vista
+            // Verifies if vertex is visible
             if (x >= left && x <= right && y >= top && y <= bottom) {
                 tileVisible = true;
-                break;  // No necesitamos seguir comprobando los otros vértices si ya encontramos uno dentro de la vista
+                break;  // No need to keep searching if 1 out of 6 vertices is visible
             }
         }
 
-        // Si el tile está visible, dibújalo
+        // If tile is visible, show and make visible
         if (tileVisible) {
-            // Establecer la textura y dibujar el tile
             window.draw(&m_vertices[i], 6, sf::PrimitiveType::Triangles, &m_tileset);
+            tile.isVisible = true;
+            
+        } else {
+            tile.isVisible = false;
         }
     }
-    
 }
 
 
