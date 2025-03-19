@@ -11,6 +11,7 @@ public:
         sf::Vector2f position;          // Position of the tile in global coord.
         bool hasCollision = false;      // If <true>, the tile has hitbox.
         sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
+        bool isVisible = false;         // If <true>, the tile is visible.
     };
 
     struct SpecialTileAttributes {
