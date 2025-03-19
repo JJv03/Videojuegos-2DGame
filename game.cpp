@@ -88,6 +88,44 @@ void Game::init(){
     player.gAnimationManager = gAnimationManager;
     player.gWhipAnimationManager = gWhipAnimationManager;
         
+    // --------------------------------------------------
+    // GUI
+    // --------------------------------------------------
+    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    // Score
+    sf::Text scoreText(font, "SCORE-000000", 16);
+    scoreText.setFillColor(sf::Color::White);
+    scoreText.setPosition(sf::Vector2f(10, 10));
+
+    // Time
+    sf::Text timeText(font, "TIME 0147", 16);
+    timeText.setFillColor(sf::Color::White);
+    timeText.setPosition(sf::Vector2f(250, 10));
+
+    // Stage
+    sf::Text stageText(font, "STAGE 01", 16);
+    stageText.setFillColor(sf::Color::White);
+    stageText.setPosition(sf::Vector2f(400, 10));
+
+    // Player
+    sf::Text playerText(font, "PLAYER", 16);
+    playerText.setFillColor(sf::Color::White);
+    playerText.setPosition(sf::Vector2f(10, 26));
+
+    // Enemy
+    sf::Text enemyText(font, "ENEMY", 16);
+    enemyText.setFillColor(sf::Color::White);
+    enemyText.setPosition(sf::Vector2f(10, 42));
+
+    texts.push_back(scoreText);
+    texts.push_back(timeText);
+    texts.push_back(stageText);
+    texts.push_back(playerText);
+    texts.push_back(enemyText);
 }
 
 // Effects changes depending on the input of the player
@@ -104,6 +142,13 @@ void Game::update(float deltaTime){
 void Game::draw(sf::RenderWindow& window, Camera& camera){
     //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
     tileMap.drawScene(window, camera);
+
+    // GUI
+    for (const auto& text : texts) {
+        std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
+
     player.draw(window);
 }
 

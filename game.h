@@ -1,6 +1,6 @@
 #pragma once
 #include "player.h"
-#include "tilemap.h"   
+#include "tilemap.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game{
@@ -25,4 +25,12 @@ public:
     void draw(sf::RenderWindow& window, Camera& camera);
     
     sf::View getView(sf::RenderWindow& window, Camera& camera);
+
+private:
+    // All refered to the GUI
+    sf::Font font;
+    std::vector<sf::Text> texts;
+    // Vectors with the diferents rectangles of each HealthBar
+    std::vector<sf::RectangleShape> playerHealthBar;
+    std::vector<sf::RectangleShape> enemyHealthBar;
 };
