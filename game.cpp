@@ -170,10 +170,10 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
     player.draw(window);
 }
 
-/* void Game::draw(sf::RenderWindow& window, Camera& camera) {
+/*void Game::draw(sf::RenderWindow& window, Camera& camera) {
     // Modificar la vista del juego para bajarlo
     sf::View gameView = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
-    gameView.move(0, 20); // Mover la vista del juego 20 píxeles hacia abajo (ajusta según sea necesario)
+    gameView.move(sf::Vector2f(0, 20)); // Mover la vista del juego 20 píxeles hacia abajo (ajusta según sea necesario)
     window.setView(gameView);
 
     // Dibujar el mapa y los sprites
@@ -187,7 +187,7 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
     // Dibujar el rectángulo negro en la parte superior
     sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
     guiBackground.setFillColor(sf::Color::Black);
-    guiBackground.setPosition(0, 0);
+    guiBackground.setPosition(sf::Vector2f(0, 0));
     window.draw(guiBackground);
 
     // Dibujar los textos de la GUI
@@ -197,7 +197,7 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
 
     // Restaurar la vista original del juego
     window.setView(gameView);
-} */
+}*/
 
 sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
     camera.startVertex.x = player.sprite->getPosition().x - (camera.getView(window.getSize()).getSize().x / 2.f);
