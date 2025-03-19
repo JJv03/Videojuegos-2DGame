@@ -20,7 +20,8 @@ Player::Player(){
     whipState = 0;
     whipFrames = 6;
 
-
+    hearts=3;
+    lives=3;
 }
 
 void Player::handleInput(sf::Event event)

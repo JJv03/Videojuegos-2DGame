@@ -43,6 +43,8 @@ public:
     float verticalSpeed;
     float horizontalSpeed;
 
+    int hearts;
+    int lives;
 
     // Whip 
     sf::Texture whipTexture;
