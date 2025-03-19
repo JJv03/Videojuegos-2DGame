@@ -38,6 +38,16 @@ public:
     bool isBeingHurt;
     bool hasToPressAgain;
 
+    // Stats
+    int health;
+    int lives;
+    int score;
+    int hearts;
+
+    //Interactions
+    bool isInvulnerable;
+    float invulnerableTime;
+    bool isPassingObject;
     
     float verticalSpeed;
     float horizontalSpeed;
@@ -46,6 +56,13 @@ public:
     sf::Sprite* whipSprite;
     int whipState;
     int whipFrames;
+    int whipLvl;
+    int whipDmg;
+
+    // Secondary weapon
+    sf::Texture secondaryWeaponTexture;
+    sf::Sprite* secondaryWeaponSprite;
+    int secondaryWeapon; // 0 nada, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
 
     AnimationManager* gAnimationManager { nullptr };
     AnimationManager* gWhipAnimationManager { nullptr };
