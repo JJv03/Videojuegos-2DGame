@@ -5,7 +5,7 @@
 #include "playerState.h"
 #include "animationManager.h"
 
-constexpr float gMovementSpeed { 75.0f };
+constexpr float gMovementSpeed { 120.0f };
 
 class PlayerState;
 

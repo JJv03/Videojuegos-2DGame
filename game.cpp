@@ -156,10 +156,14 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
 }
 
 sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
+    camera.startVertex.x = player.sprite->getPosition().x - (camera.getView(window.getSize()).getSize().x / 2.f);
+
     sf::View view = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
-    
+
     sf::Vector2f playerPosition = player.sprite->getPosition();
-    view.setCenter(sf::Vector2f(playerPosition.x, view.getCenter().y)); // Centrar la vista horizontalmente en la posición del jugador
+
+     // Centrar la vista horizontalmente en la posición del jugador
+    view.setCenter(sf::Vector2f(static_cast<int>(playerPosition.x), static_cast<int>(view.getCenter().y))); 
     
     return view;
 }

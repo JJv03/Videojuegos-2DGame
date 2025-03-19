@@ -8,7 +8,8 @@ Camera::Camera(sf::Vector2f _startVertex, sf::Vector2f _viewSize) :
                 viewSize(_viewSize), startVertex(_startVertex) {}
 
 
-sf::View Camera::getView(const sf::Vector2u& windowSize) {
+sf::View Camera::getView(const sf::Vector2u& windowSize)
+{
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
     const float viewAspect = this->viewSize.x / this->viewSize.y;
     sf::Vector2f adjustedSize;
@@ -18,16 +19,12 @@ sf::View Camera::getView(const sf::Vector2u& windowSize) {
         // La ventana es más ancha que la vista original: fijamos la altura
         adjustedSize.y = this->viewSize.y;
         adjustedSize.x = this->viewSize.y * windowAspect;
-
-        // Center the view horizontally
-        this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
     else
     {
         // La ventana es más estrecha: fijamos el ancho
         adjustedSize.x = this->viewSize.x;
         adjustedSize.y = this->viewSize.x / windowAspect;
-        this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
 
     return sf::View(sf::FloatRect(this->startVertex, adjustedSize));

@@ -38,8 +38,6 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
 
 bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height) {
 
-    m_tileset.setSmooth(false);
-
     std::vector<int> tilemap;
     leerNumeros(tilemap_path, tilemap);
     
@@ -54,6 +52,8 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
     if (!m_tileset.loadFromFile(tileset_path)) {
         return false;
     }
+
+    m_tileset.setSmooth(false);
 
     int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
