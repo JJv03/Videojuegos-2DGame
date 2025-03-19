@@ -20,6 +20,18 @@ Player::Player(){
     whipState = 0;
     whipFrames = 6;
 
+    //Stats
+    health=16;
+    lives=3;
+    score=0;
+    hearts=5;
+
+    //Interactions
+    isInvulnerable = false;
+    invulnerableTime = 3.0f; //3 segs
+    isPassingObject = false;
+
+
 }
 
 void Player::handleInput(sf::Event event)

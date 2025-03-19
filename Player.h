@@ -42,6 +42,16 @@ public:
     float verticalSpeed;
     float horizontalSpeed;
 
+    // Stats
+    int health;
+    int lives;
+    int score;
+    int hearts;
+
+    //Interactions
+    bool isInvulnerable;
+    float invulnerableTime;
+    bool isPassingObject;
 
     // Whip 
     sf::Texture whipTexture;
