@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include <cmath>
+#include "globals.h"
 
 AnimationManager* gAnimationManager { nullptr };
 AnimationManager* gWhipAnimationManager { nullptr };
@@ -96,30 +97,32 @@ void Game::init(){
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
+    float margin = gWindowWidth * 0.025f;
+
     // Score
-    sf::Text scoreText(font, "SCORE-000000", 16);
+    sf::Text scoreText(font, "SCORE-000000", 12);
     scoreText.setFillColor(sf::Color::White);
-    scoreText.setPosition(sf::Vector2f(10, 10));
+    scoreText.setPosition(sf::Vector2f(margin, margin));
 
     // Time
-    sf::Text timeText(font, "TIME 0147", 16);
+    sf::Text timeText(font, "TIME 0147", 12);
     timeText.setFillColor(sf::Color::White);
-    timeText.setPosition(sf::Vector2f(250, 10));
+    timeText.setPosition(sf::Vector2f(gWindowWidth * 0.46f, margin));
 
     // Stage
-    sf::Text stageText(font, "STAGE 01", 16);
+    sf::Text stageText(font, "STAGE 01", 12);
     stageText.setFillColor(sf::Color::White);
-    stageText.setPosition(sf::Vector2f(400, 10));
+    stageText.setPosition(sf::Vector2f(gWindowWidth * 0.76f, margin));
 
     // Player
-    sf::Text playerText(font, "PLAYER", 16);
+    sf::Text playerText(font, "PLAYER", 12);
     playerText.setFillColor(sf::Color::White);
-    playerText.setPosition(sf::Vector2f(10, 26));
+    playerText.setPosition(sf::Vector2f(margin, margin + 15));
 
     // Enemy
-    sf::Text enemyText(font, "ENEMY", 16);
+    sf::Text enemyText(font, "ENEMY", 12);
     enemyText.setFillColor(sf::Color::White);
-    enemyText.setPosition(sf::Vector2f(10, 42));
+    enemyText.setPosition(sf::Vector2f(margin, margin + 30));
 
     texts.push_back(scoreText);
     texts.push_back(timeText);
