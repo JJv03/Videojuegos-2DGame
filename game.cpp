@@ -100,27 +100,27 @@ void Game::init(){
     float margin = gWindowWidth * 0.025f;
 
     // Score
-    sf::Text scoreText(font, "SCORE-000000", 12);
+    sf::Text scoreText(font, "SCORE-000000", 11);
     scoreText.setFillColor(sf::Color::White);
     scoreText.setPosition(sf::Vector2f(margin, margin));
 
     // Time
-    sf::Text timeText(font, "TIME 0147", 12);
+    sf::Text timeText(font, "TIME 0147", 11);
     timeText.setFillColor(sf::Color::White);
     timeText.setPosition(sf::Vector2f(gWindowWidth * 0.46f, margin));
 
     // Stage
-    sf::Text stageText(font, "STAGE 01", 12);
+    sf::Text stageText(font, "STAGE 01", 11);
     stageText.setFillColor(sf::Color::White);
     stageText.setPosition(sf::Vector2f(gWindowWidth * 0.76f, margin));
 
     // Player
-    sf::Text playerText(font, "PLAYER", 12);
+    sf::Text playerText(font, "PLAYER", 11);
     playerText.setFillColor(sf::Color::White);
     playerText.setPosition(sf::Vector2f(margin, margin + 15));
 
     // Enemy
-    sf::Text enemyText(font, "ENEMY", 12);
+    sf::Text enemyText(font, "ENEMY", 11);
     enemyText.setFillColor(sf::Color::White);
     enemyText.setPosition(sf::Vector2f(margin, margin + 30));
 
@@ -139,6 +139,17 @@ void Game::handleInput(sf::Event event){
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime){
     player.update(deltaTime);
+
+    float playerX = player.sprite->getPosition().x;
+    float playerY = player.sprite->getPosition().y;
+    float margin = gWindowWidth * 0.025f;
+
+    // Mantener la relación original del init con la posición del jugador, pero más abajo en Y y un poco más a la izquierda en X
+    texts[0].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.42f))); // SCORE
+    texts[1].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.03f), playerY - (gWindowHeight * 0.42f))); // TIME
+    texts[2].setPosition(sf::Vector2f(playerX + (gWindowWidth * 0.27f), playerY - (gWindowHeight * 0.42f))); // STAGE
+    texts[3].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.39f))); // PLAYER
+    texts[4].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.36f))); // ENEMY
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
