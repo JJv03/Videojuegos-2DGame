@@ -97,7 +97,7 @@ void Game::init(){
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
-    float margin = gWindowWidth * 0.025f;
+    float margin = gWindowWidth * 0.015f;
 
     // Score
     sf::Text scoreText(font, "SCORE-000000", 11);
@@ -139,17 +139,6 @@ void Game::handleInput(sf::Event event){
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime){
     player.update(deltaTime);
-
-    float playerX = player.sprite->getPosition().x;
-    float playerY = player.sprite->getPosition().y;
-    float margin = gWindowWidth * 0.025f;
-
-    // Mantener la relación original del init con la posición del jugador, pero más abajo en Y y un poco más a la izquierda en X
-    texts[0].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.42f))); // SCORE
-    texts[1].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.03f), playerY - (gWindowHeight * 0.42f))); // TIME
-    texts[2].setPosition(sf::Vector2f(playerX + (gWindowWidth * 0.27f), playerY - (gWindowHeight * 0.42f))); // STAGE
-    texts[3].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.39f))); // PLAYER
-    texts[4].setPosition(sf::Vector2f(playerX - (gWindowWidth * 0.49f), playerY - (gWindowHeight * 0.36f))); // ENEMY
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
@@ -158,13 +147,57 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
     tileMap.drawScene(window, camera);
 
     // GUI
+    sf::View gameView = window.getView();
+
+    // Configurar una nueva vista fija para la GUI
+    sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
+    window.setView(guiView); // Aplicar la vista fija para la GUI
+
+    // Dibujar el rectángulo negro en la parte superior
+    sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
+    guiBackground.setFillColor(sf::Color::Black);
+    guiBackground.setPosition(sf::Vector2f(0, 0));
+    window.draw(guiBackground);
+
+    // Dibujar los textos de la GUI
     for (const auto& text : texts) {
-        std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
         window.draw(text);
     }
 
+    // Restaurar la vista original del juego
+    window.setView(gameView);
+
     player.draw(window);
 }
+
+/* void Game::draw(sf::RenderWindow& window, Camera& camera) {
+    // Modificar la vista del juego para bajarlo
+    sf::View gameView = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
+    gameView.move(0, 20); // Mover la vista del juego 20 píxeles hacia abajo (ajusta según sea necesario)
+    window.setView(gameView);
+
+    // Dibujar el mapa y los sprites
+    tileMap.drawScene(window, camera);
+    player.draw(window);
+
+    // Restaurar la vista de la GUI
+    sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
+    window.setView(guiView); // Aplicar la vista fija para la GUI
+
+    // Dibujar el rectángulo negro en la parte superior
+    sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
+    guiBackground.setFillColor(sf::Color::Black);
+    guiBackground.setPosition(0, 0);
+    window.draw(guiBackground);
+
+    // Dibujar los textos de la GUI
+    for (const auto& text : texts) {
+        window.draw(text);
+    }
+
+    // Restaurar la vista original del juego
+    window.setView(gameView);
+} */
 
 sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
     camera.startVertex.x = player.sprite->getPosition().x - (camera.getView(window.getSize()).getSize().x / 2.f);
