@@ -199,15 +199,33 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
     window.setView(gameView);
 }*/
 
-sf::View Game::getView(sf::RenderWindow& window, Camera& camera){
-    camera.startVertex.x = player.sprite->getPosition().x - (camera.getView(window.getSize()).getSize().x / 2.f);
+sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
+    // Obtener la vista actual de la cámara
+    sf::View view = camera.getView(window.getSize());
 
-    sf::View view = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
-
+    // Obtener la posición del jugador
     sf::Vector2f playerPosition = player.sprite->getPosition();
 
-     // Centrar la vista horizontalmente en la posición del jugador
-    view.setCenter(sf::Vector2f(static_cast<int>(playerPosition.x), static_cast<int>(view.getCenter().y))); 
+    // Centrar la vista horizontalmente en la posición del jugador
+    view.setCenter(sf::Vector2f(static_cast<int>(playerPosition.x), static_cast<int>(view.getCenter().y)));
+
+    // Obtener los límites del mapa
+    sf::FloatRect mapBounds = tileMap.getMapBounds();
+    sf::Vector2f viewSize = view.getSize();
+
     
+    // Calcular los límites permitidos para la cámara en X
+    float minX = mapBounds.position.x + viewSize.x / 2;
+    float maxX = mapBounds.position.x + mapBounds.size.x - viewSize.x / 2;
+
+    // Calcular los límites permitidos para la cámara en Y
+    float minY = mapBounds.position.y + viewSize.y / 2;
+    float maxY = mapBounds.position.y + mapBounds.size.y - viewSize.y / 2;
+
+    // Restringir la posición de la cámara dentro de los límites del mapa
+    float centerX = std::max(minX, std::min(view.getCenter().x, maxX));
+    float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
+    view.setCenter({centerX, centerY});
+
     return view;
 }
