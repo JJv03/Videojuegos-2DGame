@@ -13,15 +13,14 @@ public:
         sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
     };
 
-    struct SpecialTileAttributes {
+    struct SpecialTile {
         enum class Type {   // Types of special tiles. Only in this scope
             Candelabrum,
             BreakableWall,
             Bonfire
         };
 
-        sf::Vector2f position;          // Position of the tile in global coord.
-        sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
+        sf::Sprite sprite;              // Sprite of the special tile
         bool isBreakable = false;       // Enabling the tile to be destroyed
         bool isDestroyed = false;       // If the tile is destroyed
         Type type;
@@ -42,7 +41,6 @@ private:
     // Guarda la textura del tilemap entero
     sf::Texture m_tileset;
 
-    
     sf::Texture m_hoguera;
 
     // Permite hacer window.draw(tilemap) directamente
@@ -52,13 +50,16 @@ public:
     // Matrix with the properties of each solid tile.
     std::vector<std::vector<SolidTileAttributes>> m_solidTiles;
 
-    // Vector with the properties of each special tile
-    std::vector<SpecialTileAttributes> m_specialTiles;
+    // Vector with the all the special tiles in the tilemap
+    std::vector<SpecialTile> m_specialTiles;
 
-    std::vector<sf::Sprite> vectHoguera;
+    //std::vector<sf::Sprite> vectHoguera;
     
     // Loads the tilemap with the given tiles
     bool load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height);
+
+    // Function to get the position of a tile based on its offset and position in the tilemap
+    sf::Vector2f getPositionForOffset(const int x, const int y, const int x_offset, const int y_offset) const;
 
     // Function to get the hitbox for a solid tile based on its ID
     sf::FloatRect getHitboxForSolidTile(const int id) const;
