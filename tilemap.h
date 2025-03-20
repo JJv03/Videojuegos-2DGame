@@ -16,8 +16,8 @@ public:
 
     struct SpecialTileAttributes {
         enum class Type {   // Types of special tiles. Only in this scope
-            Candelabrum,
-            BreakableWall
+            Candelabrum = 0,
+            BreakableWall = 1,
         };
 
         sf::Vector2f position;          // Position of the tile in global coord.
@@ -53,7 +53,7 @@ public:
     std::vector<SpecialTileAttributes> m_specialTiles;
     
     // Loads the tilemap with the given tiles
-    bool load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height);
+    bool load(const std::string& tileset_path, const std::string& tilemap_path);
 
     // Function to get the hitbox for a solid tile based on its ID
     sf::FloatRect getHitboxForSolidTile(const int id) const;
@@ -66,7 +66,10 @@ public:
 
     // Function that return the limit coordinates of the map
     sf::FloatRect getMapBounds() const;
+
+    // Function that processes the tilemap file and stores its width and height and returns the tilemap's solidTiles
+    // as an int vector parameter, and its specialTiles as an int vector parameter (each group of 4 representig a specialTile)
+    void processFile(const std::string& archivo, std::vector<int>& listaNumeros);
 };
 
 
-void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros);

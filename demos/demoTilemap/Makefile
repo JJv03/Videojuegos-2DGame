@@ -4,7 +4,7 @@ CXXFLAGS    := -I"../../SFML/include" -g -Wall -std=c++20
 LDFLAGS     := -L"../../SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-system
 
 # Lista de fuentes y objetos
-SRCS        := main.cpp tilemap.cpp camera.cpp
+SRCS        := leveleditor.cpp tilemap.cpp camera.cpp
 OBJ_DIR     := build
 OBJS        := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 EXEC        := $(OBJ_DIR)/game.exe

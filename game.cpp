@@ -16,7 +16,7 @@ Game::Game(){
 
 // Initializes a new game from the beggining
 void Game::init(){
-    if (!tileMap.load("./assets/tilesets/tileset_1.png", "./assets/tilesets/tilemap_1_1.txt", 24, 7)){
+    if (!tileMap.load("./assets/tilesets/tileset_1.png", "./assets/tilemaps/level1/tilemap_1_1.txt")){
         std::cerr << "Error al cargar el tilemap." << std::endl;
         return;
     }

@@ -36,21 +36,18 @@ sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
 
 
 
-bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path, unsigned int width, unsigned int height) {
-
-    m_tilesPerRow = width;
-    m_tilesPerColumn = height;
+bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path) {
 
     std::vector<int> tilemap;
-    leerNumeros(tilemap_path, tilemap);
+    processFile(tilemap_path, tilemap);
     
-    m_solidTiles.resize(height);
+    m_solidTiles.resize(m_tilesPerColumn);
     for (auto& row : m_solidTiles) {
-        row.resize(width);
+        row.resize(m_tilesPerRow);
     }
 
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
-    m_vertices.resize(width * height * 6);
+    m_vertices.resize(m_tilesPerColumn * m_tilesPerRow * 6);
 
     if (!m_tileset.loadFromFile(tileset_path)) {
         return false;
@@ -60,11 +57,11 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
 
     int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
-    for (unsigned int i = 0; i < width; ++i)
+    for (unsigned int i = 0; i < m_tilesPerRow; ++i)
     {
-        for (unsigned int j = 0; j < height; ++j)
+        for (unsigned int j = 0; j < m_tilesPerColumn; ++j)
         {
-            int tileIndex = i + j * width;
+            int tileIndex = i + j * m_tilesPerRow;
             int tileNumber = tilemap[tileIndex];
 
             // Encontrar su posicion en el tileset
@@ -181,27 +178,53 @@ sf::FloatRect TileMap::getMapBounds() const{
 
 // ------------------------ Auxiliar functions ------------------------
 
-void leerNumeros(const std::string& archivo, std::vector<int>& listaNumeros) {
+void TileMap::processFile(const std::string& archivo, std::vector<int>& solidTileNumberList) {
     std::ifstream file(archivo);
-    std::string linea;
+    std::string line;
     
     if (!file.is_open()) {
-        std::cerr << "Error al abrir el archivo." << std::endl;
+        std::cerr << "Error opening tilemap file." << std::endl;
         return;
     }
 
-    while (std::getline(file, linea)) {
-        std::stringstream ss(linea);
-        std::string numeroStr;
+    if (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string numberStr;
+
+        try {
+            std::getline(ss, numberStr, ',');
+            m_tilesPerRow = std::stoi(numberStr);
+            std::cout << "TILEMAP WIDTH: " << m_tilesPerRow << std::endl;
+
+            std::getline(ss, numberStr, ',');
+            m_tilesPerColumn = std::stoi(numberStr);
+            std::cout << "TILEMAP HEIGHT: " << m_tilesPerColumn << std::endl;
+
+            if (m_tilesPerRow <= 0 || m_tilesPerColumn <= 0) {
+                std::cerr << "Invalid map dimensions: " << m_tilesPerRow << "x" << m_tilesPerColumn << std::endl;
+                return;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Error parsing map dimensions: " << e.what() << std::endl;
+            return;
+        }
+    } else {
+        std::cerr << "Error: Empty or corrupted tilemap file." << std::endl;
+        return;
+    }
+
+
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string numberStr;
         
-        // Procesar cada número separado por coma
-        while (std::getline(ss, numeroStr, ',')) {
+        // Processes the solid tiles
+        while (std::getline(ss, numberStr, ',')) {
             try {
-                int numero = std::stoi(numeroStr); // Convertir de string a int
-                listaNumeros.push_back(numero); // Añadir el número a la lista
+                int numero = std::stoi(numberStr); // Convertir de string a int
+                solidTileNumberList.push_back(numero); // Añadir el número a la lista
             } catch (const std::invalid_argument&) {
-                // Si no se puede convertir el número, lo ignoramos
-                std::cerr << "Número inválido en el archivo: " << numeroStr << std::endl;
+                std::cerr << "Invalid solidTile number in tilemap file: " << numberStr << std::endl;
             }
         }
     }

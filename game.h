@@ -7,7 +7,9 @@ class Game{
 public:
     Player player;
     TileMap tileMap; // temporary, will be substituted by a tilemap manager
-
+    size_t currentLevel = 0;
+    size_t currentStage = 0;
+    
     // Constructor, destructor
     Game();
     virtual ~Game() = default;
