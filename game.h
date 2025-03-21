@@ -1,11 +1,13 @@
 #pragma once
 #include "player.h"
 #include "tilemap.h"
+#include "tilemapManager.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game{
 public:
     Player player;
+    //TilemapManager tilemapManager;
     TileMap tileMap; // temporary, will be substituted by a tilemap manager
     size_t currentLevel = 0;
     size_t currentStage = 0;

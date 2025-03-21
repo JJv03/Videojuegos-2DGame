@@ -12,10 +12,17 @@ std::vector<sf::Sprite> gSprites;
 Game::Game(){
     player = Player();
     tileMap = TileMap();
+    // tilemapManager = TilemapManager();
 }
 
 // Initializes a new game from the beggining
 void Game::init(){
+    currentLevel = 1;
+    currentStage = 1;
+
+    //tilemapManager.loadLevel(1);
+
+    // Temporary
     if (!tileMap.load("./assets/tilesets/tileset_1.png", "./assets/tilemaps/level1/tilemap_1_1.txt")){
         std::cerr << "Error al cargar el tilemap." << std::endl;
         return;
