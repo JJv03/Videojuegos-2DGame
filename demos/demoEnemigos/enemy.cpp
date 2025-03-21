@@ -46,7 +46,8 @@ bool Enemy::checkHitByEnemy(const sf::FloatRect simonBounds)
     {
         if (hitbox.findIntersection(simonBounds))
         {
-            std::cout << "Contacto con enemigo" << std::endl;
+            // EL PLAYER TENDRÁ QUE TENER MARGEN DE INMUNIDAD
+            std::cout << "Daño recibido = " << damage << std::endl;
             return true;
         }
     }

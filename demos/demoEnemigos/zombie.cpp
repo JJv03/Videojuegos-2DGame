@@ -5,6 +5,9 @@ Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     : Enemy(_sprite, _hitboxes)
 {
     speed = ZOMBIE_SPEED;
+    life = ZOMBIE_LIFE;
+    score = ZOMBIE_SCORE;
+    damage = ZOMBIE_DAMAGE;
 }
 
 Zombie Zombie::createZombie(const sf::Vector2f &position)
@@ -67,7 +70,7 @@ void Zombie::update(float deltaTime)
 }
 
 void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                             const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking)
+                             const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking, const float playerDamage)
 {
     if (!isActive || !sprite)
         return;
@@ -133,11 +136,19 @@ void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRec
         // COLISIONES CON VAPIRE KILLER
         if (playerIsAtacking)
         {
+            // EL SISTEMA DE ATAQUE DEBERÁ TENER UN COOLDAWN CUANDO GOLPEE ALGO
             if (weaponBounds.findIntersection(hitbox).has_value())
             {
-                isActive = false;
-                resetPosition();
-                break;
+                std::cout << "Vida = " << life << std::endl;
+                life -= playerDamage;
+                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
+                if (life <= 0.0f)
+                {
+                    isActive = false;
+                    resetPosition();
+                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
+                    break;
+                }
             }
         }
     }
@@ -151,6 +162,7 @@ void Zombie::resetPosition()
     Enemy::resetPosition();
 
     speed = ZOMBIE_SPEED;
+    life = ZOMBIE_LIFE;
 
     animTimer = 0.0f;
     currentFrame = 0;

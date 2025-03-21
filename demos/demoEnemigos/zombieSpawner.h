@@ -31,7 +31,7 @@ public:
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
 
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking);
+                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking, const float playerDamage);
 
     void draw(sf::RenderWindow &window, bool debugDraw = false);
 };

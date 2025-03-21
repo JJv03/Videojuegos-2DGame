@@ -22,6 +22,7 @@ constexpr float tiempoEnemigoRespawn{2.0f};
 // Constantes para la física
 constexpr float GRAVITY{980.0f};    // aceleración en píxeles/segundo²
 constexpr float JUMP_FORCE{350.0f}; // velocidad inicial del salto (píxeles/segundo)
+constexpr float PLAYER_DAMEGE{1.0f};
 
 // Cámara
 const sf::Vector2f gViewOrigin{0.f, 27.f};
@@ -165,7 +166,7 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     CheckCollisions(simonBounds, wallDownBounds, debug);
     for (auto &zombieSpawner : gZombiesSpawner)
     {
-        zombieSpawner.checkCollisions(simonBounds, vkBounds, boundsList, ataque);
+        zombieSpawner.checkCollisions(simonBounds, vkBounds, boundsList, ataque, PLAYER_DAMEGE);
     }
 }
 

@@ -7,6 +7,11 @@ class Zombie : public Enemy
 private:
     const sf::IntRect ZOMBIE_SPRITE_REGION = {{1, 28}, {16, 32}};
     const sf::Vector2f ZOMBIE_SPEED = {-75.0f, 0.0f};
+
+    const float ZOMBIE_LIFE = 1.0f;
+    const float ZOMBIE_SCORE = 100.0f;
+    const float ZOMBIE_DAMAGE = 2.0f;
+
     const float HITBOX_WIDTH = 12.f;
     const float HITBOX_HEIGHT = 30.f;
 
@@ -27,7 +32,7 @@ public:
     void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
 
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking);
+                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking, const float playerDamage);
 
     void updateAnimation(float deltaTime);
 };

@@ -121,13 +121,13 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 }
 
 void ZombieSpawner::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                                    const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking)
+                                    const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking, const float playerDamage)
 {
     for (auto &zombie : zombies)
     {
         if (zombie.isActive)
         {
-            zombie.checkCollisions(simonBounds, weaponBounds, boundsList, playerIsAtacking);
+            zombie.checkCollisions(simonBounds, weaponBounds, boundsList, playerIsAtacking, playerDamage);
         }
     }
 }
