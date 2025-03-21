@@ -7,7 +7,6 @@ ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &z
       rng(static_cast<unsigned int>(std::time(nullptr))), zombieCountDist(1, 3)
 {
     zombiesToSpawn.resize(3, false);
-    zombieSpawnTimers.resize(3, 0.0f);
 
     init();
 }
@@ -49,7 +48,7 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     // Comprueba que el spawner este activo
     spawnerActive = false;
 
-    for (int i = 0; i < zombies.size(); i++)
+    for (size_t i = 0; i < zombies.size(); i++)
     {
         if (zombiesToSpawn[i])
         {
@@ -65,13 +64,12 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
         std::fill(zombiesToSpawn.begin(), zombiesToSpawn.end(), false);
 
-        float spawnTime = 1.5f;
+        zombieSpawnTimers = 1.5f;
+        dist = 0.0;
 
         for (int i = 0; i < zombiesToSpawnCount; i++)
         {
             zombiesToSpawn[i] = true;
-            zombieSpawnTimers[i] = spawnTime;
-            spawnTime += 0.3f;
         }
     }
 
@@ -80,13 +78,15 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     {
         if (zombiesToSpawn[i])
         {
-            zombieSpawnTimers[i] -= deltaTime;
+            zombieSpawnTimers -= deltaTime;
 
-            if (zombieSpawnTimers[i] <= 0.0f)
+            if (zombieSpawnTimers <= 0.0f)
             {
+                zombies[i].movePositionToBorder(playerActivationZone, dist);
+
                 zombies[i].isActive = true;
-                zombies[i].resetPosition();
                 zombiesToSpawn[i] = false;
+                dist += 20;
             }
         }
     }

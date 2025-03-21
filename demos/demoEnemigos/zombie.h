@@ -24,6 +24,7 @@ public:
 
     void update(float deltaTime) override;
     void resetPosition() override;
+    void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
 
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                          const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking);

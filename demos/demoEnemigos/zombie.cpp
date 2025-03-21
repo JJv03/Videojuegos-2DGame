@@ -156,6 +156,32 @@ void Zombie::resetPosition()
     currentFrame = 0;
 }
 
+void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist)
+{
+    if (!sprite)
+        return;
+
+    // Borde derecho de la zona de activación
+    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 20.0f;
+
+    // Altura original del zombie
+    float originalY = sprite->getPosition().y;
+
+    // Guardar la posición actual
+    sf::Vector2f oldPosition = sprite->getPosition();
+
+    // Nueva posición
+    sf::Vector2f newPosition(rightEdgeX, originalY);
+    sprite->setPosition(newPosition);
+
+    // Actualiza las hitboxes
+    sf::Vector2f offset = newPosition - oldPosition;
+    for (auto &hitbox : hitboxes)
+    {
+        hitbox.position += offset;
+    }
+}
+
 void Zombie::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
