@@ -28,6 +28,9 @@ public:
     
     sf::View getView(sf::RenderWindow& window, Camera& camera);
 
+    // Check all the possible collisions
+    void checkCollisions();
+
 private:
     // All refered to the GUI
     sf::Font font;

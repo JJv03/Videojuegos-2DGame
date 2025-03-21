@@ -51,6 +51,7 @@ public:
     
     float verticalSpeed;
     float horizontalSpeed;
+    
     // Whip 
     sf::Texture whipTexture;
     sf::Sprite* whipSprite;

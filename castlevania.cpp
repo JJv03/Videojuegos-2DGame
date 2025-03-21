@@ -61,7 +61,6 @@ void Castlevania::run(){
         
         window.clear();
         currentState->draw(window, camera);
-
         window.display();
 
         states.processStateChanges();

@@ -21,7 +21,7 @@ void Game::init(){
         return;
     }
 
-// Simon ----------------------------------------------------------------------------
+    // Simon ----------------------------------------------------------------
     
     // Cargar imagen y configurar textura de Simon (aplicando color key)
     sf::Image simonImage;
@@ -36,7 +36,7 @@ void Game::init(){
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 171.f});
+    simonSprite.setPosition({245.f, 161.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
@@ -58,7 +58,7 @@ void Game::init(){
     gAnimationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
 
-    // Whip
+    // Whip ----------------------------------------------------------------
     sf::Image whipImage;
     if (!whipImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
@@ -77,7 +77,7 @@ void Game::init(){
     
     player.whipSprite =  new sf::Sprite(whipSprite);
     
-    // Inicializar AnimationManager
+    // Inicializar AnimationManager ----------------------------------------------------------------
     gWhipAnimationManager = new AnimationManager(*player.whipSprite);
 
     if (!gWhipAnimationManager) {
@@ -139,6 +139,7 @@ void Game::handleInput(sf::Event event){
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime){
     player.update(deltaTime);
+    //checkCollisions();
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
@@ -200,14 +201,11 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
 }*/
 
 sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
-    // Obtener la vista actual de la cámara
     sf::View view = camera.getView(window.getSize());
-    
-    // Obtener la posición del jugador  
-    sf::Vector2f playerPosition = player.sprite->getPosition();
+    sf::Vector2f playerPosition = this->player.sprite->getPosition();
 
     // Obtener los límites del mapa
-    sf::FloatRect mapBounds = tileMap.getMapBounds();
+    sf::FloatRect mapBounds = this->tileMap.getMapBounds();
     sf::Vector2f viewSize = view.getSize();
 
     // Calcular los límites permitidos para la cámara en X
@@ -229,8 +227,58 @@ sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
     }else if(playerPosition.x > maxX) {
         camera.startVertex.x = maxX - (camera.getView(window.getSize()).getSize().x / 2.f);
     } else {
-        camera.startVertex.x = player.sprite->getPosition().x - (camera.getView(window.getSize()).getSize().x / 2.f);
+        camera.startVertex.x = player.sprite->getPosition().x -
+            (camera.getView(window.getSize()).getSize().x / 2.f);
     }
 
     return view;
+}
+
+
+// -------------------------------------------------------------------------------------
+//                                    COLLISIONS
+// -------------------------------------------------------------------------------------
+
+
+void Game::checkCollisions() {
+    sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+
+    // Check collisions with the tilemap
+    for (int row = 0; row < tileMap.m_tilesPerRow; ++row) {
+        for (int col = 0; col < tileMap.m_tilesPerColumn; ++col) {
+            if (tileMap.m_solidTiles[row][col].isVisible) {
+                sf::FloatRect tileBounds = tileMap.m_solidTiles[row][col].hitbox;
+
+                if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
+                    const float overlapX = intersection->size.x;
+                    const float overlapY = intersection->size.y;
+
+                    if (overlapX < overlapY) {      // Horizontal collision
+                        if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
+                        {
+                            player.sprite->move({-overlapX, 0.f});
+                        }
+                        else
+                        {
+                            player.sprite->move({overlapX, 0.f});
+                        }
+                    } else {    // Vertical collision
+                        // Simon's feet are collisioning with the tile
+                        if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
+                        {
+                            if (player.verticalSpeed < 0.0f) {      // If player is NOT going up
+                                player.sprite->move({0.f, -overlapY});
+                                player.isOnGround = true;      // Indicamos que Simon está en el suelo
+                            }
+                        }
+                        else    // Simon's head is collisioning with the tile
+                        {
+                            player.sprite->move({0.f, overlapY});
+                            player.verticalSpeed = 0.0f;        // Simon starts falling
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

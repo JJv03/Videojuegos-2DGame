@@ -99,6 +99,17 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
     return true;
 }
 
+void TileMap::drawHitboxes(sf::RenderWindow& window) const
+{
+    for (size_t i = 0; i < this->m_solidTiles.size(); ++i) {
+        for (size_t j = 0; j < this->m_solidTiles[i].size(); ++j) {
+            sf::RectangleShape rect = FloatRectToRectShape(this->m_solidTiles[i][j].hitbox);
+            rect.setPosition({static_cast<float>(j) * this->m_tileSize, static_cast<float>(i) * this->m_tileSize});
+            window.draw(rect);
+        }
+    }
+}
+
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     // apply the transform
@@ -166,6 +177,8 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
             tile.isVisible = false;
         }
     }
+
+    drawHitboxes(window);
 }
 
 
@@ -177,6 +190,23 @@ sf::FloatRect TileMap::getMapBounds() const{
 
 
 // ------------------------ Auxiliar functions ------------------------
+
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
+{
+    if (floatRect.size.x == 0.0f || floatRect.size.y == 0.0f)
+    {
+        return sf::RectangleShape();
+    }
+
+    sf::RectangleShape rectShape(floatRect.size);
+    rectShape.setPosition(floatRect.position);
+
+    rectShape.setFillColor(sf::Color::Transparent);
+    rectShape.setOutlineColor(sf::Color::Red);
+    rectShape.setOutlineThickness(2.f);
+
+    return rectShape;
+}
 
 void TileMap::processFile(const std::string& archivo, std::vector<int>& solidTileNumberList) {
     std::ifstream file(archivo);

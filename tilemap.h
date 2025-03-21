@@ -67,9 +67,14 @@ public:
     // Function that return the limit coordinates of the map
     sf::FloatRect getMapBounds() const;
 
+    // Function that draws the hitboxes of the solid tiles
+    void drawHitboxes(sf::RenderWindow& window) const;
+
     // Function that processes the tilemap file and stores its width and height and returns the tilemap's solidTiles
     // as an int vector parameter, and its specialTiles as an int vector parameter (each group of 4 representig a specialTile)
     void processFile(const std::string& archivo, std::vector<int>& listaNumeros);
 };
 
+// Function that converts a FloatRect to a RectangleShape
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect);
 
