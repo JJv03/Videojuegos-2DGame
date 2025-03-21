@@ -46,11 +46,21 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
         }
     }
 
-    // El judador entra en la zona del spawner
-    if (playerInZone && !playerWasInZone && allZombiesInactive)
-    {
-        playerWasInZone = true;
+    // Comprueba que el spawner este activo
+    spawnerActive = false;
 
+    for (int i = 0; i < zombies.size(); i++)
+    {
+        if (zombiesToSpawn[i])
+        {
+            spawnerActive = true;
+            break;
+        }
+    }
+
+    // Activación del proceso de spawn de la horda
+    if (playerInZone && allZombiesInactive && !spawnerActive)
+    {
         int zombiesToSpawnCount = zombieCountDist(rng);
 
         std::fill(zombiesToSpawn.begin(), zombiesToSpawn.end(), false);
@@ -63,12 +73,6 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
             zombieSpawnTimers[i] = spawnTime;
             spawnTime += 0.3f;
         }
-    }
-
-    // El judador sale de la zona del spawner
-    if (!playerInZone && playerWasInZone)
-    {
-        playerWasInZone = false;
     }
 
     // Spawn de los zombies de la orda según el timer y el tamaño de la horda

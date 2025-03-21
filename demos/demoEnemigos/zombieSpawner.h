@@ -13,7 +13,7 @@ private:
     std::vector<Zombie> zombies;
 
     bool allZombiesInactive{true};
-    bool playerWasInZone{false};
+    bool spawnerActive{false};
 
     std::mt19937 rng;
     std::uniform_int_distribution<int> zombieCountDist;
