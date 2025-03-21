@@ -8,42 +8,21 @@ Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     originalPosition = sprite->getPosition();
 }
 
-void Enemy::updateEnemyRespawn(float deltaTime, const sf::FloatRect &gPlayerActivationZone, const sf::FloatRect &gPlayerDeactivationZone)
+void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
 {
-    bool enemyInsideActivationZone = false;
-    bool enemyInsideDeactivationZone = false;
+    window.draw(*sprite);
 
-    for (const auto &hitbox : hitboxes)
+    if (debugDraw)
     {
-        if (gPlayerActivationZone.findIntersection(hitbox).has_value())
+        for (const auto &hitbox : hitboxes)
         {
-            enemyInsideActivationZone = true;
+            sf::RectangleShape hitboxShape({hitbox.size.x, hitbox.size.y});
+            hitboxShape.setPosition({hitbox.position.x, hitbox.position.y});
+            hitboxShape.setFillColor(sf::Color::Transparent);
+            hitboxShape.setOutlineColor(sf::Color::Red);
+            hitboxShape.setOutlineThickness(1.0f);
+            window.draw(hitboxShape);
         }
-        if (gPlayerDeactivationZone.findIntersection(hitbox).has_value())
-        {
-            enemyInsideDeactivationZone = true;
-        }
-    }
-
-    // Si el jugador está fuera de la zona de activación, se permite que el enemigo se reactive en el futuro
-    if (!enemyInsideActivationZone)
-    {
-        needsPlayerToLeaveZone = false;
-    }
-
-    // Solo activamos si el jugador está en la zona, el enemigo no está activo y el jugador se alejó previamente
-    if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
-    {
-        std::cout << "activo" << std::endl;
-        isActive = true;
-    }
-
-    // Se desactiva si el enemigo está activo y salió de la zona de desactivación
-    if (isActive && !enemyInsideDeactivationZone)
-    {
-        std::cout << "desactivo" << std::endl;
-        isActive = false;
-        resetPosition();
     }
 }
 
@@ -57,71 +36,6 @@ void Enemy::applyGravity(float deltaTime)
         for (auto &hitbox : hitboxes)
         {
             hitbox.position.y += verticalMovement.y;
-        }
-    }
-}
-
-// SEGURAMENTE HAYA QUE CAMBIAR COSAS Y DEJAR LO ÚNICO QUE ES COMÚN PARA TODOS
-void Enemy::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
-{
-    if (!isActive || !sprite)
-        return;
-
-    isOnGround = false;
-
-    for (auto &hitbox : hitboxes)
-    {
-        for (const auto &bounds : boundsList)
-        {
-            if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(bounds))
-            {
-                float overlapX = intersection->size.x;
-                float overlapY = intersection->size.y;
-
-                if (&bounds == &boundsList[0]) // Suelo
-                {
-                    sprite->move({0.f, -overlapY});
-                    for (auto &h : hitboxes)
-                        h.position.y -= overlapY;
-                    isOnGround = true;
-                }
-                else if (overlapX < overlapY) // Colisión horizontal
-                {
-                    if (hitbox.position.x < bounds.position.x + bounds.size.x / 2.f)
-                    {
-                        // Colisión desde la izquierda
-                        sprite->move({-overlapX, 0.f});
-                        for (auto &h : hitboxes)
-                            h.position.x -= overlapX;
-                    }
-                    else
-                    {
-                        // Colisión desde la derecha
-                        sprite->move({overlapX, 0.f});
-                        for (auto &h : hitboxes)
-                            h.position.x += overlapX;
-                    }
-                    speed.x = -speed.x;
-                }
-                else // Colisión vertical
-                {
-                    if (hitbox.position.y < bounds.position.y + bounds.size.y / 2.f)
-                    {
-                        // Colisión desde arriba
-                        sprite->move({0.f, -overlapY});
-                        for (auto &h : hitboxes)
-                            h.position.y -= overlapY;
-                        isOnGround = true;
-                    }
-                    else
-                    {
-                        // Colisión desde abajo
-                        sprite->move({0.f, overlapY});
-                        for (auto &h : hitboxes)
-                            h.position.y += overlapY;
-                    }
-                }
-            }
         }
     }
 }

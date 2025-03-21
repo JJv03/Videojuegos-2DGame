@@ -116,56 +116,25 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 }
 
-void ZombieSpawner::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
+void ZombieSpawner::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                                    const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking)
 {
     for (auto &zombie : zombies)
     {
         if (zombie.isActive)
         {
-            zombie.checkCollisions(boundsList);
-        }
-    }
-}
-
-void ZombieSpawner::checkVampireKillerCollision(const sf::FloatRect &weaponBounds)
-{
-    for (auto &zombie : zombies)
-    {
-        if (zombie.isActive)
-        {
-            for (const auto &hitbox : zombie.hitboxes)
-            {
-                if (weaponBounds.findIntersection(hitbox).has_value())
-                {
-                    zombie.isActive = false;
-                    zombie.resetPosition();
-                    break;
-                }
-            }
+            zombie.checkCollisions(simonBounds, weaponBounds, boundsList, playerIsAtacking);
         }
     }
 }
 
 void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)
 {
-    for (const auto &zombie : zombies)
+    for (auto &zombie : zombies)
     {
         if (zombie.sprite && zombie.isActive)
         {
-            window.draw(*zombie.sprite);
-
-            if (debugDraw)
-            {
-                for (const auto &hitbox : zombie.hitboxes)
-                {
-                    sf::RectangleShape hitboxShape({hitbox.size.x, hitbox.size.y});
-                    hitboxShape.setPosition({hitbox.position.x, hitbox.position.y});
-                    hitboxShape.setFillColor(sf::Color::Transparent);
-                    hitboxShape.setOutlineColor(sf::Color::Red);
-                    hitboxShape.setOutlineThickness(1.0f);
-                    window.draw(hitboxShape);
-                }
-            }
+            zombie.draw(window, debugDraw);
         }
     }
 
