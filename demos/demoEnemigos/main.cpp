@@ -150,22 +150,10 @@ void CheckCollisions(sf::FloatRect simonBounds, sf::FloatRect objectBounds, cons
     }
 }
 
-void CheckVampireKillerCollision(const bool ataque)
-{
-    if (ataque)
-    {
-        sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
-
-        for (auto &zombieSpawner : gZombiesSpawner)
-        {
-            zombieSpawner.checkVampireKillerCollision(vkBounds);
-        }
-    }
-}
-
 void CheckAllCollisions(const bool ataque, const bool debug = false)
 {
     sf::FloatRect simonBounds = gSimonSprite->getGlobalBounds();
+    sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
     sf::FloatRect floorBounds = gFloor.getGlobalBounds();
     sf::FloatRect wallUpBounds = gWallUp.getGlobalBounds();
     sf::FloatRect wallDownBounds = gWallDown.getGlobalBounds();
@@ -175,10 +163,9 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     CheckCollisions(simonBounds, floorBounds, debug);
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
-    CheckVampireKillerCollision(ataque);
     for (auto &zombieSpawner : gZombiesSpawner)
     {
-        zombieSpawner.checkCollisions(boundsList);
+        zombieSpawner.checkCollisions(simonBounds, vkBounds, boundsList, ataque);
     }
 }
 

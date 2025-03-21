@@ -23,8 +23,10 @@ public:
     static Zombie createZombie(const sf::Vector2f &position);
 
     void update(float deltaTime) override;
-    void checkCollisions(const std::vector<sf::FloatRect> &boundsList) override;
     void resetPosition() override;
+
+    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking);
 
     void updateAnimation(float deltaTime);
 };

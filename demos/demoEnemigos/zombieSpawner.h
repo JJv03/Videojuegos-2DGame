@@ -8,9 +8,9 @@
 class ZombieSpawner
 {
 private:
-    std::vector<Zombie> zombies;
-    sf::FloatRect spawnZone;
     sf::Vector2f spawnPosition;
+    sf::FloatRect spawnZone;
+    std::vector<Zombie> zombies;
 
     bool allZombiesInactive{true};
     bool playerWasInZone{false};
@@ -28,9 +28,8 @@ public:
 
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
 
-    void checkCollisions(const std::vector<sf::FloatRect> &boundsList);
-
-    void checkVampireKillerCollision(const sf::FloatRect &weaponBounds);
+    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                         const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking);
 
     void draw(sf::RenderWindow &window, bool debugDraw = false);
 };

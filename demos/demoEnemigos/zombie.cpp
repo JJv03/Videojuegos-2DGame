@@ -4,7 +4,7 @@
 Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
     : Enemy(_sprite, _hitboxes)
 {
-    setSpeed(ZOMBIE_SPEED);
+    speed = ZOMBIE_SPEED;
 }
 
 Zombie Zombie::createZombie(const sf::Vector2f &position)
@@ -48,11 +48,13 @@ Zombie Zombie::createZombie(const sf::Vector2f &position)
 
 void Zombie::update(float deltaTime)
 {
+    // EL RESPAWN SE DEBE GESTIONAR AQUI (SOLO EN LOS ZOMBIES SE TIENE UN SPAWNER)
+
     if (isActive)
     {
         applyGravity(deltaTime);
 
-        sf::Vector2f horizontalMovement = {getSpeed().x * deltaTime, 0.f};
+        sf::Vector2f horizontalMovement = {speed.x * deltaTime, 0.f};
         sprite->move(horizontalMovement);
 
         for (auto &hitbox : hitboxes)
@@ -64,16 +66,91 @@ void Zombie::update(float deltaTime)
     }
 }
 
-void Zombie::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
+void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                             const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking)
 {
-    Enemy::checkCollisions(boundsList);
+    if (!isActive || !sprite)
+        return;
+
+    isOnGround = false;
+
+    for (auto &hitbox : hitboxes)
+    {
+        // COLISIONES CON EL ENTORNO
+        for (const auto &bounds : boundsList)
+        {
+            if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(bounds))
+            {
+                float overlapX = intersection->size.x;
+                float overlapY = intersection->size.y;
+
+                if (&bounds == &boundsList[0]) // Suelo
+                {
+                    sprite->move({0.f, -overlapY});
+                    for (auto &h : hitboxes)
+                        h.position.y -= overlapY;
+                    isOnGround = true;
+                }
+                else if (overlapX < overlapY) // Colisión horizontal
+                {
+                    if (hitbox.position.x < bounds.position.x + bounds.size.x / 2.f)
+                    {
+                        // Colisión desde la izquierda
+                        sprite->move({-overlapX, 0.f});
+                        for (auto &h : hitboxes)
+                            h.position.x -= overlapX;
+                    }
+                    else
+                    {
+                        // Colisión desde la derecha
+                        sprite->move({overlapX, 0.f});
+                        for (auto &h : hitboxes)
+                            h.position.x += overlapX;
+                    }
+                    speed.x = -speed.x;
+                }
+                else // Colisión vertical
+                {
+                    if (hitbox.position.y < bounds.position.y + bounds.size.y / 2.f)
+                    {
+                        // Colisión desde arriba
+                        sprite->move({0.f, -overlapY});
+                        for (auto &h : hitboxes)
+                            h.position.y -= overlapY;
+                        isOnGround = true;
+                    }
+                    else
+                    {
+                        // Colisión desde abajo
+                        sprite->move({0.f, overlapY});
+                        for (auto &h : hitboxes)
+                            h.position.y += overlapY;
+                    }
+                }
+            }
+        }
+
+        // COLISIONES CON VAPIRE KILLER
+        if (playerIsAtacking)
+        {
+            if (weaponBounds.findIntersection(hitbox).has_value())
+            {
+                isActive = false;
+                resetPosition();
+                break;
+            }
+        }
+    }
+
+    // COLISIONES POR CONTACTO CON EL JUGADOR
+    Enemy::checkHitByEnemy(simonBounds);
 }
 
 void Zombie::resetPosition()
 {
     Enemy::resetPosition();
 
-    setSpeed(ZOMBIE_SPEED);
+    speed = ZOMBIE_SPEED;
 
     animTimer = 0.0f;
     currentFrame = 0;
@@ -99,7 +176,7 @@ void Zombie::updateAnimation(float deltaTime)
     }
 
     // Voltear el sprite según la dirección del movimiento
-    sf::Vector2f currentSpeed = getSpeed();
+    sf::Vector2f currentSpeed = speed;
 
     if (currentSpeed.x < 0)
     {
