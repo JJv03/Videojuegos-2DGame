@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include "camera.h"
-#include "zombie.h"
+#include "zombieSpawner.h"
 
 // Variables globales de configuración
 bool gEnMovimiento{false};
@@ -40,7 +40,7 @@ float verticalSpeed{0.0f}; // velocidad vertical actual
 sf::RectangleShape gVampireKiller;
 
 // Vector de zombies
-std::vector<Zombie> gZombies;
+std::vector<ZombieSpawner> gZombiesSpawner;
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -156,20 +156,9 @@ void CheckVampireKillerCollision(const bool ataque)
     {
         sf::FloatRect vkBounds = gVampireKiller.getGlobalBounds();
 
-        for (auto &enemy : gZombies)
+        for (auto &zombieSpawner : gZombiesSpawner)
         {
-            if (enemy.sprite && enemy.isActive)
-            {
-                for (const auto &hitbox : enemy.hitboxes)
-                {
-                    if (const std::optional<sf::FloatRect> intersection = vkBounds.findIntersection(hitbox))
-                    {
-                        enemy.isActive = false;
-                        enemy.resetPosition();
-                        break;
-                    }
-                }
-            }
+            zombieSpawner.checkVampireKillerCollision(vkBounds);
         }
     }
 }
@@ -181,17 +170,15 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     sf::FloatRect wallUpBounds = gWallUp.getGlobalBounds();
     sf::FloatRect wallDownBounds = gWallDown.getGlobalBounds();
 
+    std::vector<sf::FloatRect> boundsList = {floorBounds, wallUpBounds, wallDownBounds};
+
     CheckCollisions(simonBounds, floorBounds, debug);
     CheckCollisions(simonBounds, wallUpBounds, debug);
     CheckCollisions(simonBounds, wallDownBounds, debug);
     CheckVampireKillerCollision(ataque);
-    for (auto &enemy : gZombies)
+    for (auto &zombieSpawner : gZombiesSpawner)
     {
-        if (enemy.isActive)
-        {
-            enemy.checkCollisions({floorBounds, wallUpBounds, wallDownBounds});
-            enemy.checkHitByEnemy(simonBounds);
-        }
+        zombieSpawner.checkCollisions(boundsList);
     }
 }
 
@@ -274,9 +261,7 @@ bool init()
 
     const sf::Vector2f ENEMY_POSITION = {345.f, 171.f};
 
-    gZombies.push_back(Zombie::createZombie(ENEMY_POSITION));
-
-    gZombies.push_back(Zombie::createZombie({ENEMY_POSITION.x + 100.f, ENEMY_POSITION.y}));
+    gZombiesSpawner.push_back(ZombieSpawner(ENEMY_POSITION, {100.f, 100.f}));
 
     return true;
 }
@@ -313,9 +298,9 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
         gSimonSprite->move({1.5f * deltaTime * gMovementSpeed, 0.f});
     }
 
-    for (auto &enemy : gZombies)
+    for (auto &zombieSpawner : gZombiesSpawner)
     {
-        enemy.update(deltaTime);
+        zombieSpawner.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
     }
 
     updatePlayerZones();
@@ -350,16 +335,9 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
 
     window.draw(FloatRectToRectShape(gPlayerDeactivationZone));
 
-    for (const auto &enemy : gZombies)
+    for (auto &zombieSpawner : gZombiesSpawner)
     {
-        if (enemy.sprite && enemy.isActive)
-        {
-            window.draw(*enemy.sprite);
-            for (const auto &hitbox : enemy.hitboxes)
-            {
-                window.draw(FloatRectToRectShape(hitbox));
-            }
-        }
+        zombieSpawner.draw(window, true);
     }
 
     window.draw(text);
@@ -470,10 +448,6 @@ int main()
             }
         }
 
-        for (auto &enemy : gZombies)
-        {
-            enemy.updateEnemyRespawn(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
-        }
         if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
         {
             std::cerr << "Error en el update" << std::endl;

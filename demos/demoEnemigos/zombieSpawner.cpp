@@ -1,0 +1,181 @@
+#include "ZombieSpawner.h"
+#include <iostream>
+#include <ctime>
+
+ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize)
+    : spawnPosition(position), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
+      rng(static_cast<unsigned int>(std::time(nullptr))), zombieCountDist(1, 3)
+{
+    zombiesToSpawn.resize(3, false);
+    zombieSpawnTimers.resize(3, 0.0f);
+
+    init();
+}
+
+void ZombieSpawner::init()
+{
+    try
+    {
+        zombies.clear();
+
+        for (int i = 0; i < 3; i++)
+        {
+            zombies.push_back(Zombie::createZombie(spawnPosition));
+            zombies.back().isActive = false;
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error initializing zombies in spawner: " << e.what() << std::endl;
+    }
+}
+
+void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
+{
+    bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
+
+    // Comprueba que todos los zombis esten inactivos
+    allZombiesInactive = true;
+
+    for (const auto &zombie : zombies)
+    {
+        if (zombie.isActive)
+        {
+            allZombiesInactive = false;
+            break;
+        }
+    }
+
+    // El judador entra en la zona del spawner
+    if (playerInZone && !playerWasInZone && allZombiesInactive)
+    {
+        playerWasInZone = true;
+
+        int zombiesToSpawnCount = zombieCountDist(rng);
+
+        std::fill(zombiesToSpawn.begin(), zombiesToSpawn.end(), false);
+
+        float spawnTime = 1.5f;
+
+        for (int i = 0; i < zombiesToSpawnCount; i++)
+        {
+            zombiesToSpawn[i] = true;
+            zombieSpawnTimers[i] = spawnTime;
+            spawnTime += 0.3f;
+        }
+    }
+
+    // El judador sale de la zona del spawner
+    if (!playerInZone && playerWasInZone)
+    {
+        playerWasInZone = false;
+    }
+
+    // Spawn de los zombies de la orda según el timer y el tamaño de la horda
+    for (size_t i = 0; i < zombies.size(); i++)
+    {
+        if (zombiesToSpawn[i])
+        {
+            zombieSpawnTimers[i] -= deltaTime;
+
+            if (zombieSpawnTimers[i] <= 0.0f)
+            {
+                zombies[i].isActive = true;
+                zombies[i].resetPosition();
+                zombiesToSpawn[i] = false;
+            }
+        }
+    }
+
+    // Actualizar los zombies activos
+    for (auto &zombie : zombies)
+    {
+        if (zombie.isActive)
+        {
+            bool zombieInsideDeactivationZone = false;
+
+            for (const auto &hitbox : zombie.hitboxes)
+            {
+                if (playerDeactivationZone.findIntersection(hitbox).has_value())
+                {
+                    zombieInsideDeactivationZone = true;
+                    break;
+                }
+            }
+
+            if (!zombieInsideDeactivationZone)
+            {
+                zombie.isActive = false;
+                zombie.resetPosition();
+            }
+            else
+            {
+                zombie.update(deltaTime);
+            }
+        }
+    }
+}
+
+void ZombieSpawner::checkCollisions(const std::vector<sf::FloatRect> &boundsList)
+{
+    for (auto &zombie : zombies)
+    {
+        if (zombie.isActive)
+        {
+            zombie.checkCollisions(boundsList);
+        }
+    }
+}
+
+void ZombieSpawner::checkVampireKillerCollision(const sf::FloatRect &weaponBounds)
+{
+    for (auto &zombie : zombies)
+    {
+        if (zombie.isActive)
+        {
+            for (const auto &hitbox : zombie.hitboxes)
+            {
+                if (weaponBounds.findIntersection(hitbox).has_value())
+                {
+                    zombie.isActive = false;
+                    zombie.resetPosition();
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)
+{
+    for (const auto &zombie : zombies)
+    {
+        if (zombie.sprite && zombie.isActive)
+        {
+            window.draw(*zombie.sprite);
+
+            if (debugDraw)
+            {
+                for (const auto &hitbox : zombie.hitboxes)
+                {
+                    sf::RectangleShape hitboxShape({hitbox.size.x, hitbox.size.y});
+                    hitboxShape.setPosition({hitbox.position.x, hitbox.position.y});
+                    hitboxShape.setFillColor(sf::Color::Transparent);
+                    hitboxShape.setOutlineColor(sf::Color::Red);
+                    hitboxShape.setOutlineThickness(1.0f);
+                    window.draw(hitboxShape);
+                }
+            }
+        }
+    }
+
+    if (debugDraw)
+    {
+        sf::RectangleShape zoneShape({spawnZone.size.x, spawnZone.size.y});
+        zoneShape.setPosition({spawnZone.position.x, spawnZone.position.y});
+        zoneShape.setFillColor(sf::Color(255, 255, 0, 50));
+        zoneShape.setOutlineColor(sf::Color::Yellow);
+        zoneShape.setOutlineThickness(1.0f);
+        window.draw(zoneShape);
+    }
+}
