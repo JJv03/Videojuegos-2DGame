@@ -57,9 +57,9 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
 
     int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
-    for (unsigned int i = 0; i < m_tilesPerRow; ++i)
+    for (int i = 0; i < m_tilesPerRow; ++i)
     {
-        for (unsigned int j = 0; j < m_tilesPerColumn; ++j)
+        for (int j = 0; j < m_tilesPerColumn; ++j)
         {
             int tileIndex = i + j * m_tilesPerRow;
             int tileNumber = tilemap[tileIndex];
