@@ -1,5 +1,6 @@
 #include "bat.h"
 #include <iostream>
+#include <cmath>
 
 Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize)
     : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize)
@@ -109,28 +110,25 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
 
         if (!zombieInsideDeactivationZone)
         {
+
             isActive = false;
             resetPosition();
         }
         else
         {
-            applyGravity(deltaTime);
-
-            if (speed.x != 0)
+            float horizontalSpeed = speed.x * deltaTime;
+            sprite->move({horizontalSpeed, 0.f});
+            for (auto &hitbox : hitboxes)
             {
-                sprite->move({speed.x * deltaTime, 0.f});
-                for (auto &hitbox : hitboxes)
-                {
-                    hitbox.position.x += speed.x * deltaTime;
-                }
+                hitbox.position.x += horizontalSpeed;
             }
-            if (speed.y != 0)
+
+            spawnTime += deltaTime;
+            float verticalOscillation = cos(spawnTime * OSCILLATION_SPEED) * OSCILLATION_AMPLITUDE;
+            sprite->move({0.f, verticalOscillation});
+            for (auto &hitbox : hitboxes)
             {
-                sprite->move({0.f, -speed.y * deltaTime});
-                for (auto &hitbox : hitboxes)
-                {
-                    hitbox.position.y -= speed.y * deltaTime;
-                }
+                hitbox.position.y += verticalOscillation;
             }
 
             updateAnimation(deltaTime);
@@ -144,63 +142,8 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     if (!isActive || !sprite)
         return;
 
-    isOnGround = false;
-
     for (auto &hitbox : hitboxes)
     {
-        // COLISIONES CON EL ENTORNO
-        for (const auto &bounds : boundsList)
-        {
-            if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(bounds))
-            {
-                float overlapX = intersection->size.x;
-                float overlapY = intersection->size.y;
-
-                if (&bounds == &boundsList[0]) // Suelo
-                {
-                    sprite->move({0.f, -overlapY});
-                    for (auto &h : hitboxes)
-                        h.position.y -= overlapY;
-                    isOnGround = true;
-                }
-                else if (overlapX < overlapY) // Colisión horizontal
-                {
-                    if (hitbox.position.x < bounds.position.x + bounds.size.x / 2.f)
-                    {
-                        // Colisión desde la izquierda
-                        sprite->move({-overlapX, 0.f});
-                        for (auto &h : hitboxes)
-                            h.position.x -= overlapX;
-                    }
-                    else
-                    {
-                        // Colisión desde la derecha
-                        sprite->move({overlapX, 0.f});
-                        for (auto &h : hitboxes)
-                            h.position.x += overlapX;
-                    }
-                    speed.x = -speed.x;
-                }
-                else // Colisión vertical
-                {
-                    if (hitbox.position.y < bounds.position.y + bounds.size.y / 2.f)
-                    {
-                        // Colisión desde arriba
-                        sprite->move({0.f, -overlapY});
-                        for (auto &h : hitboxes)
-                            h.position.y -= overlapY;
-                        isOnGround = true;
-                    }
-                    else
-                    {
-                        // Colisión desde abajo
-                        sprite->move({0.f, overlapY});
-                        for (auto &h : hitboxes)
-                            h.position.y += overlapY;
-                    }
-                }
-            }
-        }
 
         // COLISIONES CON VAPIRE KILLER
         if (playerIsAtacking)
@@ -223,7 +166,11 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     }
 
     // COLISIONES POR CONTACTO CON EL JUGADOR
-    Enemy::checkHitByEnemy(simonBounds);
+    if (Enemy::checkHitByEnemy(simonBounds))
+    {
+        isActive = false;
+        resetPosition();
+    }
 }
 
 void Bat::resetPosition()
@@ -233,20 +180,23 @@ void Bat::resetPosition()
     speed = BAT_SPEED;
     life = BAT_LIFE;
 
+    spawnTime = 0.0f;
+
     animTimer = 0.0f;
     currentFrame = 0;
 }
 
 void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone)
 {
+
     if (!sprite)
         return;
 
     // Borde derecho de la zona de activación
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + 20.0f;
+    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x;
 
-    // Altura original del zombie
-    float originalY = sprite->getPosition().y;
+    // Misma altura que el player
+    float originalY = (playerActivationZone.position.y + playerActivationZone.size.y / 2.0f) - 5.0f;
 
     // Guardar la posición actual
     sf::Vector2f oldPosition = sprite->getPosition();
