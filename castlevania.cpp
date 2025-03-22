@@ -36,7 +36,7 @@ void Castlevania::run(){
 
     sf::Clock deltaClock;
 
-    // BUCLE PRINCIPAL DEL JUEGO
+    // MAIN GAME LOOP
 
     while (window.isOpen())
     {

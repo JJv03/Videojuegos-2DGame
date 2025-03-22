@@ -36,7 +36,7 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
     return rectShape;
 }
 
-void drawHitboxes(const std::vector<std::vector<TileMap::SolidTileAttributes>>& solidTiles, sf::RenderWindow& window, float tileSize)
+void drawHitboxes(const std::vector<std::vector<TileMap::SolidTile>>& solidTiles, sf::RenderWindow& window, float tileSize)
 {
     for (size_t i = 0; i < solidTiles.size(); ++i) {
         for (size_t j = 0; j < solidTiles[i].size(); ++j) {

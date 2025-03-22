@@ -7,7 +7,7 @@
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
-    struct SolidTileAttributes {
+    struct SolidTile {
         sf::Vector2f position;          // Position of the tile in global coord.
         bool hasCollision = false;      // If <true>, the tile has hitbox.
         sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
@@ -48,7 +48,7 @@ private:
 
 public:
     // Matrix with the properties of each solid tile.
-    std::vector<std::vector<SolidTileAttributes>> m_solidTiles;
+    std::vector<std::vector<SolidTile>> m_solidTiles;
 
     // Vector with the all the special tiles in the tilemap
     std::vector<SpecialTile> m_specialTiles;
@@ -65,7 +65,7 @@ public:
     sf::FloatRect getHitboxForSolidTile(const int id) const;
 
     // Function to get the hitbox for a special tile based on its ID
-    sf::FloatRect getHitboxForSpecialTile(const int id) const;
+    sf::FloatRect getHitboxForBreakableTile(const int id) const;
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow& window, const Camera& camera);

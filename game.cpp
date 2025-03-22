@@ -12,8 +12,8 @@ std::vector<sf::Sprite> gSprites;
 // Constructor, destructor
 Game::Game(){
     player = Player();
-    tileMap = TileMap();
-    // tilemapManager = TilemapManager();
+    //tileMap = TileMap();
+    tilemaps = TilemapManager();
 }
 
 // Initializes a new game from the beggining
@@ -21,13 +21,13 @@ void Game::init(){
     currentLevel = 1;
     currentStage = 1;
 
-    //tilemapManager.loadLevel(1);
+    tilemaps.loadLevel(1);
 
     // Temporary
-    if (!tileMap.load("./assets/tilesets/tileset_1.png", "./assets/tilemaps/level1/tilemap_1_1.txt")){
-        std::cerr << "Error al cargar el tilemap." << std::endl;
-        return;
-    }
+    //if (!tileMap.load(1, 1)){
+    //    std::cerr << "Error al cargar el tilemap." << std::endl;
+    //    return;
+    //}
 
     // Simon ----------------------------------------------------------------
     
@@ -44,7 +44,8 @@ void Game::init(){
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 160.f});
+    simonSprite.setPosition(tilemaps[currentStage].initialPosition);
+
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
@@ -137,6 +138,8 @@ void Game::init(){
     texts.push_back(stageText);
     texts.push_back(playerText);
     texts.push_back(enemyText);
+    
+    startStage(1);
 }
 
 // Effects changes depending on the input of the player
@@ -152,34 +155,48 @@ void Game::update(float deltaTime){
 
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow& window, Camera& camera){
-    //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
-    tileMap.drawScene(window, camera);
 
-    // DEBUG: Draw player hitbox
-    window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
-
-    // GUI
-    sf::View gameView = window.getView();
-
-    // Configurar una nueva vista fija para la GUI
-    sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
-    window.setView(guiView); // Aplicar la vista fija para la GUI
-
-    // Dibujar el rectángulo negro en la parte superior
-    sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
-    guiBackground.setFillColor(sf::Color::Black);
-    guiBackground.setPosition(sf::Vector2f(0, 0));
-    window.draw(guiBackground);
-
-    // Dibujar los textos de la GUI
-    for (const auto& text : texts) {
-        window.draw(text);
+    if(isLoading){
+        isLoading = false;
+        loadingClock.restart();
     }
 
-    // Restaurar la vista original del juego
-    window.setView(gameView);
+    if (loadingClock.getElapsedTime().asSeconds() < 0.5f) {
+        sf::RectangleShape blackScreen(camera.getView(window.getSize()).getSize());
+        blackScreen.setFillColor(sf::Color::Black);
+        window.draw(blackScreen);
 
-    player.draw(window);
+    } else {
+        //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
+        tilemaps[currentStage].drawScene(window, camera);
+
+        // DEBUG: Draw player hitbox
+        window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
+
+        // GUI
+        sf::View gameView = window.getView();
+
+        // Configurar una nueva vista fija para la GUI
+        sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
+        window.setView(guiView); // Aplicar la vista fija para la GUI
+
+        // Dibujar el rectángulo negro en la parte superior
+        sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
+        guiBackground.setFillColor(sf::Color::Black);
+        guiBackground.setPosition(sf::Vector2f(0, 0));
+        window.draw(guiBackground);
+
+        // Dibujar los textos de la GUI
+        for (const auto& text : texts) {
+            window.draw(text);
+        }
+
+        // Restaurar la vista original del juego
+        window.setView(gameView);
+
+        player.draw(window);
+    }
+
 }
 
 /*void Game::draw(sf::RenderWindow& window, Camera& camera) {
@@ -216,7 +233,7 @@ sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
     sf::Vector2f playerPosition = this->player.sprite->getPosition();
 
     // Obtener los límites del mapa
-    sf::FloatRect mapBounds = this->tileMap.getMapBounds();
+    sf::FloatRect mapBounds = this->tilemaps[currentStage].getMapBounds();
     sf::Vector2f viewSize = view.getSize();
 
     // Calcular los límites permitidos para la cámara en X
@@ -262,7 +279,7 @@ void Game::checkCollisions() {
 void Game::checkPlayerMapBoundCollisions() {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
-    sf::FloatRect mapBounds = tileMap.getMapBounds();
+    sf::FloatRect mapBounds = tilemaps[currentStage].getMapBounds();
 
     float halfPlayerWidth = playerBounds.size.x / 2;
     float halfPlayerHeight = playerBounds.size.y / 2;
@@ -273,22 +290,25 @@ void Game::checkPlayerMapBoundCollisions() {
     if (playerBounds.position.x + playerBounds.size.x > mapBounds.position.x + mapBounds.size.x) {
         player.sprite->setPosition({mapBounds.position.x + mapBounds.size.x - halfPlayerWidth, player.sprite->getPosition().y});
     }
+    /*
     if (playerBounds.position.y < mapBounds.position.y) {
         player.sprite->setPosition({player.sprite->getPosition().x, mapBounds.position.y + halfPlayerHeight});
     }
     if (playerBounds.position.y + playerBounds.size.y > mapBounds.position.y + mapBounds.size.y) {
         player.sprite->setPosition({player.sprite->getPosition().x, mapBounds.position.y + mapBounds.size.y - halfPlayerHeight});
     }
+    */
 }
 
 
 void Game::checkPlayerTileCollisions() {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
-    for (int col = 0; col < tileMap.m_tilesPerRow; ++col) {
-        for (int row = 0; row < tileMap.m_tilesPerColumn; ++row) {
-            if (tileMap.m_solidTiles[row][col].isVisible) {
-                sf::FloatRect tileBounds = tileMap.m_solidTiles[row][col].hitbox;
+    // Solid tiles
+    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col) {
+        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row) {
+            if (tilemaps[currentStage].m_solidTiles[row][col].isVisible) {
+                sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitbox;
                 
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
                     const float overlapX = intersection->size.x;
@@ -321,4 +341,64 @@ void Game::checkPlayerTileCollisions() {
             }
         }
     }
+
+
+    // Door tiles
+    // i+1 = stage number
+    for(int i = 0; i < tilemaps[currentStage].m_doorTiles.size(); i++){
+        sf::FloatRect doorBounds = tilemaps[currentStage].m_doorTiles[i].hitbox;
+                
+        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds)) {
+
+            if(tilemaps[currentStage].m_doorTiles[i].type == TileMap::DoorTile::Type::DOOR){
+                // Quitar puerta (ya no está disponible)
+            }
+
+            int doorId = tilemaps[currentStage].m_doorTiles[i].id;
+
+            if(currentStage == tilemaps.doors[doorId].prev_stage){
+                std::cout << "NEXT STAGE" << std::endl;
+                isLoading = true;
+                currentStage = tilemaps.doors[doorId].next_stage;
+                startStage(currentStage);
+
+            } else if (currentStage == tilemaps.doors[doorId].next_stage){
+                std::cout << "PREVIOUS STAGE" << std::endl;
+                isLoading = true;
+                currentStage = tilemaps.doors[doorId].prev_stage;
+                startStage(currentStage);
+
+            } else if (100 == tilemaps.doors[doorId].next_stage){
+                std::cout << "NEXT LEVEL" << std::endl;
+                isLoading = true;
+                currentLevel += 1;
+                tilemaps.loadLevel(currentLevel);
+            } else {
+                std::cout << "ERROR: Stage doesn't correspond to any door stages" << std::endl;
+            }
+        }
+    }
 }
+ 
+
+int Game::startStage(int stage){
+    if(stage > tilemaps.tilemaps.size()){
+        std::cerr << "ERROR: Level " << currentLevel << ", stage " << stage << " doesn't exist";
+        return -1;
+    }
+
+    currentStage = stage;
+    player.sprite->setPosition(tilemaps[currentStage].initialPosition);
+
+    return stage;
+}
+
+int Game::goToStage(int fromDoor){
+    if (tilemaps.doors.find(fromDoor) == tilemaps.doors.end()){
+        std::cerr << "ERROR: Level " << currentLevel << ", door " << fromDoor << " doesn't exist";
+        return -1;
+    }
+
+    return fromDoor;
+}
+

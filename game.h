@@ -7,11 +7,13 @@
 class Game{
 public:
     Player player;
-    //TilemapManager tilemapManager;
-    TileMap tileMap; // temporary, will be substituted by a tilemap manager
+    TilemapManager tilemaps;
     size_t currentLevel = 0;
     size_t currentStage = 0;
-    
+
+    sf::Clock loadingClock;
+    bool isLoading = false;
+
     // Constructor, destructor
     Game();
     virtual ~Game() = default;
@@ -40,6 +42,13 @@ public:
 
     // Check collisions with the tilemap
     void checkPlayerTileCollisions();
+
+    // Starts stage number <stage> at current level
+    int startStage(int stage);
+
+    // Moves player from a door to another door
+    int goToStage(int fromDoor);
+
 
 private:
     // All refered to the GUI

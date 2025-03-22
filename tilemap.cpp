@@ -2,45 +2,171 @@
 #include <iostream>
 #include <fstream>
 
-sf::FloatRect TileMap::getHitboxForSolidTile(const int id) const
+// Collision Types
+enum CollisionType {
+    NO_COLLISION,
+    FULL_COLLISION,
+    BOTTOM_HALF_COLLISION,
+    TOP_HALF_COLLISION,
+    BOTTOM_LEFT_COLLISION,
+    BOTTOM_RIGHT_COLLISION,
+    TWO_VERTICAL_COLLISION,
+    THREE_VERTICAL_COLLISION,
+};
+
+std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
+    { NO_COLLISION, sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}) },
+    { FULL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize}) },
+    { BOTTOM_HALF_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize, gTileSize / 2.0f}) },
+    { TOP_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize / 2.0f}) },
+    { BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
+    { BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
+    { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 2.f}) },
+    { THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 3.f}) },
+};
+
+
+TileMap::TileMap() {
+}
+
+TileMap::~TileMap(){
+
+}
+
+sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) const
 {
-    switch (id) {
+    switch(level){
         case 1:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // No collision
+            switch (id) {
+                case 14:
+                case 34:
+                case 37:    // Stage 1-1 outside floor
+                case 53:
+                            return collisionTypes.at(TOP_HALF_COLLISION);
+                case 7:
+                case 13:
+                case 16:
+                case 21:
+                case 22:
+                case 31:
+                case 45:
+                case 55:
+                case 56:
+                case 62:    // Bottom of door
+                case 66:
+                case 70:
+                case 72:
+                            return collisionTypes.at(BOTTOM_HALF_COLLISION);
+                case 2:
+                case 61:    // Escalera (quitar)
+                            return collisionTypes.at(BOTTOM_RIGHT_COLLISION);
+                case 6:
+                case 23:
+                case 71:    // Escalera (quitar)
+                            return collisionTypes.at(BOTTOM_LEFT_COLLISION);
+                default:    
+                            return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+
+
         case 2:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize)); // Full collision
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+            
+
+        case 3:
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+
+
         case 4:
-            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Bottom half of the tile has collision
-        case 37:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Top half of the tile has collision
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+
+
+        case 5:
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+        
+
         case 6:
-            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(0.0f, m_tileSize / 2.0f)); // Bottom left of the tile has collision
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+
+
         case 7:
-            return sf::FloatRect(sf::Vector2f(m_tileSize/2.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize/2.0f, m_tileSize / 2.0f)); // Bottom right of the tile has collision
-        default:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // Default: none collisionable hitbox
+            switch (id) {
+                
+                default:    return collisionTypes.at(NO_COLLISION);
+            }
+            break;
+
+            
+        default: collisionTypes.at(NO_COLLISION);
     }
+    
 }
 
-sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
+sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
 {
     switch (id) {
         case 2:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_tileSize, m_tileSize)); // Full collision
+            return collisionTypes.at(FULL_COLLISION);
         case 4:
-            return sf::FloatRect(sf::Vector2f(0.0f, m_tileSize/2.0f), sf::Vector2f(m_tileSize, m_tileSize / 2.0f)); // Bottom half of the tile has collision
+            return collisionTypes.at(BOTTOM_HALF_COLLISION);
         default:
-            return sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f)); // Default: none collisionable hitbox
+            return collisionTypes.at(NO_COLLISION);
+    }
+}
+
+sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
+{
+    try{
+        switch (id) {
+            case 0: // Castle Entrance
+                return collisionTypes.at(THREE_VERTICAL_COLLISION);
+
+            case 1: // Door
+                return collisionTypes.at(TWO_VERTICAL_COLLISION);
+
+            case 2: // Stairs
+                return collisionTypes.at(FULL_COLLISION);
+
+            default:
+                return collisionTypes.at(NO_COLLISION);
+        }
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Error: Key not found in collisionTypes while finding doorTile hitbox: " << id << std::endl;
+        return sf::FloatRect();
     }
 }
 
 
 
-bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_path) {
 
+bool TileMap::load(int level, int stage) {
+    std::string tileset_path = "assets/tilesets/tileset_" + std::to_string(level) + ".png";
+    std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" + std::to_string(level) + "_" + std::to_string(stage) + ".txt";
+    
     std::vector<int> tilemap;
     processFile(tilemap_path, tilemap);
-    
+
     m_solidTiles.resize(m_tilesPerColumn);
     for (auto& row : m_solidTiles) {
         row.resize(m_tilesPerRow);
@@ -55,7 +181,7 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
 
     m_tileset.setSmooth(false);
 
-    int tilesPerRow = (m_tileset.getSize().x + 1) / (m_tileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
+    int tilesPerRow = (m_tileset.getSize().x + 1) / (gTileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
 
     for (int i = 0; i < m_tilesPerRow; ++i)
     {
@@ -69,32 +195,33 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
             int tileset_column = tileNumber / tilesPerRow;
 
             // Calcular las coordenadas en el tilemap **saltando el píxel vacío**
-            int texX = tileset_row * (m_tileSize + 1); // Sumamos el 1px de separación
-            int texY = tileset_column * (m_tileSize + 1);
+            int texX = tileset_row * (gTileSize + 1); // Sumamos el 1px de separación
+            int texY = tileset_column * (gTileSize + 1);
 
             // Ir al primer vértice del tile
             sf::Vertex* triangle = &m_vertices[tileIndex * 6];
 
             // Asignar las posiciones
-            triangle[0].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
-            triangle[1].position = sf::Vector2f((i + 1) * m_tileSize, j * m_tileSize);
-            triangle[2].position = sf::Vector2f(i * m_tileSize, (j + 1) * m_tileSize);
-            triangle[3].position = sf::Vector2f(i * m_tileSize, (j + 1) * m_tileSize);
-            triangle[4].position = sf::Vector2f((i + 1) * m_tileSize, j * m_tileSize);
-            triangle[5].position = sf::Vector2f((i + 1) * m_tileSize, (j + 1) * m_tileSize);
+            triangle[0].position = sf::Vector2f(i * gTileSize, j * gTileSize);
+            triangle[1].position = sf::Vector2f((i + 1) * gTileSize, j * gTileSize);
+            triangle[2].position = sf::Vector2f(i * gTileSize, (j + 1) * gTileSize);
+            triangle[3].position = sf::Vector2f(i * gTileSize, (j + 1) * gTileSize);
+            triangle[4].position = sf::Vector2f((i + 1) * gTileSize, j * gTileSize);
+            triangle[5].position = sf::Vector2f((i + 1) * gTileSize, (j + 1) * gTileSize);
 
             // Asignar las coordenadas
             triangle[0].texCoords = sf::Vector2f(texX, texY);
-            triangle[1].texCoords = sf::Vector2f(texX + m_tileSize, texY);
-            triangle[2].texCoords = sf::Vector2f(texX, texY + m_tileSize);
-            triangle[3].texCoords = sf::Vector2f(texX, texY + m_tileSize);
-            triangle[4].texCoords = sf::Vector2f(texX + m_tileSize, texY);
-            triangle[5].texCoords = sf::Vector2f(texX + m_tileSize, texY + m_tileSize);
+            triangle[1].texCoords = sf::Vector2f(texX + gTileSize, texY);
+            triangle[2].texCoords = sf::Vector2f(texX, texY + gTileSize);
+            triangle[3].texCoords = sf::Vector2f(texX, texY + gTileSize);
+            triangle[4].texCoords = sf::Vector2f(texX + gTileSize, texY);
+            triangle[5].texCoords = sf::Vector2f(texX + gTileSize, texY + gTileSize);
 
             // Set the hitbox for the solid tile
-            m_solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
-            m_solidTiles[j][i].hitbox.position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
-            m_solidTiles[j][i].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
+            m_solidTiles[j][i].hitbox = getHitboxForSolidTile(level, tileNumber);
+
+            m_solidTiles[j][i].hitbox.position.x += i * gTileSize;
+            m_solidTiles[j][i].hitbox.position.y += j * gTileSize;
         }
     }
     return true;
@@ -102,12 +229,18 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
 
 void TileMap::drawHitboxes(sf::RenderWindow& window) const
 {
+    // Solid tiles
     for (size_t i = 0; i < this->m_solidTiles.size(); ++i) {
         for (size_t j = 0; j < this->m_solidTiles[i].size(); ++j) {
             sf::RectangleShape rect = FloatRectToRectShape(this->m_solidTiles[i][j].hitbox);
-            rect.setPosition({static_cast<float>(j) * this->m_tileSize, static_cast<float>(i) * this->m_tileSize});
             window.draw(rect);
         }
+    }
+
+    // Doors
+    for (size_t i = 0; i < this->m_doorTiles.size(); ++i) {
+        sf::RectangleShape rect = FloatRectToRectShape(this->m_doorTiles[i].hitbox, 1);
+        window.draw(rect);
     }
 }
 
@@ -153,7 +286,7 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
 
         //std::cout << "index: " << i << ", Row: " << row << ", Col: " << col << std::endl;
         // Obtain the tile reference
-        SolidTileAttributes& tile = m_solidTiles[row][col];
+        SolidTile& tile = m_solidTiles[row][col];
         
         // Going through each of the 6 vertices of the tile
         for (size_t j = 0; j < 6; ++j) {
@@ -184,7 +317,7 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
 
 
 sf::FloatRect TileMap::getMapBounds() const{
-    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(m_tileSize * m_tilesPerRow, m_tileSize * m_tilesPerColumn));
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * m_tilesPerRow, gTileSize * m_tilesPerColumn));
 }
 
 
@@ -192,7 +325,7 @@ sf::FloatRect TileMap::getMapBounds() const{
 
 // ------------------------ Auxiliar functions ------------------------
 
-sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect, int color)
 {
     if (floatRect.size.x == 0.0f || floatRect.size.y == 0.0f)
     {
@@ -203,20 +336,46 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect)
     rectShape.setPosition(floatRect.position);
 
     rectShape.setFillColor(sf::Color::Transparent);
-    rectShape.setOutlineColor(sf::Color::Red);
+    
+    switch(color){
+        case 1:
+            rectShape.setOutlineColor(sf::Color::Yellow);
+            break;
+
+        default:
+            rectShape.setOutlineColor(sf::Color::Red);
+            break;
+    }
     rectShape.setOutlineThickness(2.f);
 
     return rectShape;
 }
 
-void TileMap::processFile(const std::string& archivo, std::vector<int>& solidTileNumberList) {
-    std::ifstream file(archivo);
-    std::string line;
+void TileMap::processFile(const std::string& file_path, std::vector<int>& solidTileNumberList) {
+    std::ifstream file(file_path);
     
     if (!file.is_open()) {
         std::cerr << "Error opening tilemap file." << std::endl;
         return;
     }
+
+    processFileMapDimensions(file);
+
+    processFileInitialPosition(file);
+
+    processFileSolidTiles(file, solidTileNumberList);
+
+    processFileDoorTiles(file);
+
+    processFileBreakableTiles(file);
+
+    file.close();
+}
+
+
+
+void TileMap::processFileMapDimensions(std::ifstream& file){
+    std::string line;
 
     if (std::getline(file, line)) {
         std::stringstream ss(line);
@@ -225,11 +384,9 @@ void TileMap::processFile(const std::string& archivo, std::vector<int>& solidTil
         try {
             std::getline(ss, numberStr, ',');
             m_tilesPerRow = std::stoi(numberStr);
-            std::cout << "TILEMAP WIDTH: " << m_tilesPerRow << std::endl;
 
             std::getline(ss, numberStr, ',');
             m_tilesPerColumn = std::stoi(numberStr);
-            std::cout << "TILEMAP HEIGHT: " << m_tilesPerColumn << std::endl;
 
             if (m_tilesPerRow <= 0 || m_tilesPerColumn <= 0) {
                 std::cerr << "Invalid map dimensions: " << m_tilesPerRow << "x" << m_tilesPerColumn << std::endl;
@@ -243,22 +400,127 @@ void TileMap::processFile(const std::string& archivo, std::vector<int>& solidTil
         std::cerr << "Error: Empty or corrupted tilemap file." << std::endl;
         return;
     }
+}
 
+
+void TileMap::processFileInitialPosition(std::ifstream& file){
+    std::string line;
+
+    if (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string numberStr;
+
+        try {
+            std::getline(ss, numberStr, ',');
+            int posX = std::stoi(numberStr);
+
+            std::getline(ss, numberStr, ',');
+            int posY = std::stoi(numberStr);
+
+            if (posX <= 0 || posY <= 0) {
+                std::cerr << "Invalid initial position: " << posX << "," << posY << std::endl;
+                return;
+            }
+
+            initialPosition = {posX, posY};
+
+        } catch (const std::exception& e) {
+            std::cerr << "Error parsing initial position: " << e.what() << std::endl;
+            return;
+        }
+    } else {
+        std::cerr << "Error: Empty or corrupted tilemap file." << std::endl;
+        return;
+    }
+}
+
+
+void TileMap::processFileSolidTiles(std::ifstream& file, std::vector<int>& solidTileNumberList){
+    std::string line;
 
     while (std::getline(file, line)) {
+        if(line == "doors") return;
+
         std::stringstream ss(line);
         std::string numberStr;
         
-        // Processes the solid tiles
         while (std::getline(ss, numberStr, ',')) {
             try {
-                int numero = std::stoi(numberStr); // Convertir de string a int
-                solidTileNumberList.push_back(numero); // Añadir el número a la lista
+                int number = std::stoi(numberStr);
+                solidTileNumberList.push_back(number);
             } catch (const std::invalid_argument&) {
-                std::cerr << "Invalid solidTile number in tilemap file: " << numberStr << std::endl;
+                std::cerr << "Invalid solidTile format in tilemap file: " << numberStr << std::endl;
             }
         }
     }
+}
 
-    file.close();
+void TileMap::processFileDoorTiles(std::ifstream& file){
+    std::string line;
+
+    while (std::getline(file, line)) {
+        if(line == "breakable") return;
+
+        std::stringstream ss(line);
+        std::string numberStr;
+        try {
+            std::getline(ss, numberStr, ',');
+            int doorId = std::stoi(numberStr);
+
+            std::getline(ss, numberStr, ',');
+            int doorType = std::stoi(numberStr);
+        
+            std::getline(ss, numberStr, ',');
+            int posX = std::stoi(numberStr);
+        
+            std::getline(ss, numberStr, ',');
+            int posY = std::stoi(numberStr);
+
+            sf::FloatRect hitbox = getHitboxForDoorTile(doorType);
+
+            hitbox.position.x += posX;
+            hitbox.position.y += posY;
+
+            DoorTile door = {doorId, hitbox, static_cast<DoorTile::Type>(doorType)};
+                        
+            m_doorTiles.push_back(door);
+
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Invalid doorTile number in tilemap file: " << numberStr << std::endl;
+        } catch (const std::out_of_range&){
+            std::cerr << "Out of range doorTile number in tilemap file" << std::endl;
+        }
+    }
+}
+
+void TileMap::processFileBreakableTiles(std::ifstream& file){
+    std::string line;
+
+    while (std::getline(file, line)) {
+        //if(line == "") return; // Next section?
+
+        std::stringstream ss(line);
+        std::string numberStr;
+    
+        try {
+            std::getline(ss, numberStr, ',');
+            int breakableType = std::stoi(numberStr);
+        
+            std::getline(ss, numberStr, ',');
+            int posX = std::stoi(numberStr);
+        
+            std::getline(ss, numberStr, ',');
+            int posY = std::stoi(numberStr);
+            
+            sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
+            hitbox.position.x += posX;
+            hitbox.position.y += posY;
+
+            BreakableTile tile = {hitbox, static_cast<BreakableTile::Type>(breakableType)};
+            m_breakableTiles.push_back(tile);
+            
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Invalid breakableTile number in tilemap file: " << numberStr << std::endl;
+        }
+    }
 }

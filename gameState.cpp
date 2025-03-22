@@ -21,7 +21,7 @@ sf::View GameState::getView(sf::RenderWindow& window, Camera& camera){
 
 
 
-const bool debug = true;
+const bool debug = false;
 // ======================================================
 //                      GAME STATE 
 // ======================================================

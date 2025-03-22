@@ -1,4 +1,5 @@
 #include "tilemapManager.h"
+#include <iostream>
 
 TilemapManager::TilemapManager() {
 
@@ -16,29 +17,29 @@ void TilemapManager::loadLevel(int level) {
         tilemaps.clear();
 
         tilemaps.push_back(TileMap());
-        tilemaps[0].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_1.txt");
+        tilemaps[0].load(1, 1);
 
         tilemaps.push_back(TileMap());
-        tilemaps[1].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_2.txt");
+        tilemaps[1].load(1, 2);
 
         //tilemaps.push_back(TileMap());
-        //tilemaps[2].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_3.txt");
+        //tilemaps[2].load(1, 3);
 
         //tilemaps.push_back(TileMap());
-        //tilemaps[3].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_4.txt");
+        //tilemaps[3].load(1, 4);
 
         //tilemaps.push_back(TileMap());
-        //tilemaps[4].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_5.txt");
+        //tilemaps[4].load(1, 5);
         
         // ------------------------
         doors.clear();
 
-        doors.push_back({1, 2, ENTER_CASTLE});  // Door 1
-        doors.push_back({2, 3, DOOR});          // Door 2
-        doors.push_back({3, 4, STAIRS});        // Door 3
-        doors.push_back({4, 3, STAIRS});        // Door 4
-        doors.push_back({3, 5, DOOR});          // Door 5
-        doors.push_back({5, 100, DOOR});        // Door 6
+        doors[1] = {1, 2, TileMap::DoorTile::Type::CASTLE_ENTRANCE};  // Door 1
+        doors[2] = {2, 3, TileMap::DoorTile::Type::DOOR};          // Door 2
+        doors[3] = {3, 4, TileMap::DoorTile::Type::STAIRS};        // Door 3
+        doors[4] = {4, 3, TileMap::DoorTile::Type::STAIRS};        // Door 4
+        doors[5] = {3, 5, TileMap::DoorTile::Type::DOOR};          // Door 5
+        doors[6] = {5, 100, TileMap::DoorTile::Type::DOOR};        // Door 6
 
         break;
     
@@ -80,18 +81,4 @@ void TilemapManager::loadLevel(int level) {
     default:
         break;
     }
-}
-    
-
-int TilemapManager::startStage(int stage){
-    if(stage > tilemaps.size()){
-        return -1;
-    }
-
-    return stage;
-}
-
-
-int TilemapManager::goToStage(int from, int to){
-
 }

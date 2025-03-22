@@ -26,7 +26,7 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int id) const
     }
 }
 
-sf::FloatRect TileMap::getHitboxForSpecialTile(const int id) const
+sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
 {
     switch (id) {
         case 2:

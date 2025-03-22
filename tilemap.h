@@ -3,36 +3,51 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "camera.h"
+#include "globals.h"
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
-    struct SolidTileAttributes {
-        sf::Vector2f position;          // Position of the tile in global coord.
-        bool hasCollision = false;      // If <true>, the tile has hitbox.
-        sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
-        bool isVisible = false;         // If <true>, the tile is visible.
-    };
-
-    struct BreakableTileAttributes {
-        enum class Type {   // Types of special tiles. Only in this scope
-            Candelabrum = 0,
-            BreakableWall = 1,
-        };
-
-        sf::Vector2f position;          // Position of the tile in global coord.
-        sf::FloatRect hitbox;           // Hitbox of the tile. In local coord.
-        bool isBreakable = false;       // Enabling the tile to be destroyed
-        bool isDestroyed = false;       // If the tile is destroyed
-        Type type;
-    };
-
-    // Size of each tile (square) in pixels
-    int m_tileSize = 32;
 
     // Number of tiles in the tilemap
     int m_tilesPerRow;
     int m_tilesPerColumn;
+
+    // Initial position when player starts stage
+    sf::Vector2f initialPosition;
+
+    // Tiles with hitboxes
+    struct SolidTile {
+        bool hasCollision = false;      // If <true>, the tile has hitbox.
+        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
+        bool isVisible = false;         // If <true>, the tile is visible.
+    };
+
+    // Breakable tiles
+    struct BreakableTile {
+        enum class Type {   // Types of breakable tiles. Only in this scope
+            FIREPIT = 0,
+            CANDELABRUM = 1,
+            BREAKABLE_WALL = 2,
+        };
+
+        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
+        Type type;                      // Breakable type
+        bool isBreakable = true;        // Enabling the tile to be destroyed
+        bool isDestroyed = false;       // If the tile is destroyed
+    };
+
+    struct DoorTile {
+        enum class Type{   // Types of door tiles. Only in this scope
+            CASTLE_ENTRANCE = 0,
+            DOOR = 1,
+            STAIRS = 2,
+        };
+
+        int id;
+        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
+        Type type;                      // Door type
+    };
 
 
 private:
@@ -46,20 +61,29 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 public:
-    // Matrix with the properties of each solid tile.
-    std::vector<std::vector<SolidTileAttributes>> m_solidTiles;
+    TileMap();
+    ~TileMap();
 
-    // Vector with the properties of each special tile
-    std::vector<BreakableTileAttributes> m_breakableTiles;
+    // Matrix with the properties of each solid tile.
+    std::vector<std::vector<SolidTile>> m_solidTiles;
+
+    // Vector with the properties of each breakable tile
+    std::vector<BreakableTile> m_breakableTiles;
+
+    // Vector with the properties of each door tile
+    std::vector<DoorTile>m_doorTiles;
     
     // Loads the tilemap with the given tiles
-    bool load(const std::string& tileset_path, const std::string& tilemap_path);
+    bool load(int level, int stage);
 
     // Function to get the hitbox for a solid tile based on its ID
-    sf::FloatRect getHitboxForSolidTile(const int id) const;
+    sf::FloatRect getHitboxForSolidTile(const int level, const int id) const;
 
-    // Function to get the hitbox for a special tile based on its ID
-    sf::FloatRect getHitboxForSpecialTile(const int id) const;
+    // Function to get the hitbox for a breakable tile based on its ID
+    sf::FloatRect getHitboxForBreakableTile(const int id) const;
+
+    // Function to get the hitbox for a door tile based on its ID
+    sf::FloatRect getHitboxForDoorTile(const int id) const;
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow& window, Camera& camera);
@@ -70,11 +94,29 @@ public:
     // Function that draws the hitboxes of the solid tiles
     void drawHitboxes(sf::RenderWindow& window) const;
 
-    // Function that processes the tilemap file and stores its width and height and returns the tilemap's solidTiles
-    // as an int vector parameter, and its specialTiles as an int vector parameter (each group of 4 representig a specialTile)
-    void processFile(const std::string& archivo, std::vector<int>& listaNumeros);
+    // Function that processes the tilemap file
+    void processFile(const std::string& file_path, std::vector<int>& listaNumeros);
+
+    // Function that processes the tilemap file's map dimentions section, 
+    // storing its tilesPerRow and tilesPerColumn
+    void processFileMapDimensions(std::ifstream& file);
+
+    // Function that processes the tilemap file's initial position section, 
+    // storing the players initial position when starting the stage for the first time
+    void processFileInitialPosition(std::ifstream& file);
+
+    // Function that processes the tilemap file's solidTiles section, 
+    // storing its numbers in <solitTileNumberList>
+    void processFileSolidTiles(std::ifstream& file, std::vector<int>& solidTileNumberList);
+
+    // Function that processes the tilemap file's door tiles section, 
+    // storing its doors (type,positionX,positionY) in <m_doorTiles>
+    void processFileDoorTiles(std::ifstream& file);
+
+    // Function that processes the tilemap file's breakable tiles section, 
+    // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
+    void processFileBreakableTiles(std::ifstream& file);
 };
 
 // Function that converts a FloatRect to a RectangleShape
-sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect);
-
+sf::RectangleShape FloatRectToRectShape(const sf::FloatRect& floatRect, int color = 0);

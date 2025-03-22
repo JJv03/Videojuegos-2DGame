@@ -34,12 +34,12 @@ PlayerState::PlayerState(){}
 
 PlayerIdleState::PlayerIdleState() : PlayerState()
 {
-    printf("Idle\n");
+    //printf("Idle\n");
 }
 
 void PlayerIdleState::init(Player& player)
 {
-    printf("init");
+    //printf("init");
     player.isDucking = false;
     player.isJumping = false;
     player.isWalking = false;
@@ -124,7 +124,7 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerWalkState::PlayerWalkState() : PlayerState()
 {
-    printf("Walking\n");
+    //printf("Walking\n");
 }
 
 void PlayerWalkState::init(Player& player)
@@ -211,7 +211,7 @@ void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerJumpState::PlayerJumpState() : PlayerState()
 {
-    printf("Jumping\n");
+    //printf("Jumping\n");
 }
 
 void PlayerJumpState::init(Player& player)
@@ -310,7 +310,7 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerDuckState::PlayerDuckState() : PlayerState()
 {
-    printf("Ducking\n");
+    //printf("Ducking\n");
 }
 
 void PlayerDuckState::init(Player& player)
@@ -377,7 +377,7 @@ void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerStairState::PlayerStairState() : PlayerState()
 {
-    printf("Stairs\n");
+    //printf("Stairs\n");
 }
 
 void PlayerStairState::init(Player& player)
@@ -431,7 +431,7 @@ void PlayerStairState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerStairWalkState::PlayerStairWalkState() : PlayerState()
 {
-    printf("Ducking\n");
+    //printf("Ducking\n");
 }
 
 void PlayerStairWalkState::init(Player& player)
@@ -503,7 +503,7 @@ void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackIdleState::PlayerAttackIdleState() : PlayerState()
 {
-    printf("Attacking\n");
+    //printf("Attacking\n");
 }
 
 void PlayerAttackIdleState::init(Player& player)
@@ -623,7 +623,7 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 {
-    printf("AttackingJ\n");
+    //printf("AttackingJ\n");
 }
 
 void PlayerAttackJumpState::init(Player& player)
@@ -748,7 +748,7 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 {
-    printf("AttackingDUCK\n");
+    //printf("AttackingDUCK\n");
 }
 
 void PlayerAttackDuckState::init(Player& player)
@@ -854,7 +854,7 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerAttackStairState::PlayerAttackStairState() : PlayerState()
 {
-    printf("Attacking\n");
+    //printf("Attacking\n");
 }
 
 void PlayerAttackStairState::init(Player& player)
@@ -896,7 +896,7 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerHurtState::PlayerHurtState() : PlayerState()
 {
-    printf("Hurting\n");
+    //printf("Hurting\n");
 }
 
 void PlayerHurtState::init(Player& player)
@@ -932,7 +932,7 @@ void PlayerHurtState::draw(Player& player, sf::RenderWindow &window)
 
 PlayerDeadState::PlayerDeadState() : PlayerState()
 {
-    printf("Hurting\n");
+    //printf("Hurting\n");
 }
 
 void PlayerDeadState::init(Player& player)

@@ -10,7 +10,7 @@ SRC_DIR     := .
 
 SRCS        := $(wildcard $(SRC_DIR)/*.cpp)
 OBJS        := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
-EXEC        := $(OBJ_DIR)/game.exe
+EXEC        := $(OBJ_DIR)\game.exe
 
 # Targets "phony"
 .PHONY: all clean
@@ -32,4 +32,5 @@ $(OBJ_DIR):
 
 # Limpieza de archivos generados
 clean:
-	del /Q $(OBJ_DIR)\*.o $(EXEC)
+	del /Q "$(OBJ_DIR)\*.o"
+	del /Q "$(EXEC)"
