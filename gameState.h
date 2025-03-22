@@ -45,6 +45,8 @@ public:
 
 
 class GameGS : public GameState{
+private:
+    SoundManager gameSoundManager;
 public:
     Game game;
 

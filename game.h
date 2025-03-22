@@ -5,6 +5,8 @@
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game{
+private:
+    int time = 300;
 public:
     Player player;
     TilemapManager tilemaps;

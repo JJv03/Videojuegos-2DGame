@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <optional>
+#include <sstream>
 #include "globals.h"
 
 AnimationManager* gAnimationManager { nullptr };
@@ -114,7 +115,7 @@ void Game::init(){
     scoreText.setPosition(sf::Vector2f(margin, margin));
 
     // Time
-    sf::Text timeText(font, "TIME 0147", 11);
+    sf::Text timeText(font, "TIME 300", 11);
     timeText.setFillColor(sf::Color::White);
     timeText.setPosition(sf::Vector2f(gWindowWidth * 0.46f, margin));
 
@@ -150,6 +151,23 @@ void Game::handleInput(sf::Event event){
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime){
     player.update(deltaTime);
+
+    static float timeAccumulator = 0.0f;
+    timeAccumulator += deltaTime;
+    
+    // Reducir el tiempo cada segundo completo
+    if (timeAccumulator >= 1.0f) {
+        if (time > 0) time -= static_cast<int>(timeAccumulator);
+        if (time < 0) time = 0;
+        timeAccumulator = 0.0f;
+        texts[1].setString("TIME " + std::to_string(time));
+    }
+    
+    // Actualizar el score
+    std::stringstream scoreStream;
+    scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Formato con ceros
+    texts[0].setString(scoreStream.str());
+
     checkCollisions();
 }
 
@@ -282,7 +300,7 @@ void Game::checkPlayerMapBoundCollisions() {
     sf::FloatRect mapBounds = tilemaps[currentStage].getMapBounds();
 
     float halfPlayerWidth = playerBounds.size.x / 2;
-    float halfPlayerHeight = playerBounds.size.y / 2;
+    // float halfPlayerHeight = playerBounds.size.y / 2; // Comentado por warning
 
     if (playerBounds.position.x < mapBounds.position.x) {
         player.sprite->setPosition({mapBounds.position.x + halfPlayerWidth, player.sprite->getPosition().y});
@@ -345,7 +363,7 @@ void Game::checkPlayerTileCollisions() {
 
     // Door tiles
     // i+1 = stage number
-    for(int i = 0; i < tilemaps[currentStage].m_doorTiles.size(); i++){
+    for(unsigned int i = 0; i < tilemaps[currentStage].m_doorTiles.size(); i++){
         sf::FloatRect doorBounds = tilemaps[currentStage].m_doorTiles[i].hitbox;
                 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds)) {

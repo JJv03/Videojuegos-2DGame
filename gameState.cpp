@@ -28,7 +28,8 @@ const bool debug = false;
 
 void GameGS::init(){
     if(debug) std::cout << "ESTADO: Game" << std::endl;
-
+    gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
+    gameSoundManager.playMusic("gameMusic", gMusicVolume);
     game.init();
 }
 
