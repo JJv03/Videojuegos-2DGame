@@ -2,10 +2,12 @@
 #include "player.h"
 #include "tilemap.h"
 #include "tilemapManager.h"
+#include "soundManager.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game{
 private:
+    SoundManager gameSoundManager;
     int time = 300;
 public:
     Player player;

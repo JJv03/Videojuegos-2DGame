@@ -22,6 +22,9 @@ void Game::init(){
     currentLevel = 1;
     currentStage = 1;
 
+    gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
+    gameSoundManager.playMusic("gameMusic", gMusicVolume);
+
     tilemaps.loadLevel(1);
 
     // Temporary
