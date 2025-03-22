@@ -28,10 +28,18 @@ public:
     // Renders the game
     void draw(sf::RenderWindow& window, Camera& camera);
     
+    // Gets the according view of the camera. Sticks to border if it exits mapBounds, 
+    // takes animations into account, etc
     sf::View getView(sf::RenderWindow& window, Camera& camera);
 
     // Check all the possible collisions
     void checkCollisions();
+
+    // Check map bound collisions
+    void checkPlayerMapBoundCollisions();
+
+    // Check collisions with the tilemap
+    void checkPlayerTileCollisions();
 
 private:
     // All refered to the GUI

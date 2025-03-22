@@ -252,9 +252,39 @@ sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
 
 
 void Game::checkCollisions() {
+    
+    checkPlayerMapBoundCollisions();
+
+    checkPlayerTileCollisions();
+}
+
+
+void Game::checkPlayerMapBoundCollisions() {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
-    // Check collisions with the tilemap
+    sf::FloatRect mapBounds = tileMap.getMapBounds();
+
+    float halfPlayerWidth = playerBounds.size.x / 2;
+    float halfPlayerHeight = playerBounds.size.y / 2;
+
+    if (playerBounds.position.x < mapBounds.position.x) {
+        player.sprite->setPosition({mapBounds.position.x + halfPlayerWidth, player.sprite->getPosition().y});
+    }
+    if (playerBounds.position.x + playerBounds.size.x > mapBounds.position.x + mapBounds.size.x) {
+        player.sprite->setPosition({mapBounds.position.x + mapBounds.size.x - halfPlayerWidth, player.sprite->getPosition().y});
+    }
+    if (playerBounds.position.y < mapBounds.position.y) {
+        player.sprite->setPosition({player.sprite->getPosition().x, mapBounds.position.y + halfPlayerHeight});
+    }
+    if (playerBounds.position.y + playerBounds.size.y > mapBounds.position.y + mapBounds.size.y) {
+        player.sprite->setPosition({player.sprite->getPosition().x, mapBounds.position.y + mapBounds.size.y - halfPlayerHeight});
+    }
+}
+
+
+void Game::checkPlayerTileCollisions() {
+    sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+
     for (int col = 0; col < tileMap.m_tilesPerRow; ++col) {
         for (int row = 0; row < tileMap.m_tilesPerColumn; ++row) {
             if (tileMap.m_solidTiles[row][col].isVisible) {
