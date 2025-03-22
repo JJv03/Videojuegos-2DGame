@@ -1,8 +1,8 @@
 #include "bat.h"
 #include <iostream>
 
-Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : Enemy(_sprite, _hitboxes)
+Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize)
+    : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize)
 {
     speed = BAT_SPEED;
     life = BAT_LIFE;
@@ -10,7 +10,7 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
     damage = BAT_DAMAGE;
 }
 
-Bat Bat::createBat(const sf::Vector2f &position)
+Bat Bat::createBat(const sf::Vector2f &position, const sf::Vector2f &zoneSize)
 {
     const sf::IntRect BAT_SPRITE_REGION = {{184, 11}, {16, 16}};
 
@@ -51,35 +51,90 @@ Bat Bat::createBat(const sf::Vector2f &position)
     };
 
     // Crear y retornar el bat
-    return Bat(batSprite, hitboxes);
+    return Bat(batSprite, hitboxes, position, zoneSize);
 }
 
-void Bat::update(float deltaTime)
+void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
 {
-    // EL RESPAWN SE DEBE GESTIONAR AQUI (SOLO EN LOS ZOMBIES SE TIENE UN SPAWNER)
+    // GESTIÓN DE RESPAWN
 
+    bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
+
+    if (batToSpawn)
+    {
+        spawnerActive = true;
+    }
+    else
+    {
+        spawnerActive = false;
+    }
+
+    // Activación del proceso de spawn de la horda
+    if (playerInZone && !isActive && !spawnerActive)
+    {
+        batSpawnTimers = 1.5f;
+
+        batToSpawn = true;
+    }
+
+    // Spawn de los zombies de la orda según el timer y el tamaño de la horda
+
+    if (batToSpawn)
+    {
+        batSpawnTimers -= deltaTime;
+
+        if (batSpawnTimers <= 0.0f)
+        {
+            movePositionToBorder(playerActivationZone);
+
+            isActive = true;
+            batToSpawn = false;
+        }
+    }
+
+    // GESTIÓN DE MOVIMIENTO
     if (isActive)
     {
-        applyGravity(deltaTime);
 
-        if (speed.x != 0)
+        bool zombieInsideDeactivationZone = false;
+
+        for (const auto &hitbox : hitboxes)
         {
-            sprite->move({speed.x * deltaTime, 0.f});
-            for (auto &hitbox : hitboxes)
+            if (playerDeactivationZone.findIntersection(hitbox).has_value())
             {
-                hitbox.position.x += speed.x * deltaTime;
-            }
-        }
-        if (speed.y != 0)
-        {
-            sprite->move({0.f, -speed.y * deltaTime});
-            for (auto &hitbox : hitboxes)
-            {
-                hitbox.position.y -= speed.y * deltaTime;
+                zombieInsideDeactivationZone = true;
+                break;
             }
         }
 
-        updateAnimation(deltaTime);
+        if (!zombieInsideDeactivationZone)
+        {
+            isActive = false;
+            resetPosition();
+        }
+        else
+        {
+            applyGravity(deltaTime);
+
+            if (speed.x != 0)
+            {
+                sprite->move({speed.x * deltaTime, 0.f});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.x += speed.x * deltaTime;
+                }
+            }
+            if (speed.y != 0)
+            {
+                sprite->move({0.f, -speed.y * deltaTime});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.y -= speed.y * deltaTime;
+                }
+            }
+
+            updateAnimation(deltaTime);
+        }
     }
 }
 
@@ -182,13 +237,13 @@ void Bat::resetPosition()
     currentFrame = 0;
 }
 
-void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist)
+void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone)
 {
     if (!sprite)
         return;
 
     // Borde derecho de la zona de activación
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 20.0f;
+    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + 20.0f;
 
     // Altura original del zombie
     float originalY = sprite->getPosition().y;
@@ -205,6 +260,24 @@ void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone, const 
     for (auto &hitbox : hitboxes)
     {
         hitbox.position += offset;
+    }
+}
+
+void Bat::draw(sf::RenderWindow &window, bool debugDraw)
+{
+    if (sprite && isActive)
+    {
+        Enemy::draw(window, debugDraw);
+    }
+
+    if (debugDraw)
+    {
+        sf::RectangleShape zoneShape({spawnZone.size.x, spawnZone.size.y});
+        zoneShape.setPosition({spawnZone.position.x, spawnZone.position.y});
+        zoneShape.setFillColor(sf::Color(255, 255, 0, 50));
+        zoneShape.setOutlineColor(sf::Color::Yellow);
+        zoneShape.setOutlineThickness(1.0f);
+        window.draw(zoneShape);
     }
 }
 

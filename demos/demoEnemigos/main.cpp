@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "zombieSpawner.h"
 #include "leopard.h"
+#include "bat.h"
 
 // Variables globales de configuración
 bool gEnMovimiento{false};
@@ -44,6 +45,7 @@ sf::RectangleShape gVampireKiller;
 // Vectores de los enemigos
 std::vector<ZombieSpawner> gZombiesSpawner;
 std::vector<Leopard> gLeopard;
+std::vector<Bat> gBat;
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -174,6 +176,10 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     {
         leopard.checkCollisions(simonBounds, vkBounds, boundsList, ataque, PLAYER_DAMEGE);
     }
+    for (auto &bat : gBat)
+    {
+        bat.checkCollisions(simonBounds, vkBounds, boundsList, ataque, PLAYER_DAMEGE);
+    }
 }
 
 std::string formatFPSandTime(float deltaTime)
@@ -255,10 +261,13 @@ bool init()
 
     const sf::Vector2f ZOMBIE_POSITION = {345.f, 171.f};
     const sf::Vector2f LEOPARD_POSITION = {300.f, 171.f};
+    const sf::Vector2f BAT_POSITION = {600.f, 171.f};
 
     gZombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
 
     gLeopard.push_back(Leopard::createLeopard(LEOPARD_POSITION));
+
+    gBat.push_back(Bat::createBat(BAT_POSITION, {50.f, 50.f}));
 
     return true;
 }
@@ -303,6 +312,10 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     {
         leopard.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone, playerPos);
     }
+    for (auto &bat : gBat)
+    {
+        bat.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
+    }
 
     updatePlayerZones();
 
@@ -343,6 +356,10 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
     for (auto &leopard : gLeopard)
     {
         leopard.draw(window, true);
+    }
+    for (auto &bat : gBat)
+    {
+        bat.draw(window, true);
     }
 
     window.draw(text);

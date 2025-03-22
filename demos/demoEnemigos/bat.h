@@ -14,19 +14,27 @@ private:
     const float ANIM_FRAME_TIME = 0.2f;
     const int TOTAL_FRAMES = 2;
 
+    sf::FloatRect spawnZone;
+
+    bool spawnerActive{false};
+    bool batToSpawn{false};
+
+    float batSpawnTimers = 0.0f;
+
     float animTimer = 0.0f;
     int currentFrame = 0;
 
 public:
     Bat() = default;
-    Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
+    Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize);
 
-    static Bat createBat(const sf::Vector2f &position);
+    static Bat createBat(const sf::Vector2f &position, const sf::Vector2f &zoneSize);
 
     void resetPosition() override;
-    void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
+    void movePositionToBorder(const sf::FloatRect &playerActivationZone);
+    void draw(sf::RenderWindow &window, bool debugDraw) override;
 
-    void update(float deltaTime);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                          const std::vector<sf::FloatRect> &boundsList, const bool playerIsAtacking, const float playerDamage);
 
