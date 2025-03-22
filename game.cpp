@@ -259,18 +259,12 @@ void Game::checkCollisions() {
         for (int row = 0; row < tileMap.m_tilesPerColumn; ++row) {
             if (tileMap.m_solidTiles[row][col].isVisible) {
                 sf::FloatRect tileBounds = tileMap.m_solidTiles[row][col].hitbox;
-
-                /* if (tileBounds.size.x != 0.0f) {
-                    std::cout << "Tile bounds: " << tileBounds.position.x << ", " << tileBounds.position.y << ", " << tileBounds.size.x << ", " << tileBounds.size.y << std::endl;
-                    std::cout << "Player bounds: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
-                } */
                 
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
                     if (overlapX < overlapY) {      // Horizontal collision
-                        std::cout << "Horizontal collision" << std::endl;
                         if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
                         {
                             player.sprite->move({-overlapX, 0.f});
@@ -280,13 +274,11 @@ void Game::checkCollisions() {
                             player.sprite->move({overlapX, 0.f});
                         }
                     } else {    // Vertical collision
-                        std::cout << "Vertical collision" << std::endl;
-                        // Simon's feet are collisioning with the tile
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
-                        {
+                        {   // Simon's feet are collisioning with the tile
                             if (player.verticalSpeed > 0.0f) {      // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
-                                player.isOnGround = true;      // Indicamos que Simon está en el suelo
+                                player.isOnGround = true;           // Indicamos que Simon está en el suelo
                             }
                         }
                         else    // Simon's head is collisioning with the tile
