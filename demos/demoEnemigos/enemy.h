@@ -23,10 +23,9 @@ public:
     Enemy() = default;
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
-    void draw(sf::RenderWindow &window, bool debugDraw);
-
     virtual void applyGravity(float deltaTime);
     virtual bool checkHitByEnemy(const sf::FloatRect simonBounds);
     virtual void resetPosition();
-    virtual void update(float deltaTime) = 0;
+
+    virtual void draw(sf::RenderWindow &window, bool debugDraw);
 };

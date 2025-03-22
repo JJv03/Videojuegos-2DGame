@@ -9,6 +9,7 @@
 #include <vector>
 #include "camera.h"
 #include "zombieSpawner.h"
+#include "leopard.h"
 
 // Variables globales de configuración
 bool gEnMovimiento{false};
@@ -40,8 +41,9 @@ float verticalSpeed{0.0f}; // velocidad vertical actual
 
 sf::RectangleShape gVampireKiller;
 
-// Vector de zombies
+// Vectores de los enemigos
 std::vector<ZombieSpawner> gZombiesSpawner;
+std::vector<Leopard> gLeopard;
 
 sf::RectangleShape gFloor;
 sf::RectangleShape gWallUp;
@@ -168,6 +170,10 @@ void CheckAllCollisions(const bool ataque, const bool debug = false)
     {
         zombieSpawner.checkCollisions(simonBounds, vkBounds, boundsList, ataque, PLAYER_DAMEGE);
     }
+    for (auto &leopard : gLeopard)
+    {
+        leopard.checkCollisions(simonBounds, vkBounds, boundsList, ataque, PLAYER_DAMEGE);
+    }
 }
 
 std::string formatFPSandTime(float deltaTime)
@@ -247,9 +253,12 @@ bool init()
 
     // Enemigo ----------------------------------------------------------------------------
 
-    const sf::Vector2f ENEMY_POSITION = {345.f, 171.f};
+    const sf::Vector2f ZOMBIE_POSITION = {345.f, 171.f};
+    const sf::Vector2f LEOPARD_POSITION = {400.f, 171.f};
 
-    gZombiesSpawner.push_back(ZombieSpawner(ENEMY_POSITION, {100.f, 100.f}));
+    gZombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
+
+    gLeopard.push_back(Leopard::createLeopard(LEOPARD_POSITION));
 
     return true;
 }
@@ -290,6 +299,10 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     {
         zombieSpawner.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
     }
+    for (auto &leopard : gLeopard)
+    {
+        leopard.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
+    }
 
     updatePlayerZones();
 
@@ -326,6 +339,10 @@ void render(sf::RenderWindow &window, const sf::Text &text, const bool ataque)
     for (auto &zombieSpawner : gZombiesSpawner)
     {
         zombieSpawner.draw(window, true);
+    }
+    for (auto &leopard : gLeopard)
+    {
+        leopard.draw(window, true);
     }
 
     window.draw(text);
