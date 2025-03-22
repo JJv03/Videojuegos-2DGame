@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include <cmath>
+#include <optional>
 #include "globals.h"
 
 AnimationManager* gAnimationManager { nullptr };
@@ -43,7 +44,7 @@ void Game::init(){
 
     sf::Sprite simonSprite(gTextures["simon"]);
     simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition({245.f, 161.f});
+    simonSprite.setPosition({245.f, 160.f});
     sf::FloatRect bounds = simonSprite.getLocalBounds();
     
     // Ajusta el origen de las transformaciones al centro inferior
@@ -146,13 +147,16 @@ void Game::handleInput(sf::Event event){
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime){
     player.update(deltaTime);
-    //checkCollisions();
+    checkCollisions();
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow& window, Camera& camera){
     //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
     tileMap.drawScene(window, camera);
+
+    // DEBUG: Draw player hitbox
+    window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
 
     // GUI
     sf::View gameView = window.getView();
@@ -251,16 +255,22 @@ void Game::checkCollisions() {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
     // Check collisions with the tilemap
-    for (int row = 0; row < tileMap.m_tilesPerRow; ++row) {
-        for (int col = 0; col < tileMap.m_tilesPerColumn; ++col) {
+    for (int col = 0; col < tileMap.m_tilesPerRow; ++col) {
+        for (int row = 0; row < tileMap.m_tilesPerColumn; ++row) {
             if (tileMap.m_solidTiles[row][col].isVisible) {
                 sf::FloatRect tileBounds = tileMap.m_solidTiles[row][col].hitbox;
 
+                /* if (tileBounds.size.x != 0.0f) {
+                    std::cout << "Tile bounds: " << tileBounds.position.x << ", " << tileBounds.position.y << ", " << tileBounds.size.x << ", " << tileBounds.size.y << std::endl;
+                    std::cout << "Player bounds: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
+                } */
+                
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
                     if (overlapX < overlapY) {      // Horizontal collision
+                        std::cout << "Horizontal collision" << std::endl;
                         if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
                         {
                             player.sprite->move({-overlapX, 0.f});
@@ -270,10 +280,11 @@ void Game::checkCollisions() {
                             player.sprite->move({overlapX, 0.f});
                         }
                     } else {    // Vertical collision
+                        std::cout << "Vertical collision" << std::endl;
                         // Simon's feet are collisioning with the tile
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
                         {
-                            if (player.verticalSpeed < 0.0f) {      // If player is NOT going up
+                            if (player.verticalSpeed > 0.0f) {      // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
                                 player.isOnGround = true;      // Indicamos que Simon está en el suelo
                             }

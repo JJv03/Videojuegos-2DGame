@@ -93,6 +93,7 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
 
             // Set the hitbox for the solid tile
             m_solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
+            m_solidTiles[j][i].hitbox.position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
             m_solidTiles[j][i].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
         }
     }
