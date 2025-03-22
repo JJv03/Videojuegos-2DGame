@@ -374,13 +374,13 @@ void Game::checkPlayerTileCollisions() {
 
             int doorId = tilemaps[currentStage].m_doorTiles[i].id;
 
-            if(currentStage == tilemaps.doors[doorId].prev_stage){
+            if(int(currentStage) == tilemaps.doors[doorId].prev_stage){
                 std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
                 currentStage = tilemaps.doors[doorId].next_stage;
                 startStage(currentStage);
 
-            } else if (currentStage == tilemaps.doors[doorId].next_stage){
+            } else if (int(currentStage) == tilemaps.doors[doorId].next_stage){
                 std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
                 currentStage = tilemaps.doors[doorId].prev_stage;
@@ -400,7 +400,7 @@ void Game::checkPlayerTileCollisions() {
  
 
 int Game::startStage(int stage){
-    if(stage > tilemaps.tilemaps.size()){
+    if(unsigned(stage) > tilemaps.tilemaps.size()){
         std::cerr << "ERROR: Level " << currentLevel << ", stage " << stage << " doesn't exist";
         return -1;
     }
