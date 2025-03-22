@@ -6,7 +6,7 @@
 class Enemy : public Entity
 {
 private:
-    const float VERTICAL_SPEED = 750.0f;
+    const float GRAVITY = 750.0f;
 
     sf::Vector2f originalPosition;
 

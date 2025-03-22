@@ -30,13 +30,11 @@ void Enemy::applyGravity(float deltaTime)
 {
     if (!isOnGround)
     {
-        sf::Vector2f verticalMovement = {0.f, (VERTICAL_SPEED * deltaTime)};
-        sprite->move(verticalMovement);
-
-        for (auto &hitbox : hitboxes)
-        {
-            hitbox.position.y += verticalMovement.y;
-        }
+        speed.y -= GRAVITY * deltaTime;
+    }
+    else if (isOnGround)
+    {
+        speed.y = 0.0f;
     }
 }
 
@@ -47,7 +45,7 @@ bool Enemy::checkHitByEnemy(const sf::FloatRect simonBounds)
         if (hitbox.findIntersection(simonBounds))
         {
             // EL PLAYER TENDRÁ QUE TENER MARGEN DE INMUNIDAD
-            std::cout << "Daño recibido = " << damage << std::endl;
+            // std::cout << "Daño recibido = " << damage << std::endl;
             return true;
         }
     }

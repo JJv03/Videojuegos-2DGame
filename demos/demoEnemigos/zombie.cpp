@@ -62,12 +62,21 @@ void Zombie::update(float deltaTime)
     {
         applyGravity(deltaTime);
 
-        sf::Vector2f horizontalMovement = {speed.x * deltaTime, 0.f};
-        sprite->move(horizontalMovement);
-
-        for (auto &hitbox : hitboxes)
+        if (speed.x != 0)
         {
-            hitbox.position.x += horizontalMovement.x;
+            sprite->move({speed.x * deltaTime, 0.f});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.x += speed.x * deltaTime;
+            }
+        }
+        if (speed.y != 0)
+        {
+            sprite->move({0.f, -speed.y * deltaTime});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.y -= speed.y * deltaTime;
+            }
         }
 
         updateAnimation(deltaTime);

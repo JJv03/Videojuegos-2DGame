@@ -254,7 +254,7 @@ bool init()
     // Enemigo ----------------------------------------------------------------------------
 
     const sf::Vector2f ZOMBIE_POSITION = {345.f, 171.f};
-    const sf::Vector2f LEOPARD_POSITION = {400.f, 171.f};
+    const sf::Vector2f LEOPARD_POSITION = {300.f, 171.f};
 
     gZombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
 
@@ -263,7 +263,7 @@ bool init()
     return true;
 }
 
-bool updateMovement(const float deltaTime, const bool haciaArriba, const bool haciaIzquierda, const bool haciaDerecha)
+bool updateMovement(const float deltaTime, const bool haciaArriba, const bool haciaIzquierda, const bool haciaDerecha, const sf::Vector2f &playerPos)
 {
     if (!gSimonSprite)
     {
@@ -301,7 +301,7 @@ bool updateMovement(const float deltaTime, const bool haciaArriba, const bool ha
     }
     for (auto &leopard : gLeopard)
     {
-        leopard.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone);
+        leopard.update(deltaTime, gPlayerActivationZone, gPlayerDeactivationZone, playerPos);
     }
 
     updatePlayerZones();
@@ -453,7 +453,7 @@ int main()
             }
         }
 
-        if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha))
+        if (!updateMovement(deltaTime, haciaArriba, haciaIzquierda, haciaDerecha, gSimonSprite->getPosition()))
         {
             std::cerr << "Error en el update" << std::endl;
             return -1;
