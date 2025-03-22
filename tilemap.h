@@ -14,7 +14,7 @@ public:
         bool isVisible = false;         // If <true>, the tile is visible.
     };
 
-    struct SpecialTileAttributes {
+    struct BreakableTileAttributes {
         enum class Type {   // Types of special tiles. Only in this scope
             Candelabrum = 0,
             BreakableWall = 1,
@@ -50,7 +50,7 @@ public:
     std::vector<std::vector<SolidTileAttributes>> m_solidTiles;
 
     // Vector with the properties of each special tile
-    std::vector<SpecialTileAttributes> m_specialTiles;
+    std::vector<BreakableTileAttributes> m_breakableTiles;
     
     // Loads the tilemap with the given tiles
     bool load(const std::string& tileset_path, const std::string& tilemap_path);

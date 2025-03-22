@@ -26,6 +26,9 @@ void TilemapManager::loadLevel(int level) {
 
         //tilemaps.push_back(TileMap());
         //tilemaps[3].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_4.txt");
+
+        //tilemaps.push_back(TileMap());
+        //tilemaps[4].load("assets/tilesets/tileset_1.png", "assets/tilemaps/tilemap_1_5.txt");
         
         // ------------------------
         doors.clear();
