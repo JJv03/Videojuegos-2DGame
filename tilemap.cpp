@@ -1,8 +1,14 @@
 #include "tilemap.h"
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
+#include <memory>
 
-// Collision Types
+
+using BreakableType = TileMap::BreakableTile::Type;
+using DropType = TileMap::BreakableTile::DropType;
+
+// Collision Types (only used here)
 enum CollisionType {
     NO_COLLISION,
     FULL_COLLISION,
@@ -24,6 +30,19 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 2.f}) },
     { THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 3.f}) },
 };
+
+// Hash function for the breakable tile type
+struct BreakableTypeHash {
+    std::size_t operator()(const BreakableType& t) const {
+        return std::hash<int>()(static_cast<int>(t));
+    }
+};
+
+// Dicctionary with the textures of the breakable tiles
+std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, BreakableTypeHash> breakableTextures;
+
+
+// ======================================================================================
 
 
 TileMap::TileMap() {
@@ -123,7 +142,8 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
             break;
 
             
-        default: collisionTypes.at(NO_COLLISION);
+        default:
+            return collisionTypes.at(NO_COLLISION);
     }
     
 }
@@ -131,6 +151,8 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
 sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
 {
     switch (id) {
+        case 0:
+            
         case 2:
             return collisionTypes.at(FULL_COLLISION);
         case 4:
@@ -167,7 +189,8 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
 
 bool TileMap::load(int level, int stage) {
     std::string tileset_path = "assets/tilesets/tileset_" + std::to_string(level) + ".png";
-    std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" + std::to_string(level) + "_" + std::to_string(stage) + ".txt";
+    std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" +
+                                std::to_string(level) + "_" + std::to_string(stage) + ".txt";
     
     std::vector<int> tilemap;
     processFile(tilemap_path, tilemap);
@@ -175,6 +198,11 @@ bool TileMap::load(int level, int stage) {
     m_solidTiles.resize(m_tilesPerColumn);
     for (auto& row : m_solidTiles) {
         row.resize(m_tilesPerRow);
+    }
+
+    if (!loadBreakableTextures()) {
+        std::cerr << "Error loading breakable textures" << std::endl;
+        return false;
     }
 
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
@@ -229,8 +257,24 @@ bool TileMap::load(int level, int stage) {
             m_solidTiles[j][i].hitbox.position.y += j * gTileSize;
         }
     }
+
     return true;
 }
+
+bool TileMap::loadBreakableTextures() {         
+    sf::Image firepitAndCandelabrum;
+    if (!firepitAndCandelabrum.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
+    firepitAndCandelabrum.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+
+    auto firepitTexture = std::make_shared<sf::Texture>(firepitAndCandelabrum, false, sf::IntRect({175, 2}, {16, 31}));
+    breakableTextures[BreakableType::FIREPIT] = firepitTexture;
+    
+    auto candelabrumTexture = std::make_shared<sf::Texture>(firepitAndCandelabrum, false, sf::IntRect({157, 1}, {8, 16}));
+    breakableTextures[BreakableType::CANDELABRUM] = candelabrumTexture;
+    
+    return true;
+}
+
 
 void TileMap::drawHitboxes(sf::RenderWindow& window) const
 {
@@ -245,6 +289,16 @@ void TileMap::drawHitboxes(sf::RenderWindow& window) const
     // Doors
     for (auto& doorEntry : this->m_doorTiles) {
         sf::RectangleShape rect = FloatRectToRectShape(doorEntry.second.hitbox, 1);
+        window.draw(rect);
+    }
+
+    // Breakable tiles
+    for (size_t i = 0; i < this->m_breakableTiles.size(); ++i) {
+        if (this->m_breakableTiles[i].isDestroyed) {
+            continue;
+        }
+
+        sf::RectangleShape rect = FloatRectToRectShape(this->m_breakableTiles[i].hitbox);
         window.draw(rect);
     }
 }
@@ -315,6 +369,16 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
         } else {
             tile.isVisible = false;
         }
+    }
+
+    for (size_t i = 0; i < m_breakableTiles.size(); ++i) {
+        if (m_breakableTiles[i].isDestroyed) {
+            continue;
+        }
+
+        sf::Sprite sprite(*breakableTextures[BreakableType::FIREPIT]);
+        sprite.setPosition(m_breakableTiles[i].hitbox.position);
+        window.draw(sprite);
     }
 
     drawHitboxes(window);
@@ -464,7 +528,7 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
     std::string line;
 
     while (std::getline(file, line)) {
-        if(line == "breakable") return;
+        if(line == "end_doors") return;
 
         std::stringstream ss(line);
         std::string numberStr;
@@ -513,34 +577,67 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
     }
 }
 
-void TileMap::processFileBreakableTiles(std::ifstream& file){
+void TileMap::processFileBreakableTiles(std::ifstream& file) {
     std::string line;
-
-    while (std::getline(file, line)) {
-        //if(line == "") return; // Next section?
-
-        std::stringstream ss(line);
-        std::string numberStr;
     
+    // For security, omit the lines until the "breakable" mark
+    while (std::getline(file, line)) {
+        if (line == "breakable")
+            break;
+    }
+    
+    while (std::getline(file, line)) {      // Until we find "end_breakable"
+        if (line == "end_breakable")
+            break;
+        if (line.empty())
+            continue;
+        
+        std::stringstream ss(line);
+        std::string token;
+        
         try {
-            std::getline(ss, numberStr, ',');
-            int breakableType = std::stoi(numberStr);
-        
-            std::getline(ss, numberStr, ',');
-            int posX = std::stoi(numberStr);
-        
-            std::getline(ss, numberStr, ',');
-            int posY = std::stoi(numberStr);
+            // Extraction of breakable tile type (mandatory !!!)
+            std::getline(ss, token, ',');
+            int breakableType = std::stoi(token);
             
+            // Extraction of X position (mandatory !!!)
+            std::getline(ss, token, ',');
+            int posX = std::stoi(token);
+            
+            // Extraction of Y position (mandatory !!!)
+            std::getline(ss, token, ',');
+            int posY = std::stoi(token);
+
+            // Optional values: isBreakable and dropItem.
+            // By default, it is BREAKABLE and there is NO ITEM TO DROP (= NONE).
+            bool isBreakable = true;
+            BreakableTile::DropType dropItem = BreakableTile::DropType::NONE;
+            
+            if (std::getline(ss, token, ',')) {     // Optional value
+                isBreakable = (std::stoi(token) != 0);      // If it is not 0, it is true.
+            }
+            if (std::getline(ss, token, ',')) {     // Optional value
+                // Expecting an integer representing the type of item that can be dropped
+                dropItem = static_cast<BreakableTile::DropType>(std::stoi(token));
+            }
+             
+            //sf::Vector2u textureSize = breakableTextures[static_cast<BreakableType>(breakableType)]->getSize();
+            //sf::FloatRect hitbox({posX, posY}, {textureSize.x, textureSize.y});
             sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
             hitbox.position.x += posX;
             hitbox.position.y += posY;
-
-            BreakableTile tile = {hitbox, static_cast<BreakableTile::Type>(breakableType)};
-            m_breakableTiles.push_back(tile);
             
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Invalid breakableTile number in tilemap file: " << numberStr << std::endl;
+            BreakableTile tile;
+            tile.hitbox = hitbox;
+            tile.type = static_cast<BreakableTile::Type>(breakableType);
+            tile.isBreakable = isBreakable;
+            tile.dropItem = dropItem;
+            
+            m_breakableTiles.push_back(tile);
+        } catch (const std::exception& e) {
+            std::cerr << "Error al procesar breakable tile en la línea: " << line
+                      << ". Excepción: " << e.what() << std::endl;
         }
     }
 }
+

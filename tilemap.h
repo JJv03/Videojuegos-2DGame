@@ -31,10 +31,19 @@ public:
             BREAKABLE_WALL = 2,
         };
 
+        enum class DropType {   // Types of items that can drop from breakable tiles. Only in this scope
+            NONE = 0,                // No item drops
+            DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc). Should be handled in game logic
+            CROWN = 2,
+            MEAT = 3,
+        };
+
+        //sf::Sprite sprite;              // Sprite of the breakable tile
         sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
         Type type;                      // Breakable type
         bool isBreakable = true;        // Enabling the tile to be destroyed
         bool isDestroyed = false;       // If the tile is destroyed
+        DropType dropItem = DropType::NONE;          // If the tile drops an item
     };
 
     struct DoorTile {
@@ -59,6 +68,9 @@ private:
 
     // Permite hacer window.draw(tilemap) directamente
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    // Function that loads the textures of the breakable tiles
+    bool loadBreakableTextures();
 
 public:
     TileMap();
@@ -95,7 +107,7 @@ public:
     void drawHitboxes(sf::RenderWindow& window) const;
 
     // Function that processes the tilemap file
-    void processFile(const std::string& file_path, std::vector<int>& listaNumeros);
+    void processFile(const std::string& file_path, std::vector<int>& solidTileNumberList);
 
     // Function that processes the tilemap file's map dimentions section, 
     // storing its tilesPerRow and tilesPerColumn
