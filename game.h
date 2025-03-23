@@ -47,6 +47,9 @@ public:
     // Check collisions with the tilemap
     void checkPlayerTileCollisions();
 
+    // Draw healthBar
+    void drawHealthBars(sf::RenderWindow& window, int health, int bossHealth);
+
     // Starts stage number <stage> at current level
     int startStage(int stage);
 

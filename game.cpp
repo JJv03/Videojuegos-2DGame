@@ -197,27 +197,77 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
         // GUI
         sf::View gameView = window.getView();
 
-        // Configurar una nueva vista fija para la GUI
+        // Configure a new view for the GUI
         sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
-        window.setView(guiView); // Aplicar la vista fija para la GUI
+        window.setView(guiView);
 
-        // Dibujar el rectángulo negro en la parte superior
-        sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
+        // Draw the black rectangle
+        sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50));
         guiBackground.setFillColor(sf::Color::Black);
         guiBackground.setPosition(sf::Vector2f(0, 0));
         window.draw(guiBackground);
 
-        // Dibujar los textos de la GUI
+        // Draw the GUI texts
         for (const auto& text : texts) {
             window.draw(text);
         }
 
-        // Restaurar la vista original del juego
+        drawHealthBars(window, player.health, 16); // CHANGE FOR BOSS HEALTH!!!!!
+
+        // Restore the original game view
         window.setView(gameView);
 
         player.draw(window);
     }
 
+}
+
+void Game::drawHealthBars(sf::RenderWindow& window, int playerHealth, int bossHealth) {
+    const int MAX_HEALTH = 16;
+    const int SEGMENT_WIDTH = 5;
+    const int SEGMENT_HEIGHT = 10;
+    const int SPACING = 2;
+    const float BORDER_THICKNESS = 1.0f;
+    const sf::Vector2f START_POS(78, 22);
+
+    // Player
+    for (int i = 0; i < MAX_HEALTH; ++i) {
+        bool isFull = (i < playerHealth);
+
+        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
+        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
+        sf::RectangleShape segment(sf::Vector2f(width, height));
+
+        // Adjust the position to center the empty segments within the border
+        float xOffset = isFull ? 0 : BORDER_THICKNESS;
+        float yOffset = isFull ? 0 : BORDER_THICKNESS;
+        segment.setPosition(sf::Vector2f(78 + i * (SEGMENT_WIDTH + SPACING) + xOffset, 22 + yOffset));
+
+        segment.setOutlineThickness(BORDER_THICKNESS);
+        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
+        segment.setFillColor(isFull ? sf::Color::Red : sf::Color::Black);
+
+        window.draw(segment);
+    }
+
+    // Boss
+    for (int i = 0; i < MAX_HEALTH; ++i) {
+        bool isFull = (i < bossHealth);
+
+        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
+        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
+        sf::RectangleShape segment(sf::Vector2f(width, height));
+
+        float xOffset = isFull ? 0 : BORDER_THICKNESS;
+        float yOffset = isFull ? 0 : BORDER_THICKNESS;
+        segment.setPosition(sf::Vector2f(78 + i * (SEGMENT_WIDTH + SPACING) + xOffset, 35 + yOffset));
+
+        segment.setOutlineThickness(BORDER_THICKNESS);
+        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
+        segment.setFillColor(isFull ? sf::Color(255, 150, 120) : sf::Color::Black);
+
+        window.draw(segment);
+    }
 }
 
 /*void Game::draw(sf::RenderWindow& window, Camera& camera) {
