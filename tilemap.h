@@ -44,9 +44,9 @@ public:
             STAIRS = 2,
         };
 
-        int id;
         sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
         Type type;                      // Door type
+        sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
     };
 
 
@@ -71,7 +71,7 @@ public:
     std::vector<BreakableTile> m_breakableTiles;
 
     // Vector with the properties of each door tile
-    std::vector<DoorTile>m_doorTiles;
+    std::unordered_map<int,DoorTile> m_doorTiles;
     
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);

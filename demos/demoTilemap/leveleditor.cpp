@@ -5,7 +5,7 @@
 #include <sstream>
 
 const int TILE_SIZE = 32;
-const int MAP_WIDTH = 48;
+const int MAP_WIDTH = 16;
 const int MAP_HEIGHT = 6;
 const int TILESET_WIDTH = 10;
 const int TILESET_HEIGHT = 8;
@@ -151,6 +151,7 @@ private:
     void saveGrid() {
         std::ofstream outFile("grid.txt");
         outFile << MAP_WIDTH << "," << MAP_HEIGHT << std::endl;
+        outFile << 64 << "," << 64 << std::endl;
         for (int i = 0; i < MAP_HEIGHT; ++i) {
             for (int j = 0; j < MAP_WIDTH; ++j) {
                 outFile << grid[i][j];
@@ -160,6 +161,9 @@ private:
             }
             outFile << std::endl;
         }
+
+        outFile << "doors" << std::endl;
+        outFile << "breakable" << std::endl;
         outFile.close();
         std::cout << "Datos guardados en 'grid.txt'" << std::endl;
     }
@@ -173,7 +177,8 @@ private:
 
         std::string line;
         std::getline(inFile, line);  // Skips the first line (map's dimensions)
-        
+        std::getline(inFile, line);  // Skips the second line (initial position)
+
         for (int i = 0; i < MAP_HEIGHT; ++i) {
             if (!std::getline(inFile, line)) break;
             std::stringstream ss(line);

@@ -38,6 +38,9 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
     switch(level){
         case 1:
             switch (id) {
+                case 76:
+                            return collisionTypes.at(FULL_COLLISION);
+
                 case 14:
                 case 34:
                 case 37:    // Stage 1-1 outside floor
@@ -58,10 +61,12 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
                 case 72:
                             return collisionTypes.at(BOTTOM_HALF_COLLISION);
                 case 2:
+                case 4:     // Escalera (quitar)
                 case 61:    // Escalera (quitar)
                             return collisionTypes.at(BOTTOM_RIGHT_COLLISION);
                 case 6:
                 case 23:
+                case 46:    // Escalera (quitar)
                 case 71:    // Escalera (quitar)
                             return collisionTypes.at(BOTTOM_LEFT_COLLISION);
                 default:    
@@ -238,8 +243,8 @@ void TileMap::drawHitboxes(sf::RenderWindow& window) const
     }
 
     // Doors
-    for (size_t i = 0; i < this->m_doorTiles.size(); ++i) {
-        sf::RectangleShape rect = FloatRectToRectShape(this->m_doorTiles[i].hitbox, 1);
+    for (auto& doorEntry : this->m_doorTiles) {
+        sf::RectangleShape rect = FloatRectToRectShape(doorEntry.second.hitbox, 1);
         window.draw(rect);
     }
 }
@@ -476,14 +481,29 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
             std::getline(ss, numberStr, ',');
             int posY = std::stoi(numberStr);
 
+            sf::Vector2f aparition;
+
+            if(doorType == 2){ // if stairs
+                std::getline(ss, numberStr, ',');
+                int playerPosX = std::stoi(numberStr);
+            
+                std::getline(ss, numberStr, ',');
+                int playerPosY = std::stoi(numberStr);
+                std::cout << "Stairs: " << playerPosX << ", " << playerPosY << std::endl;
+
+                aparition = {playerPosX, playerPosY};
+            } else {
+                aparition = initialPosition;
+            }
+
             sf::FloatRect hitbox = getHitboxForDoorTile(doorType);
 
             hitbox.position.x += posX;
             hitbox.position.y += posY;
 
-            DoorTile door = {doorId, hitbox, static_cast<DoorTile::Type>(doorType)};
-                        
-            m_doorTiles.push_back(door);
+            DoorTile door = {hitbox, static_cast<DoorTile::Type>(doorType), aparition};
+            
+            m_doorTiles[doorId] = door;
 
         } catch (const std::invalid_argument&) {
             std::cerr << "Invalid doorTile number in tilemap file: " << numberStr << std::endl;

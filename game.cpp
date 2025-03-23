@@ -143,7 +143,7 @@ void Game::init(){
     texts.push_back(playerText);
     texts.push_back(enemyText);
     
-    startStage(1);
+    startStage(4);
 }
 
 // Effects changes depending on the input of the player
@@ -416,28 +416,36 @@ void Game::checkPlayerTileCollisions() {
 
     // Door tiles
     // i+1 = stage number
-    for(unsigned int i = 0; i < tilemaps[currentStage].m_doorTiles.size(); i++){
-        sf::FloatRect doorBounds = tilemaps[currentStage].m_doorTiles[i].hitbox;
+    for(auto& doorEntry : tilemaps[currentStage].m_doorTiles){
+        sf::FloatRect doorBounds = doorEntry.second.hitbox;
                 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds)) {
 
-            if(tilemaps[currentStage].m_doorTiles[i].type == TileMap::DoorTile::Type::DOOR){
+            if(doorEntry.second.type == TileMap::DoorTile::Type::DOOR){
                 // Quitar puerta (ya no está disponible)
             }
 
-            int doorId = tilemaps[currentStage].m_doorTiles[i].id;
+            int doorId = doorEntry.first;
 
             if(int(currentStage) == tilemaps.doors[doorId].prev_stage){
                 std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
-                currentStage = tilemaps.doors[doorId].next_stage;
-                startStage(currentStage);
+                
+                if(tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS) {
+                    startStage(tilemaps.doors[doorId].next_stage, doorId);
+                } else {
+                    startStage(tilemaps.doors[doorId].next_stage);
+                }
 
             } else if (int(currentStage) == tilemaps.doors[doorId].next_stage){
                 std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
-                currentStage = tilemaps.doors[doorId].prev_stage;
-                startStage(currentStage);
+
+                if(tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS) {
+                    startStage(tilemaps.doors[doorId].prev_stage, doorId);
+                } else {
+                    startStage(tilemaps.doors[doorId].prev_stage);
+                }
 
             } else if (100 == tilemaps.doors[doorId].next_stage){
                 std::cout << "NEXT LEVEL" << std::endl;
@@ -452,14 +460,22 @@ void Game::checkPlayerTileCollisions() {
 }
  
 
-int Game::startStage(int stage){
+int Game::startStage(int stage, int fromDoor){
     if(unsigned(stage) > tilemaps.tilemaps.size()){
         std::cerr << "ERROR: Level " << currentLevel << ", stage " << stage << " doesn't exist";
         return -1;
     }
 
     currentStage = stage;
-    player.sprite->setPosition(tilemaps[currentStage].initialPosition);
+
+    std::cout << "Current stage: " << currentStage << std::endl;
+    if(fromDoor == 0){
+        std::cout << "NO stairs: " << tilemaps[currentStage].initialPosition.x << ", " <<tilemaps[currentStage].initialPosition.y << std::endl;
+        player.sprite->setPosition(tilemaps[currentStage].initialPosition);
+    } else {
+        std::cout << "STAIRS: fromDoor: " << fromDoor << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.x << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.y << std::endl;
+        player.sprite->setPosition(tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition);
+    }
 
     return stage;
 }

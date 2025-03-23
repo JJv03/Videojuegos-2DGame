@@ -51,7 +51,7 @@ public:
     void drawHealthBars(sf::RenderWindow& window, int health, int bossHealth);
 
     // Starts stage number <stage> at current level
-    int startStage(int stage);
+    int startStage(int stage, int fromDoor = 0);
 
     // Moves player from a door to another door
     int goToStage(int fromDoor);
