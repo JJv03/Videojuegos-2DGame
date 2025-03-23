@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include "playerState.h"
 #include "animationManager.h"
+#include "globals.h"
 
 constexpr float gMovementSpeed { 120.0f };
 
@@ -65,10 +66,16 @@ public:
     sf::Sprite* secondaryWeaponSprite;
     int secondaryWeapon; // 0 nada, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
 
+    // Activation zone
+    sf::FloatRect gPlayerActivationZone;
+    sf::FloatRect gPlayerDeactivationZone;
+    const float ACTIVATION_WIDTH = gWindowWidth;
+    const float ACTIVATION_HEIGHT = gWindowHeight;
+    const float DEACTIVATION_WIDTH = gWindowWidth * 1.2f;
+    const float DEACTIVATION_HEIGHT = gWindowHeight * 1.2f;
+
     AnimationManager* gAnimationManager { nullptr };
     AnimationManager* gWhipAnimationManager { nullptr };
-
-
 
     std::vector<AnimationManager::Frame> idleFrames {
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 32)), 0.2f}
@@ -138,7 +145,7 @@ public:
     //void removeState();
 
     PlayerStateRef& getActiveState();
-
+    void updateActivationZones();
 
     
 };

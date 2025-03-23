@@ -12,7 +12,7 @@ std::vector<sf::Sprite> gSprites;
 
 // Constructor, destructor
 Game::Game(){
-    player = Player();
+    Player player;
     //tileMap = TileMap();
     tilemaps = TilemapManager();
 }

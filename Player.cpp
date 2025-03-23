@@ -1,4 +1,5 @@
 #include "player.h"
+#include "globals.h"
 #include <iostream>
 
 
@@ -45,6 +46,7 @@ void Player::handleInput(sf::Event event)
 void Player::update(float deltaTime)
 {
     getActiveState()->update(*this, deltaTime);
+    updateActivationZones();
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -75,4 +77,27 @@ void Player::removeState()
 PlayerStateRef& Player::getActiveState()
 {
     return activeState;
+}
+
+void Player::updateActivationZones()
+{
+    sf::Vector2f playerPos = sprite->getPosition();
+
+    sf::Vector2u windowSize = {gWindowWidth, gWindowHeight};
+
+    // Calcular las dimensiones de las zonas en función del tamaño de la ventana
+    float activationWidth = windowSize.x; // 100% del ancho de la ventana
+    float activationHeight = windowSize.y; // 100% de la altura de la ventana
+    float deactivationWidth = windowSize.x * 1.2f; // 120% del ancho de la ventana
+    float deactivationHeight = windowSize.y * 1.2f; // 120% de la altura de la ventana
+
+    gPlayerActivationZone = sf::FloatRect(
+        {playerPos.x - activationWidth / 2.0f,
+         playerPos.y - activationHeight / 2.0f},
+        {activationWidth, activationHeight});
+
+    gPlayerDeactivationZone = sf::FloatRect(
+        {playerPos.x - deactivationWidth / 2.0f,
+         playerPos.y - deactivationHeight / 2.0f},
+        {deactivationWidth, deactivationHeight});
 }
