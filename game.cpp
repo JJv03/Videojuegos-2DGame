@@ -374,6 +374,7 @@ void Game::checkPlayerMapBoundCollisions() {
 
 void Game::checkPlayerTileCollisions() {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+    bool hasCollided = false;
 
     // Solid tiles
     for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col) {
@@ -382,6 +383,7 @@ void Game::checkPlayerTileCollisions() {
                 sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitbox;
                 
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
+                    hasCollided = true;
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
@@ -411,6 +413,10 @@ void Game::checkPlayerTileCollisions() {
                 }
             }
         }
+    }
+
+    if (!hasCollided) {     // If Simon is not colliding with any solid tile
+        player.isOnGround = false;
     }
 
 
