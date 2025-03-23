@@ -143,7 +143,7 @@ void Game::init(){
     texts.push_back(playerText);
     texts.push_back(enemyText);
     
-    startStage(4);
+    startStage(1);
 }
 
 // Effects changes depending on the input of the player
