@@ -5,7 +5,7 @@
 #include <sstream>
 
 const int TILE_SIZE = 32;
-const int MAP_WIDTH = 16;
+const int MAP_WIDTH = 24;
 const int MAP_HEIGHT = 6;
 const int TILESET_WIDTH = 10;
 const int TILESET_HEIGHT = 8;

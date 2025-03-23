@@ -28,8 +28,8 @@ void TilemapManager::loadLevel(int level) {
         tilemaps.push_back(TileMap());
         tilemaps[3].load(1, 4);
 
-        //tilemaps.push_back(TileMap());
-        //tilemaps[4].load(1, 5);
+        tilemaps.push_back(TileMap());
+        tilemaps[4].load(1, 5);
         
         // ------------------------
         doors.clear();
