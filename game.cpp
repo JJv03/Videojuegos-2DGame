@@ -399,7 +399,7 @@ void Game::checkPlayerTileCollisions() {
                         {   // Simon's feet are collisioning with the tile
                             if (player.verticalSpeed > 0.0f) {      // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
-                                player.isOnGround = true;           // Indicamos que Simon está en el suelo
+                                player.isOnGround = true;           // Set Simon to be on ground
                             }
                         }
                         else    // Simon's head is collisioning with the tile
