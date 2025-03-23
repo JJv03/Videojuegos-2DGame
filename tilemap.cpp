@@ -22,13 +22,13 @@ enum CollisionType {
 
 std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     { NO_COLLISION, sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}) },
-    { FULL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize}) },
-    { BOTTOM_HALF_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize, gTileSize / 2.0f}) },
-    { TOP_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize / 2.0f}) },
+    { FULL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize)) },
+    { BOTTOM_HALF_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, sf::Vector2f(gTileSize, gTileSize / 2.0f)) },
+    { TOP_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize / 2.0f)) },
     { BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
     { BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
-    { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 2.f}) },
-    { THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize, gTileSize * 3.f}) },
+    { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f)) },
+    { THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 3.f)) },
 };
 
 // Hash function for the breakable tile type
@@ -491,7 +491,7 @@ void TileMap::processFileInitialPosition(std::ifstream& file){
                 return;
             }
 
-            initialPosition = {posX, posY};
+            initialPosition = sf::Vector2f(posX, posY);
 
         } catch (const std::exception& e) {
             std::cerr << "Error parsing initial position: " << e.what() << std::endl;
@@ -555,7 +555,7 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
                 int playerPosY = std::stoi(numberStr);
                 std::cout << "Stairs: " << playerPosX << ", " << playerPosY << std::endl;
 
-                aparition = {playerPosX, playerPosY};
+                aparition = sf::Vector2f(playerPosX, playerPosY);
             } else {
                 aparition = initialPosition;
             }
