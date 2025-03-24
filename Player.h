@@ -40,7 +40,7 @@ public:
     bool hasToPressAgain;
 
     // Stats
-    const float DAMAGE = 1.0f;
+    float damage = 1.0f;
     int health;
     int lives;
     int score;

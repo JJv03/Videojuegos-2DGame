@@ -422,15 +422,15 @@ void Game::checkEnemiesCollisions()
 
     for (auto &zombieSpawner : zombiesSpawner)
     {
-        zombieSpawner.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.DAMAGE);
+        zombieSpawner.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
     }
     for (auto &leopard : leopard)
     {
-        leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.DAMAGE);
+        leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
     }
     for (auto &bat : bat)
     {
-        bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.DAMAGE);
+        bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
     }
 }
 
