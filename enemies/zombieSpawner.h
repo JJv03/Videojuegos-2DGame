@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zombie.h"
+#include "createEnemies.h"
 #include <vector>
 #include <random>
 #include <memory>
@@ -30,8 +30,7 @@ public:
 
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
 
-    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                         const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
+    void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
 
     void draw(sf::RenderWindow &window, bool debugDraw = false);
 };

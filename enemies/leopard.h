@@ -1,7 +1,7 @@
 #pragma once
 
 #include "enemy.h"
-#include "tilemap.h"
+#include "../tilemap.h"
 
 class Leopard : public Enemy
 {
@@ -33,8 +33,6 @@ private:
 public:
     Leopard() = default;
     Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
-
-    static Leopard createLeopard(const sf::Vector2f &position);
 
     void resetPosition() override;
     void draw(sf::RenderWindow &window, bool debugDraw) override;

@@ -80,9 +80,9 @@ void Game::init()
 
     zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
 
-    leopard.push_back(Leopard::createLeopard(LEOPARD_POSITION));
+    leopard.push_back(createLeopard(LEOPARD_POSITION));
 
-    bat.push_back(Bat::createBat(BAT_POSITION, {50.f, 50.f}));
+    bat.push_back(createBatSpawner(BAT_POSITION, {50.f, 50.f}));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -422,7 +422,7 @@ void Game::checkEnemiesCollisions()
 
     for (auto &zombieSpawner : zombiesSpawner)
     {
-        zombieSpawner.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+        zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
     }
     for (auto &leopard : leopard)
     {

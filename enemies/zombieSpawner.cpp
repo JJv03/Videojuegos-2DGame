@@ -19,7 +19,7 @@ void ZombieSpawner::init()
 
         for (int i = 0; i < 3; i++)
         {
-            zombies.push_back(Zombie::createZombie(spawnPosition));
+            zombies.push_back(createZombie(spawnPosition));
             zombies.back().isActive = false;
         }
     }
@@ -119,14 +119,13 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 }
 
-void ZombieSpawner::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                                    const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
+void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
     for (auto &zombie : zombies)
     {
         if (zombie.isActive)
         {
-            zombie.checkCollisions(simonBounds, weaponBounds, tileMap, playerIsAtacking, playerDamage);
+            zombie.checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
         }
     }
 }

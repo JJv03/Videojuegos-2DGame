@@ -1,7 +1,7 @@
 #pragma once
 
 #include "enemy.h"
-#include "tilemap.h"
+#include "../tilemap.h"
 
 class Zombie : public Enemy
 {
@@ -22,14 +22,11 @@ public:
     Zombie() = default;
     Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
-    static Zombie createZombie(const sf::Vector2f &position);
-
     void resetPosition() override;
     void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
 
     void update(float deltaTime);
-    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                         const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
+    void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
 
     void updateAnimation(float deltaTime);
 };

@@ -11,50 +11,6 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
     damage = BAT_DAMAGE;
 }
 
-Bat Bat::createBat(const sf::Vector2f &position, const sf::Vector2f &zoneSize)
-{
-    const sf::IntRect BAT_SPRITE_REGION = {{184, 11}, {16, 16}};
-
-    const float HITBOX_WIDTH = 15.f;
-    const float HITBOX_HEIGHT = 15.f;
-
-    // Crear la textura
-    sf::Image batImage;
-    if (!batImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del bat" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del bat");
-    }
-    batImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    sf::Texture *batTexture = new sf::Texture();
-    if (!batTexture->loadFromImage(batImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete batTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
-    // Crear el sprite
-    auto batSprite = std::make_shared<sf::Sprite>(*batTexture);
-    batSprite->setTextureRect(BAT_SPRITE_REGION);
-    batSprite->setPosition(position);
-
-    // Ajustar el origen al centro inferior del sprite
-    sf::FloatRect bounds = batSprite->getLocalBounds();
-    batSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-
-    // Crear las hitboxes
-    std::vector<sf::FloatRect> hitboxes = {
-        sf::FloatRect(
-            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
-            {HITBOX_WIDTH, HITBOX_HEIGHT}),
-    };
-
-    // Crear y retornar el bat
-    return Bat(batSprite, hitboxes, position, zoneSize);
-}
-
 void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
 {
     // GESTIÓN DE RESPAWN
@@ -166,10 +122,14 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     }
 
     // COLISIONES POR CONTACTO CON EL JUGADOR
-    if (Enemy::checkHitByEnemy(simonBounds))
+    for (const auto &hitbox : hitboxes)
     {
-        isActive = false;
-        resetPosition();
+        if (hitbox.findIntersection(simonBounds))
+        {
+            isActive = false;
+            resetPosition();
+            break;
+        }
     }
 }
 

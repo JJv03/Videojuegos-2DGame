@@ -38,20 +38,6 @@ void Enemy::applyGravity(float deltaTime)
     }
 }
 
-bool Enemy::checkHitByEnemy(const sf::FloatRect simonBounds)
-{
-    for (const auto &hitbox : hitboxes)
-    {
-        if (hitbox.findIntersection(simonBounds))
-        {
-            // EL PLAYER TENDRÁ QUE TENER MARGEN DE INMUNIDAD
-            // std::cout << "Daño recibido = " << damage << std::endl;
-            return true;
-        }
-    }
-    return false;
-}
-
 void Enemy::resetPosition()
 {
     sf::Vector2f offset = originalPosition - sprite->getPosition();

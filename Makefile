@@ -8,7 +8,7 @@ LDFLAGS     := -L"./SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-
 OBJ_DIR     := build
 SRC_DIR     := .
 
-SRCS        := $(wildcard $(SRC_DIR)/*.cpp)
+SRCS        := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/enemies/*.cpp)
 OBJS        := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 EXEC        := $(OBJ_DIR)/game.exe
 
@@ -24,11 +24,8 @@ $(EXEC): $(OBJS) | $(OBJ_DIR)
 
 # Regla general para compilar archivos .cpp en .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	@mkdir -p $(@D) 
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Crear el directorio de objetos (order-only)
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
 
 # Limpieza de archivos generados
 clean:

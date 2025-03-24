@@ -1,65 +1,118 @@
-#include "zombie.h"
+#include "leopard.h"
 #include <iostream>
+#include <cmath>
 
-Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
+Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
     : Enemy(_sprite, _hitboxes)
 {
-    speed = ZOMBIE_SPEED;
-    life = ZOMBIE_LIFE;
-    score = ZOMBIE_SCORE;
-    damage = ZOMBIE_DAMAGE;
+    speed = {0.0f, 0.0f};
+    life = LEOPARD_LIFE;
+    score = LEOPARD_SCORE;
+    damage = LEOPARD_DAMAGE;
+
+    // Campo de visión
+    if (!hitboxes.empty())
+    {
+        visionField = sf::FloatRect(
+            {hitboxes[0].position.x - VISION_RANGE, hitboxes[0].position.y - VISION_RANGE},
+            {hitboxes[0].size.x + (VISION_RANGE * 2), hitboxes[0].size.y + (VISION_RANGE * 2)});
+    }
 }
 
-Zombie Zombie::createZombie(const sf::Vector2f &position)
+void Leopard::updateVisionField()
 {
-    const sf::IntRect ZOMBIE_SPRITE_REGION = {{1, 28}, {16, 32}};
-
-    const float HITBOX_WIDTH = 12.f;
-    const float HITBOX_HEIGHT = 30.f;
-
-    // Crear la textura
-    sf::Image zombieImage;
-    if (!zombieImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
+    if (!hitboxes.empty())
     {
-        std::cerr << "Error cargando la imagen del zombie" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del zombie");
+        visionField = sf::FloatRect(
+            {hitboxes[0].position.x - VISION_RANGE, hitboxes[0].position.y - VISION_RANGE},
+            {hitboxes[0].size.x + (VISION_RANGE * 2), hitboxes[0].size.y + (VISION_RANGE * 2)});
     }
-    zombieImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    sf::Texture *zombieTexture = new sf::Texture();
-    if (!zombieTexture->loadFromImage(zombieImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete zombieTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
-    // Crear el sprite
-    auto zombieSprite = std::make_shared<sf::Sprite>(*zombieTexture);
-    zombieSprite->setTextureRect(ZOMBIE_SPRITE_REGION);
-    zombieSprite->setPosition(position);
-
-    // Ajustar el origen al centro inferior del sprite
-    sf::FloatRect bounds = zombieSprite->getLocalBounds();
-    zombieSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-
-    // Crear las hitboxes
-    std::vector<sf::FloatRect> hitboxes = {
-        sf::FloatRect(
-            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
-            {HITBOX_WIDTH, HITBOX_HEIGHT}),
-    };
-
-    // Crear y retornar el zombie
-    return Zombie(zombieSprite, hitboxes);
 }
 
-void Zombie::update(float deltaTime)
+bool Leopard::checkForLedge(const sf::FloatRect floorBounds)
 {
-    // EL RESPAWN SE DEBE GESTIONAR AQUI (SOLO EN LOS ZOMBIES SE TIENE UN SPAWNER)
+    if (!isOnGround || std::abs(speed.x) < 0.1f)
+        return false;
 
+    float offsetX = (speed.x > 0) ? hitboxes[0].size.x + 10.0f : -10.0f;
+
+    sf::Vector2f checkPoint = {
+        hitboxes[0].position.x + offsetX,
+        hitboxes[0].position.y + hitboxes[0].size.y + 5.0f};
+
+    // Pequeño rectángulo para verificar colisión con el suelo
+    sf::FloatRect checkRect = sf::FloatRect(
+        {checkPoint.x - 5.0f, checkPoint.y},
+        {10.0f, 10.0f});
+
+    return !checkRect.findIntersection(floorBounds).has_value();
+}
+
+void Leopard::jump()
+{
+    if (isOnGround)
+    {
+        speed.y = LEOPARD_JUMP_SPEED;
+        isOnGround = false;
+    }
+}
+
+void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::Vector2f &playerPos)
+{
+    playerPosition = playerPos;
+
+    // GESTIÓN DE RESPAWN
+    bool enemyInsideActivationZone = false;
+    bool enemyInsideDeactivationZone = false;
+
+    for (const auto &hitbox : hitboxes)
+    {
+        if (playerActivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideActivationZone = true;
+        }
+        if (playerDeactivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideDeactivationZone = true;
+        }
+    }
+
+    // Si el jugador está fuera de la zona de activación, se permite que el enemigo se reactive en el futuro
+    if (!enemyInsideActivationZone)
+    {
+        needsPlayerToLeaveZone = false;
+    }
+
+    // Solo activamos si el jugador está en la zona, el enemigo no está activo y el jugador se alejó previamente
+    if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
+    {
+        isActive = true;
+    }
+
+    // Se desactiva si el enemigo está activo y salió de la zona de desactivación
+    if (isActive && !enemyInsideDeactivationZone)
+    {
+        isActive = false;
+        resetPosition();
+    }
+
+    // GESTIÓN DE MOVIMIENTO
     if (isActive)
     {
+        updateVisionField();
+
+        if (playerDetected && speed.x == 0)
+        {
+            float directionToPlayer = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
+            speed.x = std::abs(LEOPARD_SPEED.x) * directionToPlayer;
+        }
+        else if (!playerDetected && !hasRedirected && speed.x != 0 && isOnGround)
+        {
+            float directionToLastPlayerPos = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
+            speed.x = std::abs(LEOPARD_SPEED.x) * directionToLastPlayerPos;
+            hasRedirected = true;
+        }
+
         applyGravity(deltaTime);
 
         if (speed.x != 0)
@@ -83,13 +136,15 @@ void Zombie::update(float deltaTime)
     }
 }
 
-void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                             const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
+void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                              const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
     if (!isActive || !sprite)
         return;
 
     isOnGround = false;
+
+    playerDetected = visionField.findIntersection(simonBounds).has_value();
 
     for (auto &hitbox : hitboxes)
     {
@@ -152,6 +207,12 @@ void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRec
             }
         }
 
+        // Verificar si hay un precipicio adelante y saltar
+        if (isOnGround && checkForLedge(mapBounds))
+        {
+            jump();
+        }
+
         // COLISIONES CON VAPIRE KILLER
         if (playerIsAtacking)
         {
@@ -171,49 +232,41 @@ void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRec
             }
         }
     }
-
-    // COLISIONES POR CONTACTO CON EL JUGADOR
-    Enemy::checkHitByEnemy(simonBounds);
 }
 
-void Zombie::resetPosition()
+void Leopard::resetPosition()
 {
     Enemy::resetPosition();
 
-    speed = ZOMBIE_SPEED;
-    life = ZOMBIE_LIFE;
+    speed = {0.0f, 0.0f};
+    life = LEOPARD_LIFE;
 
     animTimer = 0.0f;
     currentFrame = 0;
+    playerDetected = false;
+    hasRedirected = false;
 }
 
-void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist)
+void Leopard::draw(sf::RenderWindow &window, bool debugDraw)
 {
-    if (!sprite)
-        return;
-
-    // Borde derecho de la zona de activación
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 20.0f;
-
-    // Altura original del zombie
-    float originalY = sprite->getPosition().y;
-
-    // Guardar la posición actual
-    sf::Vector2f oldPosition = sprite->getPosition();
-
-    // Nueva posición
-    sf::Vector2f newPosition(rightEdgeX, originalY);
-    sprite->setPosition(newPosition);
-
-    // Actualiza las hitboxes
-    sf::Vector2f offset = newPosition - oldPosition;
-    for (auto &hitbox : hitboxes)
+    if (sprite && isActive)
     {
-        hitbox.position += offset;
+        Enemy::draw(window, debugDraw);
+
+        if (debugDraw)
+        {
+            sf::RectangleShape visionRect;
+            visionRect.setPosition(visionField.position);
+            visionRect.setSize(visionField.size);
+            visionRect.setFillColor(sf::Color(0, 255, 0, 50));
+            visionRect.setOutlineColor(sf::Color(0, 255, 0));
+            visionRect.setOutlineThickness(1.0f);
+            window.draw(visionRect);
+        }
     }
 }
 
-void Zombie::updateAnimation(float deltaTime)
+void Leopard::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
         return;

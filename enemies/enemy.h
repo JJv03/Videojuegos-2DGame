@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "entity.h"
+#include "../entity.h"
 
 class Enemy : public Entity
 {
@@ -24,7 +24,6 @@ public:
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
     virtual void applyGravity(float deltaTime);
-    virtual bool checkHitByEnemy(const sf::FloatRect simonBounds);
     virtual void resetPosition();
 
     virtual void draw(sf::RenderWindow &window, bool debugDraw);

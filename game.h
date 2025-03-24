@@ -3,9 +3,7 @@
 #include "tilemap.h"
 #include "tilemapManager.h"
 #include "soundManager.h"
-#include "zombieSpawner.h"
-#include "leopard.h"
-#include "bat.h"
+#include "./enemies/createEnemies.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game

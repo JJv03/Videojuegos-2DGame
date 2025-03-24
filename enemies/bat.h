@@ -33,8 +33,6 @@ public:
     Bat() = default;
     Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize);
 
-    static Bat createBat(const sf::Vector2f &position, const sf::Vector2f &zoneSize);
-
     void resetPosition() override;
     void movePositionToBorder(const sf::FloatRect &playerActivationZone);
     void draw(sf::RenderWindow &window, bool debugDraw) override;
