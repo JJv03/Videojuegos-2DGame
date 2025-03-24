@@ -3,17 +3,23 @@
 #include "tilemap.h"
 #include "tilemapManager.h"
 #include "soundManager.h"
+#include "zombieSpawner.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
-class Game{
+class Game
+{
 private:
     SoundManager gameSoundManager;
     int time = 300;
+
 public:
     Player player;
     TilemapManager tilemaps;
     size_t currentLevel = 0;
     size_t currentStage = 0;
+
+    // Vectores de los enemigos
+    std::vector<ZombieSpawner> zombiesSpawner;
 
     sf::Clock loadingClock;
     bool isLoading = false;
@@ -32,14 +38,17 @@ public:
     void update(float deltaTime);
 
     // Renders the game
-    void draw(sf::RenderWindow& window, Camera& camera);
-    
-    // Gets the according view of the camera. Sticks to border if it exits mapBounds, 
+    void draw(sf::RenderWindow &window, Camera &camera);
+
+    // Gets the according view of the camera. Sticks to border if it exits mapBounds,
     // takes animations into account, etc
-    sf::View getView(sf::RenderWindow& window, Camera& camera);
+    sf::View getView(sf::RenderWindow &window, Camera &camera);
 
     // Check all the possible collisions
     void checkCollisions();
+
+    // Check enemies collisions
+    void checkEnemiesCollisions();
 
     // Check map bound collisions
     void checkPlayerMapBoundCollisions();
@@ -48,14 +57,13 @@ public:
     void checkPlayerTileCollisions();
 
     // Draw healthBar
-    void drawHealthBars(sf::RenderWindow& window, int health, int bossHealth);
+    void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth);
 
     // Starts stage number <stage> at current level
     int startStage(int stage, int fromDoor = 0);
 
     // Moves player from a door to another door
     int goToStage(int fromDoor);
-
 
 private:
     // All refered to the GUI

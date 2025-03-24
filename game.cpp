@@ -5,20 +5,22 @@
 #include <sstream>
 #include "globals.h"
 
-AnimationManager* gAnimationManager { nullptr };
-AnimationManager* gWhipAnimationManager { nullptr };
+AnimationManager *gAnimationManager{nullptr};
+AnimationManager *gWhipAnimationManager{nullptr};
 std::unordered_map<std::string, sf::Texture> gTextures;
 std::vector<sf::Sprite> gSprites;
 
 // Constructor, destructor
-Game::Game(){
+Game::Game()
+{
     Player player;
-    //tileMap = TileMap();
+    // tileMap = TileMap();
     tilemaps = TilemapManager();
 }
 
 // Initializes a new game from the beggining
-void Game::init(){
+void Game::init()
+{
     currentLevel = 1;
     currentStage = 1;
 
@@ -28,13 +30,13 @@ void Game::init(){
     tilemaps.loadLevel(1);
 
     // Temporary
-    //if (!tileMap.load(1, 1)){
+    // if (!tileMap.load(1, 1)){
     //    std::cerr << "Error al cargar el tilemap." << std::endl;
     //    return;
     //}
 
     // Simon ----------------------------------------------------------------
-    
+
     // Cargar imagen y configurar textura de Simon (aplicando color key)
     sf::Image simonImage;
     if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
@@ -42,7 +44,7 @@ void Game::init(){
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
     simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    simonImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
+    simonImage.createMaskFromColor(sf::Color(0, 128, 0));        // color key
 
     gTextures["simon"] = sf::Texture(simonImage, false);
 
@@ -51,25 +53,30 @@ void Game::init(){
     simonSprite.setPosition(tilemaps[currentStage].initialPosition);
 
     sf::FloatRect bounds = simonSprite.getLocalBounds();
-    
+
     // Ajusta el origen de las transformaciones al centro inferior
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
     gSprites.push_back(simonSprite);
     player.sprite = &gSprites.back();
 
     gAnimationManager = new AnimationManager(*player.sprite);
-    
+
     gAnimationManager->addAnimation(idleSimon, player.idleFrames);
     gAnimationManager->addAnimation(jumpSimon, player.jumpFrames);
     gAnimationManager->addAnimation(walkSimon, player.walkFrames);
-    gAnimationManager->addAnimation(walkSlowSimon, player.walkSlowFrames,false);
+    gAnimationManager->addAnimation(walkSlowSimon, player.walkSlowFrames, false);
     gAnimationManager->addAnimation(duckSimon, player.duckFrames);
-    gAnimationManager->addAnimation(attackSimon, player.attackFrames,false);
-    gAnimationManager->addAnimation(attackFloorSimon, player.attackFloorFrames,false);
-    
+    gAnimationManager->addAnimation(attackSimon, player.attackFrames, false);
+    gAnimationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
 
     gAnimationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
+
+    // Enemies -------------------------------------------------------------
+
+    const sf::Vector2f ZOMBIE_POSITION = {345.f, 171.f};
+
+    zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -78,22 +85,22 @@ void Game::init(){
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
     whipImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    whipImage.createMaskFromColor(sf::Color(0, 128, 0)); // color key
+    whipImage.createMaskFromColor(sf::Color(0, 128, 0));        // color key
     gTextures["whip"] = sf::Texture(whipImage, false);
 
     sf::Sprite whipSprite(gTextures["whip"]);
     whipSprite.setTextureRect(sf::IntRect({1, 477}, {8, 32}));
     whipSprite.setPosition({245.f, 171.f});
-    
+
     whipSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    
-    
-    player.whipSprite =  new sf::Sprite(whipSprite);
-    
+
+    player.whipSprite = new sf::Sprite(whipSprite);
+
     // Inicializar AnimationManager ----------------------------------------------------------------
     gWhipAnimationManager = new AnimationManager(*player.whipSprite);
 
-    if (!gWhipAnimationManager) {
+    if (!gWhipAnimationManager)
+    {
         std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
     }
     gWhipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whipLvl1Frames, false);
@@ -101,12 +108,13 @@ void Game::init(){
     // Se pasa a player y así toda la animación no se tiene que gestionar en el main
     player.gAnimationManager = gAnimationManager;
     player.gWhipAnimationManager = gWhipAnimationManager;
-        
+
     // --------------------------------------------------
     // GUI
     // --------------------------------------------------
-    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
-        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
+    {
+        std::cout << "No se ha encontrado la fuente" << std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
@@ -142,30 +150,40 @@ void Game::init(){
     texts.push_back(stageText);
     texts.push_back(playerText);
     texts.push_back(enemyText);
-    
+
     startStage(1);
 }
 
 // Effects changes depending on the input of the player
-void Game::handleInput(sf::Event event){
+void Game::handleInput(sf::Event event)
+{
     player.handleInput(event);
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime){
+void Game::update(float deltaTime)
+{
     player.update(deltaTime);
+
+    for (auto &zombieSpawner : zombiesSpawner)
+    {
+        zombieSpawner.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
+    }
 
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
-    
+
     // Reducir el tiempo cada segundo completo
-    if (timeAccumulator >= 1.0f) {
-        if (time > 0) time -= static_cast<int>(timeAccumulator);
-        if (time < 0) time = 0;
+    if (timeAccumulator >= 1.0f)
+    {
+        if (time > 0)
+            time -= static_cast<int>(timeAccumulator);
+        if (time < 0)
+            time = 0;
         timeAccumulator = 0.0f;
         texts[1].setString("TIME " + std::to_string(time));
     }
-    
+
     // Actualizar el score
     std::stringstream scoreStream;
     scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Formato con ceros
@@ -175,24 +193,32 @@ void Game::update(float deltaTime){
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
-void Game::draw(sf::RenderWindow& window, Camera& camera){
+void Game::draw(sf::RenderWindow &window, Camera &camera)
+{
 
-    if(isLoading){
+    if (isLoading)
+    {
         isLoading = false;
         loadingClock.restart();
     }
 
-    if (loadingClock.getElapsedTime().asSeconds() < 0.5f) {
+    if (loadingClock.getElapsedTime().asSeconds() < 0.5f)
+    {
         sf::RectangleShape blackScreen(camera.getView(window.getSize()).getSize());
         blackScreen.setFillColor(sf::Color::Black);
         window.draw(blackScreen);
-
-    } else {
-        //camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
+    }
+    else
+    {
+        // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
 
-        // DEBUG: Draw player hitbox
+        // DEBUG: Draw player and whip hitbox
         window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
+        if (player.isAttacking)
+        {
+            window.draw(FloatRectToRectShape(player.whipSprite->getGlobalBounds()));
+        }
 
         // GUI
         sf::View gameView = window.getView();
@@ -208,7 +234,8 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
         window.draw(guiBackground);
 
         // Draw the GUI texts
-        for (const auto& text : texts) {
+        for (const auto &text : texts)
+        {
             window.draw(text);
         }
 
@@ -218,11 +245,19 @@ void Game::draw(sf::RenderWindow& window, Camera& camera){
         window.setView(gameView);
 
         player.draw(window);
-    }
 
+        for (auto &zombieSpawner : zombiesSpawner)
+        {
+            zombieSpawner.draw(window, true);
+        }
+
+        window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
+        window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
+    }
 }
 
-void Game::drawHealthBars(sf::RenderWindow& window, int playerHealth, int bossHealth) {
+void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth)
+{
     const int MAX_HEALTH = 16;
     const int SEGMENT_WIDTH = 5;
     const int SEGMENT_HEIGHT = 10;
@@ -231,7 +266,8 @@ void Game::drawHealthBars(sf::RenderWindow& window, int playerHealth, int bossHe
     const sf::Vector2f START_POS(78, 22);
 
     // Player
-    for (int i = 0; i < MAX_HEALTH; ++i) {
+    for (int i = 0; i < MAX_HEALTH; ++i)
+    {
         bool isFull = (i < playerHealth);
 
         float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
@@ -251,7 +287,8 @@ void Game::drawHealthBars(sf::RenderWindow& window, int playerHealth, int bossHe
     }
 
     // Boss
-    for (int i = 0; i < MAX_HEALTH; ++i) {
+    for (int i = 0; i < MAX_HEALTH; ++i)
+    {
         bool isFull = (i < bossHealth);
 
         float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
@@ -299,7 +336,8 @@ void Game::drawHealthBars(sf::RenderWindow& window, int playerHealth, int bossHe
     window.setView(gameView);
 }*/
 
-sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
+sf::View Game::getView(sf::RenderWindow &window, Camera &camera)
+{
     sf::View view = camera.getView(window.getSize());
     sf::Vector2f playerPosition = this->player.sprite->getPosition();
 
@@ -321,33 +359,53 @@ sf::View Game::getView(sf::RenderWindow& window, Camera& camera) {
     view.setCenter({centerX, centerY});
 
     // Esquina de la cámara en la esquina superior izquierda, limitada por los bordes del mapa
-    if(playerPosition.x < minX) {
+    if (playerPosition.x < minX)
+    {
         camera.startVertex.x = minX - (camera.getView(window.getSize()).getSize().x / 2.f);
-    }else if(playerPosition.x > maxX) {
+    }
+    else if (playerPosition.x > maxX)
+    {
         camera.startVertex.x = maxX - (camera.getView(window.getSize()).getSize().x / 2.f);
-    } else {
+    }
+    else
+    {
         camera.startVertex.x = player.sprite->getPosition().x -
-            (camera.getView(window.getSize()).getSize().x / 2.f);
+                               (camera.getView(window.getSize()).getSize().x / 2.f);
     }
 
     return view;
 }
 
-
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
 
+void Game::checkCollisions()
+{
 
-void Game::checkCollisions() {
-    
     checkPlayerMapBoundCollisions();
 
     checkPlayerTileCollisions();
+
+    checkEnemiesCollisions();
 }
 
+void Game::checkEnemiesCollisions()
+{
 
-void Game::checkPlayerMapBoundCollisions() {
+    // ESTAS BOUNDS DEBERÍAN SER CON LAS HITBOXES NO CON LOS SPRITES
+    sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+
+    sf::FloatRect whipBounds = player.whipSprite->getGlobalBounds();
+
+    for (auto &zombieSpawner : zombiesSpawner)
+    {
+        zombieSpawner.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.DAMAGE);
+    }
+}
+
+void Game::checkPlayerMapBoundCollisions()
+{
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
     sf::FloatRect mapBounds = tilemaps[currentStage].getMapBounds();
@@ -355,10 +413,12 @@ void Game::checkPlayerMapBoundCollisions() {
     float halfPlayerWidth = playerBounds.size.x / 2;
     // float halfPlayerHeight = playerBounds.size.y / 2; // Comentado por warning
 
-    if (playerBounds.position.x < mapBounds.position.x) {
+    if (playerBounds.position.x < mapBounds.position.x)
+    {
         player.sprite->setPosition({mapBounds.position.x + halfPlayerWidth, player.sprite->getPosition().y});
     }
-    if (playerBounds.position.x + playerBounds.size.x > mapBounds.position.x + mapBounds.size.x) {
+    if (playerBounds.position.x + playerBounds.size.x > mapBounds.position.x + mapBounds.size.x)
+    {
         player.sprite->setPosition({mapBounds.position.x + mapBounds.size.x - halfPlayerWidth, player.sprite->getPosition().y});
     }
     /*
@@ -371,23 +431,28 @@ void Game::checkPlayerMapBoundCollisions() {
     */
 }
 
-
-void Game::checkPlayerTileCollisions() {
+void Game::checkPlayerTileCollisions()
+{
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
     bool hasCollided = false;
 
     // Solid tiles
-    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col) {
-        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row) {
-            if (tilemaps[currentStage].m_solidTiles[row][col].isVisible) {
+    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
+    {
+        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
+        {
+            if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
+            {
                 sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitbox;
-                
-                if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds)) {
+
+                if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
+                {
                     hasCollided = true;
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
-                    if (overlapX < overlapY) {      // Horizontal collision
+                    if (overlapX < overlapY)
+                    { // Horizontal collision
                         if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
                         {
                             player.sprite->move({-overlapX, 0.f});
@@ -396,18 +461,21 @@ void Game::checkPlayerTileCollisions() {
                         {
                             player.sprite->move({overlapX, 0.f});
                         }
-                    } else {    // Vertical collision
+                    }
+                    else
+                    { // Vertical collision
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
-                        {   // Simon's feet are collisioning with the tile
-                            if (player.verticalSpeed > 0.0f) {      // If player is NOT going up
+                        { // Simon's feet are collisioning with the tile
+                            if (player.verticalSpeed > 0.0f)
+                            { // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
-                                player.isOnGround = true;           // Set Simon to be on ground
+                                player.isOnGround = true; // Set Simon to be on ground
                             }
                         }
-                        else    // Simon's head is collisioning with the tile
+                        else // Simon's head is collisioning with the tile
                         {
                             player.sprite->move({0.f, overlapY});
-                            player.verticalSpeed = 0.0f;        // Simon starts falling
+                            player.verticalSpeed = 0.0f; // Simon starts falling
                         }
                     }
                 }
@@ -415,59 +483,74 @@ void Game::checkPlayerTileCollisions() {
         }
     }
 
-    if (!hasCollided) {     // If Simon is not colliding with any solid tile
+    if (!hasCollided)
+    { // If Simon is not colliding with any solid tile
         player.isOnGround = false;
     }
 
-
     // Door tiles
     // i+1 = stage number
-    for(auto& doorEntry : tilemaps[currentStage].m_doorTiles){
+    for (auto &doorEntry : tilemaps[currentStage].m_doorTiles)
+    {
         sf::FloatRect doorBounds = doorEntry.second.hitbox;
-                
-        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds)) {
 
-            if(doorEntry.second.type == TileMap::DoorTile::Type::DOOR){
+        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds))
+        {
+
+            if (doorEntry.second.type == TileMap::DoorTile::Type::DOOR)
+            {
                 // Quitar puerta (ya no está disponible)
             }
 
             int doorId = doorEntry.first;
 
-            if(int(currentStage) == tilemaps.doors[doorId].prev_stage){
+            if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
+            {
                 std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
-                
-                if(tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS) {
+
+                if (tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS)
+                {
                     startStage(tilemaps.doors[doorId].next_stage, doorId);
-                } else {
+                }
+                else
+                {
                     startStage(tilemaps.doors[doorId].next_stage);
                 }
-
-            } else if (int(currentStage) == tilemaps.doors[doorId].next_stage){
+            }
+            else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
+            {
                 std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
 
-                if(tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS) {
+                if (tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS)
+                {
                     startStage(tilemaps.doors[doorId].prev_stage, doorId);
-                } else {
+                }
+                else
+                {
                     startStage(tilemaps.doors[doorId].prev_stage);
                 }
-
-            } else if (100 == tilemaps.doors[doorId].next_stage){
+            }
+            else if (100 == tilemaps.doors[doorId].next_stage)
+            {
                 std::cout << "NEXT LEVEL" << std::endl;
                 isLoading = true;
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
-            } else {
+            }
+            else
+            {
                 std::cout << "ERROR: Stage doesn't correspond to any door stages" << std::endl;
             }
         }
     }
 }
- 
 
-int Game::startStage(int stage, int fromDoor){
-    if(unsigned(stage) > tilemaps.tilemaps.size()){
+int Game::startStage(int stage, int fromDoor)
+{
+    if (unsigned(stage) > tilemaps.tilemaps.size())
+    {
         std::cerr << "ERROR: Level " << currentLevel << ", stage " << stage << " doesn't exist";
         return -1;
     }
@@ -475,10 +558,13 @@ int Game::startStage(int stage, int fromDoor){
     currentStage = stage;
 
     std::cout << "Current stage: " << currentStage << std::endl;
-    if(fromDoor == 0){
-        std::cout << "NO stairs: " << tilemaps[currentStage].initialPosition.x << ", " <<tilemaps[currentStage].initialPosition.y << std::endl;
+    if (fromDoor == 0)
+    {
+        std::cout << "NO stairs: " << tilemaps[currentStage].initialPosition.x << ", " << tilemaps[currentStage].initialPosition.y << std::endl;
         player.sprite->setPosition(tilemaps[currentStage].initialPosition);
-    } else {
+    }
+    else
+    {
         std::cout << "STAIRS: fromDoor: " << fromDoor << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.x << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.y << std::endl;
         player.sprite->setPosition(tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition);
     }
@@ -486,12 +572,13 @@ int Game::startStage(int stage, int fromDoor){
     return stage;
 }
 
-int Game::goToStage(int fromDoor){
-    if (tilemaps.doors.find(fromDoor) == tilemaps.doors.end()){
+int Game::goToStage(int fromDoor)
+{
+    if (tilemaps.doors.find(fromDoor) == tilemaps.doors.end())
+    {
         std::cerr << "ERROR: Level " << currentLevel << ", door " << fromDoor << " doesn't exist";
         return -1;
     }
 
     return fromDoor;
 }
-

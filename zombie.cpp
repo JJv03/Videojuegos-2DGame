@@ -1,0 +1,246 @@
+#include "zombie.h"
+#include <iostream>
+
+Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
+    : Enemy(_sprite, _hitboxes)
+{
+    speed = ZOMBIE_SPEED;
+    life = ZOMBIE_LIFE;
+    score = ZOMBIE_SCORE;
+    damage = ZOMBIE_DAMAGE;
+}
+
+Zombie Zombie::createZombie(const sf::Vector2f &position)
+{
+    const sf::IntRect ZOMBIE_SPRITE_REGION = {{1, 28}, {16, 32}};
+
+    const float HITBOX_WIDTH = 12.f;
+    const float HITBOX_HEIGHT = 30.f;
+
+    // Crear la textura
+    sf::Image zombieImage;
+    if (!zombieImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
+    {
+        std::cerr << "Error cargando la imagen del zombie" << std::endl;
+        throw std::runtime_error("Error cargando la imagen del zombie");
+    }
+    zombieImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+
+    sf::Texture *zombieTexture = new sf::Texture();
+    if (!zombieTexture->loadFromImage(zombieImage))
+    {
+        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
+        delete zombieTexture;
+        throw std::runtime_error("Error cargando la textura desde la imagen");
+    }
+
+    // Crear el sprite
+    auto zombieSprite = std::make_shared<sf::Sprite>(*zombieTexture);
+    zombieSprite->setTextureRect(ZOMBIE_SPRITE_REGION);
+    zombieSprite->setPosition(position);
+
+    // Ajustar el origen al centro inferior del sprite
+    sf::FloatRect bounds = zombieSprite->getLocalBounds();
+    zombieSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Crear las hitboxes
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    // Crear y retornar el zombie
+    return Zombie(zombieSprite, hitboxes);
+}
+
+void Zombie::update(float deltaTime)
+{
+    // EL RESPAWN SE DEBE GESTIONAR AQUI (SOLO EN LOS ZOMBIES SE TIENE UN SPAWNER)
+
+    if (isActive)
+    {
+        applyGravity(deltaTime);
+
+        if (speed.x != 0)
+        {
+            sprite->move({speed.x * deltaTime, 0.f});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.x += speed.x * deltaTime;
+            }
+        }
+        if (speed.y != 0)
+        {
+            sprite->move({0.f, -speed.y * deltaTime});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.y -= speed.y * deltaTime;
+            }
+        }
+
+        updateAnimation(deltaTime);
+    }
+}
+
+void Zombie::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+                             const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
+{
+    if (!isActive || !sprite)
+        return;
+
+    isOnGround = false;
+
+    for (auto &hitbox : hitboxes)
+    {
+        // COLISIONES CON EL ENTORNO
+        sf::FloatRect mapBounds = tileMap.getMapBounds();
+
+        if (!hitbox.findIntersection(mapBounds))
+            continue;
+
+        for (size_t row = 0; row < tileMap.m_solidTiles.size(); ++row)
+        {
+            for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
+            {
+                sf::FloatRect tileBounds = tileMap.m_solidTiles[row][col].hitbox;
+                if (tileBounds.size.x == 0 || tileBounds.size.y == 0)
+                    continue;
+
+                if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(tileBounds))
+                {
+                    float overlapX = intersection->size.x;
+                    float overlapY = intersection->size.y;
+
+                    if (overlapX < overlapY) // Colisión horizontal
+                    {
+                        if (hitbox.position.x < tileBounds.position.x + tileBounds.size.x / 2.f)
+                        {
+                            // Colisión desde la izquierda
+                            sprite->move({-overlapX, 0.f});
+                            for (auto &h : hitboxes)
+                                h.position.x -= overlapX;
+                        }
+                        else
+                        {
+                            // Colisión desde la derecha
+                            sprite->move({overlapX, 0.f});
+                            for (auto &h : hitboxes)
+                                h.position.x += overlapX;
+                        }
+                        speed.x = -speed.x;
+                    }
+                    else // Colisión vertical
+                    {
+                        if (hitbox.position.y < tileBounds.position.y + tileBounds.size.y / 2.f)
+                        {
+                            // Colisión desde arriba
+                            sprite->move({0.f, -overlapY});
+                            for (auto &h : hitboxes)
+                                h.position.y -= overlapY;
+                            isOnGround = true;
+                        }
+                        else
+                        {
+                            // Colisión desde abajo
+                            sprite->move({0.f, overlapY});
+                            for (auto &h : hitboxes)
+                                h.position.y += overlapY;
+                        }
+                    }
+                }
+            }
+        }
+
+        // COLISIONES CON VAPIRE KILLER
+        if (playerIsAtacking)
+        {
+            // EL SISTEMA DE ATAQUE DEBERÁ TENER UN COOLDAWN CUANDO GOLPEE ALGO
+            if (weaponBounds.findIntersection(hitbox).has_value())
+            {
+                std::cout << "Vida = " << life << std::endl;
+                life -= playerDamage;
+                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
+                if (life <= 0.0f)
+                {
+                    isActive = false;
+                    resetPosition();
+                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
+                    break;
+                }
+            }
+        }
+    }
+
+    // COLISIONES POR CONTACTO CON EL JUGADOR
+    Enemy::checkHitByEnemy(simonBounds);
+}
+
+void Zombie::resetPosition()
+{
+    Enemy::resetPosition();
+
+    speed = ZOMBIE_SPEED;
+    life = ZOMBIE_LIFE;
+
+    animTimer = 0.0f;
+    currentFrame = 0;
+}
+
+void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist)
+{
+    if (!sprite)
+        return;
+
+    // Borde derecho de la zona de activación
+    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 20.0f;
+
+    // Altura original del zombie
+    float originalY = sprite->getPosition().y;
+
+    // Guardar la posición actual
+    sf::Vector2f oldPosition = sprite->getPosition();
+
+    // Nueva posición
+    sf::Vector2f newPosition(rightEdgeX, originalY);
+    sprite->setPosition(newPosition);
+
+    // Actualiza las hitboxes
+    sf::Vector2f offset = newPosition - oldPosition;
+    for (auto &hitbox : hitboxes)
+    {
+        hitbox.position += offset;
+    }
+}
+
+void Zombie::updateAnimation(float deltaTime)
+{
+    if (!isActive || !sprite)
+        return;
+
+    animTimer += deltaTime;
+
+    if (animTimer >= ANIM_FRAME_TIME)
+    {
+        animTimer = 0.0f;
+        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
+
+        /*if (currentFrame == 0) {
+
+        } else {
+
+        }*/
+    }
+
+    // Voltear el sprite según la dirección del movimiento
+    sf::Vector2f currentSpeed = speed;
+
+    if (currentSpeed.x < 0)
+    {
+        sprite->setScale({1.0f, 1.0f});
+    }
+    else if (currentSpeed.x > 0)
+    {
+        sprite->setScale({-1.0f, 1.0f});
+    }
+}
