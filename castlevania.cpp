@@ -43,6 +43,7 @@ void Castlevania::run(){
         GameStateRef& currentState = states.getActiveState();
 
         float deltaTime = deltaClock.restart().asSeconds();
+        deltaTime = std::min(deltaTime, 1/60.f);
 
         while (auto eventOpt = window.pollEvent()) 
         {

@@ -69,6 +69,29 @@ private:
     // Permite hacer window.draw(tilemap) directamente
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    // Function that processes the tilemap file
+    void processFile(const std::string& file_path, std::vector<int>& solidTileNumberList);
+
+    // Function that processes the tilemap file's map dimentions section, 
+    // storing its tilesPerRow and tilesPerColumn
+    void processFileMapDimensions(std::ifstream& file);
+
+    // Function that processes the tilemap file's initial position section, 
+    // storing the players initial position when starting the stage for the first time
+    void processFileInitialPosition(std::ifstream& file);
+
+    // Function that processes the tilemap file's solidTiles section, 
+    // storing its numbers in <solitTileNumberList>
+    void processFileSolidTiles(std::ifstream& file, std::vector<int>& solidTileNumberList);
+
+    // Function that processes the tilemap file's door tiles section, 
+    // storing its doors (type,positionX,positionY) in <m_doorTiles>
+    void processFileDoorTiles(std::ifstream& file);
+
+    // Function that processes the tilemap file's breakable tiles section, 
+    // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
+    void processFileBreakableTiles(std::ifstream& file);
+
     // Function that loads the textures of the breakable tiles
     bool loadBreakableTextures();
 
@@ -105,29 +128,6 @@ public:
 
     // Function that draws the hitboxes of the solid tiles
     void drawHitboxes(sf::RenderWindow& window) const;
-
-    // Function that processes the tilemap file
-    void processFile(const std::string& file_path, std::vector<int>& solidTileNumberList);
-
-    // Function that processes the tilemap file's map dimentions section, 
-    // storing its tilesPerRow and tilesPerColumn
-    void processFileMapDimensions(std::ifstream& file);
-
-    // Function that processes the tilemap file's initial position section, 
-    // storing the players initial position when starting the stage for the first time
-    void processFileInitialPosition(std::ifstream& file);
-
-    // Function that processes the tilemap file's solidTiles section, 
-    // storing its numbers in <solitTileNumberList>
-    void processFileSolidTiles(std::ifstream& file, std::vector<int>& solidTileNumberList);
-
-    // Function that processes the tilemap file's door tiles section, 
-    // storing its doors (type,positionX,positionY) in <m_doorTiles>
-    void processFileDoorTiles(std::ifstream& file);
-
-    // Function that processes the tilemap file's breakable tiles section, 
-    // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
-    void processFileBreakableTiles(std::ifstream& file);
 };
 
 // Function that converts a FloatRect to a RectangleShape

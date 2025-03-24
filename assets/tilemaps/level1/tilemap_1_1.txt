@@ -11,4 +11,8 @@ doors
 end_doors
 breakable
 0,95,129
+0,217,129
+0,351,129
+0,479,129
+0,607,129
 end_breakable
