@@ -10,7 +10,7 @@ SRC_DIR     := .
 
 SRCS        := $(wildcard $(SRC_DIR)/*.cpp)
 OBJS        := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
-EXEC        := $(OBJ_DIR)\game.exe
+EXEC        := $(OBJ_DIR)/game.exe
 
 # Targets "phony"
 .PHONY: all clean
