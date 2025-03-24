@@ -74,9 +74,12 @@ void Game::init()
 
     // Enemies -------------------------------------------------------------
 
-    const sf::Vector2f ZOMBIE_POSITION = {345.f, 171.f};
+    const sf::Vector2f ZOMBIE_POSITION = {350.f, 171.f};
+    const sf::Vector2f LEOPARD_POSITION = {400.f, 171.f};
 
     zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
+
+    leopard.push_back(Leopard::createLeopard(LEOPARD_POSITION));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -169,6 +172,10 @@ void Game::update(float deltaTime)
     {
         zombieSpawner.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
     }
+    for (auto &leopard : leopard)
+    {
+        leopard.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone, player.sprite->getPosition());
+    }
 
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
@@ -249,6 +256,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         for (auto &zombieSpawner : zombiesSpawner)
         {
             zombieSpawner.draw(window, true);
+        }
+        for (auto &leopard : leopard)
+        {
+            leopard.draw(window, true);
         }
 
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
@@ -401,6 +412,10 @@ void Game::checkEnemiesCollisions()
     for (auto &zombieSpawner : zombiesSpawner)
     {
         zombieSpawner.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.DAMAGE);
+    }
+    for (auto &leopard : leopard)
+    {
+        leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.DAMAGE);
     }
 }
 
