@@ -38,9 +38,9 @@ public:
             MEAT = 3,
         };
 
-        //sf::Sprite sprite;              // Sprite of the breakable tile
-        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
         Type type;                      // Breakable type
+        sf::Vector2f position;          // Position of the tile. In global coord.
+        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
         bool isBreakable = true;        // Enabling the tile to be destroyed
         bool isDestroyed = false;       // If the tile is destroyed
         DropType dropItem = DropType::NONE;          // If the tile drops an item

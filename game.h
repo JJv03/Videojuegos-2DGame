@@ -4,6 +4,7 @@
 #include "tilemapManager.h"
 #include "soundManager.h"
 #include "./enemies/createEnemies.h"
+#include "item.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game
@@ -22,6 +23,8 @@ public:
     std::vector<ZombieSpawner> zombiesSpawner;
     std::vector<Leopard> leopard;
     std::vector<Bat> bat;
+
+    std::vector<Item> items;
 
     sf::Clock loadingClock;
     bool isLoading = false;

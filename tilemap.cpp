@@ -620,7 +620,9 @@ void TileMap::processFileBreakableTiles(std::ifstream& file) {
                 // Expecting an integer representing the type of item that can be dropped
                 dropItem = static_cast<BreakableTile::DropType>(std::stoi(token));
             }
-             
+            
+            sf::Vector2f position(posX, posY);
+            
             //sf::Vector2u textureSize = breakableTextures[static_cast<BreakableType>(breakableType)]->getSize();
             //sf::FloatRect hitbox({posX, posY}, {textureSize.x, textureSize.y});
             sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
@@ -628,6 +630,7 @@ void TileMap::processFileBreakableTiles(std::ifstream& file) {
             hitbox.position.y += posY;
             
             BreakableTile tile;
+            tile.position = position;
             tile.hitbox = hitbox;
             tile.type = static_cast<BreakableTile::Type>(breakableType);
             tile.isBreakable = isBreakable;
