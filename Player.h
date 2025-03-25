@@ -88,7 +88,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 32)), 0.1f}};
 
     std::vector<AnimationManager::Frame> duckFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 32)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
     std::vector<AnimationManager::Frame> walkFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
@@ -112,12 +112,12 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 32)), 0.1f}};
 
     std::vector<AnimationManager::Frame> attackFloorFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 32)), 0.01f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 32)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.01f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
 
     std::vector<AnimationManager::Frame> whipLvl1Frames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},

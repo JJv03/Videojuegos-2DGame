@@ -308,15 +308,13 @@ PlayerDuckState::PlayerDuckState() : PlayerState()
 
 void PlayerDuckState::init(Player& player)
 {
-
-    if(!player.isDucking){
-        player.isDucking = true;
-    }
-    player.sprite->move({0.f,3.0f});
+    player.sprite->move({0.f,8.0f});
+    player.isDucking = true;
 }
 
 void PlayerDuckState::handleInput(Player& player, sf::Event event)
 {
+
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_RIGHT && player.dir == LEFT) {
             player.dir = RIGHT;
@@ -779,8 +777,7 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 }
 
 void PlayerAttackDuckState::update(Player& player, float deltaTime)
-{
-    
+{   
     player.currentAnimation = attackFloorSimon;
    
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){

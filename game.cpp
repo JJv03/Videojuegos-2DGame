@@ -173,6 +173,7 @@ void Game::handleInput(sf::Event event)
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime)
 {
+
     player.update(deltaTime);
 
     for (auto &zombieSpawner : zombiesSpawner)
@@ -508,7 +509,6 @@ void Game::checkPlayerTileCollisions()
 
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
                 {
-                    hasCollided = true;
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
@@ -527,7 +527,8 @@ void Game::checkPlayerTileCollisions()
                     { // Vertical collision
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
                         { // Simon's feet are collisioning with the tile
-                            if (player.verticalSpeed > 0.0f)
+
+                            if (!hasCollided && player.verticalSpeed > 0.0f)
                             { // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
                                 player.isOnGround = true; // Set Simon to be on ground
@@ -539,6 +540,8 @@ void Game::checkPlayerTileCollisions()
                             player.verticalSpeed = 0.0f; // Simon starts falling
                         }
                     }
+                    
+                    hasCollided = true;
                 }
             }
         }
