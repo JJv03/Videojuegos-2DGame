@@ -65,7 +65,7 @@ public:
     // Secondary weapon
     sf::Texture secondaryWeaponTexture;
     sf::Sprite *secondaryWeaponSprite;
-    int secondaryWeapon; // 0 nada, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
+    int secondaryWeapon; // 0 nothing, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
 
     // Activation zone
     sf::FloatRect gPlayerActivationZone;
@@ -131,8 +131,8 @@ public:
     Player();
 
     void handleInput(sf::Event event);
-    void update(float deltaTime);        // Actualiza lógica
-    void draw(sf::RenderWindow &window); // Renderiza
+    void update(float deltaTime);        
+    void draw(sf::RenderWindow &window); 
 
     void setState(PlayerStateRef newState);
     // void addState(PlayerStateRef newState);
