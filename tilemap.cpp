@@ -14,6 +14,8 @@ enum CollisionType {
     FULL_COLLISION,
     BOTTOM_HALF_COLLISION,
     TOP_HALF_COLLISION,
+    LEFT_HALF_COLLISION,
+    RIGHT_HALF_COLLISION,
     BOTTOM_LEFT_COLLISION,
     BOTTOM_RIGHT_COLLISION,
     TWO_VERTICAL_COLLISION,
@@ -25,6 +27,8 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     { FULL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize)) },
     { BOTTOM_HALF_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, sf::Vector2f(gTileSize, gTileSize / 2.0f)) },
     { TOP_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize / 2.0f)) },
+    { LEFT_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize)) },
+    { RIGHT_HALF_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize)) },
     { BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
     { BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
     { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f)) },
@@ -151,12 +155,12 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
 sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
 {
     switch (id) {
-        case 0:
-            
-        case 2:
+        case 0: // Firepit
+            return collisionTypes.at(LEFT_HALF_COLLISION);
+        case 1: // Candelabrum
             return collisionTypes.at(FULL_COLLISION);
-        case 4:
-            return collisionTypes.at(BOTTOM_HALF_COLLISION);
+        case 2: // Breakable wall
+            return collisionTypes.at(FULL_COLLISION);
         default:
             return collisionTypes.at(NO_COLLISION);
     }
