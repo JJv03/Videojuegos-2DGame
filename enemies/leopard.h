@@ -20,14 +20,14 @@ private:
     int currentFrame = 0;
 
     // Campo de visión
-    const float VISION_RANGE = 125.0f;
+    const float VISION_RANGE = 100.0f;
     sf::FloatRect visionField;
     bool playerDetected = false;
     bool hasRedirected = false;
     sf::Vector2f playerPosition;
 
     // Detección de precipicios
-    bool checkForLedge(const sf::FloatRect floorBounds);
+    bool checkForLedge(const TileMap &tileMap);
     void jump();
 
 public:

@@ -74,15 +74,19 @@ void Game::init()
 
     // Enemies -------------------------------------------------------------
 
-    const sf::Vector2f ZOMBIE_POSITION = {350.f, 160.f};
-    const sf::Vector2f LEOPARD_POSITION = {400.f, 160.f};
-    const sf::Vector2f BAT_POSITION = {450.f, 160.f};
+    // LEVEL 1 - STAGE 2
+    zombiesSpawner.push_back(ZombieSpawner({200.f, 176.f}, {50.f, 50.f}, 1, 2));
+    leopard.push_back(createLeopard({696.f, 112.f}, 1, 2));
+    leopard.push_back(createLeopard({888.f, 80.f}, 1, 2));
+    leopard.push_back(createLeopard({950.f, 112.f}, 1, 2));
+    zombiesSpawner.push_back(ZombieSpawner({1300.f, 176.f}, {50.f, 50.f}, 1, 2));
 
-    zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}, 1, 1));
+    // LEVEL 1 - STAGE 3
+    bat.push_back(createBatSpawner({136.f, 112.f}, {50.f, 50.f}, 1, 3));
+    bat.push_back(createBatSpawner({395.f, 112.f}, {50.f, 50.f}, 1, 3));
 
-    leopard.push_back(createLeopard(LEOPARD_POSITION, 1, 1));
-
-    bat.push_back(createBatSpawner(BAT_POSITION, {50.f, 50.f}, 1, 1));
+    // LEVEL 1 - STAGE 5
+    zombiesSpawner.push_back(ZombieSpawner({203.f, 176.f}, {50.f, 50.f}, 1, 5));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;

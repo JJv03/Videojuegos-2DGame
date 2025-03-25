@@ -29,7 +29,7 @@ void Leopard::updateVisionField()
     }
 }
 
-bool Leopard::checkForLedge(const sf::FloatRect floorBounds)
+bool Leopard::checkForLedge(const TileMap &tileMap)
 {
     if (!isOnGround || std::abs(speed.x) < 0.1f)
         return false;
@@ -45,7 +45,26 @@ bool Leopard::checkForLedge(const sf::FloatRect floorBounds)
         {checkPoint.x - 5.0f, checkPoint.y},
         {10.0f, 10.0f});
 
-    return !checkRect.findIntersection(floorBounds).has_value();
+    const float minHeightThreshold = 5.0f; // Tolerancia vertical
+
+    for (const auto &row : tileMap.m_solidTiles)
+    {
+        for (const auto &tile : row)
+        {
+            if (tile.hitbox.size.x == 0 || tile.hitbox.size.y == 0)
+                continue;
+
+            if (const std::optional<sf::FloatRect> intersection = checkRect.findIntersection(tile.hitbox))
+            {
+                if (intersection->size.y >= minHeightThreshold)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 void Leopard::jump()
@@ -210,7 +229,7 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
         }
 
         // Verificar si hay un precipicio adelante y saltar
-        if (isOnGround && checkForLedge(mapBounds))
+        if (isOnGround && checkForLedge(tileMap))
         {
             jump();
         }
