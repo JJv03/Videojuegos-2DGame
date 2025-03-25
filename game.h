@@ -24,7 +24,7 @@ public:
     std::vector<Leopard> leopard;
     std::vector<Bat> bat;
 
-    std::vector<Item> items;
+    // std::vector<Item> items;
 
     sf::Clock loadingClock;
     bool isLoading = false;

@@ -78,11 +78,11 @@ void Game::init()
     const sf::Vector2f LEOPARD_POSITION = {400.f, 160.f};
     const sf::Vector2f BAT_POSITION = {450.f, 160.f};
 
-    zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
+    zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}, 1, 1));
 
-    leopard.push_back(createLeopard(LEOPARD_POSITION));
+    leopard.push_back(createLeopard(LEOPARD_POSITION, 1, 1));
 
-    bat.push_back(createBatSpawner(BAT_POSITION, {50.f, 50.f}));
+    bat.push_back(createBatSpawner(BAT_POSITION, {50.f, 50.f}, 1, 1));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -173,15 +173,24 @@ void Game::update(float deltaTime)
 
     for (auto &zombieSpawner : zombiesSpawner)
     {
-        zombieSpawner.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
+        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
+        {
+            zombieSpawner.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
+        }
     }
     for (auto &leopard : leopard)
     {
-        leopard.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone, player.sprite->getPosition());
+        if (leopard.level == currentLevel && leopard.stage == currentStage)
+        {
+            leopard.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone, player.sprite->getPosition());
+        }
     }
     for (auto &bat : bat)
     {
-        bat.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
+        if (bat.level == currentLevel && bat.stage == currentStage)
+        {
+            bat.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
+        }
     }
 
     static float timeAccumulator = 0.0f;
@@ -262,15 +271,24 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         for (auto &zombieSpawner : zombiesSpawner)
         {
-            zombieSpawner.draw(window, true);
+            if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
+            {
+                zombieSpawner.draw(window, true);
+            }
         }
         for (auto &leopard : leopard)
         {
-            leopard.draw(window, true);
+            if (leopard.level == currentLevel && leopard.stage == currentStage)
+            {
+                leopard.draw(window, true);
+            }
         }
         for (auto &bat : bat)
         {
-            bat.draw(window, true);
+            if (bat.level == currentLevel && bat.stage == currentStage)
+            {
+                bat.draw(window, true);
+            }
         }
 
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
@@ -422,15 +440,24 @@ void Game::checkEnemiesCollisions()
 
     for (auto &zombieSpawner : zombiesSpawner)
     {
-        zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
+        {
+            zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+        }
     }
     for (auto &leopard : leopard)
     {
-        leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+        if (leopard.level == currentLevel && leopard.stage == currentStage)
+        {
+            leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+        }
     }
     for (auto &bat : bat)
     {
-        bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
+        if (bat.level == currentLevel && bat.stage == currentStage)
+        {
+            bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
+        }
     }
 }
 

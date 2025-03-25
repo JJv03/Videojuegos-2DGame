@@ -24,7 +24,10 @@ private:
     std::vector<bool> zombiesToSpawn;
 
 public:
-    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize);
+    size_t level;
+    size_t stage;
+
+    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage);
 
     void init();
 

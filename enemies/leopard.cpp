@@ -2,8 +2,8 @@
 #include <iostream>
 #include <cmath>
 
-Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : Enemy(_sprite, _hitboxes)
+Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const size_t &level, const size_t &stage)
+    : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
     speed = {0.0f, 0.0f};
     life = LEOPARD_LIFE;

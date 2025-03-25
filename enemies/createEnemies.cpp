@@ -44,7 +44,7 @@ Zombie createZombie(const sf::Vector2f &position)
     return Zombie(zombieSprite, hitboxes);
 }
 
-Leopard createLeopard(const sf::Vector2f &position)
+Leopard createLeopard(const sf::Vector2f &position, const size_t &level, const size_t &stage)
 {
     const sf::IntRect LEOPARD_SPRITE_REGION = {{56, 11}, {24, 16}};
 
@@ -85,10 +85,10 @@ Leopard createLeopard(const sf::Vector2f &position)
     };
 
     // Crear y retornar el zombie
-    return Leopard(leopardSprite, hitboxes);
+    return Leopard(leopardSprite, hitboxes, level, stage);
 }
 
-Bat createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize)
+Bat createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
 {
     const sf::IntRect BAT_SPRITE_REGION = {{184, 11}, {16, 16}};
 
@@ -129,5 +129,5 @@ Bat createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize)
     };
 
     // Crear y retornar el bat
-    return Bat(batSprite, hitboxes, position, zoneSize);
+    return Bat(batSprite, hitboxes, position, zoneSize, level, stage);
 }

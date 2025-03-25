@@ -2,8 +2,9 @@
 #include <iostream>
 #include <cmath>
 
-Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize)
-    : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize)
+Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
+         const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+    : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize), level(level), stage(stage)
 {
     speed = BAT_SPEED;
     life = BAT_LIFE;

@@ -30,8 +30,12 @@ private:
     int currentFrame = 0;
 
 public:
+    size_t level;
+    size_t stage;
+
     Bat() = default;
-    Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const sf::Vector2f &zoneSize);
+    Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
+        const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage);
 
     void resetPosition() override;
     void movePositionToBorder(const sf::FloatRect &playerActivationZone);

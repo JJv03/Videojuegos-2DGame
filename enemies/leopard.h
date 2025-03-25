@@ -31,8 +31,11 @@ private:
     void jump();
 
 public:
+    size_t level;
+    size_t stage;
+
     Leopard() = default;
-    Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
+    Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const size_t &level, const size_t &stage);
 
     void resetPosition() override;
     void draw(sf::RenderWindow &window, bool debugDraw) override;
