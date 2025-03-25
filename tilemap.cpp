@@ -16,6 +16,7 @@ enum CollisionType {
     TOP_HALF_COLLISION,
     LEFT_HALF_COLLISION,
     RIGHT_HALF_COLLISION,
+    THIN_TOP_LEFT_COLLISION,
     BOTTOM_LEFT_COLLISION,
     BOTTOM_RIGHT_COLLISION,
     TWO_VERTICAL_COLLISION,
@@ -29,6 +30,7 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     { TOP_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize / 2.0f)) },
     { LEFT_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize)) },
     { RIGHT_HALF_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize)) },
+    { THIN_TOP_LEFT_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize / 4.0f, gTileSize / 2.0f}) },
     { BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
     { BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f}) },
     { TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f)) },
@@ -158,7 +160,7 @@ sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
         case 0: // Firepit
             return collisionTypes.at(LEFT_HALF_COLLISION);
         case 1: // Candelabrum
-            return collisionTypes.at(FULL_COLLISION);
+            return collisionTypes.at(THIN_TOP_LEFT_COLLISION);
         case 2: // Breakable wall
             return collisionTypes.at(FULL_COLLISION);
         default:
@@ -380,9 +382,17 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
             continue;
         }
 
-        sf::Sprite sprite(*breakableTextures[BreakableType::FIREPIT]);
-        sprite.setPosition(m_breakableTiles[i].hitbox.position);
-        window.draw(sprite);
+        if(m_breakableTiles[i].type == TileMap::BreakableTile::Type::CANDELABRUM){
+            sf::Sprite sprite(*breakableTextures[BreakableType::CANDELABRUM]);
+            sprite.setPosition(m_breakableTiles[i].hitbox.position);
+            window.draw(sprite);
+
+        } else if(m_breakableTiles[i].type == TileMap::BreakableTile::Type::FIREPIT){
+            sf::Sprite sprite(*breakableTextures[BreakableType::FIREPIT]);
+            sprite.setPosition(m_breakableTiles[i].hitbox.position);
+            window.draw(sprite);
+
+        }
     }
 
     drawHitboxes(window);
