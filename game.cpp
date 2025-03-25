@@ -74,9 +74,9 @@ void Game::init()
 
     // Enemies -------------------------------------------------------------
 
-    const sf::Vector2f ZOMBIE_POSITION = {350.f, 171.f};
-    const sf::Vector2f LEOPARD_POSITION = {400.f, 171.f};
-    const sf::Vector2f BAT_POSITION = {450.f, 171.f};
+    const sf::Vector2f ZOMBIE_POSITION = {350.f, 160.f};
+    const sf::Vector2f LEOPARD_POSITION = {400.f, 160.f};
+    const sf::Vector2f BAT_POSITION = {450.f, 160.f};
 
     zombiesSpawner.push_back(ZombieSpawner(ZOMBIE_POSITION, {50.f, 50.f}));
 
