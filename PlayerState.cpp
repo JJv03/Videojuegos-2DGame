@@ -28,6 +28,8 @@ constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
 constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
+
+
 PlayerState::PlayerState(){}
 
 // ---------------------------- IDLE ----------------------------
@@ -92,6 +94,37 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
+    /*
+    if(sf::Keyboard::isKeyPressed(KEY_RIGHT)){
+        player.dir = RIGHT;
+        player.isWalking = true;
+        player.setState(state<Walk>());
+    }
+
+    if(sf::Keyboard::isKeyPressed(KEY_LEFT)){
+        player.dir = LEFT;
+        player.isWalking = true;
+        player.setState(state<Walk>());
+    }
+
+    if(sf::Keyboard::isKeyPressed(KEY_DOWN)) {
+        player.isDucking = true;
+        player.setState(state<Duck>());
+    }
+
+    if(sf::Keyboard::isKeyPressed(KEY_JUMP)) {
+        player.isJumping = true;
+        player.verticalSpeed = -JUMP_FORCE;
+        player.isOnGround = false;
+        player.setState(state<Jump>());
+    }
+
+    if(sf::Keyboard::isKeyPressed(KEY_ATTACK) && player.hasToPressAgain) {
+        player.isAttacking = true;
+        player.hasToPressAgain = false;
+        player.setState(state<AttackIdle>());
+    }*/
+
     if (!player.isOnGround)
     {
         player.sprite->move({0.f,GRAVITY*deltaTime});
@@ -246,14 +279,11 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
     {
         if (keyReleased->scancode == KEY_LEFT || keyReleased->scancode == KEY_RIGHT)
         {
-            player.horizontalSpeed = 0.0f;
-            player.isWalking = false;
+            //player.horizontalSpeed = 0.0f;
+            //player.isWalking = false;
         }
         
     }
-    
-
-    
 }
 
 void PlayerJumpState::update(Player& player, float deltaTime)
@@ -263,6 +293,7 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
+    
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
@@ -289,13 +320,7 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     if (player.isOnGround)
     {
         player.isJumping = false;
-        if (!player.isWalking)
-        {
-            player.setState(state<Idle>());
-        }
-        else{
-            player.setState(state<Walk>());
-        }
+        player.setState(state<Idle>());
     }
 }
 
@@ -399,9 +424,7 @@ PlayerStairState::PlayerStairState() : PlayerState()
 
 void PlayerStairState::init(Player& player)
 {
-    if(!player.isOnStairs){
-        player.isOnStairs = true;
-    }
+    player.isOnStairs = true;   
 }
 
 void PlayerStairState::handleInput(Player& player, sf::Event event)
@@ -454,9 +477,7 @@ PlayerStairWalkState::PlayerStairWalkState() : PlayerState()
 
 void PlayerStairWalkState::init(Player& player)
 {
-    if(!player.isDucking){
-        player.isDucking = true;
-    }
+    player.isDucking = true;
 }
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
@@ -527,10 +548,8 @@ PlayerAttackIdleState::PlayerAttackIdleState() : PlayerState()
 
 void PlayerAttackIdleState::init(Player& player)
 {
-    if(!player.isAttacking){
-        player.isAttacking = true;
-        
-    }
+    player.isAttacking = true;
+    
     player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
     player.gAnimationManager->playAnimation(attackSimon);
     player.isAttacking = true;
@@ -561,10 +580,10 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
     player.currentAnimation = attackSimon;
 
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
-    
-        player.gAnimationManager->playAnimation(player.currentAnimation);
 
+        player.gAnimationManager->playAnimation(player.currentAnimation);
     }
+
     if (!player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping)){
     
         player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
@@ -790,13 +809,10 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
-    if(!player.isAttacking){
-        player.isAttacking = true;
-    }
-
-    if(!player.isDucking){
-        player.isDucking = true;
-    }
+    player.isAttacking = true;
+    
+    player.isDucking = true;
+    
     player.hasToPressAgain = false;
     player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
     player.gAnimationManager->playAnimation(attackSimon);
@@ -898,13 +914,9 @@ PlayerAttackStairState::PlayerAttackStairState() : PlayerState()
 
 void PlayerAttackStairState::init(Player& player)
 {
-    if(!player.isAttacking){
-        player.isAttacking = true;
-    }
-
-    if(!player.isOnStairs){
-        player.isOnStairs = true;
-    }
+    player.isAttacking = true;
+    player.isOnStairs = true;
+    
 }
 
 void PlayerAttackStairState::handleInput(Player& player, sf::Event event)

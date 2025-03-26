@@ -6,7 +6,6 @@
 #include "animationManager.h"
 #include "globals.h"
 
-constexpr float gMovementSpeed{120.0f};
 
 class PlayerState;
 

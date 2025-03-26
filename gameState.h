@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "game.h"
 #include "soundManager.h"
+#include "globals.h"
 
 // Para evitar dependencias cíclicas
 class GameStateMachine;
@@ -11,6 +12,7 @@ protected:
     GameStateMachine* stateMachine;
     
 public:
+    sf::Vector2f m_viewSize;
     explicit GameState(GameStateMachine* stateMachine) : stateMachine(stateMachine) {}
     virtual ~GameState() = default;
 
@@ -57,6 +59,7 @@ public:
     void pause() override;
     void resume() override;
     void close() override;
+    sf::View getView(sf::RenderWindow& window, Camera& camera) override;
 };
 
 
