@@ -57,7 +57,6 @@ public:
     void pause() override;
     void resume() override;
     void close() override;
-    sf::View getView(sf::RenderWindow& window, Camera& camera) override;
 };
 
 
@@ -79,6 +78,7 @@ public:
     void pause() override;
     void resume() override;
     void close() override;
+    sf::View getView(sf::RenderWindow& window, Camera& camera) override;
 };
 
 

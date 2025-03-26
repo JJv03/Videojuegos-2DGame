@@ -1,8 +1,7 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 
-// Clase que representa una cámara en SFML
+
 class Camera
 {
 public:

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "camera.h"
 
 Camera::Camera(sf::Vector2f _viewSize) : viewSize(_viewSize), startVertex(0.f, 0.f) {}
@@ -19,13 +20,17 @@ sf::View Camera::getView(const sf::Vector2u& windowSize)
         // La ventana es más ancha que la vista original: fijamos la altura
         adjustedSize.y = this->viewSize.y;
         adjustedSize.x = this->viewSize.y * windowAspect;
+        //this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
     else
     {
         // La ventana es más estrecha: fijamos el ancho
         adjustedSize.x = this->viewSize.x;
         adjustedSize.y = this->viewSize.x / windowAspect;
+        //this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
 
+    // std::cout << "Start Vertex" << this->startVertex.x << ", " << this->startVertex.y << std::endl;
+    // std::cout << "Adjusted size: " << adjustedSize.x << ", " << adjustedSize.y << std::endl;
     return sf::View(sf::FloatRect(this->startVertex, adjustedSize));
 }

@@ -381,7 +381,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
     window.setView(gameView);
 }*/
 
-sf::View Game::getView(sf::RenderWindow &window, Camera &camera)
+/* sf::View Game::getView(sf::RenderWindow &window, Camera &camera)
 {
     sf::View view = camera.getView(window.getSize());
     sf::Vector2f playerPosition = this->player.sprite->getPosition();
@@ -419,7 +419,7 @@ sf::View Game::getView(sf::RenderWindow &window, Camera &camera)
     }
 
     return view;
-}
+} */
 
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS

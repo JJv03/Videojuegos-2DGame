@@ -47,7 +47,7 @@ public:
 
     // Gets the according view of the camera. Sticks to border if it exits mapBounds,
     // takes animations into account, etc
-    sf::View getView(sf::RenderWindow &window, Camera &camera);
+    //sf::View getView(sf::RenderWindow &window, Camera &camera);
 
     // Check all the possible collisions
     void checkCollisions();
