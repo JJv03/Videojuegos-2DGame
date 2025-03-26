@@ -24,7 +24,6 @@ $(EXEC): $(OBJS) | $(OBJ_DIR)
 
 # Regla general para compilar archivos .cpp en .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	@mkdir -p $(@D) 
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Limpieza de archivos generados

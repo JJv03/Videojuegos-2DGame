@@ -27,11 +27,17 @@ bool loadItemTextures() {
 
     auto purpleMoneyBagTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({61, 1}, {16, 16}));
     itemTextures[ItemType::PURPLE_MONEY_BAG] = purpleMoneyBagTexture;
+
+    return true;
 }
 
 
 Item::Item(ItemType type, const sf::Vector2f& position, const sf::Sprite& sprite):
-        m_type(type), m_position(position), m_isOnGround(false), m_verticalSpeed(0.f), m_sprite(std::make_shared<sf::Sprite>(sprite))
+    m_type(type), 
+    m_sprite(std::make_shared<sf::Sprite>(sprite)), // Mueve esto arriba
+    m_position(position), 
+    m_isOnGround(false), 
+    m_verticalSpeed(0.f)
 {
     m_sprite->setPosition(m_position);
 }
