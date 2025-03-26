@@ -19,25 +19,8 @@ constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 const bool debug = false;
 
 
-sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
-    // Update global window dimensions
-    sf::Vector2u windowSize = window.getSize();
-    gWindowWidth = windowSize.x;
-    gWindowHeight = windowSize.y;
-    const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
-
-    // ========================== VIEW ==========================
-
-    sf::Vector2f viewSize(256.f, 50.f + 158.f);
-    //const float viewAspect = camera.viewSize.x / camera.viewSize.y;
-    const float viewAspect = viewSize.x / viewSize.y;
-    sf::View view(sf::FloatRect({0.f, 0.f}, viewSize));
-
-    
-    // ========================== VIEWPORT ==========================
-    // Adjust the viewport (how the window sees the View) to maintain the aspect-ratio and center it
-
+sf::FloatRect getCenteredViewport(float windowAspect, float viewAspect) {
     float x_offset = 0.0f, y_offset = 0.0f;
     float width = 1.0f, height = 1.0f;
 
@@ -49,8 +32,22 @@ sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
         y_offset = (1.0f - height) / 2.0f;
     }
 
-    // Viewport is centered and maintains the aspect-ratio
-    view.setViewport(sf::FloatRect({x_offset, y_offset}, {width, height}));
+    return sf::FloatRect({x_offset, y_offset}, {width, height});
+}
+
+sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
+    // Update global window dimensions
+    sf::Vector2u windowSize = window.getSize();
+    gWindowWidth = windowSize.x;
+    gWindowHeight = windowSize.y;
+    const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
+
+
+    sf::Vector2f viewSize(gMenuGS_size_x, gMenuGS_size_y);
+    const float viewAspect = viewSize.x / viewSize.y;
+    sf::View view(sf::FloatRect({0.f, 0.f}, viewSize));
+
+    view.setViewport(getCenteredViewport(windowAspect, viewAspect));
 
     return view;
 }
@@ -63,48 +60,30 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
 
-    // ========================== VIEW ==========================
-
     sf::Vector2f viewSize(static_cast<int>(this->m_viewSize.x), static_cast<int>(this->m_viewSize.y));
-    //const float viewAspect = camera.viewSize.x / camera.viewSize.y;
     const float viewAspect = viewSize.x / viewSize.y;
     sf::View view(sf::FloatRect({0.f, 0.f}, viewSize));
+
     sf::Vector2f currentCenter = view.getCenter();
     view.setCenter({game.player.sprite->getPosition().x, currentCenter.y});
 
-    // Limites del mapa
+
+    // LIMIT WITH CURRENT MAP
     sf::FloatRect mapBounds = game.tilemaps[game.currentStage].getMapBounds();
 
-    // Límites permitidos para la cámara en X
-    float minX = mapBounds.position.x + viewSize.x / 2;
-    float maxX = mapBounds.position.x + mapBounds.size.x - viewSize.x / 2;
+    // Limits x-axis
+    float minX = mapBounds.position.x + viewSize.x / 2.f;
+    float maxX = mapBounds.position.x + mapBounds.size.x - viewSize.x / 2.f;
 
-    // Límites permitidos para la cámara en Y
-    float minY = mapBounds.position.y + viewSize.y / 2;
-    float maxY = mapBounds.position.y + mapBounds.size.y - viewSize.y / 2;
+    // Limits y-axis
+    float minY = mapBounds.position.y + viewSize.y / 2.f;
+    float maxY = mapBounds.position.y + mapBounds.size.y - viewSize.y / 2.f;
 
-    // Restringir la posición de la cámara dentro de los límites del mapa
     float centerX = std::max(minX, std::min(view.getCenter().x, maxX));
     float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
     view.setCenter({centerX, centerY});
 
-    
-    // ========================== VIEWPORT ==========================
-    // Adjust the viewport (how the window sees the View) to maintain the aspect-ratio and center it
-
-    float x_offset = 0.0f, y_offset = 0.0f;
-    float width = 1.0f, height = 1.0f;
-
-    if (windowAspect > viewAspect) {    // Window is wider than the view: adjust height
-        width = viewAspect / windowAspect;
-        x_offset = (1.0f - width) / 2.0f;
-    } else {    // Window is taller than the view --> adjust height
-        height = windowAspect / viewAspect;
-        y_offset = (1.0f - height) / 2.0f;
-    }
-
-    // Viewport is centered and maintains the aspect-ratio
-    view.setViewport(sf::FloatRect({x_offset, y_offset}, {width, height}));
+    view.setViewport(getCenteredViewport(windowAspect, viewAspect));
 
     return view;
 }
@@ -115,28 +94,12 @@ sf::View MenuGS::getView(sf::RenderWindow& window, Camera& camera) {
     gWindowHeight = windowSize.y;
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
-    // ========================== VIEW ==========================
 
     sf::Vector2f viewSize(static_cast<int>(this->m_viewSize.x), static_cast<int>(this->m_viewSize.y));
     sf::View view(sf::FloatRect({0.f, 0.f}, viewSize));
     const float viewAspect = viewSize.x / viewSize.y;
 
-    // ========================== VIEWPORT ==========================
-    // Adjust the viewport (how the window sees the View) to maintain the aspect-ratio and center it
-
-    float x_offset = 0.0f, y_offset = 0.0f;
-    float width = 1.0f, height = 1.0f;
-
-    if (windowAspect > viewAspect) {    // Window is wider than the view: adjust height
-        width = viewAspect / windowAspect;
-        x_offset = (1.0f - width) / 2.0f;
-    } else {    // Window is taller than the view --> adjust height
-        height = windowAspect / viewAspect;
-        y_offset = (1.0f - height) / 2.0f;
-    }
-
-    // Viewport is centered and maintains the aspect-ratio
-    view.setViewport(sf::FloatRect({x_offset, y_offset}, {width, height}));
+    view.setViewport(getCenteredViewport(windowAspect, viewAspect));
 
     return view;
 }
@@ -148,7 +111,7 @@ sf::View MenuGS::getView(sf::RenderWindow& window, Camera& camera) {
 
 void GameGS::init(){
     this->m_viewSize.x = gGameGS_size_x;
-    this->m_viewSize.y = gGUI_size_x + gGameGS_size_y;
+    this->m_viewSize.y = gGUI_size_y + gGameGS_size_y;
     if(debug) std::cout << "ESTADO: Game" << std::endl;
     game.init();
 }

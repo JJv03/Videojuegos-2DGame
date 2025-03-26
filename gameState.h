@@ -4,6 +4,15 @@
 #include "soundManager.h"
 #include "globals.h"
 
+
+// ============ Auxiliar functions =============
+
+// Adjusts the viewport (how the window sees the View) to maintain the aspect-ratio and center it
+sf::FloatRect getCenteredViewport(float windowAspect, float viewAspect);
+
+
+// ============ Game State Machine =============
+
 // Para evitar dependencias cíclicas
 class GameStateMachine;
 
