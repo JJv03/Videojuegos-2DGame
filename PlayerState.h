@@ -17,6 +17,7 @@ public:
     virtual void handleInput(Player& player, sf::Event event) = 0;
     virtual void update(Player& player, float deltaTime) = 0;
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
+    virtual void hello() = 0;
 };
 
 // ---------------------------- IDLE ----------------------------
@@ -29,6 +30,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- WALK ----------------------------
@@ -41,6 +43,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- JUMP ----------------------------
@@ -53,6 +56,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -66,6 +70,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -79,6 +84,7 @@ PlayerStairState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -92,6 +98,7 @@ PlayerStairWalkState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- ATTACK-IDLE ----------------------------
@@ -104,6 +111,7 @@ PlayerAttackIdleState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -117,6 +125,7 @@ PlayerAttackJumpState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -130,6 +139,7 @@ PlayerAttackDuckState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 
@@ -143,6 +153,7 @@ PlayerAttackStairState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- HURT ----------------------------
@@ -155,6 +166,7 @@ PlayerHurtState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- DEAD ----------------------------
@@ -167,6 +179,7 @@ PlayerDeadState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 // ---------------------------- INVULNERABLE ----------------------------
@@ -179,6 +192,7 @@ PlayerInvulnerableState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void hello() override;
 };
 
 

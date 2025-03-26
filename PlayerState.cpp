@@ -119,6 +119,11 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerIdleState::hello(){
+    std::cout << "PLAYER STATE: Idle" << std::endl;
+}
+
+
 // --------------------------------------------------------------
 
 
@@ -201,6 +206,10 @@ void PlayerWalkState::update(Player& player, float deltaTime)
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerWalkState::hello(){
+    std::cout << "PLAYER STATE: Walk" << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -296,6 +305,11 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerJumpState::hello(){
+    std::cout << "PLAYER STATE: Jump" << std::endl;
+}
+
+
 // --------------------------------------------------------------
 
 
@@ -349,6 +363,11 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
 
 void PlayerDuckState::update(Player& player, float deltaTime)
 {
+    if (!player.isOnGround)
+    {
+        player.sprite->move({0.f,GRAVITY*deltaTime*deltaTime});
+    }
+
     player.currentAnimation = duckSimon;
     if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
         
@@ -361,6 +380,10 @@ void PlayerDuckState::update(Player& player, float deltaTime)
 void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerDuckState::hello(){
+    std::cout << "PLAYER STATE: Duck" << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -412,6 +435,10 @@ void PlayerStairState::update(Player& player, float deltaTime)
 void PlayerStairState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerStairState::hello(){
+    std::cout << "PLAYER STATE: Stairs" << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -480,6 +507,10 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
 void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerStairWalkState::hello(){
+    std::cout << "PLAYER STATE: Stair walk" << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -598,6 +629,11 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
     window.draw(*player.whipSprite);
 }
+
+void PlayerAttackIdleState::hello(){
+    std::cout << "PLAYER STATE: Attack Idle" << std::endl;
+}
+
 
 // --------------------------------------------------------------
 
@@ -736,6 +772,11 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whipSprite);
 }
 
+void PlayerAttackJumpState::hello(){
+    std::cout << "PLAYER STATE: Attack Jump" << std::endl;
+}
+
+
 // --------------------------------------------------------------
 
 
@@ -840,6 +881,11 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whipSprite);
 }
 
+void PlayerAttackDuckState::hello(){
+    std::cout << "PLAYER STATE: Attack Duck" << std::endl;
+}
+
+
 // --------------------------------------------------------------
 
 
@@ -879,6 +925,10 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whipSprite);
 }
 
+void PlayerAttackStairState::hello(){
+    std::cout << "PLAYER STATE: Attack stairs" << std::endl;
+}
+
 // --------------------------------------------------------------
 
 
@@ -911,6 +961,10 @@ void PlayerHurtState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerHurtState::hello(){
+    std::cout << "PLAYER STATE: Hurt" << std::endl;
+}
+
 // --------------------------------------------------------------
 
 
@@ -937,6 +991,10 @@ void PlayerDeadState::update(Player& player, float deltaTime)
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerDeadState::hello(){
+    std::cout << "PLAYER STATE: Dead" << std::endl;
 }
 
 // --------------------------------------------------------------

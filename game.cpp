@@ -528,7 +528,7 @@ void Game::checkPlayerTileCollisions()
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
                         { // Simon's feet are collisioning with the tile
 
-                            if (!hasCollided && player.verticalSpeed > 0.0f)
+                            if (!hasCollided && (player.verticalSpeed >= 0.0f))
                             { // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
                                 player.isOnGround = true; // Set Simon to be on ground
