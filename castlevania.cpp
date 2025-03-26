@@ -10,6 +10,8 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 // constexpr int escala { 1 };
 // int minWindowWidth = 400;
@@ -24,7 +26,8 @@ void Castlevania::run(){
 
     sf::RenderWindow window(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castleveina", sf::Style::Default);
     //sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default, sf::State::Fullscreen);
-    window.setVerticalSyncEnabled(true);
+    //window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
 
     sf::Image icon;
     if (!icon.loadFromFile("./assets/sprites/icon.png"))
@@ -65,6 +68,9 @@ void Castlevania::run(){
         window.display();
 
         states.processStateChanges();
+        
+        // Esto va muy bien para ver las cosas a cámara lenta xD
+        //std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 }
 

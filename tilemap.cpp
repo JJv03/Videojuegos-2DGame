@@ -495,12 +495,12 @@ void TileMap::processFileInitialPosition(std::ifstream& file){
 
         try {
             std::getline(ss, numberStr, ',');
-            int posX = std::stoi(numberStr);
+            float posX = std::stof(numberStr);
 
             std::getline(ss, numberStr, ',');
-            int posY = std::stoi(numberStr);
+            float posY = std::stof(numberStr);
 
-            if (posX <= 0 || posY <= 0) {
+            if (posX <= 0.f || posY <= 0.f) {
                 std::cerr << "Invalid initial position: " << posX << "," << posY << std::endl;
                 return;
             }

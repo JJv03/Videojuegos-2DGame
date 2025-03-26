@@ -496,6 +496,7 @@ void Game::checkPlayerMapBoundCollisions()
 void Game::checkPlayerTileCollisions()
 {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+    //std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
     bool hasCollided = false;
 
     // Solid tiles
@@ -503,53 +504,67 @@ void Game::checkPlayerTileCollisions()
     {
         for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
         {
-            if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
-            {
+            // if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
+            // {
                 sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitbox;
+                sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
+                // if (row == 5 && col == 3) {
+                //     std::cout << "Tile: " << tileBounds.position.x << ", " << tileBounds.position.y << ", " << tileBounds.size.x << ", " << tileBounds.size.y << std::endl;
+                //     std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
+                // }
                 if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
                 {
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
+                    //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
                     if (overlapX < overlapY)
                     { // Horizontal collision
+                        //std::cout << "COLISION HORIZONTAL" << std::endl;
                         if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
                         {
                             player.sprite->move({-overlapX, 0.f});
+                            playerBounds.position.x -= overlapX;
                         }
                         else
                         {
                             player.sprite->move({overlapX, 0.f});
+                            playerBounds.position.x += overlapX;
                         }
                     }
                     else
                     { // Vertical collision
+                        //std::cout << "COLISION VERTICAL" << std::endl;
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
                         { // Simon's feet are collisioning with the tile
 
-                            if (!hasCollided && (player.verticalSpeed >= 0.0f))
+                            if (!player.isOnGround && player.verticalSpeed >= 0.0f)
                             { // If player is NOT going up
                                 player.sprite->move({0.f, -overlapY});
+                                player.verticalSpeed = 0.0f; // (For security) Simon stops falling
                                 player.isOnGround = true; // Set Simon to be on ground
+                                playerBounds.position.y -= overlapY;
                             }
                         }
                         else // Simon's head is collisioning with the tile
                         {
                             player.sprite->move({0.f, overlapY});
-                            player.verticalSpeed = 0.0f; // Simon starts falling
+                            playerBounds.position.y += overlapY;
+                            player.verticalSpeed = 0.0f; // (For security) Simon starts falling
                         }
                     }
                     
                     hasCollided = true;
                 }
-            }
+            // }
         }
     }
 
     if (!hasCollided)
     { // If Simon is not colliding with any solid tile
         player.isOnGround = false;
+        std::cout << "NO COLISIONS" << std::endl;
     }
 
     // Door tiles

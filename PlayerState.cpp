@@ -6,8 +6,8 @@ template <typename T>
 std::unique_ptr<T> state() {
     return std::make_unique<T>();
 }
-constexpr float GRAVITY { 980.0f };       
-constexpr float JUMP_FORCE { 350.0f };    
+constexpr float GRAVITY { 450.0f };       
+constexpr float JUMP_FORCE { 205.0f };    
 
 using Idle = PlayerIdleState;
 using Walk = PlayerWalkState;
@@ -94,7 +94,7 @@ void PlayerIdleState::update(Player& player, float deltaTime)
 {
     if (!player.isOnGround)
     {
-        player.sprite->move({0.f,GRAVITY*deltaTime*deltaTime});
+        player.sprite->move({0.f,GRAVITY*deltaTime});
     }
     player.currentAnimation = idleSimon;
     
@@ -183,7 +183,7 @@ void PlayerWalkState::update(Player& player, float deltaTime)
     
     if (!player.isOnGround)
     {
-        player.sprite->move({0.f,GRAVITY*deltaTime*deltaTime});
+        player.sprite->move({0.f,GRAVITY*deltaTime});
     }
     
     if(player.dir == RIGHT){
