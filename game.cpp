@@ -133,31 +133,31 @@ void Game::init()
     // Score
     sf::Text scoreText(font, "SCORE-000000", gGUI_text_size);
     scoreText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, margin - gGUI_size_y));
+    textPositions.push_back(sf::Vector2f(margin, margin + gGUI_position_y));
     scoreText.setPosition(textPositions.back());
 
     // Time
     sf::Text timeText(font, "TIME 300", gGUI_text_size);
     timeText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin - gGUI_size_y));
+    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin + gGUI_position_y));
     timeText.setPosition(textPositions.back());
 
     // Stage
     sf::Text stageText(font, "STAGE 01", gGUI_text_size);
     stageText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_StagePositionXFactor, margin - gGUI_size_y));
+    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_StagePositionXFactor, margin + gGUI_position_y));
     stageText.setPosition(textPositions.back());
 
     // Player
     sf::Text playerText(font, "PLAYER", gGUI_text_size);
     playerText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_PlayerPositionYFactor) - gGUI_size_y));
+    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_PlayerPositionYFactor) + gGUI_position_y));
     playerText.setPosition(textPositions.back());
 
     // Enemy
     sf::Text enemyText(font, "ENEMY", gGUI_text_size);
     enemyText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_EnemyPositionYFactor) - gGUI_size_y));
+    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_EnemyPositionYFactor) + gGUI_position_y));
     enemyText.setPosition(textPositions.back());
 
     texts.push_back(scoreText);
