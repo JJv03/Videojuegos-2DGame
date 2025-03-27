@@ -55,18 +55,7 @@ void PlayerIdleState::init(Player& player)
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {    
-            player.dir = RIGHT;
-            player.isWalking = true;
-            player.setState(state<Walk>());
-        }
-        
-        if (keyPressed->scancode == KEY_LEFT) {
-            player.dir = LEFT;
-            player.isWalking = true;
-            player.setState(state<Walk>());
-        }
-    
+           
         if (keyPressed->scancode == KEY_DOWN) {
             player.isDucking = true;
             player.setState(state<Duck>());
@@ -94,7 +83,6 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    /*
     if(sf::Keyboard::isKeyPressed(KEY_RIGHT)){
         player.dir = RIGHT;
         player.isWalking = true;
@@ -106,24 +94,6 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         player.isWalking = true;
         player.setState(state<Walk>());
     }
-
-    if(sf::Keyboard::isKeyPressed(KEY_DOWN)) {
-        player.isDucking = true;
-        player.setState(state<Duck>());
-    }
-
-    if(sf::Keyboard::isKeyPressed(KEY_JUMP)) {
-        player.isJumping = true;
-        player.verticalSpeed = -JUMP_FORCE;
-        player.isOnGround = false;
-        player.setState(state<Jump>());
-    }
-
-    if(sf::Keyboard::isKeyPressed(KEY_ATTACK) && player.hasToPressAgain) {
-        player.isAttacking = true;
-        player.hasToPressAgain = false;
-        player.setState(state<AttackIdle>());
-    }*/
 
     if (!player.isOnGround)
     {
@@ -220,10 +190,10 @@ void PlayerWalkState::update(Player& player, float deltaTime)
     }
     
     if(player.dir == RIGHT){
-        player.sprite->move({0.5f * deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({deltaTime * gMovementSpeed, 0.f});
         player.sprite->setScale({-1.f, 1.f});
     } else {
-        player.sprite->move({-0.5f * deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
         player.sprite->setScale({1.f, 1.f});
     }
     player.currentAnimation = walkSimon;
@@ -297,14 +267,14 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
-        player.horizontalSpeed = 50.0f ;  // Adjust as needed
         if (player.dir == RIGHT)
         {
+            player.horizontalSpeed = gMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
         }
         else
         {
-            player.horizontalSpeed = -player.horizontalSpeed;
+            player.horizontalSpeed = -gMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
@@ -754,14 +724,14 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
-        player.horizontalSpeed = 50.0f ;  // Adjust as needed
         if (player.dir == RIGHT)
         {
+            player.horizontalSpeed = gMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
         }
         else
         {
-            player.horizontalSpeed = -player.horizontalSpeed;
+            player.horizontalSpeed = -gMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
