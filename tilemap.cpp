@@ -220,7 +220,7 @@ bool TileMap::load(int level, int stage) {
 
     m_tileset.setSmooth(false);
 
-    int tilesPerRow = (m_tileset.getSize().x + 1) / (static_cast<int>(gTileSize) + 1); // Tiene en cuenta el pixel de margen entre tiles
+    int tilesPerRow = (m_tileset.getSize().x + 1) / (static_cast<int>(gTileSize) + 1); // 1 pixel margin between tiles
 
     for (int i = 0; i < m_tilesPerRow; ++i)
     {
@@ -233,8 +233,8 @@ bool TileMap::load(int level, int stage) {
             int tileset_row = tileNumber % tilesPerRow;
             int tileset_column = tileNumber / tilesPerRow;
 
-            // Calcular las coordenadas en el tilemap **saltando el píxel vacío**
-            int texX = tileset_row * (static_cast<int>(gTileSize) + 1); // Sumamos el 1px de separación
+            // Calculate tilemap coordinates (+1 for pixel margin between tiles)
+            int texX = tileset_row * (static_cast<int>(gTileSize) + 1);     // 1px of margin between tiles
             int texY = tileset_column * (static_cast<int>(gTileSize) + 1);
 
             // Points to the first vertex of the tile

@@ -4,7 +4,8 @@
 /* =================================================================
  * =========================== CONSTANTS ===========================
  * ================================================================= */
-// IMPORTANT: no `extern` because it's known in compile time
+// NOTE 1: constexpr goes without `extern` because it's known in compile time
+// NOTE 2: const goes with `extern` because it's known in exec time
 
 
 // ============ GENERAL INFO / USAGE VARIABLES =============
