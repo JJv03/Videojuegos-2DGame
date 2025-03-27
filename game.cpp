@@ -564,7 +564,7 @@ void Game::checkPlayerTileCollisions()
     if (!hasCollided)
     { // If Simon is not colliding with any solid tile
         player.isOnGround = false;
-        std::cout << "NO COLISIONS" << std::endl;
+        //std::cout << "NO COLISIONS" << std::endl;
     }
 
     // Door tiles
