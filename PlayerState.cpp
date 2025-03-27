@@ -190,10 +190,10 @@ void PlayerWalkState::update(Player& player, float deltaTime)
     }
     
     if(player.dir == RIGHT){
-        player.sprite->move({deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({deltaTime * gPlayerMovementSpeed, 0.f});
         player.sprite->setScale({-1.f, 1.f});
     } else {
-        player.sprite->move({-1.f * deltaTime * gMovementSpeed, 0.f});
+        player.sprite->move({-1.f * deltaTime * gPlayerMovementSpeed, 0.f});
         player.sprite->setScale({1.f, 1.f});
     }
     player.currentAnimation = walkSimon;
@@ -228,7 +228,7 @@ PlayerJumpState::PlayerJumpState() : PlayerState()
 void PlayerJumpState::init(Player& player)
 {
     if (player.isWalking) {
-        player.horizontalSpeed = (player.dir == RIGHT) ? gMovementSpeed : -gMovementSpeed;
+        player.horizontalSpeed = (player.dir == RIGHT) ? gPlayerMovementSpeed : -gPlayerMovementSpeed;
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
@@ -269,12 +269,12 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     {
         if (player.dir == RIGHT)
         {
-            player.horizontalSpeed = gMovementSpeed;
+            player.horizontalSpeed = gPlayerMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
         }
         else
         {
-            player.horizontalSpeed = -gMovementSpeed;
+            player.horizontalSpeed = -gPlayerMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
@@ -645,7 +645,7 @@ void PlayerAttackJumpState::init(Player& player)
     player.hasToPressAgain = false;
     // Store the horizontal speed if the player was walking
     if (player.isWalking) {
-        player.horizontalSpeed = (player.dir == RIGHT) ? gMovementSpeed : -gMovementSpeed;
+        player.horizontalSpeed = (player.dir == RIGHT) ? gPlayerMovementSpeed : -gPlayerMovementSpeed;
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
@@ -726,12 +726,12 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     {
         if (player.dir == RIGHT)
         {
-            player.horizontalSpeed = gMovementSpeed;
+            player.horizontalSpeed = gPlayerMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
         }
         else
         {
-            player.horizontalSpeed = -gMovementSpeed;
+            player.horizontalSpeed = -gPlayerMovementSpeed;
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }

@@ -38,8 +38,6 @@ sf::FloatRect getCenteredViewport(float windowAspect, float viewAspect) {
 sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
     // Update global window dimensions
     sf::Vector2u windowSize = window.getSize();
-    gWindowWidth = windowSize.x;
-    gWindowHeight = windowSize.y;
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
 
@@ -55,14 +53,12 @@ sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
 sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
     // Update global window dimensions
     sf::Vector2u windowSize = window.getSize();
-    gWindowWidth = windowSize.x;
-    gWindowHeight = windowSize.y;
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
 
     sf::Vector2f viewSize(static_cast<int>(this->m_viewSize.x), static_cast<int>(this->m_viewSize.y));
     const float viewAspect = viewSize.x / viewSize.y;
-    sf::View view(sf::FloatRect({0.f, 0.f}, viewSize));
+    sf::View view(sf::FloatRect({gGameGS_position_x, gGameGS_position_y}, viewSize));
 
     sf::Vector2f currentCenter = view.getCenter();
     view.setCenter({game.player.sprite->getPosition().x, currentCenter.y});
@@ -70,6 +66,8 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
 
     // LIMIT WITH CURRENT MAP
     sf::FloatRect mapBounds = game.tilemaps[game.currentStage].getMapBounds();
+    mapBounds.size.y = mapBounds.size.y + gGUI_size_y + gTileSize;
+    mapBounds.position.y = mapBounds.position.y - gGUI_size_y;
 
     // Limits x-axis
     float minX = mapBounds.position.x + viewSize.x / 2.f;
@@ -83,15 +81,13 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
     float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
     view.setCenter({centerX, centerY});
 
-    view.setViewport(getCenteredViewport(windowAspect, viewAspect));
 
+    view.setViewport(getCenteredViewport(windowAspect, viewAspect)); 
     return view;
 }
 
 sf::View MenuGS::getView(sf::RenderWindow& window, Camera& camera) {
     sf::Vector2u windowSize = window.getSize();
-    gWindowWidth = windowSize.x;
-    gWindowHeight = windowSize.y;
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
 
 
@@ -111,7 +107,7 @@ sf::View MenuGS::getView(sf::RenderWindow& window, Camera& camera) {
 
 void GameGS::init(){
     this->m_viewSize.x = gGameGS_size_x;
-    this->m_viewSize.y = gGUI_size_y + gGameGS_size_y;
+    this->m_viewSize.y = gGameGS_size_y;
     if(debug) std::cout << "ESTADO: Game" << std::endl;
     game.init();
 }

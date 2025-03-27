@@ -43,8 +43,8 @@ void Game::init()
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
-    simonImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    simonImage.createMaskFromColor(sf::Color(0, 128, 0));        // color key
+    simonImage.createMaskFromColor(gColorKeyGrey);
+    simonImage.createMaskFromColor(gColorKeyGreen);
 
     gTextures["simon"] = sf::Texture(simonImage, false);
 
@@ -94,8 +94,8 @@ void Game::init()
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
-    whipImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // color key
-    whipImage.createMaskFromColor(sf::Color(0, 128, 0));        // color key
+    whipImage.createMaskFromColor(gColorKeyGrey);
+    whipImage.createMaskFromColor(gColorKeyGreen);
     gTextures["whip"] = sf::Texture(whipImage, false);
 
     sf::Sprite whipSprite(gTextures["whip"]);
@@ -128,32 +128,37 @@ void Game::init()
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
-    float margin = gWindowWidth * 0.015f;
+    float margin = gGUI_size_x * gGUI_MarginFactor;
 
     // Score
-    sf::Text scoreText(font, "SCORE-000000", 11);
-    scoreText.setFillColor(sf::Color::White);
-    scoreText.setPosition(sf::Vector2f(margin, margin));
+    sf::Text scoreText(font, "SCORE-000000", gGUI_text_size);
+    scoreText.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(margin, margin - gGUI_size_y));
+    scoreText.setPosition(textPositions.back());
 
     // Time
-    sf::Text timeText(font, "TIME 300", 11);
-    timeText.setFillColor(sf::Color::White);
-    timeText.setPosition(sf::Vector2f(gWindowWidth * 0.46f, margin));
+    sf::Text timeText(font, "TIME 300", gGUI_text_size);
+    timeText.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin - gGUI_size_y));
+    timeText.setPosition(textPositions.back());
 
     // Stage
-    sf::Text stageText(font, "STAGE 01", 11);
-    stageText.setFillColor(sf::Color::White);
-    stageText.setPosition(sf::Vector2f(gWindowWidth * 0.76f, margin));
+    sf::Text stageText(font, "STAGE 01", gGUI_text_size);
+    stageText.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_StagePositionXFactor, margin - gGUI_size_y));
+    stageText.setPosition(textPositions.back());
 
     // Player
-    sf::Text playerText(font, "PLAYER", 11);
-    playerText.setFillColor(sf::Color::White);
-    playerText.setPosition(sf::Vector2f(margin, margin + 15));
+    sf::Text playerText(font, "PLAYER", gGUI_text_size);
+    playerText.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_PlayerPositionYFactor) - gGUI_size_y));
+    playerText.setPosition(textPositions.back());
 
     // Enemy
-    sf::Text enemyText(font, "ENEMY", 11);
-    enemyText.setFillColor(sf::Color::White);
-    enemyText.setPosition(sf::Vector2f(margin, margin + 30));
+    sf::Text enemyText(font, "ENEMY", gGUI_text_size);
+    enemyText.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_EnemyPositionYFactor) - gGUI_size_y));
+    enemyText.setPosition(textPositions.back());
 
     texts.push_back(scoreText);
     texts.push_back(timeText);
@@ -248,29 +253,40 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             window.draw(FloatRectToRectShape(player.whipSprite->getGlobalBounds()));
         }
 
-        // GUI
-        sf::View gameView = window.getView();
+        // =========================================
+        // ================== GUI ==================
+        // =========================================
+        
+        sf::Vector2u windowSize = window.getSize();
+        sf::Vector2f gameViewPosition = window.getView().getViewport().position;
+        sf::Vector2i windowPixelCoordOfUpperLeftCornerOfGameView(windowSize.x * gameViewPosition.x, windowSize.y * gameViewPosition.y);
 
-        // Configure a new view for the GUI
-        sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
-        window.setView(guiView);
-
+        sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = window.mapPixelToCoords(windowPixelCoordOfUpperLeftCornerOfGameView);
+        sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
+        
         // Draw the black rectangle
-        sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50));
-        guiBackground.setFillColor(sf::Color::Black);
-        guiBackground.setPosition(sf::Vector2f(0, 0));
+        sf::RectangleShape guiBackground(sf::Vector2f(gGUI_size_x, gGUI_size_y));
+        guiBackground.setFillColor(gGUI_color);
+        guiBackground.setPosition(guiPosition);
         window.draw(guiBackground);
 
         // Draw the GUI texts
-        for (const auto &text : texts)
-        {
+        sf::Vector2f virtualWorldOffset(virtualCoordOfUpperLeftCornerOfGame.x - gGUI_position_x,
+                                        virtualCoordOfUpperLeftCornerOfGame.y - gGUI_position_y);
+        
+        for (int i = 0; i < static_cast<int>(texts.size()); ++i) {
+            sf::Text& text = texts[i];
+            sf::Vector2f& pos = textPositions[i];
+            text.setPosition(pos + virtualWorldOffset);
             window.draw(text);
         }
 
-        drawHealthBars(window, player.health, 16); // CHANGE FOR BOSS HEALTH!!!!!
+        // Draw the health bars
+        drawHealthBars(window, player.health, 16, virtualWorldOffset); // CHANGE FOR BOSS HEALTH!!!!!
 
-        // Restore the original game view
-        window.setView(gameView);
+
+
+        // PLAYER and ENTITIES =====================================
 
         player.draw(window);
 
@@ -301,14 +317,17 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
     }
 }
 
-void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth)
+void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth, sf::Vector2f virtualWorldset)
 {
     const int MAX_HEALTH = 16;
     const int SEGMENT_WIDTH = 5;
-    const int SEGMENT_HEIGHT = 10;
+    const int SEGMENT_HEIGHT = 6;
     const int SPACING = 2;
     const float BORDER_THICKNESS = 1.0f;
-    const sf::Vector2f START_POS(78, 22);
+    const sf::Vector2f PLAYER_POS(gGUI_PlayerHpBar_position_x + virtualWorldset.x,
+                                  gGUI_PlayerHpBar_position_y + virtualWorldset.y);
+    const sf::Vector2f BOSS_POS(gGUI_BossHpBar_position_x + virtualWorldset.x,
+                                gGUI_BossHpBar_position_y + virtualWorldset.y);
 
     // Player
     for (int i = 0; i < MAX_HEALTH; ++i)
@@ -322,7 +341,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
         // Adjust the position to center the empty segments within the border
         float xOffset = isFull ? 0 : BORDER_THICKNESS;
         float yOffset = isFull ? 0 : BORDER_THICKNESS;
-        segment.setPosition(sf::Vector2f(78 + i * (SEGMENT_WIDTH + SPACING) + xOffset, 22 + yOffset));
+        segment.setPosition(sf::Vector2f(PLAYER_POS.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, PLAYER_POS.y + yOffset));
 
         segment.setOutlineThickness(BORDER_THICKNESS);
         segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
@@ -342,7 +361,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
 
         float xOffset = isFull ? 0 : BORDER_THICKNESS;
         float yOffset = isFull ? 0 : BORDER_THICKNESS;
-        segment.setPosition(sf::Vector2f(78 + i * (SEGMENT_WIDTH + SPACING) + xOffset, 35 + yOffset));
+        segment.setPosition(sf::Vector2f(BOSS_POS.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, BOSS_POS.y + yOffset));
 
         segment.setOutlineThickness(BORDER_THICKNESS);
         segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);

@@ -62,7 +62,8 @@ public:
     void checkPlayerTileCollisions();
 
     // Draw healthBar
-    void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth);
+    void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth,
+                        sf::Vector2f virtualWorldset);
 
     // Starts stage number <stage> at current level
     int startStage(int stage, int fromDoor = 0);
@@ -74,6 +75,8 @@ private:
     // All refered to the GUI
     sf::Font font;
     std::vector<sf::Text> texts;
+    std::vector<sf::Vector2f> textPositions;
+
     // Vectors with the diferents rectangles of each HealthBar
     std::vector<sf::RectangleShape> playerHealthBar;
     std::vector<sf::RectangleShape> enemyHealthBar;

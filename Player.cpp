@@ -79,17 +79,17 @@ PlayerStateRef& Player::getActiveState()
     return activeState;
 }
 
-void Player::updateActivationZones()
+void Player::updateActivationZones()        // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
 {
     sf::Vector2f playerPos = sprite->getPosition();
 
-    sf::Vector2u windowSize = {gWindowWidth, gWindowHeight};
+    sf::Vector2f windowSize = {static_cast<float>(gWindowWidth), static_cast<float>(gWindowHeight)};
 
-    // Calculate activation zones depending on the window size
-    float activationWidth = windowSize.x; // 100% window width
-    float activationHeight = windowSize.y; // 100% window height
-    float deactivationWidth = windowSize.x * 1.2f; // 120% window width
-    float deactivationHeight = windowSize.y * 1.2f; // 120% window height
+    // Calcular las dimensiones de las zonas en función del tamaño de la ventana
+    float activationWidth = static_cast<int>(windowSize.x); // 100% del ancho de la ventana
+    float activationHeight = static_cast<int>(windowSize.y); // 100% de la altura de la ventana
+    float deactivationWidth = static_cast<int>(windowSize.x * 1.2f); // 120% del ancho de la ventana
+    float deactivationHeight = static_cast<int>(windowSize.y * 1.2f); // 120% de la altura de la ventana
 
     gPlayerActivationZone = sf::FloatRect(
         {playerPos.x - activationWidth / 2.0f,

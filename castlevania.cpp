@@ -18,7 +18,7 @@
 // int minWindowHeight = 400;
 
 // Cámara
-Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gWindowWidth, gWindowHeight)));
+Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(static_cast<float>(gWindowWidth), static_cast<float>(gWindowHeight))));
 
 void Castlevania::run(){
     states.addState(std::make_unique<MenuGS>(&states));
