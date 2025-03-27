@@ -56,7 +56,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    // Cancelar animaciones etc automáticamente?
+    // Cancel animations automatically?
     //this->activeState->pause(*this);
     this->activeState = std::move(newState);
     this->activeState->init(*this);
@@ -85,11 +85,11 @@ void Player::updateActivationZones()
 
     sf::Vector2u windowSize = {gWindowWidth, gWindowHeight};
 
-    // Calcular las dimensiones de las zonas en función del tamaño de la ventana
-    float activationWidth = windowSize.x; // 100% del ancho de la ventana
-    float activationHeight = windowSize.y; // 100% de la altura de la ventana
-    float deactivationWidth = windowSize.x * 1.2f; // 120% del ancho de la ventana
-    float deactivationHeight = windowSize.y * 1.2f; // 120% de la altura de la ventana
+    // Calculate activation zones depending on the window size
+    float activationWidth = windowSize.x; // 100% window width
+    float activationHeight = windowSize.y; // 100% window height
+    float deactivationWidth = windowSize.x * 1.2f; // 120% window width
+    float deactivationHeight = windowSize.y * 1.2f; // 120% window height
 
     gPlayerActivationZone = sf::FloatRect(
         {playerPos.x - activationWidth / 2.0f,

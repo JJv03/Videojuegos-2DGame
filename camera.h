@@ -12,6 +12,6 @@ public:
     Camera(sf::FloatRect _viewRect);
     Camera(sf::Vector2f _startVertex, sf::Vector2f _viewSize);
 
-    // Devuelve la vista ajustada según el tamaño de la ventana
+    // Function that returns the adjusted view depending on <windowSize>
     sf::View getView(const sf::Vector2u& windowSize);
 };

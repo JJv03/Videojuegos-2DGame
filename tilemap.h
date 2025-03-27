@@ -60,13 +60,13 @@ public:
 
 
 private:
-    // Guarda las posiciones de los vertices del tilemap
+    // Saves the map's tiles' vertex positions
     sf::VertexArray m_vertices;
 
-    // Guarda la textura del tilemap entero
+    // Saves the map's whole tileset texture
     sf::Texture m_tileset;
 
-    // Permite hacer window.draw(tilemap) directamente
+    // Method that allows doing window.draw(tilemap) (although this is not used, drawScene is prefered)
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     // Function that processes the tilemap file

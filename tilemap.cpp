@@ -220,7 +220,7 @@ bool TileMap::load(int level, int stage) {
 
     m_tileset.setSmooth(false);
 
-    int tilesPerRow = (m_tileset.getSize().x + 1) / (gTileSize + 1); // Tiene en cuenta el pixel de margen entre tiles
+    int tilesPerRow = (m_tileset.getSize().x + 1) / (gTileSize + 1); // 1 pixel margin between tiles
 
     for (int i = 0; i < m_tilesPerRow; ++i)
     {
@@ -229,18 +229,18 @@ bool TileMap::load(int level, int stage) {
             int tileIndex = i + j * m_tilesPerRow;
             int tileNumber = tilemap[tileIndex];
 
-            // Encontrar su posicion en el tileset
+            // Finds position in tileset
             int tileset_row = tileNumber % tilesPerRow;
             int tileset_column = tileNumber / tilesPerRow;
 
-            // Calcular las coordenadas en el tilemap **saltando el píxel vacío**
-            int texX = tileset_row * (gTileSize + 1); // Sumamos el 1px de separación
+            // Calculate tilemap coordinates (+1 for pixel margin between tiles)
+            int texX = tileset_row * (gTileSize + 1);
             int texY = tileset_column * (gTileSize + 1);
 
-            // Ir al primer vértice del tile
+            // Points to the first vertex of the tile
             sf::Vertex* triangle = &m_vertices[tileIndex * 6];
 
-            // Asignar las posiciones
+            // Assigns positions
             triangle[0].position = sf::Vector2f(i * gTileSize, j * gTileSize);
             triangle[1].position = sf::Vector2f((i + 1) * gTileSize, j * gTileSize);
             triangle[2].position = sf::Vector2f(i * gTileSize, (j + 1) * gTileSize);
@@ -248,7 +248,7 @@ bool TileMap::load(int level, int stage) {
             triangle[4].position = sf::Vector2f((i + 1) * gTileSize, j * gTileSize);
             triangle[5].position = sf::Vector2f((i + 1) * gTileSize, (j + 1) * gTileSize);
 
-            // Asignar las coordenadas
+            // Assigns texture coordinates
             triangle[0].texCoords = sf::Vector2f(texX, texY);
             triangle[1].texCoords = sf::Vector2f(texX + gTileSize, texY);
             triangle[2].texCoords = sf::Vector2f(texX, texY + gTileSize);

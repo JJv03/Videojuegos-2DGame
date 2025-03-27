@@ -12,11 +12,19 @@ public:
     PlayerState();
     virtual ~PlayerState() = default;
 
-
+    // Method that is called when a new state is created
     virtual void init(Player& player) = 0;
+
+    // Method that manages the user's input events
     virtual void handleInput(Player& player, sf::Event event) = 0;
+
+    // Method that manages the player's logic
     virtual void update(Player& player, float deltaTime) = 0;
+
+    // Method that displays the player's graphics onto the window
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
+
+    // Debugging method that indicates the current state throw standard output
     virtual void hello() = 0;
 };
 

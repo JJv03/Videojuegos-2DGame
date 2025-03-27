@@ -34,7 +34,7 @@ bool loadItemTextures() {
 
 Item::Item(ItemType type, const sf::Vector2f& position, const sf::Sprite& sprite):
     m_type(type), 
-    m_sprite(std::make_shared<sf::Sprite>(sprite)), // Mueve esto arriba
+    m_sprite(std::make_shared<sf::Sprite>(sprite)), // Mueve esto arriba (?)
     m_position(position), 
     m_isOnGround(false), 
     m_verticalSpeed(0.f)

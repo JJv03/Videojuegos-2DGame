@@ -18,7 +18,7 @@ void SoundManager::loadSound(const std::string& id, const std::string& filepath)
     }
 
     soundBuffers[id] = std::move(buffer);
-    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));  // Agregamos la primera instancia
+    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));  // Adds the first instance
 }
 
 void SoundManager::playSound(const std::string& id, float volume) {
@@ -27,7 +27,7 @@ void SoundManager::playSound(const std::string& id, float volume) {
         return;
     }
 
-    // Buscar una instancia de sonido que no esté reproduciéndose
+    // Searches for a sound instance that's not playing currently
     for (const auto& sound : sounds[id]) {
         if (sound->getStatus() != sf::Sound::Status::Playing) {
             sound->setVolume(volume);
@@ -36,7 +36,7 @@ void SoundManager::playSound(const std::string& id, float volume) {
         }
     }
 
-    // Si todas las instancias están ocupadas, creamos una nueva
+    // If all sound instances are playing, creates a new one
     sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));
     sounds[id].back()->setVolume(volume);
     sounds[id].back()->play();
@@ -94,16 +94,16 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         return;
     }
 
-    // Crear un hilo separado para gestionar la transición de las músicas
+    // Creates a separated thread to manage music transitions
     std::thread([this, firstId, secondId, secondSongLoop]() {
         musicTracks[firstId].play();
         
-        // Esperar de forma no bloqueante hasta que la primera canción termine
+        // Waits (but doesn't block execution) until the first song ends
         while (musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
 
         musicTracks[secondId].setLooping(secondSongLoop);
         musicTracks[secondId].play();
-    }).detach(); // Desvincula el hilo para que siga ejecutándose en segundo plano
+    }).detach(); // Detaches the thread so it runs on the background
 }

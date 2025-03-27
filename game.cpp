@@ -37,7 +37,7 @@ void Game::init()
 
     // Simon ----------------------------------------------------------------
 
-    // Cargar imagen y configurar textura de Simon (aplicando color key)
+    // Loads simon texture
     sf::Image simonImage;
     if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
@@ -54,7 +54,7 @@ void Game::init()
 
     sf::FloatRect bounds = simonSprite.getLocalBounds();
 
-    // Ajusta el origen de las transformaciones al centro inferior
+    // Adjusts the transformation origin to the bottom center
     simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
     gSprites.push_back(simonSprite);
     player.sprite = &gSprites.back();
@@ -115,7 +115,7 @@ void Game::init()
     }
     gWhipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whipLvl1Frames, false);
 
-    // Se pasa a player y así toda la animación no se tiene que gestionar en el main
+    // Player manages its animations so they don't have to be managed outside
     player.gAnimationManager = gAnimationManager;
     player.gWhipAnimationManager = gWhipAnimationManager;
 
@@ -201,7 +201,7 @@ void Game::update(float deltaTime)
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
 
-    // Reducir el tiempo cada segundo completo
+    // Reduce time every second
     if (timeAccumulator >= 1.0f)
     {
         if (time > 0)
@@ -212,9 +212,9 @@ void Game::update(float deltaTime)
         texts[1].setString("TIME " + std::to_string(time));
     }
 
-    // Actualizar el score
+    // Update score
     std::stringstream scoreStream;
-    scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Formato con ceros
+    scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
     texts[0].setString(scoreStream.str());
 
     checkCollisions();
@@ -438,7 +438,7 @@ void Game::checkCollisions()
 void Game::checkEnemiesCollisions()
 {
 
-    // ESTAS BOUNDS DEBERÍAN SER CON LAS HITBOXES NO CON LOS SPRITES
+    // TO-DO: ESTAS BOUNDS DEBERÍAN SER CON LAS HITBOXES NO CON LOS SPRITES
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
     sf::FloatRect whipBounds = player.whipSprite->getGlobalBounds();
@@ -575,11 +575,6 @@ void Game::checkPlayerTileCollisions()
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds))
         {
-
-            if (doorEntry.second.type == TileMap::DoorTile::Type::DOOR)
-            {
-                // Quitar puerta (ya no está disponible)
-            }
 
             int doorId = doorEntry.first;
 

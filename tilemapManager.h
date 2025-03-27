@@ -26,6 +26,7 @@ public:
     TilemapManager();
     ~TilemapManager();
 
+    // Method that loads the indicated <level> in <tilemaps>, <doors>, ...
     void loadLevel(int level);
 
     TileMap& operator[](int i) {

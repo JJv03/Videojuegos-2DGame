@@ -3,7 +3,7 @@
 #include "gameStateMachine.h"
 #include "globals.h"
 
-#include <thread> // Necesario para sleep_for
+#include <thread> // Necessary for using sleep_for
 #include <chrono>
 
 constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
@@ -161,6 +161,7 @@ void MenuGS::init(){
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
+    // Loads menu texture
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
     position = 0;
     if (!menuTextures["menu"].loadFromFile("./assets/sprites/menu/menu2.png")) {
@@ -168,36 +169,32 @@ void MenuGS::init(){
     }
     sf::Sprite menu(menuTextures["menu"]);
 
+    // Adjusts menu position
     sf::FloatRect spriteBounds = menu.getLocalBounds();
     float spriteWidth = spriteBounds.size.x;
     float spriteHeight = spriteBounds.size.y;
 
-    // Calcular el factor de escala basado en la altura máxima (250 píxeles)
     float scaleFactor = gWindowHeight / spriteHeight;
 
-    // Aplicar el factor de escala al sprite para mantener la relación de aspecto
     menu.setScale(sf::Vector2f(scaleFactor, scaleFactor));
 
-    // Obtener las nuevas dimensiones del sprite escalado
     float scaledWidth = spriteWidth * scaleFactor;
     float scaledHeight = spriteHeight * scaleFactor;
 
-    // Calcular la posición para centrar el sprite en la pantalla
     float xPosition = (gWindowWidth - scaledWidth) / 2;
     float yPosition = (gWindowHeight - scaledHeight) / 2;
 
-    // Establecer la posición del sprite
     menu.setPosition(sf::Vector2f(xPosition, yPosition));
 
     menuSprites.push_back(menu);
 
-    // Cargar la fuente 
+    // Loads text font
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
-    // Definir opciones del menú
+    // Defines menu options
     std::string textos[4] = {"STORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
     for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
@@ -205,7 +202,7 @@ void MenuGS::init(){
         // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
         sf::FloatRect textBounds = text.getLocalBounds();
 
-        // Calcular posición centrada
+        // Centers position
         float xPos = (gWindowWidth - textBounds.size.x) / 2;
         float yPos = 200.f + i * 45.f;
 

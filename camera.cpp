@@ -17,14 +17,14 @@ sf::View Camera::getView(const sf::Vector2u& windowSize)
 
     if (windowAspect > viewAspect)
     {
-        // La ventana es más ancha que la vista original: fijamos la altura
+        // If window is wider that original view: Set height and adjust width
         adjustedSize.y = this->viewSize.y;
         adjustedSize.x = this->viewSize.y * windowAspect;
         //this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
     }
     else
     {
-        // La ventana es más estrecha: fijamos el ancho
+        // If window is thinner that original view: Set width and adjust height
         adjustedSize.x = this->viewSize.x;
         adjustedSize.y = this->viewSize.x / windowAspect;
         //this->startVertex.x = -(adjustedSize.x - this->viewSize.x) / 2.f;
