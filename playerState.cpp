@@ -347,7 +347,6 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
         if (keyReleased->scancode == KEY_DOWN){
             player.isDucking = false;
-            player.sprite->move({0.f,-3.0f});
             player.setState(state<Idle>());
         }       
         if (keyReleased->scancode == KEY_ATTACK) {
@@ -825,13 +824,13 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whipSprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
+                             player.sprite->getPosition().y + 4)  // Adjust Y offset
             );
             player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whipSprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
+                             player.sprite->getPosition().y + 4)  // Adjust Y offset
             );
             player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }

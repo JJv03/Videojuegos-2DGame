@@ -88,6 +88,7 @@ public:
 
     std::vector<AnimationManager::Frame> duckFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
+        
     std::vector<AnimationManager::Frame> walkFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
