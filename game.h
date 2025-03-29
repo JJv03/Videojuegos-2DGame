@@ -81,16 +81,3 @@ private:
     std::vector<sf::RectangleShape> playerHealthBar;
     std::vector<sf::RectangleShape> enemyHealthBar;
 };
-
-
-/**
- * Obtiene las coordenadas virtuales de la esquina superior izquierda de la vista del juego.
- *
- * Calcula el píxel correspondiente a la esquina superior izquierda del rectángulo de la view
- * (que puede ser menor que la ventana por mantener el aspect-ratio) y lo convierte a coordenadas
- * del juego mediante mapPixelToCoords.
- *
- * @param window La ventana que contiene la view del juego.
- * @return Coordenadas virtuales de la esquina superior izquierda del área visible del juego.
- */
-sf::Vector2f getVirtualUpperLeftCornerCoordOfGameView(sf::RenderWindow &window);

@@ -4,6 +4,7 @@
 #include <optional>
 #include <sstream>
 #include "globals.h"
+#include "utils.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
 
@@ -602,18 +603,4 @@ int Game::goToStage(int fromDoor)
     }
 
     return fromDoor;
-}
-
-// -------------------------------------------------------------------------------------
-//                                    AUXILIARY FUNCTIONS
-// -------------------------------------------------------------------------------------
-
-sf::Vector2f getVirtualUpperLeftCornerCoordOfGameView(sf::RenderWindow &window)
-{
-    sf::Vector2u windowSize = window.getSize();
-    sf::Vector2f gameViewPosition = window.getView().getViewport().position;
-    sf::Vector2i windowPixelCoordOfUpperLeftCornerOfGameView(windowSize.x * gameViewPosition.x, windowSize.y * gameViewPosition.y);
-    sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = window.mapPixelToCoords(windowPixelCoordOfUpperLeftCornerOfGameView);
-    //std::cout << "Upper left corner of game view: " << virtualCoordOfUpperLeftCornerOfGame.x << ", " << virtualCoordOfUpperLeftCornerOfGame.y << std::endl;
-    return virtualCoordOfUpperLeftCornerOfGame;
 }
