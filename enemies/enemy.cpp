@@ -2,7 +2,7 @@
 #include <iostream>
 
 Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : Entity(_sprite, _hitboxes)
+    : EntitySprite(_sprite, _hitboxes)
 {
     // Guarda la posición inicial
     originalPosition = sprite->getPosition();

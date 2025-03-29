@@ -20,7 +20,7 @@ enum PlayerDirection
 typedef std::unique_ptr<PlayerState> PlayerStateRef;
 
 
-class Whip : public Entity
+class Whip : public EntitySprite
 {
 public:
     int whipState;
@@ -42,7 +42,7 @@ public:
 };
 
 
-class SubWeapon : public Entity
+class SubWeapon : public EntitySprite
 {
 public:
     enum Type
@@ -62,7 +62,7 @@ public:
 };
 
 
-class Player : public Entity
+class Player : public EntitySprite
 {
 public:
     animationID currentAnimation;

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "../entity.h"
 
-class Enemy : public Entity
+class Enemy : public EntitySprite
 {
 private:
     const float GRAVITY = 750.0f;

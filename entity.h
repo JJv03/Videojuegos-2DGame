@@ -6,10 +6,20 @@
 class Entity
 {
 public:
-    std::shared_ptr<sf::Sprite> sprite;
     std::vector<sf::FloatRect> hitboxes;
 
     Entity() = default;
     virtual ~Entity() = default;
-    Entity(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
+    Entity(std::vector<sf::FloatRect> &_hitboxes);
+};
+
+
+class EntitySprite : public Entity
+{
+public:
+    std::shared_ptr<sf::Sprite> sprite;
+
+    EntitySprite() = default;
+    virtual ~EntitySprite() = default;
+    EntitySprite(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
 };

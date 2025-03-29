@@ -1,4 +1,8 @@
 #include "entity.h"
 
-Entity::Entity(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : sprite(_sprite), hitboxes(_hitboxes) {}
+Entity::Entity(std::vector<sf::FloatRect> &_hitboxes)
+    : hitboxes(_hitboxes) {}
+
+    
+EntitySprite::EntitySprite(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
+    : Entity(_hitboxes), sprite(_sprite) {}
