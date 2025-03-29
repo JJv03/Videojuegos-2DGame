@@ -42,6 +42,26 @@ public:
 };
 
 
+class SubWeapon : public Entity
+{
+public:
+    enum Type
+    {
+        NONE,
+        KNIFE,
+        AXE,
+        HOLY_WATER,
+        CROSS,
+        STOPWATCH,
+    };
+
+    SubWeapon();
+    ~SubWeapon() = default;
+
+    Type type;
+};
+
+
 class Player : public Entity
 {
 public:
@@ -78,9 +98,7 @@ public:
 
     // Weapons
     Whip whip;
-
-    sf::Sprite *secondaryWeaponSprite;
-    int secondaryWeapon; // 0 nothing, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
+    SubWeapon subWeapon;
 
     // Activation zone
     sf::FloatRect gPlayerActivationZone;
@@ -145,8 +163,6 @@ public:
     void draw(sf::RenderWindow &window); 
 
     void setState(PlayerStateRef newState);
-    // void addState(PlayerStateRef newState);
-    // void removeState();
 
     PlayerStateRef &getActiveState();
     void updateActivationZones();

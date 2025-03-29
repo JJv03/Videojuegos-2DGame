@@ -19,9 +19,6 @@ Player::Player(){
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
 
-    // Secondary weapon
-    secondaryWeapon = 0;
-
     //Stats
     health=16;
     lives=3;
@@ -94,4 +91,9 @@ Whip::Whip(){
     whipFrames = 6;
     whipDmg = 1;
     whipLvl = 1;
+}
+
+// ----------------------------- SUBWEAPON -----------------------------
+SubWeapon::SubWeapon(){
+    type = NONE;
 }

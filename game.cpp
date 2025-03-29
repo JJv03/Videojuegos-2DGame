@@ -54,6 +54,7 @@ void Game::init()
     // Adjusts the transformation origin to the bottom center
     simonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
     player.sprite = simonSprite;
+    player.hitboxes.push_back(player.sprite.get()->getLocalBounds());
 
     AnimationManager *animationManager = new AnimationManager(*player.sprite);
 
@@ -101,6 +102,7 @@ void Game::init()
     whipSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
     player.whip.sprite = whipSprite;
+    player.whip.hitboxes.push_back(player.whip.sprite.get()->getLocalBounds());
 
     // Inicializar AnimationManager ----------------------------------------------------------------
     AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite);
