@@ -51,14 +51,16 @@ bool Leopard::checkForLedge(const TileMap &tileMap)
     {
         for (const auto &tile : row)
         {
-            if (tile.hitbox.size.x == 0 || tile.hitbox.size.y == 0)
-                continue;
+            for(const auto &hitbox : tile.hitboxes){
+                if (hitbox.size.x == 0 || hitbox.size.y == 0)
+                    continue;
 
-            if (const std::optional<sf::FloatRect> intersection = checkRect.findIntersection(tile.hitbox))
-            {
-                if (intersection->size.y >= minHeightThreshold)
+                if (const std::optional<sf::FloatRect> intersection = checkRect.findIntersection(hitbox))
                 {
-                    return false;
+                    if (intersection->size.y >= minHeightThreshold)
+                    {
+                        return false;
+                    }
                 }
             }
         }

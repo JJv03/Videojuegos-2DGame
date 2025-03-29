@@ -13,8 +13,12 @@ TileSprite::TileSprite(){
 
 // -------------------------- SOLID TILE --------------------------
 
-SolidTile::SolidTile(){
+SolidTile::SolidTile() : Tile() {
     
 }
 
-// ----------------------------------------------------------
+// -------------------------- BREAKABLE TILE --------------------------
+
+BreakableTile::BreakableTile() : TileSprite() {
+
+}

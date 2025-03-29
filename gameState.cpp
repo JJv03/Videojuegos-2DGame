@@ -16,7 +16,7 @@ constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 
-const bool debug = false;
+const bool debug = true;
 
 
 

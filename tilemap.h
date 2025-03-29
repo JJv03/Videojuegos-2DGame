@@ -19,29 +19,6 @@ public:
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
 
-    // Breakable tiles
-    struct BreakableTile {
-        enum class Type {   // Types of breakable tiles. Only in this scope
-            FIREPIT = 0,
-            CANDELABRUM = 1,
-            BREAKABLE_WALL = 2,
-        };
-
-        enum class DropType {   // Types of items that can drop from breakable tiles. Only in this scope
-            NONE = 0,                // No item drops
-            DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc). Should be handled in game logic
-            CROWN = 2,
-            MEAT = 3,
-        };
-
-        Type type;                      // Breakable type
-        sf::Vector2f position;          // Position of the tile. In global coord.
-        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
-        bool isBreakable = true;        // Enabling the tile to be destroyed
-        bool isDestroyed = false;       // If the tile is destroyed
-        DropType dropItem = DropType::NONE;          // If the tile drops an item
-    };
-
     struct DoorTile {
         enum class Type{   // Types of door tiles. Only in this scope
             CASTLE_ENTRANCE = 0,
