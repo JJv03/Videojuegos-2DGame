@@ -523,7 +523,7 @@ void Game::checkPlayerTileCollisions()
         {
             // if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
             // {
-                sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitbox;
+            for(auto tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes){
                 sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
                 // if (row == 5 && col == 3) {
@@ -574,7 +574,7 @@ void Game::checkPlayerTileCollisions()
                     
                     hasCollided = true;
                 }
-            // }
+            }
         }
     }
 

@@ -4,6 +4,9 @@
 #include <vector>
 #include "camera.h"
 #include "globals.h"
+#include "entity.h"
+#include "tile.h"
+
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
@@ -15,13 +18,6 @@ public:
 
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
-
-    // Tiles with hitboxes
-    struct SolidTile {
-        bool hasCollision = false;      // If <true>, the tile has hitbox.
-        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
-        bool isVisible = false;         // If <true>, the tile is visible.
-    };
 
     // Breakable tiles
     struct BreakableTile {

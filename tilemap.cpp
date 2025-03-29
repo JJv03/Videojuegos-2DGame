@@ -257,10 +257,11 @@ bool TileMap::load(int level, int stage) {
             triangle[5].texCoords = sf::Vector2f(texX + gTileSize, texY + gTileSize);
 
             // Set the hitbox for the solid tile
-            m_solidTiles[j][i].hitbox = getHitboxForSolidTile(level, tileNumber);
-
-            m_solidTiles[j][i].hitbox.position.x += i * gTileSize;
-            m_solidTiles[j][i].hitbox.position.y += j * gTileSize;
+            sf::FloatRect hitbox = getHitboxForSolidTile(level, tileNumber);
+            hitbox.position.x += i * gTileSize;
+            hitbox.position.y += j * gTileSize;
+            
+            m_solidTiles[j][i].hitboxes.push_back(hitbox);
         }
     }
 
@@ -287,8 +288,10 @@ void TileMap::drawHitboxes(sf::RenderWindow& window) const
     // Solid tiles
     for (size_t i = 0; i < this->m_solidTiles.size(); ++i) {
         for (size_t j = 0; j < this->m_solidTiles[i].size(); ++j) {
-            sf::RectangleShape rect = FloatRectToRectShape(this->m_solidTiles[i][j].hitbox);
-            window.draw(rect);
+            for(auto hitbox : this->m_solidTiles[i][j].hitboxes){
+                sf::RectangleShape rect = FloatRectToRectShape(hitbox);
+                window.draw(rect);
+            }
         }
     }
 
