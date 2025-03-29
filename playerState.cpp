@@ -101,11 +101,11 @@ void PlayerIdleState::update(Player& player, float deltaTime)
     }
     player.currentAnimation = idleSimon;
     
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
         
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
     }
-    player.gAnimationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
 }
 
 void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
@@ -198,12 +198,12 @@ void PlayerWalkState::update(Player& player, float deltaTime)
     }
     player.currentAnimation = walkSimon;
     
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
         
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    player.gAnimationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
@@ -280,11 +280,11 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     }
 
     // Play jump animation if not already playing
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation))
+    if (!player.animationManager->isPlaying(player.currentAnimation))
     {
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
     }
-    player.gAnimationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
 
     // Check if landed
     if (player.isOnGround)
@@ -363,12 +363,12 @@ void PlayerDuckState::update(Player& player, float deltaTime)
     }
 
     player.currentAnimation = duckSimon;
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
         
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    player.gAnimationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
 }
 
 void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
@@ -480,13 +480,13 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
     }
 
     /*
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
         
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    player.gAnimationManager->update(deltaTime);
-    if (player.isAttacking && player.gAnimationManager->isAnimationFinished())
+    player.animationManager->update(deltaTime);
+    if (player.isAttacking && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
@@ -519,8 +519,8 @@ void PlayerAttackIdleState::init(Player& player)
 {
     player.isAttacking = true;
     
-    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
-    player.gAnimationManager->playAnimation(attackSimon);
+    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    player.animationManager->playAnimation(attackSimon);
     player.isAttacking = true;
     player.attackedFinished = false;
     player.hasToPressAgain = false;
@@ -548,56 +548,56 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = attackSimon;
 
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
 
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
     }
 
-    if (!player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
     
-        player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
 
     }
-    player.gAnimationManager->update(deltaTime);
-    player.gWhipAnimationManager->update(deltaTime);
-    if (player.gWhipAnimationManager->getCurrentFrameIndex() == 2 || player.gWhipAnimationManager->getCurrentFrameIndex() == 3) {
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     } else {
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     }
    
     
     
-    if (player.gAnimationManager->isPlaying(player.currentAnimation) && player.gAnimationManager->isAnimationFinished())
+    if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        //player.gAnimationManager->setAnimationSpeed(1.0f); // 2x speed
+        //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
 
         if (player.isWalking)
         {
@@ -615,7 +615,7 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
-    window.draw(*player.whipSprite);
+    window.draw(*player.whip.sprite);
 }
 
 void PlayerAttackIdleState::hello(){
@@ -637,8 +637,8 @@ PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 void PlayerAttackJumpState::init(Player& player)
 {
     // Start the whip and attack animations
-    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
-    player.gAnimationManager->playAnimation(attackSimon);
+    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    player.animationManager->playAnimation(attackSimon);
     player.isAttacking = true;
     player.attackedFinished = false;
     player.hasToPressAgain = false;
@@ -669,54 +669,54 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = attackSimon;
    
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
     
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    if (!player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
     
-        player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
 
     }
-    //player.gAnimationManager->setAnimationSpeed(2.0f); // 2x speed
-    //player.gWhipAnimationManager->setAnimationSpeed(2.0f); // 2x speed
-    player.gAnimationManager->update(deltaTime);
-    player.gWhipAnimationManager->update(deltaTime);
+    //player.animationManager->setAnimationSpeed(2.0f); // 2x speed
+    //player.whip.animationManager->setAnimationSpeed(2.0f); // 2x speed
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
 
     // Apply gravity
     player.verticalSpeed += GRAVITY * deltaTime;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
     
-    if (player.gWhipAnimationManager->getCurrentFrameIndex() == 2 || player.gWhipAnimationManager->getCurrentFrameIndex() == 3) {
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     } else {
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     }
 
@@ -734,7 +734,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
-    if (player.gAnimationManager->isPlaying(attackSimon) && player.gAnimationManager->isAnimationFinished())
+    if (player.animationManager->isPlaying(attackSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
@@ -757,7 +757,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
 void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
-    window.draw(*player.whipSprite);
+    window.draw(*player.whip.sprite);
 }
 
 void PlayerAttackJumpState::hello(){
@@ -783,8 +783,8 @@ void PlayerAttackDuckState::init(Player& player)
     player.isDucking = true;
     
     player.hasToPressAgain = false;
-    player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
-    player.gAnimationManager->playAnimation(attackSimon);
+    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    player.animationManager->playAnimation(attackSimon);
 }
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
@@ -806,51 +806,51 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
 {   
     player.currentAnimation = attackFloorSimon;
    
-    if (!player.gAnimationManager->isPlaying(player.currentAnimation)){
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
     
-        player.gAnimationManager->playAnimation(player.currentAnimation);
+        player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    if (!player.gWhipAnimationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
     
-        player.gWhipAnimationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
 
     }
-    player.gAnimationManager->update(deltaTime);
-    player.gWhipAnimationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
 
-    if (player.gWhipAnimationManager->getCurrentFrameIndex() == 2 || player.gWhipAnimationManager->getCurrentFrameIndex() == 3) {
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
                              player.sprite->getPosition().y + 4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
                              player.sprite->getPosition().y + 4)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     } else {
         if (player.dir == RIGHT) {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            player.whipSprite->setPosition(
+            player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
                              player.sprite->getPosition().y)  // Adjust Y offset
             );
-            player.whipSprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     }
 
-    if (player.gAnimationManager->isPlaying(attackFloorSimon) && player.gAnimationManager->isAnimationFinished())
+    if (player.animationManager->isPlaying(attackFloorSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
@@ -863,7 +863,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
 void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
-    window.draw(*player.whipSprite);
+    window.draw(*player.whip.sprite);
 }
 
 void PlayerAttackDuckState::hello(){
@@ -903,7 +903,7 @@ void PlayerAttackStairState::update(Player& player, float deltaTime)
 void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
-    window.draw(*player.whipSprite);
+    window.draw(*player.whip.sprite);
 }
 
 void PlayerAttackStairState::hello(){

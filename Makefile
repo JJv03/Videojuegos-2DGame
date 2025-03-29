@@ -28,5 +28,5 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 
 # Limpieza de archivos generados
 clean:
-	del /Q "$(OBJ_DIR)\*.o"
-	del /Q "$(EXEC)"
+	del "$(OBJ_DIR)\*.o"
+	del "$(EXEC)"

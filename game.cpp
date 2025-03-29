@@ -5,10 +5,7 @@
 #include <sstream>
 #include "globals.h"
 
-AnimationManager *gAnimationManager{nullptr};
-AnimationManager *gWhipAnimationManager{nullptr};
 std::unordered_map<std::string, sf::Texture> gTextures;
-std::vector<sf::Sprite> gSprites;
 
 // Constructor, destructor
 Game::Game()
@@ -48,28 +45,27 @@ void Game::init()
 
     gTextures["simon"] = sf::Texture(simonImage, false);
 
-    sf::Sprite simonSprite(gTextures["simon"]);
-    simonSprite.setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite.setPosition(tilemaps[currentStage].initialPosition);
+    auto simonSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
+    simonSprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
+    simonSprite->setPosition(tilemaps[currentStage].initialPosition);
 
-    sf::FloatRect bounds = simonSprite.getLocalBounds();
+    sf::FloatRect bounds = simonSprite->getLocalBounds();
 
     // Adjusts the transformation origin to the bottom center
-    simonSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    gSprites.push_back(simonSprite);
-    player.sprite = &gSprites.back();
+    simonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    player.sprite = simonSprite;
 
-    gAnimationManager = new AnimationManager(*player.sprite);
+    AnimationManager *animationManager = new AnimationManager(*player.sprite);
 
-    gAnimationManager->addAnimation(idleSimon, player.idleFrames);
-    gAnimationManager->addAnimation(jumpSimon, player.jumpFrames);
-    gAnimationManager->addAnimation(walkSimon, player.walkFrames);
-    gAnimationManager->addAnimation(walkSlowSimon, player.walkSlowFrames, false);
-    gAnimationManager->addAnimation(duckSimon, player.duckFrames);
-    gAnimationManager->addAnimation(attackSimon, player.attackFrames, false);
-    gAnimationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
+    animationManager->addAnimation(idleSimon, player.idleFrames);
+    animationManager->addAnimation(jumpSimon, player.jumpFrames);
+    animationManager->addAnimation(walkSimon, player.walkFrames);
+    animationManager->addAnimation(walkSlowSimon, player.walkSlowFrames, false);
+    animationManager->addAnimation(duckSimon, player.duckFrames);
+    animationManager->addAnimation(attackSimon, player.attackFrames, false);
+    animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
 
-    gAnimationManager->playAnimation(idleSimon);
+    animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
 
     // Enemies -------------------------------------------------------------
@@ -98,26 +94,26 @@ void Game::init()
     whipImage.createMaskFromColor(gColorKeyGreen);
     gTextures["whip"] = sf::Texture(whipImage, false);
 
-    sf::Sprite whipSprite(gTextures["whip"]);
-    whipSprite.setTextureRect(sf::IntRect({1, 477}, {8, 32}));
-    whipSprite.setPosition({245.f, 171.f});
+    auto whipSprite = std::make_shared<sf::Sprite>(gTextures["whip"]);
+    whipSprite->setTextureRect(sf::IntRect({1, 477}, {8, 32}));
+    whipSprite->setPosition({245.f, 171.f});
 
-    whipSprite.setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    whipSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
-    player.whipSprite = new sf::Sprite(whipSprite);
+    player.whip.sprite = whipSprite;
 
     // Inicializar AnimationManager ----------------------------------------------------------------
-    gWhipAnimationManager = new AnimationManager(*player.whipSprite);
+    AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite);
 
-    if (!gWhipAnimationManager)
+    if (!whipAnimationManager)
     {
         std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
     }
-    gWhipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whipLvl1Frames, false);
+    whipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whip.lvl1Frames, false);
 
-    // Player manages its animations so they don't have to be managed outside
-    player.gAnimationManager = gAnimationManager;
-    player.gWhipAnimationManager = gWhipAnimationManager;
+    // Player and whip manage its animations so they don't have to be managed outside
+    player.animationManager = animationManager;
+    player.whip.animationManager = whipAnimationManager;
 
     // --------------------------------------------------
     // GUI
@@ -250,7 +246,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
         if (player.isAttacking)
         {
-            window.draw(FloatRectToRectShape(player.whipSprite->getGlobalBounds()));
+            window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
         }
 
         // =========================================
@@ -460,7 +456,7 @@ void Game::checkEnemiesCollisions()
     // TO-DO: ESTAS BOUNDS DEBERÍAN SER CON LAS HITBOXES NO CON LOS SPRITES
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
-    sf::FloatRect whipBounds = player.whipSprite->getGlobalBounds();
+    sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
 
     for (auto &zombieSpawner : zombiesSpawner)
     {
@@ -653,12 +649,10 @@ int Game::startStage(int stage, int fromDoor)
     std::cout << "Current stage: " << currentStage << std::endl;
     if (fromDoor == 0)
     {
-        std::cout << "NO stairs: " << tilemaps[currentStage].initialPosition.x << ", " << tilemaps[currentStage].initialPosition.y << std::endl;
         player.sprite->setPosition(tilemaps[currentStage].initialPosition);
     }
     else
     {
-        std::cout << "STAIRS: fromDoor: " << fromDoor << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.x << ", " << tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition.y << std::endl;
         player.sprite->setPosition(tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition);
     }
 

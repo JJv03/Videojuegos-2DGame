@@ -5,6 +5,8 @@
 #include "playerState.h"
 #include "animationManager.h"
 #include "globals.h"
+#include "entity.h"
+
 
 
 class PlayerState;
@@ -17,13 +19,34 @@ enum PlayerDirection
 
 typedef std::unique_ptr<PlayerState> PlayerStateRef;
 
-class Player
+
+class Whip : public Entity
+{
+public:
+    int whipState;
+    int whipFrames;
+    int whipLvl;
+    int whipDmg;
+
+    AnimationManager *animationManager{nullptr};
+
+    std::vector<AnimationManager::Frame> lvl1Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
+    };
+
+    Whip();
+    ~Whip() = default;
+};
+
+
+class Player : public Entity
 {
 public:
     animationID currentAnimation;
     PlayerStateRef activeState;
-    sf::Texture texture;
-    sf::Sprite *sprite;
 
     PlayerDirection dir;
 
@@ -53,16 +76,9 @@ public:
     float verticalSpeed;
     float horizontalSpeed;
 
-    // Whip
-    sf::Texture whipTexture;
-    sf::Sprite *whipSprite;
-    int whipState;
-    int whipFrames;
-    int whipLvl;
-    int whipDmg;
+    // Weapons
+    Whip whip;
 
-    // Secondary weapon
-    sf::Texture secondaryWeaponTexture;
     sf::Sprite *secondaryWeaponSprite;
     int secondaryWeapon; // 0 nothing, 1 knife, 2 axe, 3 holy water, 4 cross, 5 stop watch
 
@@ -74,8 +90,8 @@ public:
     const float DEACTIVATION_WIDTH = gWindowWidth * 1.2f;
     const float DEACTIVATION_HEIGHT = gWindowHeight * 1.2f;
 
-    AnimationManager *gAnimationManager{nullptr};
-    AnimationManager *gWhipAnimationManager{nullptr};
+    // Animations
+    AnimationManager *animationManager{nullptr};
 
     std::vector<AnimationManager::Frame> idleFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 32)), 0.2f}};
@@ -119,16 +135,10 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
 
-    std::vector<AnimationManager::Frame> whipLvl1Frames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
-    };
-
     // --------------------------------
 
     Player();
+    ~Player() = default;
 
     void handleInput(sf::Event event);
     void update(float deltaTime);        
@@ -141,3 +151,4 @@ public:
     PlayerStateRef &getActiveState();
     void updateActivationZones();
 };
+

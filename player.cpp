@@ -18,10 +18,6 @@ Player::Player(){
     attackedFinished = false;
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
-    whipState = 0;
-    whipFrames = 6;
-    whipDmg = 1;
-    whipLvl = 1;
 
     // Secondary weapon
     secondaryWeapon = 0;
@@ -62,18 +58,6 @@ void Player::setState(PlayerStateRef newState)
     this->activeState->init(*this);
 }
 
-/*
-void Player::addState(PlayerStateRef newState)
-{
-    replaceState(std::move(newState));
-}
-
-void Player::removeState()
-{
-    stateMachine.removeState();
-}
-*/
-
 PlayerStateRef& Player::getActiveState()
 {
     return activeState;
@@ -100,4 +84,14 @@ void Player::updateActivationZones()        // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS
         {playerPos.x - deactivationWidth / 2.0f,
          playerPos.y - deactivationHeight / 2.0f},
         {deactivationWidth, deactivationHeight});
+}
+
+
+
+// ----------------------------- WHIP -----------------------------
+Whip::Whip(){
+    whipState = 0;
+    whipFrames = 6;
+    whipDmg = 1;
+    whipLvl = 1;
 }

@@ -567,7 +567,6 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
             
                 std::getline(ss, numberStr, ',');
                 int playerPosY = std::stoi(numberStr);
-                std::cout << "Stairs: " << playerPosX << ", " << playerPosY << std::endl;
 
                 aparition = sf::Vector2f(playerPosX, playerPosY);
             } else {

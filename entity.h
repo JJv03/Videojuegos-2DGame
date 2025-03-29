@@ -10,5 +10,6 @@ public:
     std::vector<sf::FloatRect> hitboxes;
 
     Entity() = default;
+    virtual ~Entity() = default;
     Entity(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
 };
