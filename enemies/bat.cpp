@@ -102,7 +102,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     for (auto &hitbox : hitboxes)
     {
 
-        // COLISIONES CON VAPIRE KILLER
+        // Vampire killer (whip) collisions
         if (playerIsAtacking)
         {
             // EL SISTEMA DE ATAQUE DEBERÁ TENER UN COOLDAWN CUANDO GOLPEE ALGO
@@ -122,7 +122,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
         }
     }
 
-    // COLISIONES POR CONTACTO CON EL JUGADOR
+    // Player collisions
     for (const auto &hitbox : hitboxes)
     {
         if (hitbox.findIntersection(simonBounds))
