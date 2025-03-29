@@ -201,7 +201,7 @@ int main() {
         {
             window.draw(*gSimonSprite);
         }
-        drawHitboxes(tileMap.m_solidTiles, window, tileMap.m_tileSize);
+        drawHitboxes(tileMap.solidTiles, window, tileMap.m_tileSize);
 
         window.display();
     }

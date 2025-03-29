@@ -202,9 +202,9 @@ bool TileMap::load(int level, int stage) {
     std::vector<int> tilemap;
     processFile(tilemap_path, tilemap);
 
-    m_solidTiles.resize(m_tilesPerColumn);
-    for (auto& row : m_solidTiles) {
-        row.resize(m_tilesPerRow);
+    solidTiles.resize(tilesPerColumn);
+    for (auto& row : solidTiles) {
+        row.resize(tilesPerRow);
     }
 
     if (!loadBreakableTextures()) {
@@ -213,7 +213,7 @@ bool TileMap::load(int level, int stage) {
     }
 
     m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
-    m_vertices.resize(m_tilesPerColumn * m_tilesPerRow * 6);
+    m_vertices.resize(tilesPerColumn * tilesPerRow * 6);
 
     if (!m_tileset.loadFromFile(tileset_path)) {
         return false;
@@ -223,11 +223,11 @@ bool TileMap::load(int level, int stage) {
 
     int tilesPerRow = (m_tileset.getSize().x + 1) / (static_cast<int>(gTileSize) + 1); // 1 pixel margin between tiles
 
-    for (int i = 0; i < m_tilesPerRow; ++i)
+    for (int i = 0; i < tilesPerRow; ++i)
     {
-        for (int j = 0; j < m_tilesPerColumn; ++j)
+        for (int j = 0; j < tilesPerColumn; ++j)
         {
-            int tileIndex = i + j * m_tilesPerRow;
+            int tileIndex = i + j * tilesPerRow;
             int tileNumber = tilemap[tileIndex];
 
             // Finds position in tileset
@@ -262,7 +262,7 @@ bool TileMap::load(int level, int stage) {
             hitbox.position.x += i * gTileSize;
             hitbox.position.y += j * gTileSize;
             
-            m_solidTiles[j][i].hitboxes.push_back(hitbox);
+            solidTiles[j][i].hitboxes.push_back(hitbox);
         }
     }
 
@@ -287,9 +287,9 @@ bool TileMap::loadBreakableTextures() {
 void TileMap::drawHitboxes(sf::RenderWindow& window) const
 {
     // Solid tiles
-    for (size_t i = 0; i < this->m_solidTiles.size(); ++i) {
-        for (size_t j = 0; j < this->m_solidTiles[i].size(); ++j) {
-            for(auto hitbox : this->m_solidTiles[i][j].hitboxes){
+    for (size_t i = 0; i < this->solidTiles.size(); ++i) {
+        for (size_t j = 0; j < this->solidTiles[i].size(); ++j) {
+            for(auto hitbox : this->solidTiles[i][j].hitboxes){
                 sf::RectangleShape rect = FloatRectToRectShape(hitbox);
                 window.draw(rect);
             }
@@ -297,18 +297,18 @@ void TileMap::drawHitboxes(sf::RenderWindow& window) const
     }
 
     // Doors
-    for (auto& doorEntry : this->m_doorTiles) {
+    for (auto& doorEntry : this->doorTiles) {
         sf::RectangleShape rect = FloatRectToRectShape(doorEntry.second.hitbox, 1);
         window.draw(rect);
     }
 
     // Breakable tiles
-    for (size_t i = 0; i < this->m_breakableTiles.size(); ++i) {
-        if (this->m_breakableTiles[i].isDestroyed) {
+    for (size_t i = 0; i < this->breakableTiles.size(); ++i) {
+        if (this->breakableTiles[i].isDestroyed) {
             continue;
         }
 
-        sf::RectangleShape rect = FloatRectToRectShape(this->m_breakableTiles[i].hitbox);
+        sf::RectangleShape rect = FloatRectToRectShape(this->breakableTiles[i].hitbox);
         window.draw(rect);
     }
 }
@@ -327,34 +327,34 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 
 void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
-    VisibleTileRange visibleTiles = calculateVisibleTileRange(window, m_tilesPerRow, m_tilesPerColumn);
+    VisibleTileRange visibleTiles = calculateVisibleTileRange(window, tilesPerRow, tilesPerColumn);
 
     // Drawing the tiles
     for (int row = visibleTiles.firstRow; row <= visibleTiles.lastRow; ++row) {
         for (int col = visibleTiles.firstCol; col <= visibleTiles.lastCol; ++col) {
-            size_t tileIndex = row * m_tilesPerRow + col;
+            size_t tileIndex = row * tilesPerRow + col;
             size_t vertexIndex = tileIndex * 6;     // Every tile has 6 vertices
             
-            SolidTile& tile = m_solidTiles[row][col];
+            SolidTile& tile = solidTiles[row][col];
             
             window.draw(&m_vertices[vertexIndex], 6, sf::PrimitiveType::Triangles, &m_tileset);
             tile.isVisible = true;
         }
     }
 
-    for (size_t i = 0; i < m_breakableTiles.size(); ++i) {
-        if (m_breakableTiles[i].isDestroyed) {
+    for (size_t i = 0; i < breakableTiles.size(); ++i) {
+        if (breakableTiles[i].isDestroyed) {
             continue;
         }
 
-        if(m_breakableTiles[i].type == TileMap::BreakableTile::Type::CANDELABRUM){
+        if(breakableTiles[i].type == TileMap::BreakableTile::Type::CANDELABRUM){
             sf::Sprite sprite(*breakableTextures[BreakableType::CANDELABRUM]);
-            sprite.setPosition(m_breakableTiles[i].hitbox.position);
+            sprite.setPosition(breakableTiles[i].hitbox.position);
             window.draw(sprite);
 
-        } else if(m_breakableTiles[i].type == TileMap::BreakableTile::Type::FIREPIT){
+        } else if(breakableTiles[i].type == TileMap::BreakableTile::Type::FIREPIT){
             sf::Sprite sprite(*breakableTextures[BreakableType::FIREPIT]);
-            sprite.setPosition(m_breakableTiles[i].hitbox.position);
+            sprite.setPosition(breakableTiles[i].hitbox.position);
             window.draw(sprite);
 
         }
@@ -365,7 +365,7 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
 
 
 sf::FloatRect TileMap::getMapBounds() const{
-    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * m_tilesPerRow, gTileSize * m_tilesPerColumn));
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * tilesPerRow, gTileSize * tilesPerColumn));
 }
 
 
@@ -431,13 +431,13 @@ void TileMap::processFileMapDimensions(std::ifstream& file){
 
         try {
             std::getline(ss, numberStr, ',');
-            m_tilesPerRow = std::stoi(numberStr);
+            tilesPerRow = std::stoi(numberStr);
 
             std::getline(ss, numberStr, ',');
-            m_tilesPerColumn = std::stoi(numberStr);
+            tilesPerColumn = std::stoi(numberStr);
 
-            if (m_tilesPerRow <= 0 || m_tilesPerColumn <= 0) {
-                std::cerr << "Invalid map dimensions: " << m_tilesPerRow << "x" << m_tilesPerColumn << std::endl;
+            if (tilesPerRow <= 0 || tilesPerColumn <= 0) {
+                std::cerr << "Invalid map dimensions: " << tilesPerRow << "x" << tilesPerColumn << std::endl;
                 return;
             }
         } catch (const std::exception& e) {
@@ -545,7 +545,7 @@ void TileMap::processFileDoorTiles(std::ifstream& file){
 
             DoorTile door = {hitbox, static_cast<DoorTile::Type>(doorType), aparition};
             
-            m_doorTiles[doorId] = door;
+            doorTiles[doorId] = door;
 
         } catch (const std::invalid_argument&) {
             std::cerr << "Invalid doorTile number in tilemap file: " << numberStr << std::endl;
@@ -614,7 +614,7 @@ void TileMap::processFileBreakableTiles(std::ifstream& file) {
             tile.isBreakable = isBreakable;
             tile.dropItem = dropItem;
             
-            m_breakableTiles.push_back(tile);
+            breakableTiles.push_back(tile);
         } catch (const std::exception& e) {
             std::cerr << "Error al procesar breakable tile en la línea: " << line
                       << ". Excepción: " << e.what() << std::endl;

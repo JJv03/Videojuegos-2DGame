@@ -30,8 +30,8 @@ public:
     int m_tileSize = 32;
 
     // Number of tiles in the tilemap
-    int m_tilesPerRow;
-    int m_tilesPerColumn;
+    int tilesPerRow;
+    int tilesPerColumn;
 
 
 private:
@@ -48,7 +48,7 @@ private:
 
 public:
     // Matrix with the properties of each solid tile.
-    std::vector<std::vector<SolidTile>> m_solidTiles;
+    std::vector<std::vector<SolidTile>> solidTiles;
 
     // Vector with the all the special tiles in the tilemap
     std::vector<SpecialTile> m_specialTiles;

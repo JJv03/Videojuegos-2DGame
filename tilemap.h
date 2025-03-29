@@ -13,8 +13,8 @@ class TileMap : public sf::Drawable, public sf::Transformable
 public:
 
     // Number of tiles in the tilemap
-    int m_tilesPerRow;
-    int m_tilesPerColumn;
+    int tilesPerRow;
+    int tilesPerColumn;
 
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
@@ -81,11 +81,11 @@ private:
     void processFileSolidTiles(std::ifstream& file, std::vector<int>& solidTileNumberList);
 
     // Function that processes the tilemap file's door tiles section, 
-    // storing its doors (type,positionX,positionY) in <m_doorTiles>
+    // storing its doors (type,positionX,positionY) in <doorTiles>
     void processFileDoorTiles(std::ifstream& file);
 
     // Function that processes the tilemap file's breakable tiles section, 
-    // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
+    // storing its breakableTiles (type,positionX,positionY) in <breakableTiles>
     void processFileBreakableTiles(std::ifstream& file);
 
     // Function that loads the textures of the breakable tiles
@@ -96,13 +96,13 @@ public:
     ~TileMap();
 
     // Matrix with the properties of each solid tile.
-    std::vector<std::vector<SolidTile>> m_solidTiles;
+    std::vector<std::vector<SolidTile>> solidTiles;
 
     // Vector with the properties of each breakable tile
-    std::vector<BreakableTile> m_breakableTiles;
+    std::vector<BreakableTile> breakableTiles;
 
     // Vector with the properties of each door tile
-    std::unordered_map<int,DoorTile> m_doorTiles;
+    std::unordered_map<int,DoorTile> doorTiles;
     
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);

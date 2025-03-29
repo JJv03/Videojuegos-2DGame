@@ -35,8 +35,8 @@ sf::Vector2f getVirtualUpperLeftCornerCoordOfGameView(sf::RenderWindow &window);
  * tiles at the edges are included.
  * 
  * @param window Reference to the SFML render window.
- * @param m_tilesPerRow Total number of tiles per row in the tilemap.
- * @param m_tilesPerColumn Total number of tiles per column in the tilemap.
+ * @param tilesPerRow Total number of tiles per row in the tilemap.
+ * @param tilesPerColumn Total number of tiles per column in the tilemap.
  * @return VisibleTileRange The calculated range of visible tiles.
  */
-VisibleTileRange calculateVisibleTileRange(sf::RenderWindow& window, const int m_tilesPerRow, const int m_tilesPerColumn);
+VisibleTileRange calculateVisibleTileRange(sf::RenderWindow& window, const int tilesPerRow, const int tilesPerColumn);
