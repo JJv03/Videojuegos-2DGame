@@ -4,7 +4,6 @@
 #include <fstream>
 #include <unordered_map>
 #include <memory>
-#include <cmath>
 
 
 using BreakableType = TileMap::BreakableTile::Type;
@@ -328,18 +327,11 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 
 void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
-    sf::Vector2f upperLeft = getVirtualUpperLeftCornerCoordOfGameView(window);
-    sf::Vector2f size(gGameVisibleWorld_size_x, gGameVisibleWorld_size_y);    // Size of the visible game area
-
-    // We are ONLY considering the tiles that are visible in the camera (even if they are not fully visible!!!)
-    int firstCol = std::max(0, static_cast<int>(upperLeft.x / gTileSize));
-    int lastCol = std::min(m_tilesPerRow - 1, static_cast<int>(std::ceil((upperLeft.x + size.x) / gTileSize)) - 1);
-    int firstRow = std::max(0, static_cast<int>(upperLeft.y / gTileSize));
-    int lastRow = std::min(m_tilesPerColumn - 1, static_cast<int>(std::ceil((upperLeft.y + size.y) / gTileSize)) - 1);
+    VisibleTileRange visibleTiles = calculateVisibleTileRange(window, m_tilesPerRow, m_tilesPerColumn);
 
     // Drawing the tiles
-    for (int row = firstRow; row <= lastRow; ++row) {
-        for (int col = firstCol; col <= lastCol; ++col) {
+    for (int row = visibleTiles.firstRow; row <= visibleTiles.lastRow; ++row) {
+        for (int col = visibleTiles.firstCol; col <= visibleTiles.lastCol; ++col) {
             size_t tileIndex = row * m_tilesPerRow + col;
             size_t vertexIndex = tileIndex * 6;     // Every tile has 6 vertices
             
@@ -629,4 +621,3 @@ void TileMap::processFileBreakableTiles(std::ifstream& file) {
         }
     }
 }
-
