@@ -2,7 +2,6 @@
 #include <iostream>
 
 TilemapManager::TilemapManager() {
-
 }
 
 TilemapManager::~TilemapManager() {
@@ -82,3 +81,4 @@ void TilemapManager::loadLevel(int level) {
         break;
     }
 }
+

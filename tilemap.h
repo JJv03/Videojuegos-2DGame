@@ -7,6 +7,7 @@
 #include "entity.h"
 #include "tile.h"
 
+using BreakableType = BreakableTile::Type;
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
@@ -18,6 +19,16 @@ public:
 
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
+    
+    // Hash function for the breakable tile type
+    struct BreakableTypeHash {
+        std::size_t operator()(const BreakableType& t) const {
+            return std::hash<int>()(static_cast<int>(t));
+        }
+    };
+    
+    // Dicctionary with the textures of the breakable tiles
+    static std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, BreakableTypeHash> breakableTextures;
 
     struct DoorTile {
         enum class Type{   // Types of door tiles. Only in this scope
@@ -66,7 +77,7 @@ private:
     void processFileBreakableTiles(std::ifstream& file);
 
     // Function that loads the textures of the breakable tiles
-    bool loadBreakableTextures();
+    static bool loadBreakableTextures();
 
 public:
     TileMap();

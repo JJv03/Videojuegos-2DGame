@@ -5,9 +5,10 @@
 #include <unordered_map>
 #include <memory>
 
-
 using BreakableType = BreakableTile::Type;
 using DropType = BreakableTile::DropType;
+
+std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, TileMap::BreakableTypeHash> TileMap::breakableTextures;
 
 // Collision Types (only used here)
 enum CollisionType {
@@ -38,15 +39,6 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     { THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 3.f)) },
 };
 
-// Hash function for the breakable tile type
-struct BreakableTypeHash {
-    std::size_t operator()(const BreakableType& t) const {
-        return std::hash<int>()(static_cast<int>(t));
-    }
-};
-
-// Dicctionary with the textures of the breakable tiles
-std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, BreakableTypeHash> breakableTextures;
 
 
 // ======================================================================================
@@ -192,6 +184,45 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
 }
 
 
+bool TileMap::loadBreakableTextures() {
+    // If they're already loaded, return true
+    if (!breakableTextures.empty()) {
+        return true;
+    }
+
+    sf::Image itemsObjectsImage;
+    if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
+    itemsObjectsImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+
+    auto firepitTexture = std::make_shared<sf::Texture>();
+    if (!firepitTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({175, 2}, {16, 31}))) {
+        std::cout << "Error cargando textura Firepit." << std::endl;
+        return false;
+    }
+    
+    breakableTextures[BreakableType::FIREPIT] = firepitTexture;
+    
+    auto candelabrumTexture = std::make_shared<sf::Texture>();
+    if (!candelabrumTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({157, 1}, {8, 16}))) {
+        std::cout << "Error cargando textura Candelabrum." << std::endl;
+        return false;
+    }
+    breakableTextures[BreakableType::CANDELABRUM] = candelabrumTexture;
+    
+    // ---------------------------------------
+    sf::Image tilesetLvl1Image;
+    if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png")) return false;
+    tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+
+    auto breakableWallTexture = std::make_shared<sf::Texture>();
+    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({175, 149}, {32, 32}))) {
+        std::cout << "Error cargando textura Breakable Wall." << std::endl;
+        return false;
+    }
+    breakableTextures[BreakableType::BREAKABLE_WALL] = breakableWallTexture;
+    
+    return true;
+}
 
 
 bool TileMap::load(int level, int stage) {
@@ -199,7 +230,6 @@ bool TileMap::load(int level, int stage) {
     std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" +
                                 std::to_string(level) + "_" + std::to_string(stage) + ".txt";
     
-                                
     if (!loadBreakableTextures()) {
         std::cerr << "Error loading breakable textures" << std::endl;
         return false;
@@ -267,28 +297,6 @@ bool TileMap::load(int level, int stage) {
         }
     }
 
-    return true;
-}
-
-bool TileMap::loadBreakableTextures() { 
-    sf::Image itemsObjectsImage;
-    if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
-    itemsObjectsImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    auto firepitTexture = std::make_shared<sf::Texture>(itemsObjectsImage, false, sf::IntRect({175, 2}, {16, 31}));
-    breakableTextures[BreakableType::FIREPIT] = firepitTexture;
-    
-    auto candelabrumTexture = std::make_shared<sf::Texture>(itemsObjectsImage, false, sf::IntRect({157, 1}, {8, 16}));
-    breakableTextures[BreakableType::CANDELABRUM] = candelabrumTexture;
-    
-    // ---------------------------------------
-    sf::Image tilesetLvl1Image;
-    if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png")) return false;
-    tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    auto breakableWallTexture = std::make_shared<sf::Texture>(tilesetLvl1Image, false, sf::IntRect({175, 149}, {32, 32}));
-    breakableTextures[BreakableType::BREAKABLE_WALL] = breakableWallTexture;
-    
     return true;
 }
 
