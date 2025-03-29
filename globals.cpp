@@ -29,7 +29,7 @@ const float gOverlapedTileSize = gTileSize/2.f;     // It's overlaped by the GUI
 
 
 // ============ GUI VARIABLES =============
-const float gGUI_size_x = gGameVisibleWorld_size_x + 1.f;   // +1px for error margin
+const float gGUI_size_x = gGameVisibleWorld_size_x;   // +1px for error margin
 const float gGUI_size_y = 35.0f;
 const float gGUI_position_x = 0.0f;
 const float gGUI_position_y = -gGUI_size_y + gOverlapedTileSize;

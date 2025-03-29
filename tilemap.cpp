@@ -1,8 +1,10 @@
 #include "tilemap.h"
+#include "utils.h"
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include <memory>
+#include <cmath>
 
 
 using BreakableType = TileMap::BreakableTile::Type;
@@ -326,57 +328,25 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 
 void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
-    sf::View view = camera.getView(window.getSize());
+    sf::Vector2f upperLeft = getVirtualUpperLeftCornerCoordOfGameView(window);
+    sf::Vector2f size(gGameVisibleWorld_size_x, gGameVisibleWorld_size_y);    // Size of the visible game area
 
-    sf::Vector2f center = view.getCenter();
-    sf::Vector2f size = view.getSize();
+    // We are ONLY considering the tiles that are visible in the camera (even if they are not fully visible!!!)
+    int firstCol = std::max(0, static_cast<int>(upperLeft.x / gTileSize));
+    int lastCol = std::min(m_tilesPerRow - 1, static_cast<int>(std::ceil((upperLeft.x + size.x) / gTileSize)) - 1);
+    int firstRow = std::max(0, static_cast<int>(upperLeft.y / gTileSize));
+    int lastRow = std::min(m_tilesPerColumn - 1, static_cast<int>(std::ceil((upperLeft.y + size.y) / gTileSize)) - 1);
 
-    float left   = center.x - size.x / 2.f; // Adding a 100.f offset will show how it works
-    float right  = center.x + size.x / 2.f; // Subtracting a 100.f offset will show how it works
-    float top    = center.y - size.y / 2.f;
-    float bottom = center.y + size.y / 2.f;
-
-    // Show coords
-    //std::cout << "Left: " << left << ", Right: " << right << ", Top: " << top << ", Bottom: " << bottom << std::endl;
-    
-    
-    // Draw only the tiles that are inside the camera
-    for (size_t i = 0; i < m_vertices.getVertexCount(); i += 6) {  // Avanza de 6 en 6, ya que cada tile tiene 6 vértices
-
-        bool tileVisible = false;
-
-        // Obtain the tile index
-        size_t tileIndex = i / 6;
-
-        size_t row = tileIndex / m_tilesPerRow;
-
-        size_t col = tileIndex % m_tilesPerRow;
-
-        //std::cout << "index: " << i << ", Row: " << row << ", Col: " << col << std::endl;
-        // Obtain the tile reference
-        SolidTile& tile = m_solidTiles[row][col];
-        
-        // Going through each of the 6 vertices of the tile
-        for (size_t j = 0; j < 6; ++j) {
-            if(j == 3 || j == 4) continue; // Only needs to check 4 vertices, 2 of them are repeated
-            sf::Vertex& vertex = m_vertices[i + j];
-            float x = vertex.position.x;
-            float y = vertex.position.y;
-
-            // Verifies if vertex is visible
-            if (x >= left && x <= right && y >= top && y <= bottom) {
-                tileVisible = true;
-                break;  // No need to keep searching if 1 out of 6 vertices is visible
-            }
-        }
-
-        // If tile is visible, show and make visible
-        if (tileVisible) {
-            window.draw(&m_vertices[i], 6, sf::PrimitiveType::Triangles, &m_tileset);
-            tile.isVisible = true;
+    // Drawing the tiles
+    for (int row = firstRow; row <= lastRow; ++row) {
+        for (int col = firstCol; col <= lastCol; ++col) {
+            size_t tileIndex = row * m_tilesPerRow + col;
+            size_t vertexIndex = tileIndex * 6;     // Every tile has 6 vertices
             
-        } else {
-            tile.isVisible = false;
+            SolidTile& tile = m_solidTiles[row][col];
+            
+            window.draw(&m_vertices[vertexIndex], 6, sf::PrimitiveType::Triangles, &m_tileset);
+            tile.isVisible = true;
         }
     }
 
