@@ -254,12 +254,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         // =========================================
         // ================== GUI ==================
         // =========================================
-        
-        sf::Vector2u windowSize = window.getSize();
-        sf::Vector2f gameViewPosition = window.getView().getViewport().position;
-        sf::Vector2i windowPixelCoordOfUpperLeftCornerOfGameView(windowSize.x * gameViewPosition.x, windowSize.y * gameViewPosition.y);
 
-        sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = window.mapPixelToCoords(windowPixelCoordOfUpperLeftCornerOfGameView);
+        sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = getVirtualUpperLeftCornerCoordOfGameView(window);
         sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
         
         // Draw the black rectangle
@@ -369,74 +365,6 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
     }
 }
 
-/*void Game::draw(sf::RenderWindow& window, Camera& camera) {
-    // Modificar la vista del juego para bajarlo
-    sf::View gameView = camera.getView(window.getSize()); // Obtener la vista actual de la cámara
-    gameView.move(sf::Vector2f(0, 20)); // Mover la vista del juego 20 píxeles hacia abajo (ajusta según sea necesario)
-    window.setView(gameView);
-
-    // Dibujar el mapa y los sprites
-    tileMap.drawScene(window, camera);
-    player.draw(window);
-
-    // Restaurar la vista de la GUI
-    sf::View guiView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(gWindowWidth, gWindowHeight)));
-    window.setView(guiView); // Aplicar la vista fija para la GUI
-
-    // Dibujar el rectángulo negro en la parte superior
-    sf::RectangleShape guiBackground(sf::Vector2f(gWindowWidth, 50)); // Altura de 50px
-    guiBackground.setFillColor(sf::Color::Black);
-    guiBackground.setPosition(sf::Vector2f(0, 0));
-    window.draw(guiBackground);
-
-    // Dibujar los textos de la GUI
-    for (const auto& text : texts) {
-        window.draw(text);
-    }
-
-    // Restaurar la vista original del juego
-    window.setView(gameView);
-}*/
-
-/* sf::View Game::getView(sf::RenderWindow &window, Camera &camera)
-{
-    sf::View view = camera.getView(window.getSize());
-    sf::Vector2f playerPosition = this->player.sprite->getPosition();
-
-    // Obtener los límites del mapa
-    sf::FloatRect mapBounds = this->tilemaps[currentStage].getMapBounds();
-    sf::Vector2f viewSize = view.getSize();
-
-    // Calcular los límites permitidos para la cámara en X
-    float minX = mapBounds.position.x + viewSize.x / 2;
-    float maxX = mapBounds.position.x + mapBounds.size.x - viewSize.x / 2;
-
-    // Calcular los límites permitidos para la cámara en Y
-    float minY = mapBounds.position.y + viewSize.y / 2;
-    float maxY = mapBounds.position.y + mapBounds.size.y - viewSize.y / 2;
-
-    // Restringir la posición de la cámara dentro de los límites del mapa
-    float centerX = std::max(minX, std::min(view.getCenter().x, maxX));
-    float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
-    view.setCenter({centerX, centerY});
-
-    // Esquina de la cámara en la esquina superior izquierda, limitada por los bordes del mapa
-    if (playerPosition.x < minX)
-    {
-        camera.startVertex.x = minX - (camera.getView(window.getSize()).getSize().x / 2.f);
-    }
-    else if (playerPosition.x > maxX)
-    {
-        camera.startVertex.x = maxX - (camera.getView(window.getSize()).getSize().x / 2.f);
-    }
-    else
-    {
-        camera.startVertex.x = player.sprite->getPosition().x -
-                               (camera.getView(window.getSize()).getSize().x / 2.f);
-    }
-
-    return view;
-} */
 
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS
@@ -638,6 +566,10 @@ void Game::checkPlayerTileCollisions()
     }
 }
 
+// -------------------------------------------------------------------------------------
+//                                    DEBUG TILEMAP
+// -------------------------------------------------------------------------------------
+
 int Game::startStage(int stage, int fromDoor)
 {
     if (unsigned(stage) > tilemaps.tilemaps.size())
@@ -670,4 +602,18 @@ int Game::goToStage(int fromDoor)
     }
 
     return fromDoor;
+}
+
+// -------------------------------------------------------------------------------------
+//                                    AUXILIARY FUNCTIONS
+// -------------------------------------------------------------------------------------
+
+sf::Vector2f getVirtualUpperLeftCornerCoordOfGameView(sf::RenderWindow &window)
+{
+    sf::Vector2u windowSize = window.getSize();
+    sf::Vector2f gameViewPosition = window.getView().getViewport().position;
+    sf::Vector2i windowPixelCoordOfUpperLeftCornerOfGameView(windowSize.x * gameViewPosition.x, windowSize.y * gameViewPosition.y);
+    sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = window.mapPixelToCoords(windowPixelCoordOfUpperLeftCornerOfGameView);
+    //std::cout << "Upper left corner of game view: " << virtualCoordOfUpperLeftCornerOfGame.x << ", " << virtualCoordOfUpperLeftCornerOfGame.y << std::endl;
+    return virtualCoordOfUpperLeftCornerOfGame;
 }
