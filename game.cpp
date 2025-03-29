@@ -446,13 +446,13 @@ void Game::checkPlayerTileCollisions()
     bool hasCollided = false;
 
     // Solid tiles
-    for (int col = 0; col < tilemaps[currentStage].tilesPerRow; ++col)
+    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
     {
-        for (int row = 0; row < tilemaps[currentStage].tilesPerColumn; ++row)
+        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
         {
-            // if (tilemaps[currentStage].solidTiles[row][col].isVisible)
+            // if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
             // {
-            for(auto tileBounds : tilemaps[currentStage].solidTiles[row][col].hitboxes){
+            for(auto tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes){
                 sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
                 // if (row == 5 && col == 3) {
@@ -515,7 +515,7 @@ void Game::checkPlayerTileCollisions()
 
     // Door tiles
     // i+1 = stage number
-    for (auto &doorEntry : tilemaps[currentStage].doorTiles)
+    for (auto &doorEntry : tilemaps[currentStage].m_doorTiles)
     {
         sf::FloatRect doorBounds = doorEntry.second.hitbox;
 
@@ -588,7 +588,7 @@ int Game::startStage(int stage, int fromDoor)
     }
     else
     {
-        player.sprite->setPosition(tilemaps[currentStage].doorTiles[fromDoor].playerAparition);
+        player.sprite->setPosition(tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition);
     }
 
     return stage;

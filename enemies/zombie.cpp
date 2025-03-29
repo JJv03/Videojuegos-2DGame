@@ -54,11 +54,11 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
         if (!hitbox.findIntersection(mapBounds))
             continue;
 
-        for (size_t row = 0; row < tileMap.solidTiles.size(); ++row)
+        for (size_t row = 0; row < tileMap.m_solidTiles.size(); ++row)
         {
-            for (size_t col = 0; col < tileMap.solidTiles[row].size(); ++col)
+            for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
             {
-                for(auto tileBounds : tileMap.solidTiles[row][col].hitboxes){
+                for(auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes){
                     if (tileBounds.size.x == 0 || tileBounds.size.y == 0)
                         continue;
 

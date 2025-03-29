@@ -47,8 +47,8 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
     std::vector<int> tilemap;
     leerNumeros(tilemap_path, tilemap);
     
-    solidTiles.resize(height);
-    for (auto& row : solidTiles) {
+    m_solidTiles.resize(height);
+    for (auto& row : m_solidTiles) {
         row.resize(width);
     }
 
@@ -127,8 +127,8 @@ bool TileMap::load(const std::string& tileset_path, const std::string& tilemap_p
             triangle[5].texCoords = sf::Vector2f(texX + m_tileSize, texY + m_tileSize);
 
             // Set the hitbox for the solid tile
-            solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
-            solidTiles[j][i].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
+            m_solidTiles[j][i].hitbox = getHitboxForSolidTile(tileNumber);
+            m_solidTiles[j][i].position = sf::Vector2f(i * m_tileSize, j * m_tileSize);
         }
     }
     return true;
