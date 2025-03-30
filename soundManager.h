@@ -63,6 +63,18 @@ public:
      */
     void playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop = true);
 
+    /**
+     * @brief Adjusts the volume of all active sounds.
+     * @param volume The volume to set for all active sounds (0 - 100).
+     */
+    void adjustAllSoundVolumes(float volume);
+
+    /**
+     * @brief Adjusts the volume of all active music tracks.
+     * @param volume The volume to set for all active music tracks (0 - 100).
+     */
+    void adjustAllMusicVolumes(float volume);
+
 private:
     std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;

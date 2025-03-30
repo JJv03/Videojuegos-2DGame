@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "json.hpp" // You'll need the nlohmann::json library to handle JSON
+#include "json.hpp"
 using json = nlohmann::json;
 
 class configManager {

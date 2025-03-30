@@ -107,3 +107,23 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         musicTracks[secondId].play();
     }).detach(); // Detaches the thread so it runs on the background
 }
+
+void SoundManager::adjustAllSoundVolumes(float volume) {
+    // Recorre todos los sonidos activos y ajusta su volumen
+    for (auto& [id, soundList] : sounds) {
+        for (auto& sound : soundList) {
+            if (sound->getStatus() == sf::Sound::Status::Playing) {
+                sound->setVolume(volume);
+            }
+        }
+    }
+}
+
+void SoundManager::adjustAllMusicVolumes(float volume) {
+    // Recorre todas las músicas activas y ajusta su volumen
+    for (auto& [id, music] : musicTracks) {
+        if (music.getStatus() == sf::Music::Status::Playing) {
+            music.setVolume(volume);
+        }
+    }
+}
