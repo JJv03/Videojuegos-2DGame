@@ -51,6 +51,7 @@ sf::View GameState::getView(sf::RenderWindow& window, Camera& camera) {
 }
 
 sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
+
     // Update global window dimensions
     sf::Vector2u windowSize = window.getSize();
     const float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
@@ -79,10 +80,11 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
 
     float centerX = std::max(minX, std::min(view.getCenter().x, maxX));
     float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
-    view.setCenter({centerX, centerY});
+    view.setCenter({std::round(centerX), std::round(centerY)});
 
 
     view.setViewport(getCenteredViewport(windowAspect, viewAspect)); 
+
     return view;
 }
 

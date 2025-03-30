@@ -215,7 +215,7 @@ bool TileMap::loadBreakableTextures() {
     tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
     auto breakableWallTexture = std::make_shared<sf::Texture>();
-    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({175, 149}, {32, 32}))) {
+    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({198, 231}, {32, 32}))) {
         std::cout << "Error cargando textura Breakable Wall." << std::endl;
         return false;
     }
@@ -369,7 +369,7 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
         window.draw(*m_breakableTiles[i].sprite);
     }
 
-    drawHitboxes(window);
+    //drawHitboxes(window);
 }
 
 
