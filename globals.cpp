@@ -35,7 +35,6 @@ const float gGUI_position_x = 0.0f;
 const float gGUI_position_y = -gGUI_size_y + gOverlapedTileSize;
 const sf::Color gGUI_color = sf::Color::Black;
 
-
 const unsigned int gGUI_text_size = 7;
 const sf::Color gGUI_text_color = sf::Color::White;
 
