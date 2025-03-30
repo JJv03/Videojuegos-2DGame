@@ -33,12 +33,12 @@ void TilemapManager::loadLevel(int level) {
         // ------------------------
         doors.clear();
 
-        doors[1] = {1, 2, TileMap::DoorTile::Type::CASTLE_ENTRANCE};  // Door 1
-        doors[2] = {2, 3, TileMap::DoorTile::Type::DOOR};          // Door 2
-        doors[3] = {3, 4, TileMap::DoorTile::Type::STAIRS};        // Door 3
-        doors[4] = {4, 3, TileMap::DoorTile::Type::STAIRS};        // Door 4
-        doors[5] = {3, 5, TileMap::DoorTile::Type::DOOR};          // Door 5
-        doors[6] = {5, 100, TileMap::DoorTile::Type::DOOR};        // Door 6
+        doors[1] = {1, 2, DoorTile::Type::CASTLE_ENTRANCE};  // Door 1
+        doors[2] = {2, 3, DoorTile::Type::DOOR};          // Door 2
+        doors[3] = {3, 4, DoorTile::Type::STAIRS};        // Door 3
+        doors[4] = {4, 3, DoorTile::Type::STAIRS};        // Door 4
+        doors[5] = {3, 5, DoorTile::Type::DOOR};          // Door 5
+        doors[6] = {5, 100, DoorTile::Type::DOOR};        // Door 6
 
         break;
     

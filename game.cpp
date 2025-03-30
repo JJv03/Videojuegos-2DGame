@@ -517,7 +517,7 @@ void Game::checkPlayerTileCollisions()
     // i+1 = stage number
     for (auto &doorEntry : tilemaps[currentStage].m_doorTiles)
     {
-        sf::FloatRect doorBounds = doorEntry.second.hitbox;
+        sf::FloatRect doorBounds = doorEntry.second.hitboxes[0];
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds))
         {
@@ -529,7 +529,7 @@ void Game::checkPlayerTileCollisions()
                 std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
 
-                if (tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS)
+                if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
                 {
                     startStage(tilemaps.doors[doorId].next_stage, doorId);
                 }
@@ -543,7 +543,7 @@ void Game::checkPlayerTileCollisions()
                 std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
 
-                if (tilemaps.doors[doorId].type == TileMap::DoorTile::Type::STAIRS)
+                if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
                 {
                     startStage(tilemaps.doors[doorId].prev_stage, doorId);
                 }

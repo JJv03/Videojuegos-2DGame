@@ -10,7 +10,7 @@ public:
     struct Door{
         int prev_stage;
         int next_stage;
-        TileMap::DoorTile::Type type; // For transitions
+        DoorTile::Type type; // For transitions
     };
 
     // Stores in its key <n-1> the number of the door/passage/stairs number n, and

@@ -30,18 +30,6 @@ public:
     // Dicctionary with the textures of the breakable tiles
     static std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, BreakableTypeHash> breakableTextures;
 
-    struct DoorTile {
-        enum class Type{   // Types of door tiles. Only in this scope
-            CASTLE_ENTRANCE = 0,
-            DOOR = 1,
-            STAIRS = 2,
-        };
-
-        sf::FloatRect hitbox;           // Hitbox of the tile. In global coord.
-        Type type;                      // Door type
-        sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
-    };
-
 
 private:
     // Saves the map's tiles' vertex positions

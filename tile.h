@@ -27,6 +27,19 @@ public:
     ~SolidTile() = default;
 };
 
+// -------------------------------------------------
+
+class DoorTile : public Tile {
+public:
+    enum class Type{   // Types of door tiles. Only in this scope
+        CASTLE_ENTRANCE = 0,
+        DOOR = 1,
+        STAIRS = 2,
+    };
+
+    Type type;                      // Door type
+    sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
+};
 
 // -------------------------------------------------
 
@@ -54,3 +67,5 @@ public:
     BreakableTile();
     ~BreakableTile() = default;
 };
+
+
