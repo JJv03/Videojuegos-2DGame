@@ -1,5 +1,7 @@
 #include "configManager.h"
 
+std::map<std::string, sf::Keyboard::Scancode> gameControls;
+
 configManager::configManager() {
     loadFromFile(configPath);
 }
@@ -24,12 +26,19 @@ void configManager::loadFromFile(const std::string& filename) {
         cheatsEnabled = j["cheats"]["enabled"];
         hardModeEnabled = j["difficulty"]["hard_mode"];
 
-        controls["move_right"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_right"]);
-        controls["move_left"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_left"]);
-        controls["move_down"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_down"]);
-        controls["move_up"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_up"]);
-        controls["jump"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["jump"]);
-        controls["attack"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["attack"]);
+        // controls["move_right"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_right"]);
+        // controls["move_left"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_left"]);
+        // controls["move_down"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_down"]);
+        // controls["move_up"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_up"]);
+        // controls["jump"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["jump"]);
+        // controls["attack"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["attack"]);
+        configManager& config = configManager::getInstance();
+        gameControls["move_right"] = config.getControl("move_right");
+        gameControls["move_left"] = config.getControl("move_left");
+        gameControls["move_down"] = config.getControl("move_down");
+        gameControls["move_up"] = config.getControl("move_up");
+        gameControls["jump"] = config.getControl("jump");
+        gameControls["attack"] = config.getControl("attack");
     }
 }
 
@@ -43,12 +52,12 @@ void configManager::saveToFile(const std::string& filename) {
     j["cheats"]["enabled"] = cheatsEnabled;
     j["difficulty"]["hard_mode"] = hardModeEnabled;
 
-    j["controls"]["move_right"] = static_cast<int>(controls["move_right"]);
-    j["controls"]["move_left"] = static_cast<int>(controls["move_left"]);
-    j["controls"]["move_down"] = static_cast<int>(controls["move_down"]);
-    j["controls"]["move_up"] = static_cast<int>(controls["move_up"]);
-    j["controls"]["jump"] = static_cast<int>(controls["jump"]);
-    j["controls"]["attack"] = static_cast<int>(controls["attack"]);
+    j["controls"]["move_right"] = static_cast<int>(gameControls["move_right"]);
+    j["controls"]["move_left"] = static_cast<int>(gameControls["move_left"]);
+    j["controls"]["move_down"] = static_cast<int>(gameControls["move_down"]);
+    j["controls"]["move_up"] = static_cast<int>(gameControls["move_up"]);
+    j["controls"]["jump"] = static_cast<int>(gameControls["jump"]);
+    j["controls"]["attack"] = static_cast<int>(gameControls["attack"]);
 
     std::ofstream file(filename);
     file << j.dump(4);
@@ -59,7 +68,7 @@ void configManager::setMasterVolume(float volume) { masterVolume = volume; saveT
 void configManager::setMusicVolume(float volume) { musicVolume = volume; saveToFile(configPath); }
 void configManager::setSoundVolume(float volume) { soundVolume = volume; saveToFile(configPath); }
 void configManager::setWindowMode(bool isFullscreen) { fullscreen = isFullscreen; saveToFile(configPath); }
-void configManager::setControl(const std::string& action, sf::Keyboard::Scancode key) { controls[action] = key; saveToFile(configPath); }
+void configManager::setControl(const std::string& action, sf::Keyboard::Scancode key) { gameControls[action] = key; saveToFile(configPath); }
 void configManager::setCheatsEnabled(bool enabled) { cheatsEnabled = enabled; saveToFile(configPath); }
 void configManager::setHardModeEnabled(bool enabled) { hardModeEnabled = enabled; saveToFile(configPath); }
 
@@ -68,6 +77,8 @@ float configManager::getMasterVolume() const { return masterVolume; }
 float configManager::getMusicVolume() const { return musicVolume; }
 float configManager::getSoundVolume() const { return soundVolume; }
 bool configManager::isFullscreen() const { return fullscreen; }
-sf::Keyboard::Scancode configManager::getControl(const std::string& action) const { return controls.at(action); }
+sf::Keyboard::Scancode configManager::getControl(const std::string& action) const { return gameControls.at(action); }
 bool configManager::areCheatsEnabled() const { return cheatsEnabled; }
 bool configManager::isHardModeEnabled() const { return hardModeEnabled; }
+
+bool configManager::isActionPressed(const std::string& action) { return sf::Keyboard::isKeyPressed(gameControls[action]); }

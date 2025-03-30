@@ -7,6 +7,8 @@
 
 using json = nlohmann::json;
 
+extern std::map<std::string, sf::Keyboard::Scancode> gameControls;
+
 class configManager {
     public:
         // Singleton for global access
@@ -33,6 +35,8 @@ class configManager {
         sf::Keyboard::Scancode getControl(const std::string& action) const;
         bool areCheatsEnabled() const;
         bool isHardModeEnabled() const;
+
+        bool isActionPressed(const std::string& action);
     
     private:
         configManager(); // Private constructor (Singleton)
@@ -42,7 +46,7 @@ class configManager {
         float musicVolume;
         float soundVolume;
         bool fullscreen;
-        std::map<std::string, sf::Keyboard::Scancode> controls;
+        // std::map<std::string, sf::Keyboard::Scancode> controls;
         bool cheatsEnabled;
         bool hardModeEnabled;
     
