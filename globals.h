@@ -11,8 +11,8 @@
 // ============ GENERAL INFO / USAGE VARIABLES =============
 extern const unsigned int gWindowWidth;
 extern const unsigned int gWindowHeight;
-extern const float gSoundVolume;
-extern const float gMusicVolume;
+// extern const float gSoundVolume;
+// extern const float gMusicVolume;
 
 extern const float gGameVisibleWorld_size_x;
 extern const float gGameVisibleWorld_size_y;

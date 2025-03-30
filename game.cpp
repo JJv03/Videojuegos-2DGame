@@ -5,6 +5,7 @@
 #include <sstream>
 #include "globals.h"
 #include "utils.h"
+#include "configManager.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
 
@@ -22,8 +23,12 @@ void Game::init()
     currentLevel = 1;
     currentStage = 1;
 
+    configManager& configManager = configManager::getInstance();
+    auto audio = configManager.getAudio();
+    float musicVol = (audio.master_volume * audio.music_volume)/100;
+
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
-    gameSoundManager.playMusic("gameMusic", gMusicVolume);
+    gameSoundManager.playMusic("gameMusic", musicVol);
 
     tilemaps.loadLevel(1);
 

@@ -1,8 +1,8 @@
 {
     "audio": {
-        "master_volume": 80,
-        "music_volume": 70,
-        "sound_volume": 75
+        "master_volume": 100,
+        "music_volume": 50,
+        "sound_volume": 50
     },
     "video": {
         "window_mode": "fullscreen"

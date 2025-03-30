@@ -5,6 +5,7 @@
 
 #include <thread> // Necessary for using sleep_for
 #include <chrono>
+#include "configManager.h"
 
 constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
 constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
@@ -226,8 +227,12 @@ void MenuGS::init(){
     // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
     menuSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
+    configManager& configManager = configManager::getInstance();
+    auto audio = configManager.getAudio();
+    float musicVol = (audio.master_volume * audio.music_volume)/100;
+
     menuSoundManager.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
-    menuSoundManager.playMusic("menuMusic", gMusicVolume);
+    menuSoundManager.playMusic("menuMusic", musicVol);
 }
 
 void MenuGS::handleInput(sf::Event event){
@@ -265,7 +270,10 @@ void MenuGS::handleInput(sf::Event event){
         }
 
         if (keyPressed->scancode == KEY_ENTER) {
-            menuSoundManager.playSound("menuEnter", gSoundVolume);
+            configManager& configManager = configManager::getInstance();
+            auto audio = configManager.getAudio();
+            float soundVol = (audio.master_volume * audio.sound_volume)/100;
+            menuSoundManager.playSound("menuEnter", soundVol);
             std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
                 case 0:

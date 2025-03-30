@@ -1,84 +1,182 @@
 #include "configManager.h"
+#include <fstream>
+#include <iostream>
 
-std::map<std::string, sf::Keyboard::Scancode> gameControls;
-
-configManager::configManager() {
-    loadFromFile(configPath);
+// Define how to serialize Audio to JSON
+void to_json(json& j, const configManager::Audio& a) {
+    j = json{{"master_volume", a.master_volume},
+             {"music_volume", a.music_volume},
+             {"sound_volume", a.sound_volume}};
 }
 
-// Singleton
+// Define how to deserialize Audio from JSON
+void from_json(const json& j, configManager::Audio& a) {
+    j.at("master_volume").get_to(a.master_volume);
+    j.at("music_volume").get_to(a.music_volume);
+    j.at("sound_volume").get_to(a.sound_volume);
+}
+
+// Define how to serialize Video to JSON
+void to_json(json& j, const configManager::Video& v) {
+    j = json{{"window_mode", v.window_mode}};
+}
+
+// Define how to deserialize Video from JSON
+void from_json(const json& j, configManager::Video& v) {
+    j.at("window_mode").get_to(v.window_mode);
+}
+
+// Define how to serialize Controls to JSON
+void to_json(json& j, const configManager::Controls& c) {
+    j = json{{"move_right", c.move_right},
+             {"move_left", c.move_left},
+             {"move_down", c.move_down},
+             {"move_up", c.move_up},
+             {"jump", c.jump},
+             {"attack", c.attack}};
+}
+
+// Define how to deserialize Controls from JSON
+void from_json(const json& j, configManager::Controls& c) {
+    j.at("move_right").get_to(c.move_right);
+    j.at("move_left").get_to(c.move_left);
+    j.at("move_down").get_to(c.move_down);
+    j.at("move_up").get_to(c.move_up);
+    j.at("jump").get_to(c.jump);
+    j.at("attack").get_to(c.attack);
+}
+
+// Define how to serialize Cheats to JSON
+void to_json(json& j, const configManager::Cheats& c) {
+    j = json{{"enabled", c.enabled}};
+}
+
+// Define how to deserialize Cheats from JSON
+void from_json(const json& j, configManager::Cheats& c) {
+    j.at("enabled").get_to(c.enabled);
+}
+
+// Define how to serialize Difficulty to JSON
+void to_json(json& j, const configManager::Difficulty& d) {
+    j = json{{"hard_mode", d.hard_mode}};
+}
+
+// Define how to deserialize Difficulty from JSON
+void from_json(const json& j, configManager::Difficulty& d) {
+    j.at("hard_mode").get_to(d.hard_mode);
+}
+
 configManager& configManager::getInstance() {
     static configManager instance;
     return instance;
 }
 
-// Load configuration from JSON
-void configManager::loadFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (file.is_open()) {
-        json j;
-        file >> j;
+configManager::configManager() {
+    // Initialize default configuration
+    // audio = {80, 70, 75};
+    // video = {"fullscreen"};
+    // controls = {79, 80, 81, 82, 34, 35};
+    // cheats = {false};
+    // difficulty = {false};
 
-        masterVolume = j["audio"]["master_volume"];
-        musicVolume = j["audio"]["music_volume"];
-        soundVolume = j["audio"]["sound_volume"];
-        fullscreen = j["video"]["window_mode"] == "fullscreen";
-        cheatsEnabled = j["cheats"]["enabled"];
-        hardModeEnabled = j["difficulty"]["hard_mode"];
+    // currentConfig["audio"] = audio;
+    // currentConfig["video"] = video;
+    // currentConfig["controls"] = controls;
+    // currentConfig["cheats"] = cheats;
+    // currentConfig["difficulty"] = difficulty;
 
-        // controls["move_right"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_right"]);
-        // controls["move_left"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_left"]);
-        // controls["move_down"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_down"]);
-        // controls["move_up"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["move_up"]);
-        // controls["jump"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["jump"]);
-        // controls["attack"] = static_cast<sf::Keyboard::Scancode>(j["controls"]["attack"]);
-        configManager& config = configManager::getInstance();
-        gameControls["move_right"] = config.getControl("move_right");
-        gameControls["move_left"] = config.getControl("move_left");
-        gameControls["move_down"] = config.getControl("move_down");
-        gameControls["move_up"] = config.getControl("move_up");
-        gameControls["jump"] = config.getControl("jump");
-        gameControls["attack"] = config.getControl("attack");
+    loadConfiguration("config.json");
+
+    originalConfig = currentConfig; // Copy the original configuration
+
+    std::cout<<originalConfig<<std::endl;
+}
+
+bool configManager::detectChanges() {
+    return currentConfig != originalConfig;
+}
+
+void configManager::loadConfiguration(const std::string& file) {
+    // Load configuration from a JSON file
+    std::ifstream inputFile(file);
+    if (inputFile.is_open()) {
+        inputFile >> currentConfig;
+        inputFile.close();
+
+        // Update local configuration
+        audio = currentConfig["audio"];
+        video = currentConfig["video"];
+        controls = currentConfig["controls"];
+        cheats = currentConfig["cheats"];
+        difficulty = currentConfig["difficulty"];
     }
 }
 
-// Save configuration to JSON
-void configManager::saveToFile(const std::string& filename) {
-    json j;
-    j["audio"]["master_volume"] = masterVolume;
-    j["audio"]["music_volume"] = musicVolume;
-    j["audio"]["sound_volume"] = soundVolume;
-    j["video"]["window_mode"] = fullscreen ? "fullscreen" : "windowed";
-    j["cheats"]["enabled"] = cheatsEnabled;
-    j["difficulty"]["hard_mode"] = hardModeEnabled;
-
-    j["controls"]["move_right"] = static_cast<int>(gameControls["move_right"]);
-    j["controls"]["move_left"] = static_cast<int>(gameControls["move_left"]);
-    j["controls"]["move_down"] = static_cast<int>(gameControls["move_down"]);
-    j["controls"]["move_up"] = static_cast<int>(gameControls["move_up"]);
-    j["controls"]["jump"] = static_cast<int>(gameControls["jump"]);
-    j["controls"]["attack"] = static_cast<int>(gameControls["attack"]);
-
-    std::ofstream file(filename);
-    file << j.dump(4);
+void configManager::saveConfiguration(const std::string& file) {
+    // Save configuration to a JSON file
+    std::ofstream outputFile(file);
+    if (outputFile.is_open()) {
+        outputFile << currentConfig.dump(4); // Save with indentation
+        outputFile.close();
+    }
 }
 
-// Methods to modify configuration
-void configManager::setMasterVolume(float volume) { masterVolume = volume; saveToFile(configPath); }
-void configManager::setMusicVolume(float volume) { musicVolume = volume; saveToFile(configPath); }
-void configManager::setSoundVolume(float volume) { soundVolume = volume; saveToFile(configPath); }
-void configManager::setWindowMode(bool isFullscreen) { fullscreen = isFullscreen; saveToFile(configPath); }
-void configManager::setControl(const std::string& action, sf::Keyboard::Scancode key) { gameControls[action] = key; saveToFile(configPath); }
-void configManager::setCheatsEnabled(bool enabled) { cheatsEnabled = enabled; saveToFile(configPath); }
-void configManager::setHardModeEnabled(bool enabled) { hardModeEnabled = enabled; saveToFile(configPath); }
+void configManager::applyChanges() {
+    if (detectChanges()) {
+        std::cout << "Applying configuration changes...\n";
+        // Here you would apply changes in the game, e.g.:
+        // - Adjust audio levels
+        // - Change window mode (fullscreen/windowed)
+        // - Update controls
+        // - Apply difficulty settings
 
-// Methods to retrieve values
-float configManager::getMasterVolume() const { return masterVolume; }
-float configManager::getMusicVolume() const { return musicVolume; }
-float configManager::getSoundVolume() const { return soundVolume; }
-bool configManager::isFullscreen() const { return fullscreen; }
-sf::Keyboard::Scancode configManager::getControl(const std::string& action) const { return gameControls.at(action); }
-bool configManager::areCheatsEnabled() const { return cheatsEnabled; }
-bool configManager::isHardModeEnabled() const { return hardModeEnabled; }
+        // After applying changes, save the updated configuration
+        saveConfiguration("config.json");
+    }
+}
 
-bool configManager::isActionPressed(const std::string& action) { return sf::Keyboard::isKeyPressed(gameControls[action]); }
+// Accessors and mutators
+configManager::Audio configManager::getAudio() const {
+    return audio;
+}
+
+configManager::Video configManager::getVideo() const {
+    return video;
+}
+
+configManager::Controls configManager::getControls() const {
+    return controls;
+}
+
+configManager::Cheats configManager::getCheats() const {
+    return cheats;
+}
+
+configManager::Difficulty configManager::getDifficulty() const {
+    return difficulty;
+}
+
+void configManager::setAudio(const Audio& newAudio) {
+    audio = newAudio;
+    currentConfig["audio"] = audio;
+}
+
+void configManager::setVideo(const Video& newVideo) {
+    video = newVideo;
+    currentConfig["video"] = video;
+}
+
+void configManager::setControls(const Controls& newControls) {
+    controls = newControls;
+    currentConfig["controls"] = controls;
+}
+
+void configManager::setCheats(const Cheats& newCheats) {
+    cheats = newCheats;
+    currentConfig["cheats"] = cheats;
+}
+
+void configManager::setDifficulty(const Difficulty& newDifficulty) {
+    difficulty = newDifficulty;
+    currentConfig["difficulty"] = difficulty;
+}

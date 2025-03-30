@@ -1,55 +1,67 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <fstream>
-#include "json.hpp"
-
+#include <string>
+#include "json.hpp" // You'll need the nlohmann::json library to handle JSON
 using json = nlohmann::json;
 
-extern std::map<std::string, sf::Keyboard::Scancode> gameControls;
-
 class configManager {
-    public:
-        // Singleton for global access
-        static configManager& getInstance();
-    
-        // Load and save configuration
-        void loadFromFile(const std::string& filename);
-        void saveToFile(const std::string& filename);
-    
-        // Methods to modify configuration
-        void setMasterVolume(float volume);
-        void setMusicVolume(float volume);
-        void setSoundVolume(float volume);
-        void setWindowMode(bool fullscreen);
-        void setControl(const std::string& action, sf::Keyboard::Scancode key);
-        void setCheatsEnabled(bool enabled);
-        void setHardModeEnabled(bool enabled);
-    
-        // Methods to retrieve values
-        float getMasterVolume() const;
-        float getMusicVolume() const;
-        float getSoundVolume() const;
-        bool isFullscreen() const;
-        sf::Keyboard::Scancode getControl(const std::string& action) const;
-        bool areCheatsEnabled() const;
-        bool isHardModeEnabled() const;
+public:
+    // Structure to handle audio, video, controls, etc. settings
+    struct Audio {
+        int master_volume;
+        int music_volume;
+        int sound_volume;
+    };
 
-        bool isActionPressed(const std::string& action);
+    struct Video {
+        std::string window_mode;
+    };
+
+    struct Controls {
+        int move_right;
+        int move_left;
+        int move_down;
+        int move_up;
+        int jump;
+        int attack;
+    };
+
+    struct Cheats {
+        bool enabled;
+    };
+
+    struct Difficulty {
+        bool hard_mode;
+    };
+
+    static configManager& getInstance();
+    bool detectChanges();
+    void loadConfiguration(const std::string& file);
+    void saveConfiguration(const std::string& file);
+    void applyChanges();
     
-    private:
-        configManager(); // Private constructor (Singleton)
-    
-        // Configuration variables
-        float masterVolume;
-        float musicVolume;
-        float soundVolume;
-        bool fullscreen;
-        // std::map<std::string, sf::Keyboard::Scancode> controls;
-        bool cheatsEnabled;
-        bool hardModeEnabled;
-    
-        // JSON file path
-        std::string configPath = "config.json";
+    // Accessors to get the configuration
+    Audio getAudio() const;
+    Video getVideo() const;
+    Controls getControls() const;
+    Cheats getCheats() const;
+    Difficulty getDifficulty() const;
+
+    // Methods to modify the configuration
+    void setAudio(const Audio& audio);
+    void setVideo(const Video& video);
+    void setControls(const Controls& controls);
+    void setCheats(const Cheats& cheats);
+    void setDifficulty(const Difficulty& difficulty);
+
+private:
+    configManager();
+    Audio audio;
+    Video video;
+    Controls controls;
+    Cheats cheats;
+    Difficulty difficulty;
+
+    json originalConfig;
+    json currentConfig;
 };

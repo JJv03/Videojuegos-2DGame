@@ -10,8 +10,8 @@
 // ============ GENERAL INFO / USAGE VARIABLES =============
 const unsigned int gWindowWidth = 400;
 const unsigned int gWindowHeight = 400;
-const float gSoundVolume = 100.0f;
-const float gMusicVolume = 100.0f;
+// const float gSoundVolume = 100.0f;
+// const float gMusicVolume = 100.0f;
 
 const float gGameVisibleWorld_size_x = 256.f;
 const float gGameVisibleWorld_size_y = 192.f;     // Considering the overlaped half-tile
