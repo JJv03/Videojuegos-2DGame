@@ -369,7 +369,7 @@ void TileMap::drawScene(sf::RenderWindow& window, Camera& camera){
         window.draw(*m_breakableTiles[i].sprite);
     }
 
-    //drawHitboxes(window);
+    drawHitboxes(window);
 }
 
 
