@@ -2,6 +2,7 @@
 
 #include <string>
 #include "json.hpp"
+#include <SFML/Window/Keyboard.hpp> // Agregado para gestionar teclas
 using json = nlohmann::json;
 
 class configManager {
@@ -18,12 +19,12 @@ public:
     };
 
     struct Controls {
-        int move_right;
-        int move_left;
-        int move_down;
-        int move_up;
-        int jump;
-        int attack;
+        sf::Keyboard::Key move_right;  
+        sf::Keyboard::Key move_left;
+        sf::Keyboard::Key move_down;
+        sf::Keyboard::Key move_up;
+        sf::Keyboard::Key jump;
+        sf::Keyboard::Key attack;
     };
 
     struct Cheats {
@@ -53,6 +54,10 @@ public:
     void setControls(const Controls& controls);
     void setCheats(const Cheats& cheats);
     void setDifficulty(const Difficulty& difficulty);
+
+    // Métodos de conversión entre sf::Keyboard::Key y string
+    static std::string to_string(sf::Keyboard::Key key);
+    static sf::Keyboard::Key from_string(const std::string& keyStr);
 
 private:
     configManager();

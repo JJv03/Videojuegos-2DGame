@@ -2,6 +2,17 @@
 #include <fstream>
 #include <iostream>
 
+// Convierte sf::Keyboard::Key a string usando SFML
+std::string configManager::to_string(sf::Keyboard::Key key) {
+    return std::to_string(static_cast<int>(key)); // Guardamos como string el valor de la enum
+}
+
+// Convierte string a sf::Keyboard::Key usando SFML
+sf::Keyboard::Key configManager::from_string(const std::string& keyStr) {
+    int keyInt = std::stoi(keyStr); // Convertimos de string a int
+    return static_cast<sf::Keyboard::Key>(keyInt); // Convertimos a sf::Keyboard::Key
+}
+
 // Define how to serialize Audio to JSON
 void to_json(json& j, const configManager::Audio& a) {
     j = json{{"master_volume", a.master_volume},
@@ -28,22 +39,24 @@ void from_json(const json& j, configManager::Video& v) {
 
 // Define how to serialize Controls to JSON
 void to_json(json& j, const configManager::Controls& c) {
-    j = json{{"move_right", c.move_right},
-             {"move_left", c.move_left},
-             {"move_down", c.move_down},
-             {"move_up", c.move_up},
-             {"jump", c.jump},
-             {"attack", c.attack}};
+    j = json{
+        {"move_right", configManager::to_string(c.move_right)},
+        {"move_left", configManager::to_string(c.move_left)},
+        {"move_down", configManager::to_string(c.move_down)},
+        {"move_up", configManager::to_string(c.move_up)},
+        {"jump", configManager::to_string(c.jump)},
+        {"attack", configManager::to_string(c.attack)}
+    };
 }
 
 // Define how to deserialize Controls from JSON
 void from_json(const json& j, configManager::Controls& c) {
-    j.at("move_right").get_to(c.move_right);
-    j.at("move_left").get_to(c.move_left);
-    j.at("move_down").get_to(c.move_down);
-    j.at("move_up").get_to(c.move_up);
-    j.at("jump").get_to(c.jump);
-    j.at("attack").get_to(c.attack);
+    c.move_right = configManager::from_string(j.at("move_right").get<std::string>());
+    c.move_left = configManager::from_string(j.at("move_left").get<std::string>());
+    c.move_down = configManager::from_string(j.at("move_down").get<std::string>());
+    c.move_up = configManager::from_string(j.at("move_up").get<std::string>());
+    c.jump = configManager::from_string(j.at("jump").get<std::string>());
+    c.attack = configManager::from_string(j.at("attack").get<std::string>());
 }
 
 // Define how to serialize Cheats to JSON
@@ -97,20 +110,44 @@ bool configManager::detectChanges() {
 }
 
 void configManager::loadConfiguration(const std::string& file) {
-    // Load configuration from a JSON file
     std::ifstream inputFile(file);
-    if (inputFile.is_open()) {
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: No se pudo abrir el archivo de configuración: " << file << std::endl;
+        return;
+    }
+
+    try {
         inputFile >> currentConfig;
         inputFile.close();
 
-        // Update local configuration
-        audio = currentConfig["audio"];
-        video = currentConfig["video"];
-        controls = currentConfig["controls"];
-        cheats = currentConfig["cheats"];
-        difficulty = currentConfig["difficulty"];
+        // Actualizamos solo si las claves existen y tienen el formato correcto
+        if (currentConfig.contains("audio")) {
+            audio = currentConfig.at("audio").get<Audio>();
+        }
+
+        if (currentConfig.contains("video")) {
+            video = currentConfig.at("video").get<Video>();
+        }
+
+        if (currentConfig.contains("controls")) {
+            controls = currentConfig.at("controls").get<Controls>();
+        }
+
+        if (currentConfig.contains("cheats")) {
+            cheats = currentConfig.at("cheats").get<Cheats>();
+        }
+
+        if (currentConfig.contains("difficulty")) {
+            difficulty = currentConfig.at("difficulty").get<Difficulty>();
+        }
+
+    } catch (const json::exception& e) {
+        std::cerr << "Error al parsear el JSON: " << e.what() << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Error de conversión de string a tecla (stoi): " << e.what() << std::endl;
     }
 }
+
 
 void configManager::saveConfiguration(const std::string& file) {
     // Save configuration to a JSON file

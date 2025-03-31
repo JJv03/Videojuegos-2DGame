@@ -8,12 +8,12 @@
         "window_mode": "fullscreen"
     },
     "controls": {
-        "move_right": 79,
-        "move_left": 80,
-        "move_down": 81,
-        "move_up": 82,
-        "jump": 34,
-        "attack": 35
+        "move_right": "D",
+        "move_left": "A",
+        "move_down": "S",
+        "move_up": "W",
+        "jump": "Space",
+        "attack": "LControl"
     },
     "cheats": {
         "enabled": false
