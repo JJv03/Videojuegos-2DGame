@@ -252,7 +252,7 @@ bool TileMap::load(int level, int stage) {
 
     m_tileset.setSmooth(false);
 
-    int tilesPerRow = (m_tileset.getSize().x + 1) / (static_cast<int>(gTileSize) + 1); // 1 pixel margin between tiles
+    int tilesPerRow = (m_tileset.getSize().x) / (static_cast<int>(gTileSize) + 4); // 2 pixel margin between tiles (on each side)
 
     for (int i = 0; i < m_tilesPerRow; ++i)
     {
@@ -266,8 +266,8 @@ bool TileMap::load(int level, int stage) {
             int tileset_column = tileNumber / tilesPerRow;
 
             // Calculate tilemap coordinates (+1 for pixel margin between tiles)
-            int texX = tileset_row * (static_cast<int>(gTileSize) + 1);     // 1px of margin between tiles
-            int texY = tileset_column * (static_cast<int>(gTileSize) + 1);
+            int texX = (tileset_row * (static_cast<int>(gTileSize) + 4)) + 2;     // 1px of margin between tiles
+            int texY = (tileset_column * (static_cast<int>(gTileSize) + 4)) + 2;
 
             // Points to the first vertex of the tile
             sf::Vertex* triangle = &m_vertices[tileIndex * 6];
