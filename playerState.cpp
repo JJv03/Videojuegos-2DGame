@@ -388,7 +388,7 @@ void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerDuckState::end(Player& player)
 {
-    
+    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerDuckState::hello(){
@@ -766,16 +766,9 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.attackedFinished = true;
         
         player.isJumping = false;
-        if(player.isWalking){
-            player.currentAnimation = walkSimon;
-            
-            player.setState(state<Walk>());
-        }
-        else{
-            player.currentAnimation = idleSimon;
-            player.setState(state<Idle>());
-        }
         
+        player.currentAnimation = idleSimon;
+        player.setState(state<Idle>());
     }
 
 }
@@ -808,6 +801,8 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
+    player.sprite->move({0.f,8.0f});
+
     player.isAttacking = true;
     
     player.isDucking = true;
@@ -898,7 +893,7 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackDuckState::end(Player& player)
 {
-    
+    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerAttackDuckState::hello(){
