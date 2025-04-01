@@ -450,6 +450,9 @@ void Game::checkPlayerTileCollisions()
     //std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
     bool hasCollided = false;
 
+    std::cout << "Player: " << playerBounds.position.y << std::endl;
+    //std::cout << "Ground: " << player.isOnGround << std::endl;
+
     // Solid tiles
     for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
     {
@@ -492,10 +495,20 @@ void Game::checkPlayerTileCollisions()
 
                             if (!player.isOnGround && player.verticalSpeed >= 0.0f)
                             { // If player is NOT going up
-                                player.sprite->move({0.f, -overlapY});
+
+                                // Option 1: adjust overlapedY and make it be .15f
+                                // float theoreticallyCorrectPositionY = player.sprite->getPosition().y - overlapY;
+                                // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
+                                // float moveY = theoreticallyCorrectPositionY - targetPositionY;
+
+                                // Option 2: read the tile and place the player on top of it, regardless of anything else
+                                float targetPositionY = tileBounds.position.y - playerBounds.size.y + gSimonFeetCollisionNewHeight;
+                                float moveY = targetPositionY - playerBounds.position.y;
+
+                                player.sprite->move({0.f, moveY});
+                                playerBounds.position.y += moveY;
                                 player.verticalSpeed = 0.0f; // (For security) Simon stops falling
                                 player.isOnGround = true; // Set Simon to be on ground
-                                playerBounds.position.y -= overlapY;
                             }
                         }
                         else // Simon's head is collisioning with the tile

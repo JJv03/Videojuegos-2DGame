@@ -17,6 +17,7 @@ extern const unsigned int gWindowHeight;
 extern const float gGameVisibleWorld_size_x;
 extern const float gGameVisibleWorld_size_y;
 
+extern const float gSimonFeetCollisionNewHeight;
 
 // ============ IMAGE / TEXTURE / SPRITE =============
 extern const sf::Color gColorKeyGrey;

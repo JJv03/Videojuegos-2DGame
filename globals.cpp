@@ -16,6 +16,8 @@ const unsigned int gWindowHeight = 400;
 const float gGameVisibleWorld_size_x = 256.f;
 const float gGameVisibleWorld_size_y = 192.f;     // Considering the overlaped half-tile
 
+const float gSimonFeetCollisionNewHeight = 0.15f;
+
 
 // ============ IMAGE / TEXTURE / SPRITE =============
 const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
