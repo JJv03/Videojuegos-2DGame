@@ -2,9 +2,9 @@
 #include <iostream>
 #include <ctime>
 
-ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference)
     : spawnPosition(position), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
-      rng(static_cast<unsigned int>(std::time(nullptr))), zombieCountDist(1, 3), level(level), stage(stage)
+      rng(rngReference), zombieCountDist(1, 3), level(level), stage(stage)
 {
     zombiesToSpawn.resize(3, false);
 

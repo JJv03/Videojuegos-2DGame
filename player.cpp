@@ -2,8 +2,8 @@
 #include "globals.h"
 #include <iostream>
 
-
-Player::Player(){
+Player::Player()
+{
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
     isOnGround = true;
@@ -19,15 +19,15 @@ Player::Player(){
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
 
-    //Stats
-    health=16;
-    lives=3;
-    score=0;
-    hearts=5;
+    // Stats
+    health = 16;
+    lives = 3;
+    score = 0;
+    hearts = 5;
 
-    //Interactions
+    // Interactions
     isInvulnerable = false;
-    invulnerableTime = 3.0f; //3 segs
+    invulnerableTime = 3.0f; // 3 segs
     isPassingObject = false;
 }
 
@@ -54,22 +54,22 @@ void Player::setState(PlayerStateRef newState)
     this->activeState->init(*this);
 }
 
-PlayerStateRef& Player::getActiveState()
+PlayerStateRef &Player::getActiveState()
 {
     return activeState;
 }
 
-void Player::updateActivationZones()        // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
+void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
 {
     sf::Vector2f playerPos = sprite->getPosition();
 
     sf::Vector2f windowSize = {static_cast<float>(gWindowWidth), static_cast<float>(gWindowHeight)};
 
     // Calcular las dimensiones de las zonas en función del tamaño de la ventana
-    float activationWidth = static_cast<int>(windowSize.x); // 100% del ancho de la ventana
-    float activationHeight = static_cast<int>(windowSize.y); // 100% de la altura de la ventana
-    float deactivationWidth = static_cast<int>(windowSize.x * 1.2f); // 120% del ancho de la ventana
-    float deactivationHeight = static_cast<int>(windowSize.y * 1.2f); // 120% de la altura de la ventana
+    float activationWidth = static_cast<int>(windowSize.x);           // 100% del ancho de la ventana
+    float activationHeight = static_cast<int>(windowSize.y);          // 100% de la altura de la ventana
+    float deactivationWidth = static_cast<int>(windowSize.x * 1.4f);  // 140% del ancho de la ventana
+    float deactivationHeight = static_cast<int>(windowSize.y * 1.4f); // 140% de la altura de la ventana
 
     gPlayerActivationZone = sf::FloatRect(
         {playerPos.x - activationWidth / 2.0f,
@@ -82,10 +82,9 @@ void Player::updateActivationZones()        // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS
         {deactivationWidth, deactivationHeight});
 }
 
-
-
 // ----------------------------- WHIP -----------------------------
-Whip::Whip(){
+Whip::Whip()
+{
     whipState = 0;
     whipFrames = 6;
     whipDmg = 1;
@@ -93,6 +92,7 @@ Whip::Whip(){
 }
 
 // ----------------------------- SUBWEAPON -----------------------------
-SubWeapon::SubWeapon(){
+SubWeapon::SubWeapon()
+{
     type = NONE;
 }

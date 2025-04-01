@@ -20,7 +20,7 @@ private:
     int currentFrame = 0;
 
     // Campo de visión
-    const float VISION_RANGE = 100.0f;
+    const float VISION_RANGE = 80.0f;
     sf::FloatRect visionField;
     bool playerDetected = false;
     bool hasRedirected = false;

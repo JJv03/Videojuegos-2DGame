@@ -51,7 +51,8 @@ bool Leopard::checkForLedge(const TileMap &tileMap)
     {
         for (const auto &tile : row)
         {
-            for(const auto &hitbox : tile.hitboxes){
+            for (const auto &hitbox : tile.hitboxes)
+            {
                 if (hitbox.size.x == 0 || hitbox.size.y == 0)
                     continue;
 
@@ -179,7 +180,8 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
         {
             for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
             {
-                for(auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes){
+                for (auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes)
+                {
                     if (tileBounds.size.x == 0 || tileBounds.size.y == 0)
                         continue;
 
@@ -188,7 +190,7 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
                         float overlapX = intersection->size.x;
                         float overlapY = intersection->size.y;
 
-                        const float minHeightThreshold = 0.1f;
+                        const float minHeightThreshold = 0.25f;
 
                         if (overlapX < overlapY && overlapY > minHeightThreshold) // Colisión horizontal
                         {

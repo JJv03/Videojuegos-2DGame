@@ -18,7 +18,7 @@ private:
     float dist = 0.0f;
     float zombieSpawnTimers = 0.0f;
 
-    std::mt19937 rng;
+    std::mt19937 &rng;
     std::uniform_int_distribution<int> zombieCountDist;
 
     std::vector<bool> zombiesToSpawn;
@@ -27,7 +27,7 @@ public:
     size_t level;
     size_t stage;
 
-    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage);
+    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference);
 
     void init();
 

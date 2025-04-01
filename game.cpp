@@ -23,9 +23,9 @@ void Game::init()
     currentLevel = 1;
     currentStage = 1;
 
-    configManager& configManager = configManager::getInstance();
+    configManager &configManager = configManager::getInstance();
     auto audio = configManager.getAudio();
-    float musicVol = (audio.master_volume * audio.music_volume)/100;
+    float musicVol = (audio.master_volume * audio.music_volume) / 100;
 
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
     gameSoundManager.playMusic("gameMusic", musicVol);
@@ -77,19 +77,21 @@ void Game::init()
 
     // Enemies -------------------------------------------------------------
 
+    std::mt19937 globalRng(std::random_device{}());
+
     // LEVEL 1 - STAGE 2
-    zombiesSpawner.push_back(ZombieSpawner({200.f, 176.f}, {50.f, 50.f}, 1, 2));
+    zombiesSpawner.push_back(ZombieSpawner({200.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
     leopard.push_back(createLeopard({696.f, 112.f}, 1, 2));
     leopard.push_back(createLeopard({888.f, 80.f}, 1, 2));
     leopard.push_back(createLeopard({950.f, 112.f}, 1, 2));
-    zombiesSpawner.push_back(ZombieSpawner({1300.f, 176.f}, {50.f, 50.f}, 1, 2));
+    zombiesSpawner.push_back(ZombieSpawner({1300.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
 
     // LEVEL 1 - STAGE 3
     bat.push_back(createBatSpawner({136.f, 112.f}, {50.f, 50.f}, 1, 3));
     bat.push_back(createBatSpawner({395.f, 112.f}, {50.f, 50.f}, 1, 3));
 
     // LEVEL 1 - STAGE 5
-    zombiesSpawner.push_back(ZombieSpawner({203.f, 176.f}, {50.f, 50.f}, 1, 5));
+    zombiesSpawner.push_back(ZombieSpawner({203.f, 176.f}, {50.f, 50.f}, 1, 5, globalRng));
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -263,7 +265,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = getVirtualUpperLeftCornerCoordOfGameView(window);
         sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
-        
+
         // Draw the black rectangle
         sf::RectangleShape guiBackground(sf::Vector2f(gGUI_size_x, gGUI_size_y));
         guiBackground.setFillColor(gGUI_color);
@@ -273,18 +275,17 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         // Draw the GUI texts
         sf::Vector2f virtualWorldOffset(virtualCoordOfUpperLeftCornerOfGame.x - gGUI_position_x,
                                         virtualCoordOfUpperLeftCornerOfGame.y - gGUI_position_y);
-        
-        for (int i = 0; i < static_cast<int>(texts.size()); ++i) {
-            sf::Text& text = texts[i];
-            sf::Vector2f& pos = textPositions[i];
+
+        for (int i = 0; i < static_cast<int>(texts.size()); ++i)
+        {
+            sf::Text &text = texts[i];
+            sf::Vector2f &pos = textPositions[i];
             text.setPosition(pos + virtualWorldOffset);
             window.draw(text);
         }
 
         // Draw the health bars
         drawHealthBars(window, player.health, 16, virtualWorldOffset); // CHANGE FOR BOSS HEALTH!!!!!
-
-
 
         // PLAYER and ENTITIES =====================================
 
@@ -371,7 +372,6 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
     }
 }
 
-
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
@@ -447,11 +447,11 @@ void Game::checkPlayerMapBoundCollisions()
 void Game::checkPlayerTileCollisions()
 {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
-    //std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
+    // std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
     bool hasCollided = false;
 
     std::cout << "Player: " << playerBounds.position.y << std::endl;
-    //std::cout << "Ground: " << player.isOnGround << std::endl;
+    // std::cout << "Ground: " << player.isOnGround << std::endl;
 
     // Solid tiles
     for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
@@ -460,7 +460,8 @@ void Game::checkPlayerTileCollisions()
         {
             // if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
             // {
-            for(auto tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes){
+            for (auto tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
+            {
                 sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
                 // if (row == 5 && col == 3) {
@@ -471,11 +472,11 @@ void Game::checkPlayerTileCollisions()
                 {
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
-                    //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+                    // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
                     if (overlapX < overlapY)
                     { // Horizontal collision
-                        //std::cout << "COLISION HORIZONTAL" << std::endl;
+                        // std::cout << "COLISION HORIZONTAL" << std::endl;
                         if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
                         {
                             player.sprite->move({-overlapX, 0.f});
@@ -489,7 +490,7 @@ void Game::checkPlayerTileCollisions()
                     }
                     else
                     { // Vertical collision
-                        //std::cout << "COLISION VERTICAL" << std::endl;
+                        // std::cout << "COLISION VERTICAL" << std::endl;
                         if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
                         { // Simon's feet are collisioning with the tile
 
@@ -508,7 +509,7 @@ void Game::checkPlayerTileCollisions()
                                 player.sprite->move({0.f, moveY});
                                 playerBounds.position.y += moveY;
                                 player.verticalSpeed = 0.0f; // (For security) Simon stops falling
-                                player.isOnGround = true; // Set Simon to be on ground
+                                player.isOnGround = true;    // Set Simon to be on ground
                             }
                         }
                         else // Simon's head is collisioning with the tile
@@ -518,7 +519,7 @@ void Game::checkPlayerTileCollisions()
                             player.verticalSpeed = 0.0f; // (For security) Simon starts falling
                         }
                     }
-                    
+
                     hasCollided = true;
                 }
             }
@@ -528,7 +529,7 @@ void Game::checkPlayerTileCollisions()
     if (!hasCollided)
     { // If Simon is not colliding with any solid tile
         player.isOnGround = false;
-        //std::cout << "NO COLISIONS" << std::endl;
+        // std::cout << "NO COLISIONS" << std::endl;
     }
 
     // Door tiles

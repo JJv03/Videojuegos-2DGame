@@ -58,7 +58,8 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
         {
             for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
             {
-                for(auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes){
+                for (auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes)
+                {
                     if (tileBounds.size.x == 0 || tileBounds.size.y == 0)
                         continue;
 
@@ -67,7 +68,7 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
                         float overlapX = intersection->size.x;
                         float overlapY = intersection->size.y;
 
-                        const float minHeightThreshold = 0.1f;
+                        const float minHeightThreshold = 0.25f;
 
                         if (overlapX < overlapY && overlapY > minHeightThreshold) // Colisión horizontal
                         {
