@@ -47,10 +47,12 @@ void AnimationManager::update( float deltaTime) {
 }
 
 bool AnimationManager::isPlaying(animationID id){
+    if(!currentAnimation) return false;
     return currentAnimation->id == id;
 }
 
 bool AnimationManager::isAnimationFinished() const{
+    if(!currentAnimation) return true;
     return currentFrame == currentAnimation->frames.size() - 1;
 }
 
