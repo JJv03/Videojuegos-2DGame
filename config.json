@@ -8,10 +8,10 @@
         "window_mode": "fullscreen"
     },
     "controls": {
-        "move_right": "D",
-        "move_left": "A",
-        "move_down": "S",
-        "move_up": "W",
+        "move_right": "Right",
+        "move_left": "Left",
+        "move_down": "Down",
+        "move_up": "Up",
         "jump": "Space",
         "attack": "LControl"
     },
