@@ -251,15 +251,6 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
     }
-    if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
-    {
-        if (keyReleased->scancode == KEY_LEFT || keyReleased->scancode == KEY_RIGHT)
-        {
-            //player.horizontalSpeed = 0.0f;
-            //player.isWalking = false;
-        }
-        
-    }
 }
 
 void PlayerJumpState::update(Player& player, float deltaTime)
@@ -388,7 +379,7 @@ void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerDuckState::end(Player& player)
 {
-    
+    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerDuckState::hello(){
@@ -541,8 +532,11 @@ void PlayerAttackIdleState::init(Player& player)
 {
     player.isAttacking = true;
     
-    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
-    player.animationManager->playAnimation(attackSimon);
+    if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
+        player.animationManager->playAnimation(attackSimon);
+        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    }
+
     player.isAttacking = true;
     player.attackedFinished = false;
     player.hasToPressAgain = false;
@@ -621,16 +615,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         player.attackedFinished = true;
         //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
 
-        if (player.isWalking)
-        {
-            player.currentAnimation = walkSimon;
-            player.setState(state<Walk>());
-        }else{
-            player.currentAnimation = idleSimon;
-            player.setState(state<Idle>());
-        }
-        
-        
+        player.currentAnimation = idleSimon;
+        player.setState(state<Idle>());
     }
 }
 
@@ -680,10 +666,6 @@ void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == KEY_LEFT || KeyReleased->scancode == KEY_RIGHT)
-        {
-            player.isWalking = false;
-        }
         if (KeyReleased->scancode == KEY_ATTACK)
         {
             player.hasToPressAgain = true;
@@ -760,22 +742,18 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
+
+            
+    if(player.isOnGround){
+        player.isJumping = false;
+        player.setState(state<AttackIdle>());
+    }
+
     if (player.animationManager->isPlaying(attackSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        
-        player.isJumping = false;
-        if(player.isWalking){
-            player.currentAnimation = walkSimon;
-            
-            player.setState(state<Walk>());
-        }
-        else{
-            player.currentAnimation = idleSimon;
-            player.setState(state<Idle>());
-        }
-        
+        player.setState(state<Jump>());
     }
 
 }
@@ -808,6 +786,8 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
+    player.sprite->move({0.f,8.0f});
+
     player.isAttacking = true;
     
     player.isDucking = true;
@@ -898,7 +878,7 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackDuckState::end(Player& player)
 {
-    
+    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerAttackDuckState::hello(){

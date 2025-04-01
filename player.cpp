@@ -38,6 +38,7 @@ void Player::handleInput(sf::Event event)
 
 void Player::update(float deltaTime)
 {
+    
     getActiveState()->update(*this, deltaTime);
     updateActivationZones();
 }
@@ -48,7 +49,9 @@ void Player::draw(sf::RenderWindow &window)
 }
 
 void Player::setState(PlayerStateRef newState)
-{
+{    
+    //newState->hello();
+
     this->activeState->end(*this);
     this->activeState = std::move(newState);
     this->activeState->init(*this);
