@@ -24,6 +24,9 @@ public:
     // Method that displays the player's graphics onto the window
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
 
+    // Method that is called when a state is finished
+    virtual void end(Player& player) = 0;
+
     // Debugging method that indicates the current state throw standard output
     virtual void hello() = 0;
 };
@@ -38,6 +41,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -51,6 +55,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -64,6 +69,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -78,6 +84,7 @@ public:
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -92,6 +99,7 @@ PlayerStairState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -106,6 +114,7 @@ PlayerStairWalkState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -119,6 +128,7 @@ PlayerAttackIdleState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -133,6 +143,7 @@ PlayerAttackJumpState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -147,6 +158,7 @@ PlayerAttackDuckState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -161,6 +173,7 @@ PlayerAttackStairState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -174,6 +187,7 @@ PlayerHurtState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -187,6 +201,7 @@ PlayerDeadState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 
@@ -200,6 +215,7 @@ PlayerInvulnerableState();
     void handleInput(Player& player, sf::Event event) override;
     void update(Player& player, float deltaTime) override;
     void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
     void hello() override;
 };
 

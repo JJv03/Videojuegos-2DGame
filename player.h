@@ -161,7 +161,8 @@ public:
     void handleInput(sf::Event event);
     void update(float deltaTime);        
     void draw(sf::RenderWindow &window); 
-
+    
+    // Finishes the current state, replaces it with <newState> and initializes this new state
     void setState(PlayerStateRef newState);
 
     PlayerStateRef &getActiveState();

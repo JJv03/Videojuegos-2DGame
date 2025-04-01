@@ -36,12 +36,10 @@ PlayerState::PlayerState(){}
 
 PlayerIdleState::PlayerIdleState() : PlayerState()
 {
-    //printf("Idle\n");
 }
 
 void PlayerIdleState::init(Player& player)
 {
-    //printf("init");
     player.isDucking = false;
     player.isJumping = false;
     player.isWalking = false;
@@ -122,6 +120,11 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerIdleState::end(Player& player)
+{
+
+}
+
 void PlayerIdleState::hello(){
     std::cout << "PLAYER STATE: Idle" << std::endl;
 }
@@ -134,7 +137,6 @@ void PlayerIdleState::hello(){
 
 PlayerWalkState::PlayerWalkState() : PlayerState()
 {
-    //printf("Walking\n");
 }
 
 void PlayerWalkState::init(Player& player)
@@ -211,6 +213,11 @@ void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerWalkState::end(Player& player)
+{
+    
+}
+
 void PlayerWalkState::hello(){
     std::cout << "PLAYER STATE: Walk" << std::endl;
 }
@@ -222,7 +229,6 @@ void PlayerWalkState::hello(){
 
 PlayerJumpState::PlayerJumpState() : PlayerState()
 {
-    //printf("Jumping\n");
 }
 
 void PlayerJumpState::init(Player& player)
@@ -300,6 +306,11 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerJumpState::end(Player& player)
+{
+    
+}
+
 void PlayerJumpState::hello(){
     std::cout << "PLAYER STATE: Jump" << std::endl;
 }
@@ -312,7 +323,6 @@ void PlayerJumpState::hello(){
 
 PlayerDuckState::PlayerDuckState() : PlayerState()
 {
-    //printf("Ducking\n");
 }
 
 void PlayerDuckState::init(Player& player)
@@ -376,6 +386,11 @@ void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerDuckState::end(Player& player)
+{
+    
+}
+
 void PlayerDuckState::hello(){
     std::cout << "PLAYER STATE: Duck" << std::endl;
 }
@@ -388,7 +403,6 @@ void PlayerDuckState::hello(){
 
 PlayerStairState::PlayerStairState() : PlayerState()
 {
-    //printf("Stairs\n");
 }
 
 void PlayerStairState::init(Player& player)
@@ -429,6 +443,11 @@ void PlayerStairState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerStairState::end(Player& player)
+{
+    
+}
+
 void PlayerStairState::hello(){
     std::cout << "PLAYER STATE: Stairs" << std::endl;
 }
@@ -441,7 +460,6 @@ void PlayerStairState::hello(){
 
 PlayerStairWalkState::PlayerStairWalkState() : PlayerState()
 {
-    //printf("Ducking\n");
 }
 
 void PlayerStairWalkState::init(Player& player)
@@ -499,6 +517,11 @@ void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerStairWalkState::end(Player& player)
+{
+    
+}
+
 void PlayerStairWalkState::hello(){
     std::cout << "PLAYER STATE: Stair walk" << std::endl;
 }
@@ -512,7 +535,6 @@ void PlayerStairWalkState::hello(){
 
 PlayerAttackIdleState::PlayerAttackIdleState() : PlayerState()
 {
-    //printf("Attacking\n");
 }
 
 void PlayerAttackIdleState::init(Player& player)
@@ -618,6 +640,11 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whip.sprite);
 }
 
+void PlayerAttackIdleState::end(Player& player)
+{
+    
+}
+
 void PlayerAttackIdleState::hello(){
     std::cout << "PLAYER STATE: Attack Idle" << std::endl;
 }
@@ -631,7 +658,6 @@ void PlayerAttackIdleState::hello(){
 
 PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 {
-    //printf("AttackingJ\n");
 }
 
 void PlayerAttackJumpState::init(Player& player)
@@ -760,6 +786,11 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whip.sprite);
 }
 
+void PlayerAttackJumpState::end(Player& player)
+{
+    
+}
+
 void PlayerAttackJumpState::hello(){
     std::cout << "PLAYER STATE: Attack Jump" << std::endl;
 }
@@ -773,7 +804,6 @@ void PlayerAttackJumpState::hello(){
 
 PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 {
-    printf("AttackingDUCK\n");
 }
 
 void PlayerAttackDuckState::init(Player& player)
@@ -866,6 +896,11 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whip.sprite);
 }
 
+void PlayerAttackDuckState::end(Player& player)
+{
+    
+}
+
 void PlayerAttackDuckState::hello(){
     std::cout << "PLAYER STATE: Attack Duck" << std::endl;
 }
@@ -878,7 +913,6 @@ void PlayerAttackDuckState::hello(){
 
 PlayerAttackStairState::PlayerAttackStairState() : PlayerState()
 {
-    //printf("Attacking\n");
 }
 
 void PlayerAttackStairState::init(Player& player)
@@ -906,6 +940,11 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.whip.sprite);
 }
 
+void PlayerAttackStairState::end(Player& player)
+{
+    
+}
+
 void PlayerAttackStairState::hello(){
     std::cout << "PLAYER STATE: Attack stairs" << std::endl;
 }
@@ -917,7 +956,6 @@ void PlayerAttackStairState::hello(){
 
 PlayerHurtState::PlayerHurtState() : PlayerState()
 {
-    //printf("Hurting\n");
 }
 
 void PlayerHurtState::init(Player& player)
@@ -942,6 +980,11 @@ void PlayerHurtState::draw(Player& player, sf::RenderWindow &window)
     window.draw(*player.sprite);
 }
 
+void PlayerHurtState::end(Player& player)
+{
+    
+}
+
 void PlayerHurtState::hello(){
     std::cout << "PLAYER STATE: Hurt" << std::endl;
 }
@@ -953,7 +996,6 @@ void PlayerHurtState::hello(){
 
 PlayerDeadState::PlayerDeadState() : PlayerState()
 {
-    //printf("Hurting\n");
 }
 
 void PlayerDeadState::init(Player& player)
@@ -972,6 +1014,11 @@ void PlayerDeadState::update(Player& player, float deltaTime)
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
+}
+
+void PlayerDeadState::end(Player& player)
+{
+    
 }
 
 void PlayerDeadState::hello(){
