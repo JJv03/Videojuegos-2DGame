@@ -450,7 +450,7 @@ void Game::checkPlayerTileCollisions()
     // std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
     bool hasCollided = false;
 
-    std::cout << "Player: " << playerBounds.position.y << std::endl;
+    //std::cout << "Player: " << playerBounds.position.y << std::endl;
     // std::cout << "Ground: " << player.isOnGround << std::endl;
 
     // Solid tiles
