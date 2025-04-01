@@ -27,7 +27,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
         spawnerActive = false;
     }
 
-    // Activación del proceso de spawn de la horda
+    // Activación del proceso de spawn
     if (playerInZone && !isActive && !spawnerActive)
     {
         batSpawnTimers = 1.5f;
@@ -35,7 +35,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
         batToSpawn = true;
     }
 
-    // Spawn de los zombies de la orda según el timer y el tamaño de la horda
+    // Spawn según el timer
 
     if (batToSpawn)
     {

@@ -49,67 +49,7 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
     for (auto &hitbox : hitboxes)
     {
         // COLISIONES CON EL ENTORNO
-        sf::FloatRect mapBounds = tileMap.getMapBounds();
-
-        if (!hitbox.findIntersection(mapBounds))
-            continue;
-
-        for (size_t row = 0; row < tileMap.m_solidTiles.size(); ++row)
-        {
-            for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
-            {
-                for (auto tileBounds : tileMap.m_solidTiles[row][col].hitboxes)
-                {
-                    if (tileBounds.size.x == 0 || tileBounds.size.y == 0)
-                        continue;
-
-                    if (const std::optional<sf::FloatRect> intersection = hitbox.findIntersection(tileBounds))
-                    {
-                        float overlapX = intersection->size.x;
-                        float overlapY = intersection->size.y;
-
-                        const float minHeightThreshold = 0.25f;
-
-                        if (overlapX < overlapY && overlapY > minHeightThreshold) // Colisión horizontal
-                        {
-                            if (hitbox.position.x < tileBounds.position.x + tileBounds.size.x / 2.f)
-                            {
-                                // Colisión desde la izquierda
-                                sprite->move({-overlapX, 0.f});
-                                for (auto &h : hitboxes)
-                                    h.position.x -= overlapX;
-                            }
-                            else
-                            {
-                                // Colisión desde la derecha
-                                sprite->move({overlapX, 0.f});
-                                for (auto &h : hitboxes)
-                                    h.position.x += overlapX;
-                            }
-                            speed.x = -speed.x;
-                        }
-                        else // Colisión vertical
-                        {
-                            if (hitbox.position.y < tileBounds.position.y + tileBounds.size.y / 2.f)
-                            {
-                                // Colisión desde arriba
-                                sprite->move({0.f, -overlapY});
-                                for (auto &h : hitboxes)
-                                    h.position.y -= overlapY;
-                                isOnGround = true;
-                            }
-                            else
-                            {
-                                // Colisión desde abajo
-                                sprite->move({0.f, overlapY});
-                                for (auto &h : hitboxes)
-                                    h.position.y += overlapY;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        checkBasicCollisions(tileMap, hitbox);
 
         // COLISIONES CON VAPIRE KILLER
         if (playerIsAtacking)

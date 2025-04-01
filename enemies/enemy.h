@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "../entity.h"
+#include "../tilemap.h"
 
 class Enemy : public EntitySprite
 {
@@ -23,6 +24,7 @@ public:
     Enemy() = default;
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
+    void checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hitbox);
     virtual void applyGravity(float deltaTime);
     virtual void resetPosition();
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "enemy.h"
-#include "../tilemap.h"
 
 class Zombie : public Enemy
 {
