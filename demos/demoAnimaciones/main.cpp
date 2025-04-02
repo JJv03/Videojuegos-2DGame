@@ -6,6 +6,7 @@
 #include <vector>
 #include "camera.h"
 #include "animationManager.h"
+#include "configManager.h"
 
 // Variables globales de configuración
 bool gEnMovimiento { false };
@@ -217,6 +218,8 @@ void updateAnimation(bool isOnGround, bool haciaDerecha, bool haciaIzquierda)
 // Bucle principal del juego
 int main()
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castlevania", sf::Style::Default);
     window.setVerticalSyncEnabled(true);
     sf::Clock deltaClock;
@@ -242,51 +245,45 @@ int main()
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                switch (keyPressed->scancode)
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                 {
-                    case sf::Keyboard::Scancode::Escape:
-                        window.close();
-                        break;
-                    case sf::Keyboard::Scancode::Up:
-                        haciaArriba = true;
-                        if (isOnGround)
-                        {
-                            verticalSpeed = -JUMP_FORCE;
-                            isOnGround = false;
-                        }
-                        break;
-                    case sf::Keyboard::Scancode::Down:
-                        gSimonSprite->move({0.f, 3.0f});
-                        break;
-                    case sf::Keyboard::Scancode::Left:
-                        haciaIzquierda = true;
-                        haciaDerecha = false;
-                        gSimonSprite->setScale({1.f, 1.f});
-                        break;
-                    case sf::Keyboard::Scancode::Right:
-                        haciaDerecha = true;
-                        haciaIzquierda = false;
-                        gSimonSprite->setScale({-1.f, 1.f});
-                        break;
-                    default:
-                        break;
+                    window.close();
+                }
+                else if (keyPressed->scancode == controls.move_up)  // Aquí usamos la variable
+                {
+                    haciaArriba = true;
+                    if (isOnGround)
+                    {
+                        verticalSpeed = -JUMP_FORCE;
+                        isOnGround = false;
+                    }
+                }
+                else if (keyPressed->scancode == controls.move_left)
+                {
+                    haciaIzquierda = true;
+                    haciaDerecha = false;
+                    gSimonSprite->setScale({1.f, 1.f});
+                }
+                else if (keyPressed->scancode == controls.move_right)
+                {
+                    haciaDerecha = true;
+                    haciaIzquierda = false;
+                    gSimonSprite->setScale({-1.f, 1.f});
                 }
             }
             else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
             {
-                switch (keyReleased->scancode)
+                if (keyReleased->scancode == controls.move_up)
                 {
-                    case sf::Keyboard::Scancode::Up:
-                        haciaArriba = false;
-                        break;
-                    case sf::Keyboard::Scancode::Left:
-                        haciaIzquierda = false;
-                        break;
-                    case sf::Keyboard::Scancode::Right:
-                        haciaDerecha = false;
-                        break;
-                    default:
-                        break;
+                    haciaArriba = false;
+                }
+                else if (keyReleased->scancode == controls.move_left)
+                {
+                    haciaIzquierda = false;
+                }
+                else if (keyReleased->scancode == controls.move_right)
+                {
+                    haciaDerecha = false;
                 }
             }
         }

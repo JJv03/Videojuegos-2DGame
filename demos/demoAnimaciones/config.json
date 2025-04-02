@@ -1,0 +1,24 @@
+{
+    "audio": {
+        "master_volume": 100,
+        "music_volume": 50,
+        "sound_volume": 50
+    },
+    "video": {
+        "window_mode": "fullscreen"
+    },
+    "controls": {
+        "move_right": "Right",
+        "move_left": "Left",
+        "move_down": "Down",
+        "move_up": "Up",
+        "jump": "Space",
+        "attack": "LControl"
+    },
+    "cheats": {
+        "enabled": false
+    },
+    "difficulty": {
+        "hard_mode": false
+    }
+}
