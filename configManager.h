@@ -2,6 +2,7 @@
 
 #include <string>
 #include "json.hpp"
+#include <unordered_map>
 #include <SFML/Window/Keyboard.hpp> // Agregado para gestionar teclas
 using json = nlohmann::json;
 
@@ -19,12 +20,12 @@ public:
     };
 
     struct Controls {
-        sf::Keyboard::Key move_right;  
-        sf::Keyboard::Key move_left;
-        sf::Keyboard::Key move_down;
-        sf::Keyboard::Key move_up;
-        sf::Keyboard::Key jump;
-        sf::Keyboard::Key attack;
+        sf::Keyboard::Scancode move_right;  
+        sf::Keyboard::Scancode move_left;
+        sf::Keyboard::Scancode move_down;
+        sf::Keyboard::Scancode move_up;
+        sf::Keyboard::Scancode jump;
+        sf::Keyboard::Scancode attack;
     };
 
     struct Cheats {
@@ -56,8 +57,11 @@ public:
     void setDifficulty(const Difficulty& difficulty);
 
     // Métodos de conversión entre sf::Keyboard::Key y string
-    static std::string to_string(sf::Keyboard::Key key);
-    static sf::Keyboard::Key from_string(const std::string& keyStr);
+    static sf::Keyboard::Scancode stringToScancode(const std::string& key);
+    static std::string scancodeToString(sf::Keyboard::Scancode scancode);
+
+    static void to_json(json& j, const Controls& c);
+    static void from_json(const json& j, Controls& c);
 
 private:
     configManager();
@@ -66,6 +70,9 @@ private:
     Controls controls;
     Cheats cheats;
     Difficulty difficulty;
+
+    static const std::unordered_map<std::string, sf::Keyboard::Scancode> stringToScancodeMap;
+    static const std::unordered_map<sf::Keyboard::Scancode, std::string> scancodeToStringMap;
 
     json originalConfig;
     json currentConfig;
