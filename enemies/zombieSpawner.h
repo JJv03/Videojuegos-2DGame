@@ -10,7 +10,6 @@ class ZombieSpawner
 private:
     sf::Vector2f spawnPosition;
     sf::FloatRect spawnZone;
-    std::vector<Zombie> zombies;
 
     bool allZombiesInactive{true};
     bool spawnerActive{false};
@@ -24,6 +23,8 @@ private:
     std::vector<bool> zombiesToSpawn;
 
 public:
+    std::vector<Zombie> zombies;
+
     size_t level;
     size_t stage;
 

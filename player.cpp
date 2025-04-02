@@ -94,8 +94,24 @@ Whip::Whip()
     whipLvl = 1;
 }
 
+sf::FloatRect Whip::getBounds() const {
+    return sf::FloatRect();
+}
+
+void Whip::onCollision(Entity& other){
+
+}
+
 // ----------------------------- SUBWEAPON -----------------------------
 SubWeapon::SubWeapon()
 {
     type = NONE;
+}
+
+sf::FloatRect SubWeapon::getBounds() const {
+    return sf::FloatRect();
+}
+
+void SubWeapon::onCollision(Entity& other){
+
 }

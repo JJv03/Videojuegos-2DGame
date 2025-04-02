@@ -39,6 +39,10 @@ public:
 
     Whip();
     ~Whip() = default;
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 
 
@@ -59,6 +63,10 @@ public:
     ~SubWeapon() = default;
 
     Type type;
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 
 
@@ -167,5 +175,9 @@ public:
 
     PlayerStateRef &getActiveState();
     void updateActivationZones();
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 

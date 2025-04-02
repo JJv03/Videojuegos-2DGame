@@ -25,6 +25,10 @@ public:
 
     SolidTile();
     ~SolidTile() = default;
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 
 // -------------------------------------------------
@@ -39,6 +43,10 @@ public:
 
     Type type;                      // Door type
     sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 
 // -------------------------------------------------
@@ -66,6 +74,10 @@ public:
 
     BreakableTile();
     ~BreakableTile() = default;
+
+    // Entity functions
+    sf::FloatRect getBounds() const override;
+    void onCollision(Entity& other) override;
 };
 
 

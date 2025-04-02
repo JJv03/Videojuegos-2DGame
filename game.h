@@ -5,6 +5,7 @@
 #include "soundManager.h"
 #include "./enemies/createEnemies.h"
 #include "item.h"
+#include "collisionGrid.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game
@@ -16,6 +17,12 @@ private:
 public:
     Player player;
     TilemapManager tilemaps;
+    CollisionGrid collisionGrid;
+    
+    // Where all entities will be temporarily stored in order to
+    // check their collisions
+    std::vector<Entity*> allEntities;
+
     size_t currentLevel = 0;
     size_t currentStage = 0;
 

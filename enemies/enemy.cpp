@@ -119,3 +119,13 @@ void Enemy::resetPosition()
 
     speed = {-75.0f, 0.0f};
 }
+
+
+// ------------------------- Entity functions -------------------------
+sf::FloatRect Enemy::getBounds() const {
+    return sf::FloatRect();
+}
+
+void Enemy::onCollision(Entity& other){
+
+}

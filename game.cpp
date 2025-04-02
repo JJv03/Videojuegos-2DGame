@@ -228,6 +228,7 @@ void Game::update(float deltaTime)
     scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
     texts[0].setString(scoreStream.str());
 
+    // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
     checkCollisions();
 }
 
@@ -385,6 +386,45 @@ void Game::checkCollisions()
 
     checkEnemiesCollisions();
 }
+
+// vvvvvvv NO BORRAR vvvvvvv
+/*
+void Game::checkCollisions()
+{
+    // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
+    
+    allEntities.clear();
+
+    // Add player and weapons
+    allEntities.push_back(&player);
+    allEntities.push_back(&player.whip);
+    allEntities.push_back(&player.subWeapon);
+
+    // Add tiles
+    for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
+        for (auto& solidTile : solidTileRow){
+            allEntities.push_back(&solidTile);    
+        }
+    } 
+    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) allEntities.push_back(&doorTile.second);    
+    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) allEntities.push_back(&breakableTile);    
+
+
+    // Add enemies
+    for (auto& spawner : zombiesSpawner){
+        for (auto& zombie : spawner.zombies){
+            allEntities.push_back(&zombie);    
+        }
+    }
+    for (auto& leo : leopard) allEntities.push_back(&leo);
+    for (auto& b : bat) allEntities.push_back(&b);
+    // for (auto& item : items) allEntities.push_back(&item);
+
+    // ... ADD THE REST OF ENTITIES
+    
+
+}
+*/
 
 void Game::checkEnemiesCollisions()
 {
