@@ -158,12 +158,12 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     }
 }
 
-void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+int Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                               const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
     if (!isActive || !sprite)
-        return;
-
+        return 0;
+    int score2Return = 0;
     isOnGround = false;
 
     playerDetected = visionField.findIntersection(simonBounds).has_value();
@@ -193,11 +193,13 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
                     isActive = false;
                     resetPosition();
                     std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
+                    score2Return = score;
                     break;
                 }
             }
         }
     }
+    return score2Return;
 }
 
 void Leopard::resetPosition()

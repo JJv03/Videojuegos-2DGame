@@ -93,12 +93,12 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
     }
 }
 
-void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+int Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                           const bool playerIsAtacking, const float playerDamage)
 {
     if (!isActive || !sprite)
-        return;
-
+        return 0;
+    int score2Return = 0;
     for (auto &hitbox : hitboxes)
     {
 
@@ -116,6 +116,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
                     isActive = false;
                     resetPosition();
                     std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
+                    score2Return = score;
                     break;
                 }
             }
@@ -132,6 +133,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
             break;
         }
     }
+    return score2Return;
 }
 
 void Bat::resetPosition()

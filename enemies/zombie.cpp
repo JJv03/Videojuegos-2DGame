@@ -39,11 +39,11 @@ void Zombie::update(float deltaTime)
     }
 }
 
-void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
+int Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
     if (!isActive || !sprite)
-        return;
-
+        return 0;
+    int score2Return = 0;
     isOnGround = false;
 
     for (auto &hitbox : hitboxes)
@@ -65,11 +65,13 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
                     isActive = false;
                     resetPosition();
                     std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
+                    score2Return = score;
                     break;
                 }
             }
         }
     }
+    return score2Return;
 }
 
 void Zombie::resetPosition()
