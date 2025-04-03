@@ -18,6 +18,7 @@ Player::Player()
     attackedFinished = false;
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
+    isPressingUp = false;
 
     // Stats
     health = 16;
@@ -114,7 +115,7 @@ void Whip::onCollision(Entity& other){
 // ----------------------------- SUBWEAPON -----------------------------
 SubWeapon::SubWeapon()
 {
-    type = NONE;
+    type = KNIFE;
 }
 
 sf::FloatRect SubWeapon::getBounds() const {

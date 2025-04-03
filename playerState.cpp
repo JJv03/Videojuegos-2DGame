@@ -20,7 +20,10 @@ using AttackIdle = PlayerAttackIdleState;
 using AttackJump = PlayerAttackJumpState;
 using AttackDuck = PlayerAttackDuckState;
 using AttackStairs = PlayerAttackStairState;
-
+using AttackSecondary = PlayerAttackSecondaryState;
+using Hurt = PlayerHurtState;
+using Invulnerable = PlayerInvulnerableState;
+using Dead = PlayerDeadState;
 // constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
 // constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
 // constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
@@ -28,7 +31,9 @@ using AttackStairs = PlayerAttackStairState;
 // constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
 // constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
-
+// Keys 4 hurt and dead just to animate and see the logic, after collitions with enemies are done change it
+constexpr auto KEY_HURT = sf::Keyboard::Scancode::H;
+constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
 
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
@@ -52,6 +57,7 @@ void PlayerIdleState::init(Player& player)
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.down) {
@@ -67,20 +73,53 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
     
         if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
-            player.isAttacking = true;
-            player.hasToPressAgain = false;
-            player.setState(state<AttackIdle>());
+            if (player.isPressingUp)
+            {
+                if(player.hearts>1 && player.subWeapon.type != 0){
+                    player.isAttacking = true;
+                    player.hasToPressAgain = false;
+                    player.setState(state<AttackSecondary>());
+                }
+                
+            }else{
+                player.isAttacking = true;
+                player.hasToPressAgain = false;
+                player.setState(state<AttackIdle>());
+            }
+            
+            
+        }
+
+        if(keyPressed->scancode == controls.up){
+            player.isPressingUp = true;
+        }
+
+        if(keyPressed->scancode == KEY_HURT || player.isBeingHurt){
+            player.health--;
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+
+        if(keyPressed->scancode == KEY_DEAD || player.health==0){
+            player.isDead = true;
+            player.setState(state<Dead>());
         }
     }
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
         if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
+        if(keyReleased->scancode == controls.up){
+            player.isPressingUp = false;
+        }
     }
 }
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
+    
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -146,6 +185,7 @@ void PlayerWalkState::init(Player& player)
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right && player.dir == LEFT) {
@@ -244,6 +284,7 @@ void PlayerJumpState::init(Player& player)
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.attack) {
@@ -327,6 +368,7 @@ void PlayerDuckState::init(Player& player)
 
 void PlayerDuckState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right && player.dir == LEFT) {
@@ -406,6 +448,7 @@ void PlayerStairState::init(Player& player)
 
 void PlayerStairState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right) {
@@ -464,6 +507,7 @@ void PlayerStairWalkState::init(Player& player)
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right) {
@@ -549,6 +593,7 @@ void PlayerAttackIdleState::init(Player& player)
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
@@ -670,6 +715,7 @@ void PlayerAttackJumpState::init(Player& player)
 
 void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
@@ -806,6 +852,7 @@ void PlayerAttackDuckState::init(Player& player)
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 {
+    
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
@@ -948,7 +995,8 @@ PlayerHurtState::PlayerHurtState() : PlayerState()
 
 void PlayerHurtState::init(Player& player)
 {
-
+    cout << "init hurt" << endl;
+    cout << "herido, ahora tengo esta salud:  " << player.health << endl; 
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -957,7 +1005,35 @@ void PlayerHurtState::handleInput(Player& player, sf::Event event)
 
 void PlayerHurtState::update(Player& player, float deltaTime)
 {
-    if(!player.isBeingHurt){
+    player.currentAnimation = hurtSimon;
+
+    player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
+    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
+    if (player.dir == RIGHT)
+    {
+        player.horizontalSpeed = -gPlayerMovementSpeed*0.8f;
+        player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
+    }
+    else
+    {
+        player.horizontalSpeed = gPlayerMovementSpeed*0.8f;
+        player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
+    }
+    
+    
+
+
+    // Play jump animation if not already playing
+    if (!player.animationManager->isPlaying(player.currentAnimation))
+    {
+        player.animationManager->playAnimation(player.currentAnimation);
+    }
+    player.animationManager->update(deltaTime);
+
+    // Check if landed
+    if (player.isOnGround)
+    {
+        player.isJumping = false;
         player.setState(state<Idle>());
     }
 
@@ -997,6 +1073,7 @@ void PlayerDeadState::handleInput(Player& player, sf::Event event)
 
 void PlayerDeadState::update(Player& player, float deltaTime)
 {
+   
 }
 
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
@@ -1015,5 +1092,126 @@ void PlayerDeadState::hello(){
 
 // --------------------------------------------------------------
 
+// ---------------------------- ATTACK SECONDARY ----------------------------
+
+PlayerAttackSecondaryState::PlayerAttackSecondaryState() : PlayerState()
+{
+}
+
+void PlayerAttackSecondaryState::init(Player& player)
+{
+    std::cout << "secondary " << std::endl;
+    if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
+        player.animationManager->playAnimation(attackSimon);
+        player.subWeapon.animationManager->playAnimation(knifeThrowing);
+    }
+
+    player.isAttacking = true;
+    player.attackedFinished = false;
+    player.hasToPressAgain = false;
+}
+
+void PlayerAttackSecondaryState::handleInput(Player& player, sf::Event event)
+{
+    
+    auto controls = configManager.getControls();
+    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (KeyReleased->scancode == controls.attack)
+        {
+            player.hasToPressAgain = true;
+        }
+        if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
+            if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
+                (keyReleased->scancode == controls.left && player.dir == LEFT)) {
+                player.isWalking = false;
+            }
+        }
+    }
+    
+}
+
+void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
+{
+    player.currentAnimation = attackSimon;
+    static bool subWeaponLaunched = false;
+    static float subWeaponTimer = 0.0f;
+    const float subWeaponSpeed = 250.0f; // Reduced by 50% (from 300 to 150)
+    const float subWeaponDuration = 2.0f; // 2 seconds duration
+
+    // Update the timer
+    subWeaponTimer += deltaTime;
+    cout << subWeaponTimer << endl;
+
+    // Reset everything if timer exceeds duration
+    if (subWeaponTimer >= subWeaponDuration) {
+        subWeaponLaunched = false;
+        subWeaponTimer = 0.0f;
+        player.subWeapon.sprite->setPosition(sf::Vector2f(-1000.f, -1000.f)); // Move off-screen
+    }
+
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        player.animationManager->playAnimation(player.currentAnimation);
+    }
+
+    player.animationManager->update(deltaTime);
+    float direction = (player.dir == RIGHT) ? 1.0f : -1.0f;
+
+    // Check if we've reached frame 4 and haven't launched the subweapon yet
+    if (player.animationManager->getCurrentFrameIndex() == 4 && !subWeaponLaunched) {
+        // Reset timer when launching new subweapon
+        subWeaponTimer = 0.0f;
+        
+        // Set subweapon position to player's current position
+        player.subWeapon.sprite->setPosition(
+            sf::Vector2f(player.sprite->getPosition().x,
+                         player.sprite->getPosition().y - 25));
+        
+        player.subWeapon.sprite->setScale(sf::Vector2f(direction, 1.f));
+        
+        // Play the throwing animation
+        if (!player.subWeapon.animationManager->isPlaying(knifeThrowing)) {
+            player.subWeapon.animationManager->playAnimation(knifeThrowing);
+        }
+        
+        subWeaponLaunched = true;
+    }
+
+    // Update subweapon only if it's active and timer hasn't expired
+    if (subWeaponLaunched && subWeaponTimer < subWeaponDuration) {
+        player.subWeapon.animationManager->update(deltaTime);
+        
+        // Move subweapon horizontally based on player direction
+        player.subWeapon.sprite->move(sf::Vector2f(direction * subWeaponSpeed * deltaTime, 0.f));
+    } else {
+        // Move subweapon off-screen when not active
+        player.subWeapon.sprite->setPosition(sf::Vector2f(-1000.0f, -1000.0f));
+    }
+    
+    if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
+    {
+        player.isAttacking = false;
+        player.attackedFinished = true;
+        player.currentAnimation = idleSimon;
+        player.setState(state<Idle>());
+    }
+}
+
+void PlayerAttackSecondaryState::draw(Player& player, sf::RenderWindow &window)
+{
+    window.draw(*player.sprite);
+    window.draw(*player.subWeapon.sprite);
+}
+
+void PlayerAttackSecondaryState::end(Player& player)
+{
+    
+}
+
+void PlayerAttackSecondaryState::hello(){
+    std::cout << "PLAYER STATE: Attack Secondary" << std::endl;
+}
+
+// --------------------------------------------------------------
 
 

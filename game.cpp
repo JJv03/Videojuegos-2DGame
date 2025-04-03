@@ -71,7 +71,9 @@ void Game::init()
     animationManager->addAnimation(duckSimon, player.duckFrames);
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
-
+    animationManager->addAnimation(hurtSimon,player.hurtFrames);
+    animationManager->addAnimation(deathSimon1,player.deadFrames,false);
+    //animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
 
@@ -127,6 +129,38 @@ void Game::init()
     player.whip.animationManager = whipAnimationManager;
 
     player.whip.animationManager->playAnimation(whipNoAttack);
+
+    // Secondary weapons ----------------------------------------------------------------
+    // Load knife image
+    sf::Image knifeImage;
+    if (!knifeImage.loadFromFile("./assets/sprites/player/simonBelmont.png")) {
+        std::cerr << "Error loading knife image" << std::endl;
+    }
+    knifeImage.createMaskFromColor(gColorKeyGrey);
+    knifeImage.createMaskFromColor(gColorKeyGreen);
+    gTextures["knife"] = sf::Texture(knifeImage, false);
+
+    // Create knife sprite
+    auto knifeSprite = std::make_shared<sf::Sprite>(gTextures["knife"]);
+    knifeSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
+
+    // Set up the subweapon (knife)
+    player.subWeapon.sprite = knifeSprite;
+    player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
+
+    // Initialize knife AnimationManager
+    AnimationManager *knifeAnimationManager = new AnimationManager(*player.subWeapon.sprite);
+    if (!knifeAnimationManager) {
+        std::cerr << "Error: Failed to initialize Knife AnimationManager!" << std::endl;
+    }
+
+    // Add animations (similar to whip)
+    knifeAnimationManager->addAnimation(knifeThrowing, player.subWeapon.knifeFrames, false);
+    knifeAnimationManager->addAnimation(knifeIdle, player.subWeapon.knifeFrames, false);
+
+    // Assign animation managers
+    player.subWeapon.animationManager = knifeAnimationManager;
+    player.subWeapon.animationManager->playAnimation(knifeIdle);
 
     // --------------------------------------------------
     // GUI

@@ -14,10 +14,12 @@ enum animationID{
     stairUpSimon,
     stairDownSimon,
     hurtSimon,
-    deathSimon,
+    deathSimon1,
+    deathSimon2,
     attackSimon,
     duckSimon,
     attackFloorSimon,
+    invulnerableSimon,
     
     //Whip
     whipLvl1StandingJumping,
@@ -33,7 +35,11 @@ enum animationID{
 
     // Bosses
     sleepPhantomBat,
-    flyPhantomBat
+    flyPhantomBat,
+
+    // Secondary weapon
+    knifeIdle,
+    knifeThrowing
 };
 
 

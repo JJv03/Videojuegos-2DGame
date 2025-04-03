@@ -63,6 +63,38 @@ public:
         STOPWATCH,
     };
 
+    AnimationManager *animationManager{nullptr};
+
+    std::vector<AnimationManager::Frame> knifeFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(354, 477), sf::Vector2(16, 16)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> axeFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(515, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(532, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(549, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(566, 477), sf::Vector2(16, 16)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> holyFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(587, 477), sf::Vector2(8, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(596, 477), sf::Vector2(8, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(605, 477), sf::Vector2(8, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(614, 477), sf::Vector2(8, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(623, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(640, 477), sf::Vector2(16, 16)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> crossFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> stopwatchFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
+    };
+
+    
+
     SubWeapon();
     ~SubWeapon() = default;
 
@@ -92,6 +124,7 @@ public:
     bool isDead;
     bool isBeingHurt;
     bool hasToPressAgain;
+    bool isPressingUp;
 
     // Stats
     float damage = 1.0f;
@@ -165,6 +198,11 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
 
+    std::vector<AnimationManager::Frame> deadFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(308, 21), sf::Vector2(16, 32)), 0.5f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 21), sf::Vector2(32, 16)), 0.5f},
+
+    };
     // --------------------------------
 
     Player();
