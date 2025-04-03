@@ -13,8 +13,8 @@ std::unordered_map<std::string, sf::Texture> gTextures;
 Game::Game()
 {
     Player player;
-    // tileMap = TileMap();
     tilemaps = TilemapManager();
+    collisionGrid = CollisionGrid();
 }
 
 // Initializes a new game from the beggining
@@ -26,6 +26,9 @@ void Game::init()
     configManager &configManager = configManager::getInstance();
     auto audio = configManager.getAudio();
     float musicVol = (audio.master_volume * audio.music_volume) / 100;
+
+    collisionGrid.setRows(configManager.getCollisionGridSize().rows);
+    collisionGrid.setColumns(configManager.getCollisionGridSize().columns);
 
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
     gameSoundManager.playMusic("gameMusic", musicVol);
@@ -182,7 +185,7 @@ void Game::handleInput(sf::Event event)
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime)
+void Game::update(float deltaTime, const sf::View& view)
 {
 
     player.update(deltaTime);
@@ -229,6 +232,7 @@ void Game::update(float deltaTime)
     texts[0].setString(scoreStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
+    //checkCollisions(view);
     checkCollisions();
 }
 
@@ -377,6 +381,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
 
+
 void Game::checkCollisions()
 {
 
@@ -387,9 +392,10 @@ void Game::checkCollisions()
     checkEnemiesCollisions();
 }
 
+
 // vvvvvvv NO BORRAR vvvvvvv
 /*
-void Game::checkCollisions()
+void Game::checkCollisions(const sf::View& view)
 {
     // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
     
@@ -422,7 +428,7 @@ void Game::checkCollisions()
 
     // ... ADD THE REST OF ENTITIES
     
-
+    collisionGrid.checkCollisions(allEntities, view);
 }
 */
 

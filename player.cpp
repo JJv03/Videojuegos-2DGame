@@ -85,6 +85,15 @@ void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
         {deactivationWidth, deactivationHeight});
 }
 
+
+sf::FloatRect Player::getBounds() const {
+    return sf::FloatRect();
+}
+
+void Player::onCollision(Entity& other){
+
+}
+
 // ----------------------------- WHIP -----------------------------
 Whip::Whip()
 {

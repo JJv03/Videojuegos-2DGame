@@ -127,8 +127,8 @@ void GameGS::handleInput(sf::Event event){
     game.handleInput(event);
 }
 
-void GameGS::update(float deltaTime){
-    game.update(deltaTime);
+void GameGS::update(float deltaTime, const sf::View& view){
+    game.update(deltaTime, view);
 }
 
 void GameGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -295,7 +295,7 @@ void MenuGS::handleInput(sf::Event event){
     }
 }
 
-void MenuGS::update(float deltaTime){
+void MenuGS::update(float deltaTime, const sf::View& view){
     
 }
 
@@ -349,7 +349,7 @@ void PauseGS::handleInput(sf::Event event){
     }
 }
 
-void PauseGS::update(float deltaTime){
+void PauseGS::update(float deltaTime, const sf::View& view){
     
 }
 
@@ -388,7 +388,7 @@ void ConfigGS::handleInput(sf::Event event){
     }
 }
 
-void ConfigGS::update(float deltaTime){
+void ConfigGS::update(float deltaTime, const sf::View& view){
     
 }
 

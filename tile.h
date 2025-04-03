@@ -41,6 +41,9 @@ public:
         STAIRS = 2,
     };
 
+    DoorTile();
+    ~DoorTile() = default;
+
     Type type;                      // Door type
     sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
 

@@ -33,7 +33,7 @@ public:
     virtual void handleInput(sf::Event event) = 0;
 
     // Method that manages the game logic every frame
-    virtual void update(float deltaTime) = 0;
+    virtual void update(float deltaTime, const sf::View& view) = 0;
 
     // Method that displays the game graphics onto the <window>
     virtual void draw(sf::RenderWindow& window, Camera& camera) = 0;
@@ -63,7 +63,7 @@ public:
     ~GameGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime) override;
+    void update(float deltaTime, const sf::View& view) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -85,7 +85,7 @@ public:
     ~MenuGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime) override;
+    void update(float deltaTime, const sf::View& view) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -100,7 +100,7 @@ public:
     ~PauseGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime) override;
+    void update(float deltaTime, const sf::View& view) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -114,7 +114,7 @@ public:
     ~ConfigGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime) override;
+    void update(float deltaTime, const sf::View& view) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;

@@ -5,19 +5,24 @@
 
 class CollisionGrid {
 public:
-    CollisionGrid(float cellSize, int width, int height);
+    CollisionGrid();
+    CollisionGrid(int cellsPerRow, int cellsPerColumn);
 
-    void addEntity(Entity* entity);
+    void setRows(const int& newRows);
+    void setColumns(const int& newColumns);
+
+    int getRows();
+    int getColumns();
+
+    void addEntity(Entity* entity, const sf::View& view);
     void clear();
-    void checkCollisions();
-
+    void checkCollisions(std::vector<Entity*>& allEntities, const sf::View& view);
+    
 private:
-
-    float cellSize;
-    int width, height;
+    int cellsPerRow, cellsPerColumn;
 
     std::unordered_map<int, std::vector<Entity*>> cells;
 
-    int computeCellKey(int x, int y) const;
-    std::vector<int> getKeysForEntity(const Entity& entity) const;
+    int getCellKeyFromCoords(int x, int y) const;
+    std::vector<int> getCellKeysContainingEntity(const Entity& entity, const sf::View& view) const;
 };
