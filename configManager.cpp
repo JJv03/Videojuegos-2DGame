@@ -85,6 +85,7 @@ void configManager::loadConfiguration(const std::string& file) {
     controls.up = stringToScancode(originalConfig["controls"]["up"]);
     controls.jump = stringToScancode(originalConfig["controls"]["jump"]);
     controls.attack = stringToScancode(originalConfig["controls"]["attack"]);
+    controls.enter = stringToScancode(originalConfig["controls"]["enter"]);
 
     cheats.enabled = originalConfig["cheats"]["enabled"];
     difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
@@ -104,7 +105,8 @@ void configManager::saveConfiguration(const std::string& file) {
                         {"down", scancodeToString(controls.down)},
                         {"up", scancodeToString(controls.up)},
                         {"jump", scancodeToString(controls.jump)},
-                        {"attack", scancodeToString(controls.attack)} };
+                        {"attack", scancodeToString(controls.attack)},
+                        {"enter", scancodeToString(controls.enter)}};
     j["cheats"] = { {"enabled", cheats.enabled} };
     j["difficulty"] = { {"hard_mode", difficulty.hard_mode} };
 

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "player.h"
+#include "configManager.h"
 
 class Player;
 
@@ -29,6 +30,8 @@ public:
 
     // Debugging method that indicates the current state throw standard output
     virtual void hello() = 0;
+
+    configManager &configManager;
 };
 
 // ---------------------------- IDLE ----------------------------

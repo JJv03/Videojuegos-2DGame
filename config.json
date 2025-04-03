@@ -13,7 +13,8 @@
         "down": "Down",
         "up": "Up",
         "jump": "X",
-        "attack": "Z"
+        "attack": "Z",
+        "enter": "Enter"
     },
     "cheats": {
         "enabled": false

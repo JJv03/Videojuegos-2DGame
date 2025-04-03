@@ -1,6 +1,5 @@
 #include "playerState.h"
 #include <iostream>
-#include "configManager.h"
 using namespace std;
 
 template <typename T>
@@ -22,16 +21,16 @@ using AttackJump = PlayerAttackJumpState;
 using AttackDuck = PlayerAttackDuckState;
 using AttackStairs = PlayerAttackStairState;
 
-constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
-constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
-constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
-constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
-constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
-constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
+// constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
+// constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
+// constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
+// constexpr auto KEY_UP = sf::Keyboard::Scancode::Up;
+// constexpr auto KEY_JUMP = sf::Keyboard::Scancode::X;
+// constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 
 
-PlayerState::PlayerState(){}
+PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
 // ---------------------------- IDLE ----------------------------
 
@@ -53,7 +52,6 @@ void PlayerIdleState::init(Player& player)
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.down) {
@@ -83,7 +81,6 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -149,7 +146,6 @@ void PlayerWalkState::init(Player& player)
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right && player.dir == LEFT) {
@@ -248,7 +244,6 @@ void PlayerJumpState::init(Player& player)
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.attack) {
@@ -332,7 +327,6 @@ void PlayerDuckState::init(Player& player)
 
 void PlayerDuckState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right && player.dir == LEFT) {
@@ -412,7 +406,6 @@ void PlayerStairState::init(Player& player)
 
 void PlayerStairState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right) {
@@ -471,7 +464,6 @@ void PlayerStairWalkState::init(Player& player)
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.right) {
@@ -557,7 +549,6 @@ void PlayerAttackIdleState::init(Player& player)
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
@@ -679,7 +670,6 @@ void PlayerAttackJumpState::init(Player& player)
 
 void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
@@ -816,7 +806,6 @@ void PlayerAttackDuckState::init(Player& player)
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 {
-    configManager &configManager = configManager::getInstance();
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {

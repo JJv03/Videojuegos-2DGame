@@ -26,6 +26,7 @@ public:
         sf::Keyboard::Scancode up;
         sf::Keyboard::Scancode jump;
         sf::Keyboard::Scancode attack;
+        sf::Keyboard::Scancode enter;
     };
 
     struct Cheats {
@@ -59,9 +60,6 @@ public:
     // Métodos de conversión entre sf::Keyboard::Key y string
     static sf::Keyboard::Scancode stringToScancode(const std::string& key);
     static std::string scancodeToString(sf::Keyboard::Scancode scancode);
-
-    static void to_json(json& j, const Controls& c);
-    static void from_json(const json& j, Controls& c);
 
 private:
     configManager();

@@ -8,13 +8,13 @@
 #include "configManager.h"
 
 constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
-constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
-constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
-constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
-constexpr sf::Keyboard::Scancode KEY_ENTER = sf::Keyboard::Scancode::Enter;
+// constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
+// constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
+// constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
+// constexpr sf::Keyboard::Scancode KEY_ENTER = sf::Keyboard::Scancode::Enter;
 constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
-constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
-constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
+// constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
+// constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 
 const bool debug = true;
@@ -227,7 +227,6 @@ void MenuGS::init(){
     // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
     menuSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
-    configManager& configManager = configManager::getInstance();
     auto audio = configManager.getAudio();
     float musicVol = (audio.master_volume * audio.music_volume)/100;
 
@@ -236,8 +235,9 @@ void MenuGS::init(){
 }
 
 void MenuGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_DOWN && position < 3) {    
+        if (keyPressed->scancode == controls.down && position < 3) {    
             if (!menuSprites.empty()) {
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
@@ -253,7 +253,7 @@ void MenuGS::handleInput(sf::Event event){
             }
         }
 
-        if (keyPressed->scancode == KEY_UP && position > 0) {    
+        if (keyPressed->scancode == controls.up && position > 0) {    
             if (!menuSprites.empty()) {
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
@@ -269,8 +269,7 @@ void MenuGS::handleInput(sf::Event event){
             }
         }
 
-        if (keyPressed->scancode == KEY_ENTER) {
-            configManager& configManager = configManager::getInstance();
+        if (keyPressed->scancode == controls.enter) {
             auto audio = configManager.getAudio();
             float soundVol = (audio.master_volume * audio.sound_volume)/100;
             menuSoundManager.playSound("menuEnter", soundVol);

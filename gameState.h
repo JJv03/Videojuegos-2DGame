@@ -3,6 +3,7 @@
 #include "game.h"
 #include "soundManager.h"
 #include "globals.h"
+#include "configManager.h"
 
 
 // ============ Auxiliar functions =============
@@ -80,8 +81,9 @@ private:
     std::vector<sf::Text> options;
     int position;
     SoundManager menuSoundManager;
+    configManager &configManager;
 public:
-    explicit MenuGS(GameStateMachine* machine) : GameState(machine) {}
+    explicit MenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~MenuGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
