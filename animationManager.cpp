@@ -65,3 +65,7 @@ int AnimationManager::getCurrentFrameIndex() {
     // Assuming you have a method to get the current frame index
     return currentFrame % currentAnimation->frames.size();
 }
+
+sf::FloatRect AnimationManager::getGlobalBounds(){
+    return sprite.getGlobalBounds();
+}

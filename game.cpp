@@ -27,9 +27,6 @@ void Game::init()
     auto audio = configManager.getAudio();
     float musicVol = (audio.master_volume * audio.music_volume) / 100;
 
-    collisionGrid.setRows(configManager.getCollisionGridSize().rows);
-    collisionGrid.setColumns(configManager.getCollisionGridSize().columns);
-
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
     gameSoundManager.playMusic("gameMusic", musicVol);
 
@@ -394,11 +391,10 @@ void Game::checkCollisions()
 
 
 // vvvvvvv NO BORRAR vvvvvvv
-/*
+
 void Game::checkCollisions(const sf::View& view)
 {
     // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
-    
     allEntities.clear();
 
     // Add player and weapons
@@ -407,6 +403,7 @@ void Game::checkCollisions(const sf::View& view)
     allEntities.push_back(&player.subWeapon);
 
     // Add tiles
+    /*
     for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
         for (auto& solidTile : solidTileRow){
             allEntities.push_back(&solidTile);    
@@ -424,13 +421,15 @@ void Game::checkCollisions(const sf::View& view)
     }
     for (auto& leo : leopard) allEntities.push_back(&leo);
     for (auto& b : bat) allEntities.push_back(&b);
+    */
     // for (auto& item : items) allEntities.push_back(&item);
 
     // ... ADD THE REST OF ENTITIES
     
     collisionGrid.checkCollisions(allEntities, view);
+    checkPlayerTileCollisions(); // quitar
 }
-*/
+
 
 void Game::checkEnemiesCollisions()
 {

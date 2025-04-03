@@ -58,7 +58,7 @@ public:
 
     // Check all the possible collisions
     void checkCollisions();
-    //void checkCollisions(const sf::View& view);
+    void checkCollisions(const sf::View& view);
 
     // Check enemies collisions
     void checkEnemiesCollisions();

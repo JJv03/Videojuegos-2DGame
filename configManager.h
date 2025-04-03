@@ -36,11 +36,6 @@ public:
         bool hard_mode;
     };
 
-    struct CollisionGridSize {
-        int rows;
-        int columns;
-    };
-
     static configManager& getInstance();
     bool detectChanges();
     void loadConfiguration(const std::string& file);
@@ -53,7 +48,6 @@ public:
     Controls getControls() const;
     Cheats getCheats() const;
     Difficulty getDifficulty() const;
-    CollisionGridSize getCollisionGridSize() const;
 
     // Methods to modify the configuration
     void setAudio(const Audio& audio);
@@ -61,7 +55,6 @@ public:
     void setControls(const Controls& controls);
     void setCheats(const Cheats& cheats);
     void setDifficulty(const Difficulty& difficulty);
-    void setCollisionGridSize(const CollisionGridSize& collisionGridSize);
 
     // Métodos de conversión entre sf::Keyboard::Key y string
     static sf::Keyboard::Scancode stringToScancode(const std::string& key);
@@ -77,7 +70,6 @@ private:
     Controls controls;
     Cheats cheats;
     Difficulty difficulty;
-    CollisionGridSize collisionGridSize;
 
     static const std::unordered_map<std::string, sf::Keyboard::Scancode> stringToScancodeMap;
     static const std::unordered_map<sf::Keyboard::Scancode, std::string> scancodeToStringMap;

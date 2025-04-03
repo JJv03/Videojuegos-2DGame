@@ -88,9 +88,6 @@ void configManager::loadConfiguration(const std::string& file) {
 
     cheats.enabled = originalConfig["cheats"]["enabled"];
     difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
-
-    collisionGridSize.rows = originalConfig["collision_grid_size"]["rows"];
-    collisionGridSize.columns = originalConfig["collision_grid_size"]["columns"];
 }
 
 void configManager::saveConfiguration(const std::string& file) {
@@ -110,8 +107,6 @@ void configManager::saveConfiguration(const std::string& file) {
                         {"attack", scancodeToString(controls.attack)} };
     j["cheats"] = { {"enabled", cheats.enabled} };
     j["difficulty"] = { {"hard_mode", difficulty.hard_mode} };
-    j["collision_grid_size"] = { {"rows", collisionGridSize.rows},
-                                 {"columns", collisionGridSize.columns},   };
 
     outputFile << j.dump(4);
 }
@@ -130,14 +125,12 @@ configManager::Video configManager::getVideo() const { return video; }
 configManager::Controls configManager::getControls() const { return controls; }
 configManager::Cheats configManager::getCheats() const { return cheats; }
 configManager::Difficulty configManager::getDifficulty() const { return difficulty; }
-configManager::CollisionGridSize configManager::getCollisionGridSize() const { return collisionGridSize; }
 
 void configManager::setAudio(const Audio& newAudio) { audio = newAudio; }
 void configManager::setVideo(const Video& newVideo) { video = newVideo; }
 void configManager::setControls(const Controls& newControls) { controls = newControls; }
 void configManager::setCheats(const Cheats& newCheats) { cheats = newCheats; }
 void configManager::setDifficulty(const Difficulty& newDifficulty) { difficulty = newDifficulty; }
-void configManager::setCollisionGridSize(const CollisionGridSize& newCollisionGridSize) { collisionGridSize = newCollisionGridSize; }
 
 sf::Keyboard::Scancode configManager::stringToScancode(const std::string& key) {
     auto it = stringToScancodeMap.find(key);

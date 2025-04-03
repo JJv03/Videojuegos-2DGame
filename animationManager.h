@@ -100,6 +100,9 @@ public:
     int getCurrentFrameIndex();
 
     void setAnimationSpeed(float multiplier);
+
+    sf::FloatRect getGlobalBounds();
+
 private:
     sf::Sprite& sprite;
     std::unordered_map<animationID, Animation> animations;

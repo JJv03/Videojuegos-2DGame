@@ -87,7 +87,7 @@ void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
 
 
 sf::FloatRect Player::getBounds() const {
-    return sf::FloatRect();
+    return animationManager->getGlobalBounds();
 }
 
 void Player::onCollision(Entity& other){
@@ -104,7 +104,7 @@ Whip::Whip()
 }
 
 sf::FloatRect Whip::getBounds() const {
-    return sf::FloatRect();
+    return animationManager->getGlobalBounds();
 }
 
 void Whip::onCollision(Entity& other){

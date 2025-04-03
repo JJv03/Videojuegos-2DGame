@@ -3,7 +3,7 @@
 #include <iostream>
 
 CollisionGrid::CollisionGrid() 
-    : cellsPerRow(10), cellsPerColumn(10) {}
+    : cellsPerRow(6), cellsPerColumn(6) {}
 
 CollisionGrid::CollisionGrid(int cellsPerRow, int cellsPerColumn) 
     : cellsPerRow(cellsPerRow), cellsPerColumn(cellsPerColumn) {}
@@ -28,9 +28,10 @@ std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity
 
     sf::FloatRect bounds = entity.getBounds();
 
+    if (bounds.size.x == 0.f || bounds.size.y == 0.f){ return {}; }
+
     float cellWidth = view.getSize().x / cellsPerRow;
     float cellHeight = view.getSize().y / cellsPerColumn;
-
 
     int startX = static_cast<int>(std::floor((bounds.position.x - viewPosition.x) / cellWidth));
     int startY = static_cast<int>(std::floor((bounds.position.y - viewPosition.y) / cellHeight));
@@ -43,7 +44,7 @@ std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity
             // Ignorar celdas fuera del grid visible
             if (x < 0 || x >= cellsPerRow || y < 0 || y >= cellsPerColumn)
                 continue;
-            
+
             keys.push_back(getCellKeyFromCoords(x, y));
         }
     }
@@ -60,11 +61,17 @@ int CollisionGrid::getCellKeyFromCoords(int x, int y) const {
 }
 
 void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf::View& view) {
+    cells.clear();
+
     for(auto& entity : allEntities){
         addEntity(entity, view);
     }
 
+    std::cout << "All Entities Size: " << allEntities.size() << std::endl;
+
     for (auto& [key, entities] : cells) {
+        std::cout << "Cell " << key << " - Size: " << entities.size() << std::endl;
+
         if (entities.size() < 2) continue;
 
         // Check collisions without repeating

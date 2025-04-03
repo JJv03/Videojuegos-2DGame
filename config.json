@@ -20,9 +20,5 @@
     },
     "difficulty": {
         "hard_mode": false
-    },
-    "collision_grid_size": {
-        "rows": 6,
-        "columns": 6
     }
 }
