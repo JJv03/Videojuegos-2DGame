@@ -199,7 +199,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
 
     std::vector<AnimationManager::Frame> deadFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(308, 21), sf::Vector2(16, 32)), 0.5f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(308, 21), sf::Vector2(16, 24)), 0.5f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 21), sf::Vector2(32, 16)), 0.5f},
 
     };

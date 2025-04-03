@@ -1073,7 +1073,23 @@ void PlayerDeadState::handleInput(Player& player, sf::Event event)
 
 void PlayerDeadState::update(Player& player, float deltaTime)
 {
-   
+    player.currentAnimation=deathSimon;
+    if (!player.animationManager->isPlaying(player.currentAnimation))
+    {
+        player.animationManager->playAnimation(player.currentAnimation);
+    }
+    player.animationManager->update(deltaTime);
+    /*
+    if (player.animationManager->getCurrentFrameIndex()==0)
+    {
+        player.sprite->setPosition(sf::Vector2f(player.sprite->getPosition().x,
+                                                player.sprite->getPosition().y+7));
+    }
+    else{
+        player.sprite->setPosition(sf::Vector2f(player.sprite->getPosition().x,
+                                                player.sprite->getPosition().y+15));
+    }*/
+
 }
 
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)

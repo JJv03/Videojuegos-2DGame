@@ -72,7 +72,7 @@ void Game::init()
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
     animationManager->addAnimation(hurtSimon,player.hurtFrames);
-    animationManager->addAnimation(deathSimon1,player.deadFrames,false);
+    animationManager->addAnimation(deathSimon,player.deadFrames);
     //animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
