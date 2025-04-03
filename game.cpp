@@ -112,7 +112,7 @@ void Game::init()
     player.whip.sprite = whipSprite;
     player.whip.hitboxes.push_back(player.whip.sprite.get()->getLocalBounds());
 
-    // Inicializar AnimationManager ----------------------------------------------------------------
+    // Inicializar whip AnimationManager ----------------------------------------------------------------
     AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite);
 
     if (!whipAnimationManager)
@@ -120,10 +120,13 @@ void Game::init()
         std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
     }
     whipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whip.lvl1Frames, false);
+    whipAnimationManager->addAnimation(whipNoAttack, player.whip.noAttackFrames, false);
 
     // Player and whip manage its animations so they don't have to be managed outside
     player.animationManager = animationManager;
     player.whip.animationManager = whipAnimationManager;
+
+    player.whip.animationManager->playAnimation(whipNoAttack);
 
     // --------------------------------------------------
     // GUI
@@ -184,7 +187,7 @@ void Game::handleInput(sf::Event event)
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::View& view)
 {
-
+    //std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime);
 
     for (auto &zombieSpawner : zombiesSpawner)

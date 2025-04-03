@@ -27,7 +27,7 @@ std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity
     sf::Vector2f viewPosition = view.getCenter() - (view.getSize() / 2.f);
 
     sf::FloatRect bounds = entity.getBounds();
-
+    //std::cout << bounds.size.x << ", " << bounds.size.y << std::endl;
     if (bounds.size.x == 0.f || bounds.size.y == 0.f){ return {}; }
 
     float cellWidth = view.getSize().x / cellsPerRow;
@@ -67,10 +67,10 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf:
         addEntity(entity, view);
     }
 
-    std::cout << "All Entities Size: " << allEntities.size() << std::endl;
+    //std::cout << "All Entities Size: " << allEntities.size() << std::endl;
 
     for (auto& [key, entities] : cells) {
-        std::cout << "Cell " << key << " - Size: " << entities.size() << std::endl;
+        //std::cout << "Cell " << key << " - Size: " << entities.size() << std::endl;
 
         if (entities.size() < 2) continue;
 

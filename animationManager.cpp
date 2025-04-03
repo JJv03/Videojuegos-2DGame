@@ -67,5 +67,9 @@ int AnimationManager::getCurrentFrameIndex() {
 }
 
 sf::FloatRect AnimationManager::getGlobalBounds(){
+    if( sprite.getGlobalBounds().size.x == 0.f || 
+        sprite.getGlobalBounds().size.y == 0.f){
+            return sf::FloatRect();
+        }
     return sprite.getGlobalBounds();
 }

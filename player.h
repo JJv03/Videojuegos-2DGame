@@ -30,6 +30,10 @@ public:
 
     AnimationManager *animationManager{nullptr};
 
+    std::vector<AnimationManager::Frame> noAttackFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
+    };
+
     std::vector<AnimationManager::Frame> lvl1Frames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.1f},

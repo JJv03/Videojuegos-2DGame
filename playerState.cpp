@@ -616,6 +616,7 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
 
         player.currentAnimation = idleSimon;
+        player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Idle>());
     }
 }
@@ -628,7 +629,6 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackIdleState::end(Player& player)
 {
-    
 }
 
 void PlayerAttackIdleState::hello(){
@@ -753,6 +753,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     {
         player.isAttacking = false;
         player.attackedFinished = true;
+        player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Jump>());
     }
 
@@ -766,7 +767,6 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackJumpState::end(Player& player)
 {
-    
 }
 
 void PlayerAttackJumpState::hello(){
@@ -805,10 +805,9 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
         if (KeyReleased->scancode == KEY_DOWN)
         {
             player.isDucking = false;
+            player.whip.animationManager->playAnimation(whipNoAttack);
             player.setState(state<Idle>());
         }
-        
-   
     }
 }
 
@@ -865,6 +864,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         player.isAttacking = false;
         player.attackedFinished = true;
         player.currentAnimation = duckSimon;
+        player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Duck>());
     }
 
@@ -909,6 +909,7 @@ void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
 void PlayerAttackStairState::update(Player& player, float deltaTime)
 {
     if(!player.isAttacking){
+        player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Stairs>());
     }
 
@@ -922,7 +923,6 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackStairState::end(Player& player)
 {
-    
 }
 
 void PlayerAttackStairState::hello(){

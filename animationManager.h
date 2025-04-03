@@ -21,6 +21,8 @@ enum animationID{
     
     //Whip
     whipLvl1StandingJumping,
+    whipNoAttack,
+    
     // Enemies
     walkZombie,
     idleLeopard,
