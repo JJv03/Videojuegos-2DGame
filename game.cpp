@@ -446,21 +446,21 @@ void Game::checkEnemiesCollisions()
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            player.score += zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+            zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
         }
     }
     for (auto &leopard : leopard)
     {
         if (leopard.level == currentLevel && leopard.stage == currentStage)
         {
-            player.score += leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
+            leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
         }
     }
     for (auto &bat : bat)
     {
         if (bat.level == currentLevel && bat.stage == currentStage)
         {
-            player.score += bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
+            bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
         }
     }
 }

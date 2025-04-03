@@ -119,17 +119,15 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 }
 
-int ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
+void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
-    int score2Return = 0;
     for (auto &zombie : zombies)
     {
         if (zombie.isActive)
         {
-            score2Return += zombie.checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
+            zombie.checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
         }
     }
-    return score2Return;
 }
 
 void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)

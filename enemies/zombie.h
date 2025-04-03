@@ -25,7 +25,7 @@ public:
     void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
 
     void update(float deltaTime);
-    int checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
+    void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
 
     void updateAnimation(float deltaTime);
 };

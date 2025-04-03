@@ -42,7 +42,7 @@ public:
     void draw(sf::RenderWindow &window, bool debugDraw) override;
 
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
-    int checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
+    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                          const bool playerIsAtacking, const float playerDamage);
 
     void updateAnimation(float deltaTime);
