@@ -79,10 +79,10 @@ void configManager::loadConfiguration(const std::string& file) {
     
     video.window_mode = originalConfig["video"]["window_mode"];
     
-    controls.move_right = stringToScancode(originalConfig["controls"]["move_right"]);
-    controls.move_left = stringToScancode(originalConfig["controls"]["move_left"]);
-    controls.move_down = stringToScancode(originalConfig["controls"]["move_down"]);
-    controls.move_up = stringToScancode(originalConfig["controls"]["move_up"]);
+    controls.right = stringToScancode(originalConfig["controls"]["right"]);
+    controls.left = stringToScancode(originalConfig["controls"]["left"]);
+    controls.down = stringToScancode(originalConfig["controls"]["down"]);
+    controls.up = stringToScancode(originalConfig["controls"]["up"]);
     controls.jump = stringToScancode(originalConfig["controls"]["jump"]);
     controls.attack = stringToScancode(originalConfig["controls"]["attack"]);
 
@@ -99,10 +99,10 @@ void configManager::saveConfiguration(const std::string& file) {
     json j;
     j["audio"] = { {"master_volume", audio.master_volume}, {"music_volume", audio.music_volume}, {"sound_volume", audio.sound_volume} };
     j["video"] = { {"window_mode", video.window_mode} };
-    j["controls"] = { {"move_right", scancodeToString(controls.move_right)},
-                        {"move_left", scancodeToString(controls.move_left)},
-                        {"move_down", scancodeToString(controls.move_down)},
-                        {"move_up", scancodeToString(controls.move_up)},
+    j["controls"] = { {"right", scancodeToString(controls.right)},
+                        {"left", scancodeToString(controls.left)},
+                        {"down", scancodeToString(controls.down)},
+                        {"up", scancodeToString(controls.up)},
                         {"jump", scancodeToString(controls.jump)},
                         {"attack", scancodeToString(controls.attack)} };
     j["cheats"] = { {"enabled", cheats.enabled} };

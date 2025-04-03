@@ -1,5 +1,6 @@
 #include "playerState.h"
 #include <iostream>
+#include "configManager.h"
 using namespace std;
 
 template <typename T>
@@ -52,28 +53,29 @@ void PlayerIdleState::init(Player& player)
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-           
-        if (keyPressed->scancode == KEY_DOWN) {
+        if (keyPressed->scancode == controls.down) {
             player.isDucking = true;
             player.setState(state<Duck>());
         }
     
-        if (keyPressed->scancode == KEY_JUMP) {
+        if (keyPressed->scancode == controls.jump) {
             player.isJumping = true;
             player.verticalSpeed = -JUMP_FORCE;
             player.isOnGround = false;
             player.setState(state<Jump>());
         }
     
-        if (keyPressed->scancode == KEY_ATTACK && player.hasToPressAgain) {
+        if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
             player.isAttacking = true;
             player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
         }
     }
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-        if (keyReleased->scancode == KEY_ATTACK) {
+        if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
     }
@@ -81,13 +83,15 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    if(sf::Keyboard::isKeyPressed(KEY_RIGHT)){
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
+    if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
         player.isWalking = true;
         player.setState(state<Walk>());
     }
 
-    if(sf::Keyboard::isKeyPressed(KEY_LEFT)){
+    if(sf::Keyboard::isKeyPressed(controls.left)){
         player.dir = LEFT;
         player.isWalking = true;
         player.setState(state<Walk>());
@@ -145,29 +149,31 @@ void PlayerWalkState::init(Player& player)
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT && player.dir == LEFT) {
+        if (keyPressed->scancode == controls.right && player.dir == LEFT) {
             player.dir = RIGHT;
         }
         
-        if (keyPressed->scancode == KEY_LEFT && player.dir == RIGHT) {
+        if (keyPressed->scancode == controls.left && player.dir == RIGHT) {
             player.dir = LEFT;
         }
 
-        if (keyPressed->scancode == KEY_DOWN) {
+        if (keyPressed->scancode == controls.down) {
             player.isWalking = false;
             player.isDucking = true;
             player.setState(state<Duck>());
         }
     
-        if (keyPressed->scancode == KEY_JUMP) {
+        if (keyPressed->scancode == controls.jump) {
             player.isJumping = true;
             player.isOnGround = false;
             player.verticalSpeed = -JUMP_FORCE;
             player.setState(state<Jump>());
         }
     
-        if (keyPressed->scancode == KEY_ATTACK && player.hasToPressAgain) {
+        if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
             player.isAttacking = true;
             player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
@@ -175,8 +181,8 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
     }
     
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-        if ((keyReleased->scancode == KEY_RIGHT && player.dir == RIGHT) || 
-            (keyReleased->scancode == KEY_LEFT && player.dir == LEFT)) {
+        if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
+            (keyReleased->scancode == controls.left && player.dir == LEFT)) {
             player.isWalking = false;
             player.setState(state<Idle>());
         }
@@ -242,8 +248,10 @@ void PlayerJumpState::init(Player& player)
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_ATTACK) {
+        if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
             player.attackedFinished = false;
             player.hasToPressAgain = true;
@@ -324,19 +332,20 @@ void PlayerDuckState::init(Player& player)
 
 void PlayerDuckState::handleInput(Player& player, sf::Event event)
 {
-
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT && player.dir == LEFT) {
+        if (keyPressed->scancode == controls.right && player.dir == LEFT) {
             player.dir = RIGHT;
             player.sprite->setScale({-1.f, 1.f});
         }
         
-        if (keyPressed->scancode == KEY_LEFT && player.dir == RIGHT) {
+        if (keyPressed->scancode == controls.left && player.dir == RIGHT) {
             player.dir = LEFT;
             player.sprite->setScale({1.f, 1.f});
         }
 
-        if (keyPressed->scancode == KEY_ATTACK) {
+        if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
             player.hasToPressAgain = false;
             player.attackedFinished = false;
@@ -346,11 +355,11 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
     }
     
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-        if (keyReleased->scancode == KEY_DOWN){
+        if (keyReleased->scancode == controls.down){
             player.isDucking = false;
             player.setState(state<Idle>());
         }       
-        if (keyReleased->scancode == KEY_ATTACK) {
+        if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
     }    
@@ -403,21 +412,23 @@ void PlayerStairState::init(Player& player)
 
 void PlayerStairState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {
+        if (keyPressed->scancode == controls.right) {
             player.dir = RIGHT;
             player.isWalking = true;
             player.setState(state<StairsWalk>());
         }
         
-        if (keyPressed->scancode == KEY_LEFT) {
+        if (keyPressed->scancode == controls.left) {
             player.dir = LEFT;
             player.isWalking = true;
             player.setState(state<StairsWalk>());
         }
 
 
-        if (keyPressed->scancode == KEY_ATTACK) {
+        if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
         }
@@ -460,17 +471,19 @@ void PlayerStairWalkState::init(Player& player)
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {
+        if (keyPressed->scancode == controls.right) {
             player.dir = RIGHT;
         }
         
-        if (keyPressed->scancode == KEY_LEFT) {
+        if (keyPressed->scancode == controls.left) {
             player.dir = LEFT;
         }
 
 
-        if (keyPressed->scancode == KEY_ATTACK) {
+        if (keyPressed->scancode == controls.attack) {
             player.isWalking = false;
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
@@ -544,15 +557,17 @@ void PlayerAttackIdleState::init(Player& player)
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == KEY_ATTACK)
+        if (KeyReleased->scancode == controls.attack)
         {
             player.hasToPressAgain = true;
         }
         if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-            if ((keyReleased->scancode == KEY_RIGHT && player.dir == RIGHT) || 
-                (keyReleased->scancode == KEY_LEFT && player.dir == LEFT)) {
+            if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
+                (keyReleased->scancode == controls.left && player.dir == LEFT)) {
                 player.isWalking = false;
             }
         }
@@ -664,9 +679,11 @@ void PlayerAttackJumpState::init(Player& player)
 
 void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == KEY_ATTACK)
+        if (KeyReleased->scancode == controls.attack)
         {
             player.hasToPressAgain = true;
         }
@@ -799,10 +816,12 @@ void PlayerAttackDuckState::init(Player& player)
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 {
+    configManager &configManager = configManager::getInstance();
+    auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
         
-        if (KeyReleased->scancode == KEY_DOWN)
+        if (KeyReleased->scancode == controls.down)
         {
             player.isDucking = false;
             player.whip.animationManager->playAnimation(whipNoAttack);

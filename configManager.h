@@ -20,10 +20,10 @@ public:
     };
 
     struct Controls {
-        sf::Keyboard::Scancode move_right;  
-        sf::Keyboard::Scancode move_left;
-        sf::Keyboard::Scancode move_down;
-        sf::Keyboard::Scancode move_up;
+        sf::Keyboard::Scancode right;  
+        sf::Keyboard::Scancode left;
+        sf::Keyboard::Scancode down;
+        sf::Keyboard::Scancode up;
         sf::Keyboard::Scancode jump;
         sf::Keyboard::Scancode attack;
     };
