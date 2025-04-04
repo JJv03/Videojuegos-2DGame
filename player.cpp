@@ -30,7 +30,11 @@ Player::Player()
     // Interactions
     isInvulnerable = false;
     invulnerableTime = 3.0f; // 3 segs
+    invulnerableTimeCounter = 0.0f;
     isPassingObject = false;
+    blinkTimer = 0.0f;
+    blinkInterval = 0.05f; // 0.1 segs
+    visible = true;
 }
 
 void Player::handleInput(sf::Event event)

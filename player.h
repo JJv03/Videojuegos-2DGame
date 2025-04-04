@@ -138,6 +138,10 @@ public:
     bool isInvulnerable;
     float invulnerableTime;
     bool isPassingObject;
+    float invulnerableTimeCounter;
+    float blinkTimer;
+    bool visible;
+    float blinkInterval;
 
     float verticalSpeed;
     float horizontalSpeed;

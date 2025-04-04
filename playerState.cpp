@@ -152,6 +152,42 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         player.animationManager->playAnimation(player.currentAnimation);
     }
     player.animationManager->update(deltaTime);
+
+    // Invulnerabilidad
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+    
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
 }
 
 void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
@@ -164,8 +200,12 @@ void PlayerIdleState::draw(Player& player, sf::RenderWindow &window)
     {
         player.sprite->setScale({1.f, 1.f});
     }
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
     
-    window.draw(*player.sprite);
+    
 }
 
 void PlayerIdleState::end(Player& player)
@@ -256,11 +296,50 @@ void PlayerWalkState::update(Player& player, float deltaTime)
 
     }
     player.animationManager->update(deltaTime);
+
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+    
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
+    
 }
 
 void PlayerWalkState::end(Player& player)
@@ -312,7 +391,40 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
     
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
@@ -346,7 +458,10 @@ void PlayerJumpState::update(Player& player, float deltaTime)
 
 void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
 }
 
 void PlayerJumpState::end(Player& player)
@@ -423,11 +538,48 @@ void PlayerDuckState::update(Player& player, float deltaTime)
 
     }
     player.animationManager->update(deltaTime);
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+    
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
 }
 
 void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
 }
 
 void PlayerDuckState::end(Player& player)
@@ -666,7 +818,42 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         }
     }
    
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
     
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
     
     if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
     {
@@ -682,8 +869,13 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 
 void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
-    window.draw(*player.whip.sprite);
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+        window.draw(*player.whip.sprite);
+    }
+    
+    
 }
 
 void PlayerAttackIdleState::end(Player& player)
@@ -789,6 +981,43 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         }
     }
 
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+    
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
+
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
@@ -804,6 +1033,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         }
     }
 
+    
             
     if(player.isOnGround){
         player.isJumping = false;
@@ -822,8 +1052,11 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
 
 void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
-    window.draw(*player.whip.sprite);
+    if(player.visible){
+        window.draw(*player.sprite);
+        window.draw(*player.whip.sprite);
+    }
+    
 }
 
 void PlayerAttackJumpState::end(Player& player)
@@ -922,6 +1155,42 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         }
     }
 
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+    
+    if(player.isBeingHurt && !player.isInvulnerable){
+        // ir a hurt state
+        player.health--;
+        if (player.health>0)
+        {
+            player.isJumping = true;
+            player.verticalSpeed = -JUMP_FORCE;
+            player.isOnGround = false;
+            player.setState(state<Hurt>());
+        }
+        else{
+            player.isDead = true;
+            player.setState(state<Dead>());
+        }
+    }
     if (player.animationManager->isPlaying(attackFloorSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
@@ -935,10 +1204,11 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
 
 void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
-    window.draw(*player.whip.sprite);
+    if(player.visible){
+        window.draw(*player.sprite);
+        window.draw(*player.whip.sprite);
+    }
 }
-
 void PlayerAttackDuckState::end(Player& player)
 {
     player.sprite->move({0.f,-8.0f});
@@ -1004,7 +1274,9 @@ PlayerHurtState::PlayerHurtState() : PlayerState()
 void PlayerHurtState::init(Player& player)
 {
     cout << "init hurt" << endl;
-    cout << "herido, ahora tengo esta salud:  " << player.health << endl; 
+    cout << "herido, ahora tengo esta salud:  " << player.health << endl;
+    player.isBeingHurt = true; 
+    
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -1017,6 +1289,8 @@ void PlayerHurtState::update(Player& player, float deltaTime)
 
     player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
+
+    
     if (player.dir == RIGHT)
     {
         player.horizontalSpeed = -gPlayerMovementSpeed*0.8f;
@@ -1038,18 +1312,26 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     }
     player.animationManager->update(deltaTime);
 
-    // Check if landed
+    
     if (player.isOnGround)
     {
+        player.blinkTimer = 0.0f; 
+        player.visible = true; 
         player.isJumping = false;
+        player.isBeingHurt = false;
+        player.invulnerableTimeCounter = 0.0f; 
+        player.isInvulnerable = true;
         player.setState(state<Idle>());
-    }
+    }   
 
 }
 
 void PlayerHurtState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
+    if(player.visible) {
+        window.draw(*player.sprite);
+    }
+    
 }
 
 void PlayerHurtState::end(Player& player)
