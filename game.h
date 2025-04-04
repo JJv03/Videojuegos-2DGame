@@ -3,7 +3,7 @@
 #include "tilemap.h"
 #include "tilemapManager.h"
 #include "soundManager.h"
-#include "./enemies/createEnemies.h"
+#include "./enemies/enemyManager.h"
 #include "item.h"
 #include "collisionGrid.h"
 
@@ -18,18 +18,16 @@ public:
     Player player;
     TilemapManager tilemaps;
     CollisionGrid collisionGrid;
-    
+
     // Where all entities will be temporarily stored in order to
     // check their collisions
-    std::vector<Entity*> allEntities;
+    std::vector<Entity *> allEntities;
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
 
-    // Vectores de los enemigos
-    std::vector<ZombieSpawner> zombiesSpawner;
-    std::vector<Leopard> leopard;
-    std::vector<Bat> bat;
+    // Gestor de enemigos
+    EnemyManager *enemyManager;
 
     // std::vector<Item> items;
 
@@ -47,18 +45,18 @@ public:
     void handleInput(sf::Event event);
 
     // Updates the game logic, graphics, etc
-    void update(float deltaTime, const sf::View& view);
+    void update(float deltaTime, const sf::View &view);
 
     // Renders the game
     void draw(sf::RenderWindow &window, Camera &camera);
 
     // Gets the according view of the camera. Sticks to border if it exits mapBounds,
     // takes animations into account, etc
-    //sf::View getView(sf::RenderWindow &window, Camera &camera);
+    // sf::View getView(sf::RenderWindow &window, Camera &camera);
 
     // Check all the possible collisions
     void checkCollisions();
-    void checkCollisions(const sf::View& view);
+    void checkCollisions(const sf::View &view);
 
     // Check enemies collisions
     void checkEnemiesCollisions();

@@ -70,29 +70,16 @@ void Game::init()
     animationManager->addAnimation(duckSimon, player.duckFrames);
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
-    animationManager->addAnimation(hurtSimon,player.hurtFrames);
-    animationManager->addAnimation(deathSimon,player.deadFrames,false);
-    //animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
+    animationManager->addAnimation(hurtSimon, player.hurtFrames);
+    animationManager->addAnimation(deathSimon, player.deadFrames, false);
+    // animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
 
     // Enemies -------------------------------------------------------------
 
-    std::mt19937 globalRng(std::random_device{}());
-
-    // LEVEL 1 - STAGE 2
-    zombiesSpawner.push_back(ZombieSpawner({200.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
-    leopard.push_back(createLeopard({696.f, 112.f}, 1, 2));
-    leopard.push_back(createLeopard({888.f, 80.f}, 1, 2));
-    leopard.push_back(createLeopard({950.f, 112.f}, 1, 2));
-    zombiesSpawner.push_back(ZombieSpawner({1300.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
-
-    // LEVEL 1 - STAGE 3
-    bat.push_back(createBatSpawner({136.f, 112.f}, {50.f, 50.f}, 1, 3));
-    bat.push_back(createBatSpawner({395.f, 112.f}, {50.f, 50.f}, 1, 3));
-
-    // LEVEL 1 - STAGE 5
-    zombiesSpawner.push_back(ZombieSpawner({203.f, 176.f}, {50.f, 50.f}, 1, 5, globalRng));
+    enemyManager = new EnemyManager(&player);
+    enemyManager->init();
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -132,7 +119,8 @@ void Game::init()
     // Secondary weapons ----------------------------------------------------------------
     // Load knife image
     sf::Image knifeImage;
-    if (!knifeImage.loadFromFile("./assets/sprites/player/simonBelmont.png")) {
+    if (!knifeImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    {
         std::cerr << "Error loading knife image" << std::endl;
     }
     knifeImage.createMaskFromColor(gColorKeyGrey);
@@ -149,7 +137,8 @@ void Game::init()
 
     // Initialize knife AnimationManager
     AnimationManager *knifeAnimationManager = new AnimationManager(*player.subWeapon.sprite);
-    if (!knifeAnimationManager) {
+    if (!knifeAnimationManager)
+    {
         std::cerr << "Error: Failed to initialize Knife AnimationManager!" << std::endl;
     }
 
@@ -218,32 +207,12 @@ void Game::handleInput(sf::Event event)
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime, const sf::View& view)
+void Game::update(float deltaTime, const sf::View &view)
 {
-    //std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
+    // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime);
 
-    for (auto &zombieSpawner : zombiesSpawner)
-    {
-        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
-        {
-            zombieSpawner.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
-        }
-    }
-    for (auto &leopard : leopard)
-    {
-        if (leopard.level == currentLevel && leopard.stage == currentStage)
-        {
-            leopard.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone, player.sprite->getPosition());
-        }
-    }
-    for (auto &bat : bat)
-    {
-        if (bat.level == currentLevel && bat.stage == currentStage)
-        {
-            bat.update(deltaTime, player.gPlayerActivationZone, player.gPlayerDeactivationZone);
-        }
-    }
+    enemyManager->update(deltaTime, currentLevel, currentStage);
 
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
@@ -265,7 +234,7 @@ void Game::update(float deltaTime, const sf::View& view)
     texts[0].setString(scoreStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    //checkCollisions(view);
+    // checkCollisions(view);
     checkCollisions();
 }
 
@@ -329,27 +298,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         player.draw(window);
 
-        for (auto &zombieSpawner : zombiesSpawner)
-        {
-            if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
-            {
-                zombieSpawner.draw(window, true);
-            }
-        }
-        for (auto &leopard : leopard)
-        {
-            if (leopard.level == currentLevel && leopard.stage == currentStage)
-            {
-                leopard.draw(window, true);
-            }
-        }
-        for (auto &bat : bat)
-        {
-            if (bat.level == currentLevel && bat.stage == currentStage)
-            {
-                bat.draw(window, true);
-            }
-        }
+        enemyManager->draw(window, currentLevel, currentStage);
 
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
@@ -414,7 +363,6 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
 
-
 void Game::checkCollisions()
 {
 
@@ -422,13 +370,12 @@ void Game::checkCollisions()
 
     checkPlayerTileCollisions();
 
-    checkEnemiesCollisions();
+    enemyManager->checkCollisions(currentLevel, currentStage, tilemaps);
 }
-
 
 // vvvvvvv NO BORRAR vvvvvvv
 
-void Game::checkCollisions(const sf::View& view)
+void Game::checkCollisions(const sf::View &view)
 {
     // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
     allEntities.clear();
@@ -442,17 +389,17 @@ void Game::checkCollisions(const sf::View& view)
     /*
     for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
         for (auto& solidTile : solidTileRow){
-            allEntities.push_back(&solidTile);    
+            allEntities.push_back(&solidTile);
         }
-    } 
-    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) allEntities.push_back(&doorTile.second);    
-    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) allEntities.push_back(&breakableTile);    
+    }
+    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) allEntities.push_back(&doorTile.second);
+    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) allEntities.push_back(&breakableTile);
 
 
     // Add enemies
     for (auto& spawner : zombiesSpawner){
         for (auto& zombie : spawner.zombies){
-            allEntities.push_back(&zombie);    
+            allEntities.push_back(&zombie);
         }
     }
     for (auto& leo : leopard) allEntities.push_back(&leo);
@@ -461,41 +408,9 @@ void Game::checkCollisions(const sf::View& view)
     // for (auto& item : items) allEntities.push_back(&item);
 
     // ... ADD THE REST OF ENTITIES
-    
+
     collisionGrid.checkCollisions(allEntities, view);
     checkPlayerTileCollisions(); // quitar
-}
-
-
-void Game::checkEnemiesCollisions()
-{
-
-    // TO-DO: ESTAS BOUNDS DEBERÍAN SER CON LAS HITBOXES NO CON LOS SPRITES
-    sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
-
-    sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
-
-    for (auto &zombieSpawner : zombiesSpawner)
-    {
-        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
-        {
-            zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
-        }
-    }
-    for (auto &leopard : leopard)
-    {
-        if (leopard.level == currentLevel && leopard.stage == currentStage)
-        {
-            leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], player.isAttacking, player.damage);
-        }
-    }
-    for (auto &bat : bat)
-    {
-        if (bat.level == currentLevel && bat.stage == currentStage)
-        {
-            bat.checkCollisions(playerBounds, whipBounds, player.isAttacking, player.damage);
-        }
-    }
 }
 
 void Game::checkPlayerMapBoundCollisions()
@@ -531,8 +446,8 @@ void Game::checkPlayerTileCollisions()
     // std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
     bool hasCollided = false;
 
-    //std::cout << "Player: " << playerBounds.position.y << std::endl;
-    // std::cout << "Ground: " << player.isOnGround << std::endl;
+    // std::cout << "Player: " << playerBounds.position.y << std::endl;
+    //  std::cout << "Ground: " << player.isOnGround << std::endl;
 
     // Solid tiles
     for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
