@@ -302,6 +302,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
+
+        //collisionGrid.drawCells(window, camera.getView(window.getSize()), virtualCoordOfUpperLeftCornerOfGame);
     }
 }
 

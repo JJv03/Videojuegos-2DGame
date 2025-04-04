@@ -17,6 +17,7 @@ public:
     void addEntity(Entity* entity, const sf::View& view);
     void clear();
     void checkCollisions(std::vector<Entity*>& allEntities, const sf::View& view);
+    void drawCells(sf::RenderWindow& window, const sf::View& view, const sf::Vector2f& upperLeftCorner);
     
 private:
     int cellsPerRow, cellsPerColumn;

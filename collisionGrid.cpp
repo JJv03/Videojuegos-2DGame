@@ -85,6 +85,36 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf:
             }
         }
     }
-
 }
 
+void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::View& view, const sf::Vector2f& viewPosition) {
+    
+    sf::Vector2u windowSize = window.getSize();
+    sf::FloatRect viewport = view.getViewport();
+
+    float actualWidth = windowSize.x * viewport.size.x;
+    float actualHeight = windowSize.y * viewport.size.y;
+
+    float cellWidth = actualWidth / static_cast<float>(cellsPerRow);
+    float cellHeight = actualHeight / static_cast<float>(cellsPerColumn);
+
+    for (int x = 0; x < cellsPerRow; ++x) {
+        for (int y = 0; y < cellsPerColumn; ++y) {
+            sf::RectangleShape cellShape(sf::Vector2f(cellWidth, cellHeight));
+            cellShape.setPosition({viewPosition.x + x * cellWidth, viewPosition.y + y * cellHeight});
+
+            // Colorea la celda si tiene entidades
+            int cellKey = getCellKeyFromCoords(x, y);
+            if (cells.find(cellKey) != cells.end() && !cells[cellKey].empty()) {
+                cellShape.setFillColor(sf::Color(0, 255, 0, 100)); // Verde semi-transparente
+            } else {
+                cellShape.setFillColor(sf::Color(0, 0, 0, 0)); // Transparente
+            }
+
+            cellShape.setOutlineColor(sf::Color::White);
+            cellShape.setOutlineThickness(1.f);
+
+            window.draw(cellShape);
+        }
+    }
+}
