@@ -54,7 +54,6 @@ void Game::init()
     auto simonSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
     simonSprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite->setPosition(tilemaps[currentStage].initialPosition);
-
     sf::FloatRect bounds = simonSprite->getLocalBounds();
 
     // Adjusts the transformation origin to the bottom center
@@ -72,7 +71,7 @@ void Game::init()
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
     animationManager->addAnimation(hurtSimon,player.hurtFrames);
-    animationManager->addAnimation(deathSimon,player.deadFrames);
+    animationManager->addAnimation(deathSimon,player.deadFrames,false);
     //animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;

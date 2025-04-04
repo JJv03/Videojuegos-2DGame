@@ -125,6 +125,7 @@ public:
     bool isBeingHurt;
     bool hasToPressAgain;
     bool isPressingUp;
+    bool died;
 
     // Stats
     float damage = 1.0f;

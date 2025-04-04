@@ -34,7 +34,7 @@ using Dead = PlayerDeadState;
 // Keys 4 hurt and dead just to animate and see the logic, after collitions with enemies are done change it
 constexpr auto KEY_HURT = sf::Keyboard::Scancode::H;
 constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
-
+constexpr auto KEY_REVIVE = sf::Keyboard::Scancode::R;
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
 // ---------------------------- IDLE ----------------------------
@@ -96,13 +96,21 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
         if(keyPressed->scancode == KEY_HURT || player.isBeingHurt){
             player.health--;
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
+            if (player.health>0)
+            {
+                player.isJumping = true;
+                player.verticalSpeed = -JUMP_FORCE;
+                player.isOnGround = false;
+                player.setState(state<Hurt>());
+            }
+            else{
+                player.isDead = true;
+                player.setState(state<Dead>());
+            }
+            
         }
 
-        if(keyPressed->scancode == KEY_DEAD || player.health==0){
+        if(keyPressed->scancode == KEY_DEAD){ //|| player.health==0){
             player.isDead = true;
             player.setState(state<Dead>());
         }
@@ -1064,32 +1072,54 @@ PlayerDeadState::PlayerDeadState() : PlayerState()
 
 void PlayerDeadState::init(Player& player)
 {
-
+    player.currentAnimation = deathSimon;
+    player.animationManager->playAnimation(player.currentAnimation);
+    // Initial position adjustment for first frame
+    player.sprite->move(sf::Vector2f(0.f, 8.f));
 }
 
 void PlayerDeadState::handleInput(Player& player, sf::Event event)
 {
+    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (KeyReleased->scancode == KEY_REVIVE)
+        {
+            player.died = false;
+            player.isDead = false;
+            player.health = 1; // Reset health to 1
+            player.sprite->move(sf::Vector2f(0.f, -16.f)); // Move back up
+            player.sprite->setPosition(sf::Vector2f(100.f,160.f));
+            player.currentAnimation = idleSimon;
+            player.setState(state<Idle>());
+        }
+    }
 }
 
 void PlayerDeadState::update(Player& player, float deltaTime)
 {
-    player.currentAnimation=deathSimon;
-    if (!player.animationManager->isPlaying(player.currentAnimation))
-    {
-        player.animationManager->playAnimation(player.currentAnimation);
+    if(!player.died){
+        player.currentAnimation=deathSimon;
+        if (!player.animationManager->isPlaying(player.currentAnimation))
+        {
+            player.animationManager->playAnimation(player.currentAnimation);
+        }
+        
+        
+        if (player.animationManager->getCurrentFrameIndex()==0)
+        {
+            
+        }
+        else{
+            // Second frame - lower by additional 8 pixels (total 16 from original)
+            player.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x, player.sprite->getPosition().y+8.f)
+            );
+            player.died = true;
+        }
+        player.animationManager->update(deltaTime);
+        
     }
-    player.animationManager->update(deltaTime);
-    /*
-    if (player.animationManager->getCurrentFrameIndex()==0)
-    {
-        player.sprite->setPosition(sf::Vector2f(player.sprite->getPosition().x,
-                                                player.sprite->getPosition().y+7));
-    }
-    else{
-        player.sprite->setPosition(sf::Vector2f(player.sprite->getPosition().x,
-                                                player.sprite->getPosition().y+15));
-    }*/
-
+    
 }
 
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)

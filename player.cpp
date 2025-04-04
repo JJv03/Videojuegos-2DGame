@@ -19,6 +19,7 @@ Player::Player()
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
     isPressingUp = false;
+    died = false;
 
     // Stats
     health = 16;
