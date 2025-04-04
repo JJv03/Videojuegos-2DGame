@@ -79,7 +79,7 @@ void Game::init()
     // Enemies -------------------------------------------------------------
 
     enemyManager = new EnemyManager(&player);
-    enemyManager->init();
+    enemyManager->loadEnemiesFromLevel(1, tilemaps);
 
     // Whip ----------------------------------------------------------------
     sf::Image whipImage;
@@ -573,6 +573,7 @@ void Game::checkPlayerTileCollisions()
                 isLoading = true;
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
+                enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
             }
             else
             {

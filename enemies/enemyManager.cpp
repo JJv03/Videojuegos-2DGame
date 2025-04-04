@@ -5,23 +5,6 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 {
 }
 
-void EnemyManager::init()
-{
-    // LEVEL 1 - STAGE 2
-    zombiesSpawner.push_back(ZombieSpawner({200.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
-    leopard.push_back(createLeopard({696.f, 112.f}, 1, 2));
-    leopard.push_back(createLeopard({888.f, 80.f}, 1, 2));
-    leopard.push_back(createLeopard({950.f, 112.f}, 1, 2));
-    zombiesSpawner.push_back(ZombieSpawner({1300.f, 176.f}, {50.f, 50.f}, 1, 2, globalRng));
-
-    // LEVEL 1 - STAGE 3
-    bat.push_back(createBatSpawner({136.f, 112.f}, {50.f, 50.f}, 1, 3));
-    bat.push_back(createBatSpawner({395.f, 112.f}, {50.f, 50.f}, 1, 3));
-
-    // LEVEL 1 - STAGE 5
-    zombiesSpawner.push_back(ZombieSpawner({203.f, 176.f}, {50.f, 50.f}, 1, 5, globalRng));
-}
-
 void EnemyManager::update(float deltaTime, const size_t currentLevel, const size_t currentStage)
 {
 
@@ -98,5 +81,62 @@ void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, con
         {
             bat.draw(window, true);
         }
+    }
+}
+
+void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemaps)
+{
+
+    zombiesSpawner.clear();
+    leopard.clear();
+    bat.clear();
+
+    switch (level)
+    {
+    case 1:
+
+        for (size_t stageIndex = 0; stageIndex < tilemaps.tilemaps.size(); ++stageIndex)
+        {
+            const TileMap &tilemap = tilemaps.tilemaps[stageIndex];
+            int currentStage = static_cast<int>(stageIndex) + 1;
+
+            for (const auto &enemyData : tilemap.m_enemyData)
+            {
+                switch (enemyData.type)
+                {
+                case 0: // Zombie
+                    zombiesSpawner.push_back(ZombieSpawner(
+                        enemyData.position,
+                        sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
+                                     enemyData.height > 0 ? enemyData.height : 50.f),
+                        level, currentStage, globalRng));
+                    break;
+
+                case 1: // Leopard
+                    leopard.push_back(createLeopard(enemyData.position, level, currentStage));
+                    break;
+
+                case 2: // Bat
+                    bat.push_back(createBatSpawner(
+                        enemyData.position,
+                        sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
+                                     enemyData.height > 0 ? enemyData.height : 50.f),
+                        level, currentStage));
+                    break;
+
+                default:
+                    std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
+                    break;
+                }
+            }
+        }
+        break;
+
+    case 2:
+        break;
+
+    default:
+        std::cerr << "Unknown level for enemy loading: " << level << std::endl;
+        break;
     }
 }

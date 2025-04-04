@@ -11,3 +11,10 @@ doors
 end_doors
 breakable
 end_breakable
+enemies
+0,200.0,176.0,50.0,50.0
+1,696.0,112.0
+1,888.0,80.0
+1,950.0,112.0
+0,1300.0,176.0,50.0,50.0
+end_enemies

@@ -9,22 +9,26 @@
 class EnemyManager
 {
 private:
-    // Vectores de los enemigos
+    // Enemies vector
     std::vector<ZombieSpawner> zombiesSpawner;
     std::vector<Leopard> leopard;
     std::vector<Bat> bat;
 
-    // Puntero al player
+    // Player pointer
     Player *playerPtr;
 
-    // Generador de números aleatorios
+    // Random number generator
     std::mt19937 globalRng;
+
+    // Stores in <n-1> the tilemaps of the stages n in the current level
+    std::vector<TileMap> tilemaps;
 
 public:
     EnemyManager(Player *player);
 
-    void init();
     void update(float deltaTime, const size_t currentLevel, const size_t currentStage);
     void checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps);
     void draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage);
+
+    void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);
 };
