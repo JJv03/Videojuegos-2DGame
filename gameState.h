@@ -130,4 +130,64 @@ public:
 };
 
 
+class ControlsConfGS : public GameState{
+private:
+    sf::Font font;
+    std::vector<sf::Text> configs;
+    int position;
+    SoundManager configSoundManager;
+    configManager &configManager;
+public:
+    explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~ControlsConfGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::View& view) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
+
+class VolumeConfGS : public GameState{
+private:
+    sf::Font font;
+    std::vector<sf::Text> configs;
+    int position;
+    SoundManager configSoundManager;
+    configManager &configManager;
+public:
+    explicit VolumeConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~VolumeConfGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::View& view) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
+
+class GameplayConfGS : public GameState{
+private:
+    sf::Font font;
+    std::vector<sf::Text> configs;
+    int position;
+    SoundManager configSoundManager;
+    configManager &configManager;
+public:
+    explicit GameplayConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~GameplayConfGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::View& view) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
+
 // ADD THE REST OF THE STATES HERE

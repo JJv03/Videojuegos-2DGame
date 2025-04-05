@@ -428,11 +428,10 @@ void ConfigGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[5] = {"CONTROLS", "VIDEO", "SOUND", "GAMEPLAY", "BACK"};
-    for (int i = 0; i < 5; i++) {
+    std::string textos[4] = {"CONTROLS", "SOUND", "GAMEPLAY", "BACK"};
+    for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
-        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
@@ -456,23 +455,19 @@ void ConfigGS::init(){
 
     configSprites.push_back(torch);
 
-    // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
-
-    // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
     configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
     auto audio = configManager.getAudio();
     float musicVol = (audio.master_volume * audio.music_volume)/100;
 
-    configSoundManager.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
+    configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
     configSoundManager.playMusic("menuMusic", musicVol);
 }
 
 void ConfigGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        std::cout << "HEEEEY" << std::endl;
-        if (keyPressed->scancode == controls.down && position < 4) {    
+        if (keyPressed->scancode == controls.down && position < 3) {    
             if (!configSprites.empty()) {
                 sf::Sprite torch = configSprites.back();
                 configSprites.pop_back();
@@ -511,18 +506,19 @@ void ConfigGS::handleInput(sf::Event event){
             std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
                 case 0: // Controls
-                    
+                    std::cout << "Road to controls config" << std::endl;
+                    stateMachine->replaceState(std::make_unique<ControlsConfGS>(stateMachine));
                     break;
-                case 1: // Video
-                    
+                case 1: // Sound
+                    std::cout << "Road to sound config" << std::endl;
+                    stateMachine->replaceState(std::make_unique<VolumeConfGS>(stateMachine));
                     break;
-                case 2: // Sound
-
+                case 2: // Gameplay and video
+                    std::cout << "Road to gameplay and video config" << std::endl;
+                    stateMachine->replaceState(std::make_unique<GameplayConfGS>(stateMachine));
                     break;
-                case 3: // Gameplay
-                    
-                    break;
-                case 4: // Back
+                case 3: // Back
+                    std::cout << "Road back to menu" << std::endl;
                     stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
                     break;
             }
@@ -560,6 +556,114 @@ void ConfigGS::resume(){
 
 void ConfigGS::close(){
     if(debug) std::cout << "ESTADO: Config CERRADO" << std::endl;
+    configSprites.clear();
+    configTextures.clear();
+    configs.clear();
 }
 
 ConfigGS::~ConfigGS() {}
+
+
+// ======================================================
+//                      CONTROLS CONFIG STATE 
+// ======================================================
+
+void ControlsConfGS::init(){
+    if(debug) std::cout << "ESTADO: Controls Config" << std::endl;
+}
+
+void ControlsConfGS::handleInput(sf::Event event){
+    
+}
+
+void ControlsConfGS::update(float deltaTime, const sf::View& view){
+    
+}
+
+void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
+    
+}
+
+void ControlsConfGS::pause(){
+    if(debug) std::cout << "ESTADO: Controls Config PAUSADO" << std::endl;
+}
+
+void ControlsConfGS::resume(){
+    if(debug) std::cout << "ESTADO: Controls Config REANUDADO" << std::endl;
+}
+
+void ControlsConfGS::close(){
+    if(debug) std::cout << "ESTADO: Controls Config CERRADO" << std::endl;
+}
+
+ControlsConfGS::~ControlsConfGS() {}
+
+
+// ======================================================
+//                      VOLUME CONFIG STATE 
+// ======================================================
+
+void VolumeConfGS::init(){
+    if(debug) std::cout << "ESTADO: Volume Config" << std::endl;
+}
+
+void VolumeConfGS::handleInput(sf::Event event){
+    
+}
+
+void VolumeConfGS::update(float deltaTime, const sf::View& view){
+    
+}
+
+void VolumeConfGS::draw(sf::RenderWindow& window, Camera& camera){
+    
+}
+
+void VolumeConfGS::pause(){
+    if(debug) std::cout << "ESTADO: Volume Config PAUSADO" << std::endl;
+}
+
+void VolumeConfGS::resume(){
+    if(debug) std::cout << "ESTADO: Volume Config REANUDADO" << std::endl;
+}
+
+void VolumeConfGS::close(){
+    if(debug) std::cout << "ESTADO: Volume Config CERRADO" << std::endl;
+}
+
+VolumeConfGS::~VolumeConfGS() {}
+
+
+// ======================================================
+//                      GAMEPLAY CONFIG STATE 
+// ======================================================
+
+void GameplayConfGS::init(){
+    if(debug) std::cout << "ESTADO: Gameplay Config" << std::endl;
+}
+
+void GameplayConfGS::handleInput(sf::Event event){
+    
+}
+
+void GameplayConfGS::update(float deltaTime, const sf::View& view){
+    
+}
+
+void GameplayConfGS::draw(sf::RenderWindow& window, Camera& camera){
+    
+}
+
+void GameplayConfGS::pause(){
+    if(debug) std::cout << "ESTADO: Gameplay Config PAUSADO" << std::endl;
+}
+
+void GameplayConfGS::resume(){
+    if(debug) std::cout << "ESTADO: Gameplay Config REANUDADO" << std::endl;
+}
+
+void GameplayConfGS::close(){
+    if(debug) std::cout << "ESTADO: Gameplay Config CERRADO" << std::endl;
+}
+
+GameplayConfGS::~GameplayConfGS() {}
