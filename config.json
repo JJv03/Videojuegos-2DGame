@@ -14,7 +14,8 @@
         "up": "Up",
         "jump": "X",
         "attack": "Z",
-        "enter": "Enter"
+        "enter": "Enter",
+        "escape": "Escape"
     },
     "cheats": {
         "enabled": false

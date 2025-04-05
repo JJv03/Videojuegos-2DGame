@@ -27,6 +27,7 @@ public:
         sf::Keyboard::Scancode jump;
         sf::Keyboard::Scancode attack;
         sf::Keyboard::Scancode enter;
+        sf::Keyboard::Scancode escape;
     };
 
     struct Cheats {

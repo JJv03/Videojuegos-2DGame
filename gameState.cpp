@@ -7,7 +7,7 @@
 #include <chrono>
 #include "configManager.h"
 
-constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
+// constexpr sf::Keyboard::Scancode KEY_RIGHT = sf::Keyboard::Scancode::Right;
 // constexpr sf::Keyboard::Scancode KEY_LEFT = sf::Keyboard::Scancode::Left;
 // constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
 // constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
@@ -510,26 +510,28 @@ void ConfigGS::handleInput(sf::Event event){
             configSoundManager.playSound("menuEnter", soundVol);
             std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
-                case 0:
-                    stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+                case 0: // Controls
+                    
                     break;
-                case 1:
-                    std::cout<<"Not implemented yet :P"<<std::endl;
+                case 1: // Video
+                    
                     break;
-                case 2:
-                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                case 2: // Sound
+
                     break;
-                case 3:
-                    std::cout<<"Bye bye :)"<<std::endl;
-                    //window.close();
+                case 3: // Gameplay
+                    
                     break;
-                case 4:
-                    std::cout<<"Bye bye :)"<<std::endl;
-                    //window.close();
+                case 4: // Back
+                    stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
                     break;
             }
-            //stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
         }
+        /* Add or remove???
+        if (keyPressed->scancode == controls.escape){
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        }
+        */
     }
 }
 
