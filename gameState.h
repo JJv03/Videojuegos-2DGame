@@ -111,8 +111,14 @@ public:
 
 
 class ConfigGS : public GameState{
+private:
+    sf::Font font;
+    std::vector<sf::Text> configs;
+    int position;
+    SoundManager configSoundManager;
+    configManager &configManager;
 public:
-    explicit ConfigGS(GameStateMachine* machine) : GameState(machine) {}
+    explicit ConfigGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ConfigGS() override;
     void init() override;
     void handleInput(sf::Event event) override;

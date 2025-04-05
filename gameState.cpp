@@ -374,15 +374,161 @@ PauseGS::~PauseGS() {}
 // ======================================================
 //                      CONFIG STATE 
 // ======================================================
+std::unordered_map<std::string, sf::Texture> configTextures;
+std::vector<sf::Sprite> configSprites;
 
 void ConfigGS::init(){
     if(debug) std::cout << "ESTADO: Config" << std::endl;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    position = 0;
+    if (!configTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(configTextures["bg"]);
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = bg.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    bg.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    bg.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    configSprites.push_back(bg);
+
+    // Loads text font
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    sf::Text text(font, "Configuration", 35);
+    text.setFillColor(sf::Color(122, 71, 22));
+    text.setOutlineColor(sf::Color(255, 140, 0));
+    text.setOutlineThickness(1.5); 
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    // Centers position
+    float xPos = (gWindowWidth - textBounds.size.x) / 2;
+    float yPos = 70.f;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text);
+
+    // Defines menu options
+    std::string textos[5] = {"CONTROLS", "VIDEO", "SOUND", "GAMEPLAY", "BACK"};
+    for (int i = 0; i < 5; i++) {
+        sf::Text text(font, textos[i], 30);
+        text.setFillColor(sf::Color::White);
+        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = 150.f + i * 45.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        configs.push_back(text);
+    }
+
+    if (!configTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(configTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
+
+    float torchX = configs[1].getPosition().x - 25.f;
+    float torchY = configs[1].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    configSprites.push_back(torch);
+
+    // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
+
+    // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
+    configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    auto audio = configManager.getAudio();
+    float musicVol = (audio.master_volume * audio.music_volume)/100;
+
+    configSoundManager.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
+    configSoundManager.playMusic("menuMusic", musicVol);
 }
 
 void ConfigGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_RIGHT) {    
-            stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+        std::cout << "HEEEEY" << std::endl;
+        if (keyPressed->scancode == controls.down && position < 4) {    
+            if (!configSprites.empty()) {
+                sf::Sprite torch = configSprites.back();
+                configSprites.pop_back();
+
+                position += 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = configs[position+1].getPosition().x - 25.f;
+                float torchY = configs[position+1].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                configSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == controls.up && position > 0) {    
+            if (!configSprites.empty()) {
+                sf::Sprite torch = configSprites.back();
+                configSprites.pop_back();
+
+                position -= 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = configs[position+1].getPosition().x - 25.f;
+                float torchY = configs[position+1].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                configSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == controls.enter) {
+            auto audio = configManager.getAudio();
+            float soundVol = (audio.master_volume * audio.sound_volume)/100;
+            configSoundManager.playSound("menuEnter", soundVol);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+            switch (position) {
+                case 0:
+                    stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+                    break;
+                case 1:
+                    std::cout<<"Not implemented yet :P"<<std::endl;
+                    break;
+                case 2:
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                    break;
+                case 3:
+                    std::cout<<"Bye bye :)"<<std::endl;
+                    //window.close();
+                    break;
+                case 4:
+                    std::cout<<"Bye bye :)"<<std::endl;
+                    //window.close();
+                    break;
+            }
+            //stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
         }
     }
 }
@@ -392,7 +538,14 @@ void ConfigGS::update(float deltaTime, const sf::View& view){
 }
 
 void ConfigGS::draw(sf::RenderWindow& window, Camera& camera){
-    
+    for (const auto& sprite : configSprites) {
+        window.draw(sprite);
+    }
+
+    for (const auto& text : configs) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
 }
 
 void ConfigGS::pause(){
