@@ -742,8 +742,10 @@ void VolumeConfGS::handleInput(sf::Event event){
                     if(soundVol < 100){
                         soundVol += 10;
                     }
+                    configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
                     break;
             }
+            configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.left) {    
@@ -762,8 +764,10 @@ void VolumeConfGS::handleInput(sf::Event event){
                     if(soundVol > 0){
                         soundVol -= 10;
                     }
+                    configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
                     break;
             }
+            configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.enter) {

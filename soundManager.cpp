@@ -109,7 +109,7 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
 }
 
 void SoundManager::adjustAllSoundVolumes(float volume) {
-    // Recorre todos los sonidos activos y ajusta su volumen
+    // Cycle through all active sounds and adjust their volume
     for (auto& [id, soundList] : sounds) {
         for (auto& sound : soundList) {
             if (sound->getStatus() == sf::Sound::Status::Playing) {
@@ -120,7 +120,7 @@ void SoundManager::adjustAllSoundVolumes(float volume) {
 }
 
 void SoundManager::adjustAllMusicVolumes(float volume) {
-    // Recorre todas las músicas activas y ajusta su volumen
+    // Cycle through all active musics and adjust their volume
     for (auto& [id, music] : musicTracks) {
         if (music.getStatus() == sf::Music::Status::Playing) {
             music.setVolume(volume);
