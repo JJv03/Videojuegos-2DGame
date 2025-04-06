@@ -157,6 +157,7 @@ private:
     int position;
     SoundManager configSoundManager;
     configManager &configManager;
+    int masterVol, musicVol, soundVol;
 public:
     explicit VolumeConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~VolumeConfGS() override;

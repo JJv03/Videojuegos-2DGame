@@ -1,26 +1,26 @@
 {
     "audio": {
         "master_volume": 100,
-        "music_volume": 50,
-        "sound_volume": 50
-    },
-    "video": {
-        "window_mode": "fullscreen"
-    },
-    "controls": {
-        "right": "Right",
-        "left": "Left",
-        "down": "Down",
-        "up": "Up",
-        "jump": "X",
-        "attack": "Z",
-        "enter": "Enter",
-        "escape": "Escape"
+        "music_volume": 70,
+        "sound_volume": 30
     },
     "cheats": {
         "enabled": false
     },
+    "controls": {
+        "attack": "Z",
+        "down": "Down",
+        "enter": "Enter",
+        "escape": "Escape",
+        "jump": "X",
+        "left": "Left",
+        "right": "Right",
+        "up": "Up"
+    },
     "difficulty": {
         "hard_mode": false
+    },
+    "video": {
+        "window_mode": "fullscreen"
     }
 }

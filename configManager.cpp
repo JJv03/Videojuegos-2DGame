@@ -64,6 +64,13 @@ configManager::configManager() {
     loadConfiguration("config.json");
 }
 
+int validateVolume(int value) {
+    if (value < 0 || value > 100 || value % 10 != 0) {
+        return 100;
+    }
+    return value;
+}
+
 void configManager::loadConfiguration(const std::string& file) {
     std::ifstream inputFile(file);
     if (!inputFile) {
@@ -71,11 +78,10 @@ void configManager::loadConfiguration(const std::string& file) {
         return;
     }
     inputFile >> originalConfig;
-    currentConfig = originalConfig;
 
-    audio.master_volume = originalConfig["audio"]["master_volume"];
-    audio.music_volume = originalConfig["audio"]["music_volume"];
-    audio.sound_volume = originalConfig["audio"]["sound_volume"];
+    audio.master_volume = validateVolume(originalConfig["audio"]["master_volume"]);
+    audio.music_volume = validateVolume(originalConfig["audio"]["music_volume"]);
+    audio.sound_volume = validateVolume(originalConfig["audio"]["sound_volume"]);
     
     video.window_mode = originalConfig["video"]["window_mode"];
     
@@ -113,15 +119,6 @@ void configManager::saveConfiguration(const std::string& file) {
     j["difficulty"] = { {"hard_mode", difficulty.hard_mode} };
 
     outputFile << j.dump(4);
-}
-
-bool configManager::detectChanges() {
-    return currentConfig != originalConfig;
-}
-
-void configManager::applyChanges() {
-    originalConfig = currentConfig;
-    saveConfiguration("config.json");
 }
 
 configManager::Audio configManager::getAudio() const { return audio; }

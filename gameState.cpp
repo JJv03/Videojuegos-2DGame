@@ -567,6 +567,8 @@ ConfigGS::~ConfigGS() {}
 // ======================================================
 //                      CONTROLS CONFIG STATE 
 // ======================================================
+std::unordered_map<std::string, sf::Texture> controlsConfigTextures;
+std::vector<sf::Sprite> controlsConfigSprites;
 
 void ControlsConfGS::init(){
     if(debug) std::cout << "ESTADO: Controls Config" << std::endl;
@@ -602,21 +604,242 @@ ControlsConfGS::~ControlsConfGS() {}
 // ======================================================
 //                      VOLUME CONFIG STATE 
 // ======================================================
+std::unordered_map<std::string, sf::Texture> volumeConfigTextures;
+std::vector<sf::Sprite> volumeConfigSprites;
 
 void VolumeConfGS::init(){
     if(debug) std::cout << "ESTADO: Volume Config" << std::endl;
+    auto audio = configManager.getAudio();
+    masterVol = audio.master_volume;
+    musicVol = audio.music_volume;
+    soundVol = audio.sound_volume;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    position = 0;
+    if (!volumeConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(volumeConfigTextures["bg"]);
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = bg.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    bg.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    bg.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    volumeConfigSprites.push_back(bg);
+
+    // Loads text font
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    sf::Text text(font, "SOUND", 35);
+    text.setFillColor(sf::Color(122, 71, 22));
+    text.setOutlineColor(sf::Color(255, 140, 0));
+    text.setOutlineThickness(1.5); 
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    // Centers position
+    float xPos = (gWindowWidth - textBounds.size.x) / 2;
+    float yPos = 50.f;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text);
+
+    // Defines menu options
+    std::string textos[4] = {"MASTER AUDIO", "MUSIC", "SOUNDS", "CONFIRM"};
+    for (int i = 0; i < 4; i++) {
+        sf::Text text(font, textos[i], 30);
+        text.setFillColor(sf::Color::White);
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = 115.f + i * 65.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        configs.push_back(text);
+    }
+
+    if (!volumeConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(volumeConfigTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
+
+    float torchX = configs[1].getPosition().x - 25.f;
+    float torchY = configs[1].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    volumeConfigSprites.push_back(torch);
+
+    configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    float musicVol = (audio.master_volume * audio.music_volume)/100;
+
+    configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
+    configSoundManager.playMusic("menuMusic", musicVol);
 }
 
 void VolumeConfGS::handleInput(sf::Event event){
-    
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == controls.down && position < 3) {    
+            if (!volumeConfigSprites.empty()) {
+                sf::Sprite torch = volumeConfigSprites.back();
+                volumeConfigSprites.pop_back();
+
+                position += 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = configs[position+1].getPosition().x - 25.f;
+                float torchY = configs[position+1].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                volumeConfigSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == controls.up && position > 0) {    
+            if (!volumeConfigSprites.empty()) {
+                sf::Sprite torch = volumeConfigSprites.back();
+                volumeConfigSprites.pop_back();
+
+                position -= 1;
+                std::cout<<position<<std::endl;
+
+                float torchX = configs[position+1].getPosition().x - 25.f;
+                float torchY = configs[position+1].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                volumeConfigSprites.push_back(torch);
+            }
+        }
+
+        if (keyPressed->scancode == controls.right) {    
+            switch (position){
+                case 0:
+                    if(masterVol < 100){
+                        masterVol += 10;
+                    }
+                    break;
+                case 1:
+                    if(musicVol < 100){
+                        musicVol += 10;
+                    }
+                    break;
+                case 2:
+                    if(soundVol < 100){
+                        soundVol += 10;
+                    }
+                    break;
+            }
+        }
+
+        if (keyPressed->scancode == controls.left) {    
+            switch (position){
+                case 0:
+                    if(masterVol > 0){
+                        masterVol -= 10;
+                    }
+                    break;
+                case 1:
+                    if(musicVol > 0){
+                        musicVol -= 10;
+                    }
+                    break;
+                case 2:
+                    if(soundVol > 0){
+                        soundVol -= 10;
+                    }
+                    break;
+            }
+        }
+
+        if (keyPressed->scancode == controls.enter) {
+            if (position == 3){ // Back to configs and save files
+                configManager::Audio newAudio;
+                newAudio.master_volume = masterVol;
+                newAudio.music_volume = musicVol;
+                newAudio.sound_volume = soundVol;
+
+                configManager.setAudio(newAudio);
+                configManager.saveConfiguration("config.json");
+
+                auto audio = configManager.getAudio();
+                float soundVol = (audio.master_volume * audio.sound_volume)/100;
+                configSoundManager.playSound("menuEnter", soundVol);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                std::cout << "Road back to config menu" << std::endl;
+                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+            }
+        }
+    }
 }
 
 void VolumeConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
+void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
+    const int MAX_VOLUME = 10;
+    const int SEGMENT_WIDTH = 13;
+    const int SEGMENT_HEIGHT = 15;
+    const int SPACING = 2.5;
+    const float BORDER_THICKNESS = 1.0f;
+
+    // Player
+    for (int i = 0; i < MAX_VOLUME; ++i)
+    {
+        bool isFull = (i < actualVol/10);
+
+        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
+        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
+        sf::RectangleShape segment(sf::Vector2f(width, height));
+
+        // Adjust the position to center the empty segments within the border
+        float xOffset = isFull ? 0 : BORDER_THICKNESS;
+        float yOffset = isFull ? 0 : BORDER_THICKNESS;
+        segment.setPosition(sf::Vector2f(pos.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, pos.y + yOffset));
+
+        segment.setOutlineThickness(BORDER_THICKNESS);
+        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
+        segment.setFillColor(isFull ? sf::Color::Red : sf::Color::Black);
+
+        window.draw(segment);
+    }
+}
+
 void VolumeConfGS::draw(sf::RenderWindow& window, Camera& camera){
-    
+    for (const auto& sprite : volumeConfigSprites) {
+        window.draw(sprite);
+    }
+
+    for (const auto& text : configs) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
+
+    drawVolumeBars(window, masterVol, sf::Vector2f(125, 155));
+    drawVolumeBars(window, musicVol, sf::Vector2f(125, 220));
+    drawVolumeBars(window, soundVol, sf::Vector2f(125, 285));
 }
 
 void VolumeConfGS::pause(){
@@ -629,6 +852,9 @@ void VolumeConfGS::resume(){
 
 void VolumeConfGS::close(){
     if(debug) std::cout << "ESTADO: Volume Config CERRADO" << std::endl;
+    volumeConfigSprites.clear();
+    volumeConfigTextures.clear();
+    configs.clear();
 }
 
 VolumeConfGS::~VolumeConfGS() {}

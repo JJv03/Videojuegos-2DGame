@@ -74,5 +74,4 @@ private:
     static const std::unordered_map<sf::Keyboard::Scancode, std::string> scancodeToStringMap;
 
     json originalConfig;
-    json currentConfig;
 };
