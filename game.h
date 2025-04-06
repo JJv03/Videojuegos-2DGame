@@ -45,7 +45,7 @@ public:
     void handleInput(sf::Event event);
 
     // Updates the game logic, graphics, etc
-    void update(float deltaTime, const sf::View &view);
+    void update(float deltaTime, const sf::Vector2f &viewPosition);
 
     // Renders the game
     void draw(sf::RenderWindow &window, Camera &camera);
@@ -56,7 +56,7 @@ public:
 
     // Check all the possible collisions
     void checkCollisions();
-    void checkCollisions(const sf::View &view);
+    void checkCollisions(const sf::Vector2f &viewPosition);
 
     // Check enemies collisions
     void checkEnemiesCollisions();

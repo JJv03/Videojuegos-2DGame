@@ -207,7 +207,7 @@ void Game::handleInput(sf::Event event)
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime, const sf::View &view)
+void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime);
@@ -234,7 +234,7 @@ void Game::update(float deltaTime, const sf::View &view)
     texts[0].setString(scoreStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    // checkCollisions(view);
+    //checkCollisions(viewPosition);
     checkCollisions();
 }
 
@@ -303,7 +303,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 
-        //collisionGrid.drawCells(window, camera.getView(window.getSize()), virtualCoordOfUpperLeftCornerOfGame);
+        //collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
 }
 
@@ -377,7 +377,7 @@ void Game::checkCollisions()
 
 // vvvvvvv NO BORRAR vvvvvvv
 
-void Game::checkCollisions(const sf::View &view)
+void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {
     // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
     allEntities.clear();
@@ -411,7 +411,7 @@ void Game::checkCollisions(const sf::View &view)
 
     // ... ADD THE REST OF ENTITIES
 
-    collisionGrid.checkCollisions(allEntities, view);
+    collisionGrid.checkCollisions(allEntities, viewPosition);
     checkPlayerTileCollisions(); // quitar
 }
 

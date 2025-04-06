@@ -14,10 +14,10 @@ public:
     int getRows();
     int getColumns();
 
-    void addEntity(Entity* entity, const sf::View& view);
+    void addEntity(Entity* entity, const sf::Vector2f& viewPosition);
     void clear();
-    void checkCollisions(std::vector<Entity*>& allEntities, const sf::View& view);
-    void drawCells(sf::RenderWindow& window, const sf::View& view, const sf::Vector2f& upperLeftCorner);
+    void checkCollisions(std::vector<Entity*>& allEntities, const sf::Vector2f& viewPosition);
+    void drawCells(sf::RenderWindow& window, const sf::Vector2f& upperLeftCorner);
     
 private:
     int cellsPerRow, cellsPerColumn;
@@ -25,5 +25,5 @@ private:
     std::unordered_map<int, std::vector<Entity*>> cells;
 
     int getCellKeyFromCoords(int x, int y) const;
-    std::vector<int> getCellKeysContainingEntity(const Entity& entity, const sf::View& view) const;
+    std::vector<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
 };

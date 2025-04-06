@@ -1,9 +1,10 @@
 #include "collisionGrid.h"
 #include <cmath>
 #include <iostream>
+#include "globals.h"
 
 CollisionGrid::CollisionGrid() 
-    : cellsPerRow(6), cellsPerColumn(6) {}
+    : cellsPerRow(9), cellsPerColumn(9) {}
 
 CollisionGrid::CollisionGrid(int cellsPerRow, int cellsPerColumn) 
     : cellsPerRow(cellsPerRow), cellsPerColumn(cellsPerColumn) {}
@@ -15,23 +16,21 @@ void CollisionGrid::setColumns(const int& newColumns) { cellsPerColumn = newColu
 int CollisionGrid::getRows() { return cellsPerRow; }
 int CollisionGrid::getColumns() { return cellsPerColumn; }
 
-void CollisionGrid::addEntity(Entity* entity, const sf::View& view) {
-    for (int key : getCellKeysContainingEntity(*entity, view)) {
+void CollisionGrid::addEntity(Entity* entity, const sf::Vector2f& viewPosition) {
+    for (int key : getCellKeysContainingEntity(*entity, viewPosition)) {
         cells[key].push_back(entity);
     }
 }
 
-std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity, const sf::View& view) const {
+std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition) {
     std::vector<int> keys;
-
-    sf::Vector2f viewPosition = view.getCenter() - (view.getSize() / 2.f);
 
     sf::FloatRect bounds = entity.getBounds();
     //std::cout << bounds.size.x << ", " << bounds.size.y << std::endl;
     if (bounds.size.x == 0.f || bounds.size.y == 0.f){ return {}; }
 
-    float cellWidth = view.getSize().x / cellsPerRow;
-    float cellHeight = view.getSize().y / cellsPerColumn;
+    float cellWidth = gGameGS_size_x / static_cast<float>(cellsPerRow);
+    float cellHeight = gGameGS_size_y / static_cast<float>(cellsPerColumn);
 
     int startX = static_cast<int>(std::floor((bounds.position.x - viewPosition.x) / cellWidth));
     int startY = static_cast<int>(std::floor((bounds.position.y - viewPosition.y) / cellHeight));
@@ -60,11 +59,11 @@ int CollisionGrid::getCellKeyFromCoords(int x, int y) const {
     return x + y * cellsPerRow;
 }
 
-void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf::View& view) {
+void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf::Vector2f& viewPosition) {
     cells.clear();
 
     for(auto& entity : allEntities){
-        addEntity(entity, view);
+        addEntity(entity, viewPosition);
     }
 
     //std::cout << "All Entities Size: " << allEntities.size() << std::endl;
@@ -87,17 +86,13 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf:
     }
 }
 
-void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::View& view, const sf::Vector2f& viewPosition) {
+void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::Vector2f& viewPosition) {
     
-    sf::Vector2u windowSize = window.getSize();
-    sf::FloatRect viewport = view.getViewport();
-
-    float actualWidth = windowSize.x * viewport.size.x;
-    float actualHeight = windowSize.y * viewport.size.y;
-
-    float cellWidth = actualWidth / static_cast<float>(cellsPerRow);
-    float cellHeight = actualHeight / static_cast<float>(cellsPerColumn);
-
+    float cellWidth = gGameGS_size_x / static_cast<float>(cellsPerRow);
+    float cellHeight = gGameGS_size_y / static_cast<float>(cellsPerColumn);
+    
+    //std::cout << "Cell size: x = " << cellWidth << ", y = " << cellHeight << std::endl;
+    
     for (int x = 0; x < cellsPerRow; ++x) {
         for (int y = 0; y < cellsPerColumn; ++y) {
             sf::RectangleShape cellShape(sf::Vector2f(cellWidth, cellHeight));
@@ -105,7 +100,7 @@ void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::View& view, co
 
             // Colorea la celda si tiene entidades
             int cellKey = getCellKeyFromCoords(x, y);
-            if (cells.find(cellKey) != cells.end() && !cells[cellKey].empty()) {
+            if (!cells[cellKey].empty()) {
                 cellShape.setFillColor(sf::Color(0, 255, 0, 100)); // Verde semi-transparente
             } else {
                 cellShape.setFillColor(sf::Color(0, 0, 0, 0)); // Transparente

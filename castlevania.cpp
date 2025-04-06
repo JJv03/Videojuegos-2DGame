@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
+#include "utils.h"
 
 // constexpr int escala { 1 };
 // int minWindowWidth = 400;
@@ -62,7 +63,7 @@ void Castlevania::run(){
         sf::View view = currentState->getView(window, camera);
         window.setView(view);
 
-        currentState->update(deltaTime, view);
+        currentState->update(deltaTime, getVirtualUpperLeftCornerCoordOfGameView(window));
         
         window.clear();
         currentState->draw(window, camera);
