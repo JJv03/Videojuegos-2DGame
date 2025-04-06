@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ctime>
 
+// Initialize spawner with position, zone, and RNG
 ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference)
     : spawnPosition(position), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
       rng(rngReference), zombieCountDist(1, 3), level(level), stage(stage)
@@ -11,6 +12,7 @@ ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &z
     init();
 }
 
+// Create initial zombie pool
 void ZombieSpawner::init()
 {
     try
@@ -20,7 +22,7 @@ void ZombieSpawner::init()
         for (int i = 0; i < 3; i++)
         {
             zombies.push_back(createZombie(spawnPosition));
-            zombies.back().isActive = false;
+            zombies.back().isActive = false; // Start inactive
         }
     }
     catch (const std::exception &e)
@@ -29,11 +31,13 @@ void ZombieSpawner::init()
     }
 }
 
+// Main update - handles spawning and zombie management
 void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
 {
+    // Check if player is in spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
 
-    // Comprueba que todos los zombis esten inactivos
+    // Check if all zombies are inactive
     allZombiesInactive = true;
 
     for (const auto &zombie : zombies)
@@ -45,7 +49,7 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
         }
     }
 
-    // Comprueba que el spawner este activo
+    // Check if spawner is currently active
     spawnerActive = false;
 
     for (size_t i = 0; i < zombies.size(); i++)
@@ -57,23 +61,24 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
         }
     }
 
-    // Activación del proceso de spawn de la horda
+    // Activate spawn process when conditions met
     if (playerInZone && allZombiesInactive && !spawnerActive)
     {
-        int zombiesToSpawnCount = zombieCountDist(rng);
+        int zombiesToSpawnCount = zombieCountDist(rng); // Random count (1-3)
 
         std::fill(zombiesToSpawn.begin(), zombiesToSpawn.end(), false);
 
-        zombieSpawnTimers = 1.5f;
-        dist = 0.0;
+        zombieSpawnTimers = 1.5f; // Spawn delay
+        dist = 0.0;               // Reset position offset
 
+        // Queue zombies for spawning
         for (int i = 0; i < zombiesToSpawnCount; i++)
         {
             zombiesToSpawn[i] = true;
         }
     }
 
-    // Spawn de los zombies de la orda según el timer y el tamaño de la horda
+    // Process spawn queue
     for (size_t i = 0; i < zombies.size(); i++)
     {
         if (zombiesToSpawn[i])
@@ -82,15 +87,16 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
             if (zombieSpawnTimers <= 0.0f)
             {
+                // Position and activate zombie
                 zombies[i].movePositionToBorder(playerActivationZone, dist);
                 zombies[i].isActive = true;
                 zombiesToSpawn[i] = false;
-                dist += 20;
+                dist += 20; // Offset next zombie
             }
         }
     }
 
-    // Actualizar los zombies activos
+    // Update active zombies
     for (auto &zombie : zombies)
     {
         if (zombie.isActive)
@@ -119,6 +125,7 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 }
 
+// Handle collisions for all active zombies
 void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
     for (auto &zombie : zombies)
@@ -130,6 +137,7 @@ void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const Til
     }
 }
 
+// Render active zombies and debug visuals
 void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)
 {
     for (auto &zombie : zombies)

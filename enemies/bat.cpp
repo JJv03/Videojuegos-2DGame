@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 
+// Constructor: Initialize bat with sprite, hitboxes, position, and game level/stage
 Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
          const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
     : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize), level(level), stage(stage)
@@ -12,10 +13,10 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
     damage = BAT_DAMAGE;
 }
 
+// Update bat logic: handle spawning, movement, and deactivation
 void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
 {
-    // GESTIÓN DE RESPAWN
-
+    // SPAWN LOGIC: activate bat when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
 
     if (batToSpawn)
@@ -27,16 +28,14 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
         spawnerActive = false;
     }
 
-    // Activación del proceso de spawn
     if (playerInZone && !isActive && !spawnerActive)
     {
-        batSpawnTimers = 1.5f;
+        batSpawnTimers = 1.5f; // Delay before spawning
 
         batToSpawn = true;
     }
 
-    // Spawn según el timer
-
+    // Spawn bat after timer expires
     if (batToSpawn)
     {
         batSpawnTimers -= deltaTime;
@@ -50,7 +49,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
         }
     }
 
-    // GESTIÓN DE MOVIMIENTO
+    // MOVEMENT LOGIC: Movement and oscillation when active
     if (isActive)
     {
 
@@ -81,6 +80,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
             }
 
             spawnTime += deltaTime;
+            // Oscillation effect (up-down movement)
             float verticalOscillation = cos(spawnTime * OSCILLATION_SPEED) * OSCILLATION_AMPLITUDE;
             sprite->move({0.f, verticalOscillation});
             for (auto &hitbox : hitboxes)
@@ -93,6 +93,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
     }
 }
 
+// Handle collisions
 void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                           const bool playerIsAtacking, const float playerDamage)
 {
@@ -102,10 +103,10 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     for (auto &hitbox : hitboxes)
     {
 
-        // Vampire killer (whip) collisions
+        // Check weapon collisions
         if (playerIsAtacking)
         {
-            // EL SISTEMA DE ATAQUE DEBERÁ TENER UN COOLDAWN CUANDO GOLPEE ALGO
+
             if (weaponBounds.findIntersection(hitbox).has_value())
             {
                 std::cout << "Vida = " << life << std::endl;
@@ -122,7 +123,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
         }
     }
 
-    // Player collisions
+    // Check player collisions
     for (const auto &hitbox : hitboxes)
     {
         if (hitbox.findIntersection(simonBounds))
@@ -134,6 +135,7 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     }
 }
 
+// Reset bat to initial state
 void Bat::resetPosition()
 {
     Enemy::resetPosition();
@@ -147,26 +149,24 @@ void Bat::resetPosition()
     currentFrame = 0;
 }
 
+// Move bat to spawn position at the edge of player's activation zone
 void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone)
 {
 
     if (!sprite)
         return;
 
-    // Borde derecho de la zona de activación
     float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x;
-
-    // Misma altura que el player
     float originalY = (playerActivationZone.position.y + playerActivationZone.size.y / 2.0f) - 5.0f;
 
-    // Guardar la posición actual
+    // Save original position
     sf::Vector2f oldPosition = sprite->getPosition();
 
-    // Nueva posición
+    // New position
     sf::Vector2f newPosition(rightEdgeX, originalY);
     sprite->setPosition(newPosition);
 
-    // Actualiza las hitboxes
+    // Update hitboxes to match new position
     sf::Vector2f offset = newPosition - oldPosition;
     for (auto &hitbox : hitboxes)
     {
@@ -174,6 +174,7 @@ void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone)
     }
 }
 
+// Render bat and debug info (spawn zone)
 void Bat::draw(sf::RenderWindow &window, bool debugDraw)
 {
     if (sprite && isActive)
@@ -183,6 +184,7 @@ void Bat::draw(sf::RenderWindow &window, bool debugDraw)
 
     if (debugDraw)
     {
+        // Draw spawn zone for debugging
         sf::RectangleShape zoneShape({spawnZone.size.x, spawnZone.size.y});
         zoneShape.setPosition({spawnZone.position.x, spawnZone.position.y});
         zoneShape.setFillColor(sf::Color(255, 255, 0, 50));
@@ -192,6 +194,7 @@ void Bat::draw(sf::RenderWindow &window, bool debugDraw)
     }
 }
 
+// Update animation frame and flip sprite based on direction
 void Bat::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
@@ -211,7 +214,7 @@ void Bat::updateAnimation(float deltaTime)
         }*/
     }
 
-    // Voltear el sprite según la dirección del movimiento
+    // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 
     if (currentSpeed.x < 0)

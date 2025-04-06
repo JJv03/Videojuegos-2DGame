@@ -4,7 +4,7 @@
 Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
     : EntitySprite(_sprite, _hitboxes)
 {
-    // Guarda la posición inicial
+    // Store initial position for later reset
     originalPosition = sprite->getPosition();
 }
 
@@ -13,9 +13,11 @@ void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hi
     // Tilemap collisions
     sf::FloatRect mapBounds = tileMap.getMapBounds();
 
+    // Skip collision checks if enemy is outside map bounds
     if (!hitbox.findIntersection(mapBounds))
         return;
 
+    // Check collisions with each solid tile
     for (size_t row = 0; row < tileMap.m_solidTiles.size(); ++row)
     {
         for (size_t col = 0; col < tileMap.m_solidTiles[row].size(); ++col)
@@ -32,29 +34,30 @@ void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hi
 
                     const float minHeightThreshold = 0.25f;
 
-                    if (overlapX < overlapY && overlapY > minHeightThreshold) // Colisión horizontal
+                    // Handle horizontal collision (left/right)
+                    if (overlapX < overlapY && overlapY > minHeightThreshold)
                     {
                         if (hitbox.position.x < tileBounds.position.x + tileBounds.size.x / 2.f)
                         {
-                            // Colisión desde la izquierda
+                            // Left
                             sprite->move({-overlapX, 0.f});
                             for (auto &h : hitboxes)
                                 h.position.x -= overlapX;
                         }
                         else
                         {
-                            // Colisión desde la derecha
+                            // Right
                             sprite->move({overlapX, 0.f});
                             for (auto &h : hitboxes)
                                 h.position.x += overlapX;
                         }
-                        speed.x = -speed.x;
+                        speed.x = -speed.x; // Reverse horizontal direction on collision
                     }
-                    else // Colisión vertical
+                    else // Vertical collision (up/down)
                     {
                         if (hitbox.position.y < tileBounds.position.y + tileBounds.size.y / 2.f)
                         {
-                            // Colisión desde arriba
+                            // Up
                             sprite->move({0.f, -overlapY});
                             for (auto &h : hitboxes)
                                 h.position.y -= overlapY;
@@ -62,7 +65,7 @@ void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hi
                         }
                         else
                         {
-                            // Colisión desde abajo
+                            // Down
                             sprite->move({0.f, overlapY});
                             for (auto &h : hitboxes)
                                 h.position.y += overlapY;
@@ -76,9 +79,9 @@ void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hi
 
 void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
 {
-    window.draw(*sprite);
+    window.draw(*sprite); // Draw the enemy sprite
 
-    if (debugDraw)
+    if (debugDraw) // Only draw hitboxes in debug mode
     {
         for (const auto &hitbox : hitboxes)
         {
@@ -94,6 +97,7 @@ void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
 
 void Enemy::applyGravity(float deltaTime)
 {
+    // Apply gravity only when not on ground
     if (!isOnGround)
     {
         speed.y -= GRAVITY * deltaTime;
@@ -106,6 +110,8 @@ void Enemy::applyGravity(float deltaTime)
 
 void Enemy::resetPosition()
 {
+    // Reset to original position and restore initial speed
+
     sf::Vector2f offset = originalPosition - sprite->getPosition();
 
     needsPlayerToLeaveZone = true;
@@ -120,12 +126,12 @@ void Enemy::resetPosition()
     speed = {-75.0f, 0.0f};
 }
 
-
 // ------------------------- Entity functions -------------------------
-sf::FloatRect Enemy::getBounds() const {
+sf::FloatRect Enemy::getBounds() const
+{
     return sf::FloatRect();
 }
 
-void Enemy::onCollision(Entity& other){
-
+void Enemy::onCollision(Entity &other)
+{
 }

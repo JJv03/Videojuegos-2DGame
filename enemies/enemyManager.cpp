@@ -1,10 +1,12 @@
 #include "enemyManager.h"
 #include <iostream>
 
+// Initialize with player reference and RNG
 EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::random_device{}())
 {
 }
 
+// Update all active enemies in current level/stage
 void EnemyManager::update(float deltaTime, const size_t currentLevel, const size_t currentStage)
 {
 
@@ -31,6 +33,7 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
     }
 }
 
+// Handle collisions for all enemies in current level/stage
 void EnemyManager::checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps)
 {
     sf::FloatRect playerBounds = playerPtr->sprite->getGlobalBounds();
@@ -59,6 +62,7 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
     }
 }
 
+// Render all enemies in current level/stage with debug visuals
 void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage)
 {
     for (auto &zombieSpawner : zombiesSpawner)
@@ -84,9 +88,10 @@ void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, con
     }
 }
 
+// Load enemy layout for specified level from tilemap data
 void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemaps)
 {
-
+    // Clear existing enemies
     zombiesSpawner.clear();
     leopard.clear();
     bat.clear();
@@ -100,6 +105,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
             const TileMap &tilemap = tilemaps.tilemaps[stageIndex];
             int currentStage = static_cast<int>(stageIndex) + 1;
 
+            // Create enemies from tilemap data
             for (const auto &enemyData : tilemap.m_enemyData)
             {
                 switch (enemyData.type)

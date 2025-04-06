@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 
+// Initialize leopard with stats and vision field
 Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const size_t &level, const size_t &stage)
     : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
@@ -10,7 +11,7 @@ Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
     score = LEOPARD_SCORE;
     damage = LEOPARD_DAMAGE;
 
-    // Campo de visión
+    // Set initial detection area
     if (!hitboxes.empty())
     {
         visionField = sf::FloatRect(
@@ -19,6 +20,7 @@ Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
     }
 }
 
+// Update vision field based on current position
 void Leopard::updateVisionField()
 {
     if (!hitboxes.empty())
@@ -29,24 +31,27 @@ void Leopard::updateVisionField()
     }
 }
 
+// Detect ledges/cliffs to prevent falling
 bool Leopard::checkForLedge(const TileMap &tileMap)
 {
     if (!isOnGround || std::abs(speed.x) < 0.1f)
         return false;
 
+    // Check area in movement direction
     float offsetX = (speed.x > 0) ? hitboxes[0].size.x + 10.0f : -10.0f;
 
     sf::Vector2f checkPoint = {
         hitboxes[0].position.x + offsetX,
         hitboxes[0].position.y + hitboxes[0].size.y + 5.0f};
 
-    // Pequeño rectángulo para verificar colisión con el suelo
+    // Small rectangle to check collision with the ground
     sf::FloatRect checkRect = sf::FloatRect(
         {checkPoint.x - 5.0f, checkPoint.y},
         {10.0f, 10.0f});
 
-    const float minHeightThreshold = 5.0f; // Tolerancia vertical
+    const float minHeightThreshold = 5.0f; // Vertical tolerance
 
+    // Scan solid tiles for ground collision
     for (const auto &row : tileMap.m_solidTiles)
     {
         for (const auto &tile : row)
@@ -70,6 +75,7 @@ bool Leopard::checkForLedge(const TileMap &tileMap)
     return true;
 }
 
+// Jump action
 void Leopard::jump()
 {
     if (isOnGround)
@@ -79,11 +85,12 @@ void Leopard::jump()
     }
 }
 
+// Main update loop
 void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::Vector2f &playerPos)
 {
     playerPosition = playerPos;
 
-    // GESTIÓN DE RESPAWN
+    // SPAWN LOGIC
     bool enemyInsideActivationZone = false;
     bool enemyInsideDeactivationZone = false;
 
@@ -99,36 +106,36 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
         }
     }
 
-    // Si el jugador está fuera de la zona de activación, se permite que el enemigo se reactive en el futuro
+    // If the player is outside the activation zone, the enemy is allowed to reactivate in the future.
     if (!enemyInsideActivationZone)
     {
         needsPlayerToLeaveZone = false;
     }
 
-    // Solo activamos si el jugador está en la zona, el enemigo no está activo y el jugador se alejó previamente
+    // We only activate if the player is in the area, the enemy is not active and the player has previously moved away
     if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
     {
         isActive = true;
     }
 
-    // Se desactiva si el enemigo está activo y salió de la zona de desactivación
+    // Deactivates if the enemy is active and has left the deactivation zone
     if (isActive && !enemyInsideDeactivationZone)
     {
         isActive = false;
         resetPosition();
     }
 
-    // GESTIÓN DE MOVIMIENTO
+    // MOVEMENT AI LOGIC
     if (isActive)
     {
         updateVisionField();
 
-        if (playerDetected && speed.x == 0)
+        if (playerDetected && speed.x == 0) // Chase player if detected
         {
             float directionToPlayer = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
             speed.x = std::abs(LEOPARD_SPEED.x) * directionToPlayer;
         }
-        else if (!playerDetected && !hasRedirected && speed.x != 0 && isOnGround)
+        else if (!playerDetected && !hasRedirected && speed.x != 0 && isOnGround) // Continue towards last known position
         {
             float directionToLastPlayerPos = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
             speed.x = std::abs(LEOPARD_SPEED.x) * directionToLastPlayerPos;
@@ -158,6 +165,7 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     }
 }
 
+// Handle collisions
 void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                               const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
@@ -170,19 +178,18 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
 
     for (auto &hitbox : hitboxes)
     {
-        // COLISIONES CON EL ENTORNO
+        // Environment collisions
         checkBasicCollisions(tileMap, hitbox);
 
-        // Verificar si hay un precipicio adelante y saltar
+        // Jump over ledges
         if (isOnGround && checkForLedge(tileMap))
         {
             jump();
         }
 
-        // COLISIONES CON VAPIRE KILLER
+        // Weapon collisions
         if (playerIsAtacking)
         {
-            // EL SISTEMA DE ATAQUE DEBERÁ TENER UN COOLDAWN CUANDO GOLPEE ALGO
             if (weaponBounds.findIntersection(hitbox).has_value())
             {
                 std::cout << "Vida = " << life << std::endl;
@@ -200,6 +207,7 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
     }
 }
 
+// Reset to initial state
 void Leopard::resetPosition()
 {
     Enemy::resetPosition();
@@ -213,6 +221,7 @@ void Leopard::resetPosition()
     hasRedirected = false;
 }
 
+// Render with optional debug visuals
 void Leopard::draw(sf::RenderWindow &window, bool debugDraw)
 {
     if (sprite && isActive)
@@ -221,6 +230,7 @@ void Leopard::draw(sf::RenderWindow &window, bool debugDraw)
 
         if (debugDraw)
         {
+            // Draw vision field
             sf::RectangleShape visionRect;
             visionRect.setPosition(visionField.position);
             visionRect.setSize(visionField.size);
@@ -232,6 +242,7 @@ void Leopard::draw(sf::RenderWindow &window, bool debugDraw)
     }
 }
 
+// Update animation frame and direction
 void Leopard::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
@@ -251,7 +262,7 @@ void Leopard::updateAnimation(float deltaTime)
         }*/
     }
 
-    // Voltear el sprite según la dirección del movimiento
+    // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 
     if (currentSpeed.x < 0)
