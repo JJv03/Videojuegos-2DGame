@@ -127,8 +127,8 @@ void GameGS::handleInput(sf::Event event){
     game.handleInput(event);
 }
 
-void GameGS::update(float deltaTime, const sf::View& view){
-    game.update(deltaTime, view);
+void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    game.update(deltaTime, viewPosition);
 }
 
 void GameGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -294,7 +294,7 @@ void MenuGS::handleInput(sf::Event event){
     }
 }
 
-void MenuGS::update(float deltaTime, const sf::View& view){
+void MenuGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
@@ -348,7 +348,7 @@ void PauseGS::handleInput(sf::Event event){
     }
 }
 
-void PauseGS::update(float deltaTime, const sf::View& view){
+void PauseGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
@@ -531,7 +531,7 @@ void ConfigGS::handleInput(sf::Event event){
     }
 }
 
-void ConfigGS::update(float deltaTime, const sf::View& view){
+void ConfigGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
@@ -576,7 +576,7 @@ void ControlsConfGS::handleInput(sf::Event event){
     
 }
 
-void ControlsConfGS::update(float deltaTime, const sf::View& view){
+void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
@@ -611,7 +611,7 @@ void VolumeConfGS::handleInput(sf::Event event){
     
 }
 
-void VolumeConfGS::update(float deltaTime, const sf::View& view){
+void VolumeConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
@@ -646,7 +646,7 @@ void GameplayConfGS::handleInput(sf::Event event){
     
 }
 
-void GameplayConfGS::update(float deltaTime, const sf::View& view){
+void GameplayConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
