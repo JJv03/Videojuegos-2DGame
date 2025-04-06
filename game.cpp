@@ -25,10 +25,9 @@ void Game::init()
 
     configManager &configManager = configManager::getInstance();
     auto audio = configManager.getAudio();
-    float musicVol = (audio.master_volume * audio.music_volume) / 100;
 
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
-    gameSoundManager.playMusic("gameMusic", musicVol);
+    gameSoundManager.playMusic("gameMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
 
     tilemaps.loadLevel(1);
 

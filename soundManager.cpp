@@ -127,3 +127,7 @@ void SoundManager::adjustAllMusicVolumes(float volume) {
         }
     }
 }
+
+float SoundManager::realVolume(float master, float other){
+    return (master*other)/100;
+}

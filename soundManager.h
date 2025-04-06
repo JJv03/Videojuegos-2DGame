@@ -75,6 +75,14 @@ public:
      */
     void adjustAllMusicVolumes(float volume);
 
+    /**
+     * @brief Calculates the effective volume based on master and individual volume.
+     * @param master Master volume (0 - 100).
+     * @param other Specific volume (0 - 100).
+     * @return The resulting combined volume (0 - 100).
+     */
+    float realVolume(float master, float other);
+
 private:
     std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;

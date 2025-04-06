@@ -228,10 +228,9 @@ void MenuGS::init(){
     menuSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
     auto audio = configManager.getAudio();
-    float musicVol = (audio.master_volume * audio.music_volume)/100;
 
     menuSoundManager.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
-    menuSoundManager.playMusic("menuMusic", musicVol);
+    menuSoundManager.playMusic("menuMusic", menuSoundManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void MenuGS::handleInput(sf::Event event){
@@ -271,8 +270,7 @@ void MenuGS::handleInput(sf::Event event){
 
         if (keyPressed->scancode == controls.enter) {
             auto audio = configManager.getAudio();
-            float soundVol = (audio.master_volume * audio.sound_volume)/100;
-            menuSoundManager.playSound("menuEnter", soundVol);
+            menuSoundManager.playSound("menuEnter", menuSoundManager.realVolume(audio.master_volume, audio.sound_volume));
             std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
                 case 0:
@@ -458,10 +456,9 @@ void ConfigGS::init(){
     configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
     auto audio = configManager.getAudio();
-    float musicVol = (audio.master_volume * audio.music_volume)/100;
 
     configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
-    configSoundManager.playMusic("menuMusic", musicVol);
+    configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void ConfigGS::handleInput(sf::Event event){
@@ -501,8 +498,7 @@ void ConfigGS::handleInput(sf::Event event){
 
         if (keyPressed->scancode == controls.enter) {
             auto audio = configManager.getAudio();
-            float soundVol = (audio.master_volume * audio.sound_volume)/100;
-            configSoundManager.playSound("menuEnter", soundVol);
+            configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
             std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
             switch (position) {
                 case 0: // Controls
@@ -691,10 +687,8 @@ void VolumeConfGS::init(){
 
     configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
-    float musicVol = (audio.master_volume * audio.music_volume)/100;
-
     configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
-    configSoundManager.playMusic("menuMusic", musicVol);
+    configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void VolumeConfGS::handleInput(sf::Event event){
@@ -783,8 +777,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                 configManager.saveConfiguration("config.json");
 
                 auto audio = configManager.getAudio();
-                float soundVol = (audio.master_volume * audio.sound_volume)/100;
-                configSoundManager.playSound("menuEnter", soundVol);
+                configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                 std::cout << "Road back to config menu" << std::endl;
