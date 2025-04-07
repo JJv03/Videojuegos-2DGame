@@ -40,8 +40,6 @@ private:
     sf::Vector2f m_position;
     
     bool m_isOnGround;
-    
-    float m_verticalSpeed;
 };
 
 

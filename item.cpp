@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "item.h"
 
-constexpr float GRAVITY = 980.f;
+constexpr float GRAVITY = 450.f;
 
 
 // Hash function for the breakable tile type
@@ -36,17 +36,14 @@ Item::Item(ItemType type, const sf::Vector2f& position, const sf::Sprite& sprite
     m_type(type), 
     m_sprite(std::make_shared<sf::Sprite>(sprite)), // Mueve esto arriba (?)
     m_position(position), 
-    m_isOnGround(false), 
-    m_verticalSpeed(0.f)
+    m_isOnGround(false)
 {
     m_sprite->setPosition(m_position);
 }
 
 void Item::update(float deltaTime) {
     if (!m_isOnGround) {
-        m_verticalSpeed += GRAVITY * deltaTime * 1.2f;
-        m_position.y += m_verticalSpeed * deltaTime;
-        m_sprite->setPosition(m_position);
+        m_sprite->move({0.f, GRAVITY * deltaTime});
     }
 }
 
