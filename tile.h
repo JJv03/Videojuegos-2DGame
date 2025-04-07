@@ -1,6 +1,6 @@
 #pragma once
-
 #include "entity.h"
+
 
 class Tile : public Entity
 {
@@ -21,8 +21,6 @@ public:
 class SolidTile : public Tile
 {
 public:
-    bool isVisible = false;         // If <true>, the tile is visible.
-
     SolidTile();
     ~SolidTile() = default;
 

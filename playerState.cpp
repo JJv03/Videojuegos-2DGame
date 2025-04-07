@@ -141,7 +141,7 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         player.setState(state<Walk>());
     }
 
-    if (!player.isOnGround)
+    if (!player.isOnGround)     // HABRIA QUE QUITARLO
     {
         player.sprite->move({0.f,GRAVITY*deltaTime});
     }
@@ -276,7 +276,7 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 void PlayerWalkState::update(Player& player, float deltaTime)
 {
     
-    if (!player.isOnGround)
+    if (!player.isOnGround)      // HABRIA QUE QUITARLO
     {
         player.sprite->move({0.f,GRAVITY*deltaTime});
     }

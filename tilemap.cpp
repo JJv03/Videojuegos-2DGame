@@ -355,6 +355,12 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
             window.draw(rect);
         }
     }
+
+    for (size_t i = 0; i < this->m_solidTileHitboxes.size(); ++i)
+    {
+        sf::RectangleShape rect = FloatRectToRectShape(this->m_solidTileHitboxes[i], 2);
+        window.draw(rect);
+    }
 }
 
 void TileMap::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -381,10 +387,7 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
             size_t tileIndex = row * m_tilesPerRow + col;
             size_t vertexIndex = tileIndex * 6; // Every tile has 6 vertices
 
-            SolidTile &tile = m_solidTiles[row][col];
-
             window.draw(&m_vertices[vertexIndex], 6, sf::PrimitiveType::Triangles, &m_tileset);
-            tile.isVisible = true;
         }
     }
 
@@ -425,6 +428,9 @@ sf::RectangleShape FloatRectToRectShape(const sf::FloatRect &floatRect, int colo
     case 1:
         rectShape.setOutlineColor(sf::Color::Yellow);
         break;
+    case 2:
+        rectShape.setOutlineColor(sf::Color::Blue);
+        break;
 
     default:
         rectShape.setOutlineColor(sf::Color::Red);
@@ -456,6 +462,8 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
     processFileBreakableTiles(file);
 
     processFileEnemies(file);
+
+    processFileHitboxes(file);
 
     file.close();
 }
@@ -631,10 +639,16 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
     std::string line;
 
     // For security, omit the lines until the "breakable" mark
-    while (std::getline(file, line))
+    // while (std::getline(file, line))
+    // {
+    //     if (line == "breakable")
+    //         break;
+    // }
+    std::getline(file, line);
+    if (line != "breakable")
     {
-        if (line == "breakable")
-            break;
+        std::cerr << "[Error] Expected 'breakable' but found: " << line << std::endl;
+        return;
     }
 
     while (std::getline(file, line))
@@ -712,10 +726,17 @@ void TileMap::processFileEnemies(std::ifstream &file)
     std::string line;
 
     // For security, omit the lines until the "enemies" mark
-    while (std::getline(file, line))
+    // while (std::getline(file, line))
+    // {
+    //     if (line == "enemies")
+    //         break;
+    // }
+    
+    std::getline(file, line);
+    if (line != "enemies")
     {
-        if (line == "enemies")
-            break;
+        std::cerr << "[Error] Expected 'enemies' but found: " << line << std::endl;
+        return;
     }
 
     while (std::getline(file, line))
@@ -770,3 +791,54 @@ void TileMap::processFileEnemies(std::ifstream &file)
         }
     }
 }
+
+void TileMap::processFileHitboxes(std::ifstream &file)
+{
+    std::string line;
+    
+    // while (std::getline(file, line))
+    // {
+    //     if (line == "hitboxes")
+    //         break;
+    // }
+    std::getline(file, line);
+    if (line != "hitboxes")
+    {
+        std::cerr << "[Error] Expected 'hitboxes' but found: " << line << std::endl;
+        return;
+    }
+    
+    while (std::getline(file, line))
+    {
+        if (line == "end_hitboxes") break;
+        if (line.empty()) continue;
+        
+        std::stringstream ss(line);
+        std::string token;
+        std::vector<float> values;
+        
+        try {
+            while (std::getline(ss, token, ','))        // x , y, width, height
+            {
+                try {
+                    values.push_back(std::stof(token));
+                } catch (const std::exception &e) {
+                    std::cerr << "Error al procesar valor de hitbox extra: " << token << std::endl;
+                }
+            }
+            
+            if (values.size() != 4) {
+                std::cerr << "[ERROR] La línea de hitbox no contiene exactamente 4 números." << std::endl;
+                continue;
+            }
+            
+            sf::FloatRect hitbox({values[0], values[1]}, {values[2], values[3]});
+            m_solidTileHitboxes.push_back(hitbox);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error processing hitboxes in line: " << line << ". Exception: " << e.what() << std::endl;
+        }
+    }
+}
+

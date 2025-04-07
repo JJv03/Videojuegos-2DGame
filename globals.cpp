@@ -16,6 +16,7 @@ const unsigned int gWindowHeight = 400;
 const float gGameVisibleWorld_size_x = 256.f;
 const float gGameVisibleWorld_size_y = 192.f;     // Considering the overlaped half-tile
 
+
 const float gSimonFeetCollisionNewHeight = 0.15f;
 
 
@@ -25,9 +26,12 @@ const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 
 // ============ TILEMAP VARIABLES =============
+int gStartingLevel = 1;
+int gStartingStage = 1;
+
 const float gTileSize = 32.f;
 
-const float gOverlapedTileSize = gTileSize/2.f;     // It's overlaped by the GUI
+const float gOverlapedTileSize = gTileSize/2.f;     
 
 
 // ============ GUI VARIABLES =============

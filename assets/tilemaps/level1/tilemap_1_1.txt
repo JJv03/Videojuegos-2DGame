@@ -16,3 +16,8 @@ breakable
 0,479,130
 0,607,130
 end_breakable
+enemies
+end_enemies
+hitboxes
+0, 160, 768, 16
+end_hitboxes

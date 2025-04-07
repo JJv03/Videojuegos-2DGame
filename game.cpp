@@ -20,8 +20,8 @@ Game::Game()
 // Initializes a new game from the beggining
 void Game::init()
 {
-    currentLevel = 1;
-    currentStage = 1;
+    currentLevel = gStartingLevel;
+    currentStage = gStartingStage;
 
     configManager &configManager = configManager::getInstance();
     auto audio = configManager.getAudio();
@@ -29,7 +29,7 @@ void Game::init()
     gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
     gameSoundManager.playMusic("gameMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
 
-    tilemaps.loadLevel(1);
+    tilemaps.loadLevel(currentLevel);
 
     // Temporary
     // if (!tileMap.load(1, 1)){
@@ -196,7 +196,7 @@ void Game::init()
     texts.push_back(playerText);
     texts.push_back(enemyText);
 
-    startStage(1);
+    startStage(currentStage);
 }
 
 // Effects changes depending on the input of the player
@@ -264,6 +264,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         {
             window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
         }
+
 
         // =========================================
         // ================== GUI ==================
@@ -441,83 +442,92 @@ void Game::checkPlayerMapBoundCollisions()
     */
 }
 
-void Game::checkPlayerTileCollisions()
+void Game::computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds)
 {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
-    // std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
+    if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
+    {
+        hasCollided = true;
+
+        const float overlapX = intersection->size.x;
+        const float overlapY = intersection->size.y;
+        //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+
+        if (overlapX < overlapY)    // Horizontal collision
+        { 
+            if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
+            {
+                player.sprite->move({-overlapX, 0.f});
+                playerBounds.position.x -= overlapX;
+            }
+            else
+            {
+                player.sprite->move({overlapX, 0.f});
+                playerBounds.position.x += overlapX;
+            }
+        }
+        else    // Vertical collision
+        { 
+            if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
+            { // Simon's feet are collisioning with the tile
+
+                if (!player.isOnGround && player.verticalSpeed >= 0.0f)
+                // if (player.verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
+                { // If player is NOT going up
+
+                    // Option 1: adjust overlapedY and make it be .15f
+                    // float theoreticallyCorrectPositionY = player.sprite->getPosition().y - overlapY;
+                    // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
+                    // float moveY = theoreticallyCorrectPositionY - targetPositionY;
+
+                    // Option 2: read the tile and place the player on top of it, regardless of anything else
+                    float targetPositionY = tileBounds.position.y - playerBounds.size.y + gSimonFeetCollisionNewHeight;
+                    float moveY = targetPositionY - playerBounds.position.y;
+
+                    player.sprite->move({0.f, moveY});
+                    playerBounds.position.y += moveY;
+                    player.verticalSpeed = 0.0f; // (For security) Simon stops falling
+                    player.isOnGround = true;    // Set Simon to be on ground
+                }
+            }
+            else // Simon's head is collisioning with the tile
+            {
+                player.sprite->move({0.f, overlapY});
+                playerBounds.position.y += overlapY;
+                player.verticalSpeed = 0.0f; // (For security) Simon starts falling
+            }
+        }
+    }
+}
+
+void Game::checkPlayerTileCollisions()
+{
     bool hasCollided = false;
 
-    // std::cout << "Player: " << playerBounds.position.y << std::endl;
-    //  std::cout << "Ground: " << player.isOnGround << std::endl;
+    // std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
+    // std::cout << "Tile: " << tileBounds.position.x << ", " << tileBounds.position.y << ", " << tileBounds.size.x << ", " << tileBounds.size.y << std::endl;
+    // std::cout << "Ground: " << player.isOnGround << std::endl;
 
     // Solid tiles
-    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
+    if (!tilemaps[currentStage].m_solidTileHitboxes.empty())    // Optimized hitboxes
     {
-        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
+        for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTileHitboxes)
         {
-            // if (tilemaps[currentStage].m_solidTiles[row][col].isVisible)
-            // {
-            for (auto tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
+            computePlayerTileIntersection(hasCollided, tileBounds);
+        }
+    }
+    else
+    {
+        for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
+        {
+            for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
             {
-                sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
-
-                // if (row == 5 && col == 3) {
-                //     std::cout << "Tile: " << tileBounds.position.x << ", " << tileBounds.position.y << ", " << tileBounds.size.x << ", " << tileBounds.size.y << std::endl;
-                //     std::cout << "Player: " << playerBounds.position.x << ", " << playerBounds.position.y << ", " << playerBounds.size.x << ", " << playerBounds.size.y << std::endl;
-                // }
-                if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
+                for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
                 {
-                    const float overlapX = intersection->size.x;
-                    const float overlapY = intersection->size.y;
-                    // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+                    // ignore hitboxless tiles
+                    if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
 
-                    if (overlapX < overlapY)
-                    { // Horizontal collision
-                        // std::cout << "COLISION HORIZONTAL" << std::endl;
-                        if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
-                        {
-                            player.sprite->move({-overlapX, 0.f});
-                            playerBounds.position.x -= overlapX;
-                        }
-                        else
-                        {
-                            player.sprite->move({overlapX, 0.f});
-                            playerBounds.position.x += overlapX;
-                        }
-                    }
-                    else
-                    { // Vertical collision
-                        // std::cout << "COLISION VERTICAL" << std::endl;
-                        if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
-                        { // Simon's feet are collisioning with the tile
-
-                            if (!player.isOnGround && player.verticalSpeed >= 0.0f)
-                            { // If player is NOT going up
-
-                                // Option 1: adjust overlapedY and make it be .15f
-                                // float theoreticallyCorrectPositionY = player.sprite->getPosition().y - overlapY;
-                                // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
-                                // float moveY = theoreticallyCorrectPositionY - targetPositionY;
-
-                                // Option 2: read the tile and place the player on top of it, regardless of anything else
-                                float targetPositionY = tileBounds.position.y - playerBounds.size.y + gSimonFeetCollisionNewHeight;
-                                float moveY = targetPositionY - playerBounds.position.y;
-
-                                player.sprite->move({0.f, moveY});
-                                playerBounds.position.y += moveY;
-                                player.verticalSpeed = 0.0f; // (For security) Simon stops falling
-                                player.isOnGround = true;    // Set Simon to be on ground
-                            }
-                        }
-                        else // Simon's head is collisioning with the tile
-                        {
-                            player.sprite->move({0.f, overlapY});
-                            playerBounds.position.y += overlapY;
-                            player.verticalSpeed = 0.0f; // (For security) Simon starts falling
-                        }
-                    }
-
-                    hasCollided = true;
+                    computePlayerTileIntersection(hasCollided, tileBounds);
                 }
             }
         }
@@ -531,6 +541,7 @@ void Game::checkPlayerTileCollisions()
 
     // Door tiles
     // i+1 = stage number
+    sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
     for (auto &doorEntry : tilemaps[currentStage].m_doorTiles)
     {
         sf::FloatRect doorBounds = doorEntry.second.hitboxes[0];

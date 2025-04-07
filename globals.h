@@ -17,7 +17,8 @@ extern const unsigned int gWindowHeight;
 extern const float gGameVisibleWorld_size_x;
 extern const float gGameVisibleWorld_size_y;
 
-extern const float gSimonFeetCollisionNewHeight;
+extern const float gSimonFeetCollisionNewHeight;    // Height above the corresponding tile at which Simon is placed after his feet are collide
+
 
 // ============ IMAGE / TEXTURE / SPRITE =============
 extern const sf::Color gColorKeyGrey;
@@ -25,7 +26,13 @@ extern const sf::Color gColorKeyGreen;
 
 
 // ============ TILEMAP VARIABLES =============
+
+extern int gStartingLevel;
+extern int gStartingStage;
+
 extern const float gTileSize;
+
+extern const float gOverlapedTileSize;  // Size of the overlap between the GUI and the tile
 
 
 // ============ GUI VARIABLES =============

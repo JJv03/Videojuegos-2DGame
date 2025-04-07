@@ -57,6 +57,7 @@ public:
     // Check all the possible collisions
     void checkCollisions();
     void checkCollisions(const sf::Vector2f &viewPosition);
+    void computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds);
 
     // Check enemies collisions
     void checkEnemiesCollisions();
