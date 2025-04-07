@@ -74,7 +74,7 @@ int validateVolume(int value) {
 void configManager::loadConfiguration(const std::string& file) {
     std::ifstream inputFile(file);
     if (!inputFile) {
-        std::cerr << "Error al abrir el archivo de configuración." << std::endl;
+        std::cerr << "Error opening configuration file." << std::endl;
         return;
     }
     inputFile >> originalConfig;
@@ -93,15 +93,19 @@ void configManager::loadConfiguration(const std::string& file) {
     controls.attack = stringToScancode(originalConfig["controls"]["attack"]);
     controls.enter = stringToScancode(originalConfig["controls"]["enter"]);
     controls.escape = stringToScancode(originalConfig["controls"]["escape"]);
+    controls.useSubWeapon = stringToScancode(originalConfig["controls"]["useSubWeapon"]);
 
     cheats.enabled = originalConfig["cheats"]["enabled"];
     difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
+
+    std::cout << "Configuration successfully loaded. Contents:\n";
+    std::cout << originalConfig << std::endl;
 }
 
 void configManager::saveConfiguration(const std::string& file) {
     std::ofstream outputFile(file);
     if (!outputFile) {
-        std::cerr << "Error al guardar el archivo de configuración." << std::endl;
+        std::cerr << "Error saving configuration file." << std::endl;
         return;
     }
     json j;
@@ -114,7 +118,8 @@ void configManager::saveConfiguration(const std::string& file) {
                         {"jump", scancodeToString(controls.jump)},
                         {"attack", scancodeToString(controls.attack)},
                         {"enter", scancodeToString(controls.enter)},
-                        {"escape", scancodeToString(controls.escape)}};
+                        {"escape", scancodeToString(controls.escape)},
+                        {"useSubWeapon", scancodeToString(controls.useSubWeapon)}};
     j["cheats"] = { {"enabled", cheats.enabled} };
     j["difficulty"] = { {"hard_mode", difficulty.hard_mode} };
 

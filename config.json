@@ -15,7 +15,8 @@
         "jump": "X",
         "left": "Left",
         "right": "Right",
-        "up": "Up"
+        "up": "Up",
+        "useSubWeapon": "C"
     },
     "difficulty": {
         "hard_mode": false

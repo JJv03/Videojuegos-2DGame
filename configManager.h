@@ -28,6 +28,7 @@ public:
         sf::Keyboard::Scancode attack;
         sf::Keyboard::Scancode enter;
         sf::Keyboard::Scancode escape;
+        sf::Keyboard::Scancode useSubWeapon;
     };
 
     struct Cheats {
