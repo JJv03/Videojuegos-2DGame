@@ -27,7 +27,19 @@ const std::unordered_map<std::string, sf::Keyboard::Scancode> configManager::str
     {"LAlt", sf::Keyboard::Scancode::LAlt}, {"RAlt", sf::Keyboard::Scancode::RAlt},
     {"Escape", sf::Keyboard::Scancode::Escape}, {"Up", sf::Keyboard::Scancode::Up},
     {"Down", sf::Keyboard::Scancode::Down}, {"Left", sf::Keyboard::Scancode::Left},
-    {"Right", sf::Keyboard::Scancode::Right}
+    {"Right", sf::Keyboard::Scancode::Right},
+    {"Hyphen", sf::Keyboard::Scancode::Hyphen}, {"Equal", sf::Keyboard::Scancode::Equal},
+    {"LBracket", sf::Keyboard::Scancode::LBracket}, {"RBracket", sf::Keyboard::Scancode::RBracket},
+    {"Backslash", sf::Keyboard::Scancode::Backslash}, {"Semicolon", sf::Keyboard::Scancode::Semicolon},
+    {"Apostrophe", sf::Keyboard::Scancode::Apostrophe}, {"Grave", sf::Keyboard::Scancode::Grave},
+    {"Comma", sf::Keyboard::Scancode::Comma}, {"Period", sf::Keyboard::Scancode::Period},
+    {"Slash", sf::Keyboard::Scancode::Slash},
+    {"F1", sf::Keyboard::Scancode::F1}, {"F2", sf::Keyboard::Scancode::F2},
+    {"F3", sf::Keyboard::Scancode::F3}, {"F4", sf::Keyboard::Scancode::F4},
+    {"F5", sf::Keyboard::Scancode::F5}, {"F6", sf::Keyboard::Scancode::F6},
+    {"F7", sf::Keyboard::Scancode::F7}, {"F8", sf::Keyboard::Scancode::F8},
+    {"F9", sf::Keyboard::Scancode::F9}, {"F10", sf::Keyboard::Scancode::F10},
+    {"F11", sf::Keyboard::Scancode::F11}, {"F12", sf::Keyboard::Scancode::F12}
 };
 
 const std::unordered_map<sf::Keyboard::Scancode, std::string> configManager::scancodeToStringMap = {
@@ -52,7 +64,19 @@ const std::unordered_map<sf::Keyboard::Scancode, std::string> configManager::sca
     {sf::Keyboard::Scancode::Space, "Space"}, {sf::Keyboard::Scancode::Enter, "Enter"},
     {sf::Keyboard::Scancode::Escape, "Escape"}, {sf::Keyboard::Scancode::Up, "Up"},
     {sf::Keyboard::Scancode::Down, "Down"}, {sf::Keyboard::Scancode::Left, "Left"},
-    {sf::Keyboard::Scancode::Right, "Right"}
+    {sf::Keyboard::Scancode::Right, "Right"},
+    {sf::Keyboard::Scancode::Hyphen, "Hyphen"}, {sf::Keyboard::Scancode::Equal, "Equal"},
+    {sf::Keyboard::Scancode::LBracket, "LBracket"}, {sf::Keyboard::Scancode::RBracket, "RBracket"},
+    {sf::Keyboard::Scancode::Backslash, "Backslash"}, {sf::Keyboard::Scancode::Semicolon, "Semicolon"},
+    {sf::Keyboard::Scancode::Apostrophe, "Apostrophe"}, {sf::Keyboard::Scancode::Grave, "Grave"},
+    {sf::Keyboard::Scancode::Comma, "Comma"}, {sf::Keyboard::Scancode::Period, "Period"},
+    {sf::Keyboard::Scancode::Slash, "Slash"},
+    {sf::Keyboard::Scancode::F1, "F1"}, {sf::Keyboard::Scancode::F2, "F2"},
+    {sf::Keyboard::Scancode::F3, "F3"}, {sf::Keyboard::Scancode::F4, "F4"},
+    {sf::Keyboard::Scancode::F5, "F5"}, {sf::Keyboard::Scancode::F6, "F6"},
+    {sf::Keyboard::Scancode::F7, "F7"}, {sf::Keyboard::Scancode::F8, "F8"},
+    {sf::Keyboard::Scancode::F9, "F9"}, {sf::Keyboard::Scancode::F10, "F10"},
+    {sf::Keyboard::Scancode::F11, "F11"}, {sf::Keyboard::Scancode::F12, "F12"}
 };
 
 configManager& configManager::getInstance() {

@@ -626,6 +626,11 @@ void ControlsConfGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    
+    if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
 
     sf::Text text(font, "Controls", 35);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -798,30 +803,40 @@ void ControlsConfGS::handleInput(sf::Event event){
         else{
             if (col == 0){
                 switch (position){
-                    case 0:
+                    case 0: // Right
+                        right = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 1:
+                    case 1: // Left
+                        left = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 2:
+                    case 2: // Down
+                        down = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 3:
+                    case 3: // Up
+                        up = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 4:
+                    case 4: // Jump
+                        jump = configManager.scancodeToString(keyPressed->scancode);
                         break;
                 }
             }
             else{ // col == 1
                 switch (position){
-                    case 0:
+                    case 0: // Attack
+                        attack = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 1:
+                    case 1: // Subweapon
+                        useSubWeapon = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 2:
+                    case 2: // Enter
+                        enter = configManager.scancodeToString(keyPressed->scancode);
                         break;
-                    case 3:
+                    case 3: // Escape
+                        escape = configManager.scancodeToString(keyPressed->scancode);
                         break;
                 }
             }
+            waitingInput = false;
         }
     }
 }
@@ -858,7 +873,7 @@ void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
 
         // Only add control text for options 1 to 9
         if (i >= 1 && i <= 9 && (i - 1) < currentControls.size()) {
-            sf::Text controlText(label.getFont(), currentControls[i - 1], 15);
+            sf::Text controlText(fontinputs, currentControls[i - 1], 10);
             controlText.setFillColor(sf::Color(255, 140, 0));
 
             sf::Vector2f pos = label.getPosition();

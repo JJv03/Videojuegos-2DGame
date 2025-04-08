@@ -134,6 +134,7 @@ public:
 class ControlsConfGS : public GameState{
 private:
     sf::Font font;
+    sf::Font fontinputs;
     std::vector<sf::Text> configs;
     int position, col;
     SoundManager configSoundManager;
