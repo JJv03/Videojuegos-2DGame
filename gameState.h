@@ -163,7 +163,7 @@ class VolumeConfGS : public GameState{
 private:
     sf::Font font;
     std::vector<sf::Text> configs;
-    int position;
+    int position, col;
     SoundManager configSoundManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;

@@ -982,6 +982,7 @@ void VolumeConfGS::init(){
 
     // Loads menu texture
     position = 0;
+    col = 0;
     if (!volumeConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -1040,18 +1041,31 @@ void VolumeConfGS::init(){
         configs.push_back(text);
     }
 
-    sf::Text text2(font, "CONFIRM", 30);
-    text2.setFillColor(sf::Color(0, 190, 0));
-    text2.setOutlineColor(sf::Color(0, 100, 0));
+    // BACK
+    sf::Text text2(font, "BACK", 30);
+    text2.setFillColor(sf::Color::White);
+    text2.setOutlineColor(sf::Color(128, 128, 128));
     text2.setOutlineThickness(1.5);
     textBounds = text2.getLocalBounds();
 
-    // Centers position
-    xPos = (gWindowWidth - textBounds.size.x) / 2;
-    yPos = 115.f + 3 * 65.f;
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
 
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
+
+    // CONFIRM
+    sf::Text text3(font, "CONFIRM", 30);
+    text3.setFillColor(sf::Color(0, 190, 0));
+    text3.setOutlineColor(sf::Color(0, 100, 0));
+    text3.setOutlineThickness(1.5);
+    textBounds = text3.getLocalBounds();
+
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
+
+    text3.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text3);
 
     if (!volumeConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -1076,35 +1090,11 @@ void VolumeConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.down && position < 3) {    
-            if (!volumeConfigSprites.empty()) {
-                sf::Sprite torch = volumeConfigSprites.back();
-                volumeConfigSprites.pop_back();
-
-                position ++;
-                std::cout<<position<<std::endl;
-
-                float torchX = configs[position+1].getPosition().x - 25.f;
-                float torchY = configs[position+1].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
-
-                volumeConfigSprites.push_back(torch);
-            }
+            position ++;
         }
 
         if (keyPressed->scancode == controls.up && position > 0) {    
-            if (!volumeConfigSprites.empty()) {
-                sf::Sprite torch = volumeConfigSprites.back();
-                volumeConfigSprites.pop_back();
-
-                position --;
-                std::cout<<position<<std::endl;
-
-                float torchX = configs[position+1].getPosition().x - 25.f;
-                float torchY = configs[position+1].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
-
-                volumeConfigSprites.push_back(torch);
-            }
+            position --;
         }
 
         if (keyPressed->scancode == controls.right) {    
@@ -1124,6 +1114,11 @@ void VolumeConfGS::handleInput(sf::Event event){
                         soundVol += 10;
                     }
                     configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
+                    break;
+                case 3:
+                    if (col == 0){
+                        col = 1;
+                    }
                     break;
             }
             configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
@@ -1147,12 +1142,26 @@ void VolumeConfGS::handleInput(sf::Event event){
                     }
                     configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
                     break;
+                case 3:
+                    if (col == 1){
+                        col = 0;
+                    }
+                    break;
             }
             configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.enter) {
-            if (position == 3){ // Back to configs and save files
+            if (position == 3 && col == 0){
+                auto audio = configManager.getAudio();
+                configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                std::cout << "Road back to config menu" << std::endl;
+                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+            }
+
+            if (position == 3 && col == 1){ // Back to configs and save files
                 configManager::Audio newAudio;
                 newAudio.master_volume = masterVol;
                 newAudio.music_volume = musicVol;
@@ -1165,10 +1174,29 @@ void VolumeConfGS::handleInput(sf::Event event){
                 configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                std::cout << "Road back to config menu" << std::endl;
+                std::cout << "Road back to config menu after saving" << std::endl;
                 stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
             }
         }
+
+        if (!volumeConfigSprites.empty()) {
+            sf::Sprite torch = volumeConfigSprites.back();
+            volumeConfigSprites.pop_back();
+            float torchX = 0;
+            float torchY = 0;
+            if (position <= 2){
+                torchX = configs[position+1].getPosition().x - 25.f;
+                torchY = configs[position+1].getPosition().y + 2.f;
+            }
+            else{
+                torchX = configs[position+1+col].getPosition().x - 25.f;
+                torchY = configs[position+1+col].getPosition().y + 2.f;
+            }
+            torch.setPosition(sf::Vector2f(torchX, torchY));
+
+            volumeConfigSprites.push_back(torch);
+        }
+        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
     }
 }
 
