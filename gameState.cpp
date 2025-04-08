@@ -693,7 +693,7 @@ void ControlsConfGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         // Mover hacia abajo
         if (keyPressed->scancode == controls.down){
-            int maxRows = (col == 0) ? 4 : 3; // izquierda tiene 5, derecha tiene 4
+            int maxRows = (col == 0) ? 6 : 5; // izquierda tiene 5, derecha tiene 4
             if (position < maxRows){
                 position++;
             }
@@ -711,7 +711,7 @@ void ControlsConfGS::handleInput(sf::Event event){
             if (col == 0 && position <= 3){ // para que no pase a un índice inválido
                 col = 1;
             }
-            else if (col == 0 && position >= 4){
+            else if (col == 0 && position == 4){
                 position = 3;
                 col = 1;
             }
@@ -719,7 +719,7 @@ void ControlsConfGS::handleInput(sf::Event event){
 
         // Mover a la izquierda
         if (keyPressed->scancode == controls.left){
-            if (col == 1){
+            if (col == 1 && position <= 3){
                 col = 0;
             }
         }
@@ -730,10 +730,20 @@ void ControlsConfGS::handleInput(sf::Event event){
             controlsConfigSprites.pop_back();
 
             // Calcular índice lineal en el vector `configs`
-            int index = (col == 0) ? position : 5 + position;
+            int index = 0;
+            if (position == 6 || (position == 5 && col == 1)){
+                index = 11;
+            }
+            else if (position == 5){
+                index = 10;
+            }
+            else{
+                index = (col == 0) ? position : 5 + position;
+                index++;
+            }
 
-            float torchX = configs[index + 1].getPosition().x - 25.f;
-            float torchY = configs[index + 1].getPosition().y + 2.f;
+            float torchX = configs[index].getPosition().x - 25.f;
+            float torchY = configs[index].getPosition().y + 2.f;
             torch.setPosition(sf::Vector2f(torchX, torchY));
 
             controlsConfigSprites.push_back(torch);
