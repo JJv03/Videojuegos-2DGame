@@ -139,6 +139,7 @@ private:
     SoundManager configSoundManager;
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
+    bool waitingInput;
 public:
     explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ControlsConfGS() override;

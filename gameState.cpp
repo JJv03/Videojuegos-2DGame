@@ -579,6 +579,8 @@ void ControlsConfGS::init(){
     escape = configManager.scancodeToString(controls.escape);
     useSubWeapon = configManager.scancodeToString(controls.useSubWeapon);
 
+    waitingInput = false;
+
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
@@ -634,10 +636,10 @@ void ControlsConfGS::init(){
         sf::Text text(font, textos[i], 20);
         text.setFillColor(sf::Color::White);
     
-        int col = (i < 5) ? 0 : 1;               // Columna 0: izquierda, Columna 1: derecha
-        int row = (i < 5) ? i : i - 5;           // Índice de fila
+        int col = (i < 5) ? 0 : 1;
+        int row = (i < 5) ? i : i - 5;
     
-        float spacingY = 30.f;                   // Espaciado vertical entre textos
+        float spacingY = 30.f;
         float xPos = (col == 0) ? 50.f : gWindowWidth / 2.f + 15;
         float yPos = 100.f + row * spacingY;
     
@@ -691,64 +693,65 @@ void ControlsConfGS::init(){
 void ControlsConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        // Mover hacia abajo
-        if (keyPressed->scancode == controls.down){
-            int maxRows = (col == 0) ? 6 : 5; // izquierda tiene 5, derecha tiene 4
-            if (position < maxRows){
-                position++;
-            }
-        }
-
-        // Mover hacia arriba
-        if (keyPressed->scancode == controls.up){
-            if (position > 0) {
-                position--;
-            }
-        }
-
-        // Mover a la derecha
-        if (keyPressed->scancode == controls.right){
-            if (col == 0 && position <= 3){ // para que no pase a un índice inválido
-                col = 1;
-            }
-            else if (col == 0 && position == 4){
-                position = 3;
-                col = 1;
-            }
-        }
-
-        // Mover a la izquierda
-        if (keyPressed->scancode == controls.left){
-            if (col == 1 && position <= 3){
-                col = 0;
-            }
-        }
-
-        // Actualizar la posición de la antorcha
-        if (!controlsConfigSprites.empty()){
-            sf::Sprite torch = controlsConfigSprites.back();
-            controlsConfigSprites.pop_back();
-
-            // Calcular índice lineal en el vector `configs`
-            int index = 0;
-            if (position == 6 || (position == 5 && col == 1)){
-                index = 11;
-            }
-            else if (position == 5){
-                index = 10;
-            }
-            else{
-                index = (col == 0) ? position : 5 + position;
-                index++;
+        if (!waitingInput){ // If we are not waiting an input normal movement of the torch
+            // Move down
+            if (keyPressed->scancode == controls.down){
+                int maxRows = (col == 0) ? 6 : 5;
+                if (position < maxRows){
+                    position++;
+                }
             }
 
-            float torchX = configs[index].getPosition().x - 25.f;
-            float torchY = configs[index].getPosition().y + 2.f;
-            torch.setPosition(sf::Vector2f(torchX, torchY));
+            // Move up
+            if (keyPressed->scancode == controls.up){
+                if (position > 0) {
+                    position--;
+                }
+            }
 
-            controlsConfigSprites.push_back(torch);
+            // Move right
+            if (keyPressed->scancode == controls.right){
+                if (col == 0 && position <= 3){
+                    col = 1;
+                }
+                else if (col == 0 && position == 4){
+                    position = 3;
+                    col = 1;
+                }
+            }
 
-            std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
+            // Move left
+            if (keyPressed->scancode == controls.left){
+                if (col == 1 && position <= 3){
+                    col = 0;
+                }
+            }
+
+            // Update torch position
+            if (!controlsConfigSprites.empty()){
+                sf::Sprite torch = controlsConfigSprites.back();
+                controlsConfigSprites.pop_back();
+
+                int index = 0;
+                if (position == 6 || (position == 5 && col == 1)){
+                    index = 11;
+                }
+                else if (position == 5){
+                    index = 10;
+                }
+                else{
+                    index = (col == 0) ? position : 5 + position;
+                    index++;
+                }
+
+                float torchX = configs[index].getPosition().x - 25.f;
+                float torchY = configs[index].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                controlsConfigSprites.push_back(torch);
+
+                std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
+            }
         }
     }
 }
