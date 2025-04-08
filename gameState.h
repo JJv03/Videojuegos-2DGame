@@ -4,6 +4,7 @@
 #include "soundManager.h"
 #include "globals.h"
 #include "configManager.h"
+#include <string>
 
 
 // ============ Auxiliar functions =============
@@ -137,6 +138,7 @@ private:
     int position;
     SoundManager configSoundManager;
     configManager &configManager;
+    std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
 public:
     explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ControlsConfGS() override;

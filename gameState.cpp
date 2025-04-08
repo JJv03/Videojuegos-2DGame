@@ -568,6 +568,121 @@ std::vector<sf::Sprite> controlsConfigSprites;
 
 void ControlsConfGS::init(){
     if(debug) std::cout << "ESTADO: Controls Config" << std::endl;
+    auto controls = configManager.getControls();
+    right = configManager.scancodeToString(controls.right);
+    left = configManager.scancodeToString(controls.left);
+    down = configManager.scancodeToString(controls.down);
+    up = configManager.scancodeToString(controls.up);
+    jump = configManager.scancodeToString(controls.jump);
+    attack = configManager.scancodeToString(controls.attack);
+    enter = configManager.scancodeToString(controls.enter);
+    escape = configManager.scancodeToString(controls.escape);
+    useSubWeapon = configManager.scancodeToString(controls.useSubWeapon);
+
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    position = 0;
+    if (!controlsConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(controlsConfigTextures["bg"]);
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = bg.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    bg.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    bg.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    controlsConfigSprites.push_back(bg);
+
+    // Loads text font
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    sf::Text text(font, "Controls", 35);
+    text.setFillColor(sf::Color(122, 71, 22));
+    text.setOutlineColor(sf::Color(255, 140, 0));
+    text.setOutlineThickness(1.5); 
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    // Centers position
+    float xPos = (gWindowWidth - textBounds.size.x) / 2;
+    float yPos = 50.f;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text);
+
+    // Defines menu options
+    std::string textos[9] = {"RIGHT", "LEFT", "DOWN", "UP", "JUMP", "ATTACK", "ENTER", "ESCAPE", "SUBWEAPON"};
+    for (int i = 0; i < 9; i++) {
+        sf::Text text(font, textos[i], 20);
+        text.setFillColor(sf::Color::White);
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = 100.f + i * 30.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        configs.push_back(text);
+    }
+
+    // SET DEFAULT CONTROLS
+    sf::Text text2(font, "DEFAULT", 30);
+    text2.setFillColor(sf::Color(255, 165, 0));
+    textBounds = text2.getLocalBounds();
+
+    xPos = (gWindowWidth - textBounds.size.x) / 2;
+    yPos = 115.f + 3 * 65.f;
+
+    text2.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text2);
+
+    // CONFIRM
+    sf::Text text3(font, "CONFIRM", 30);
+    text3.setFillColor(sf::Color::Green);
+    textBounds = text3.getLocalBounds();
+
+    xPos = (gWindowWidth - textBounds.size.x) / 2;
+    yPos = 115.f + 3 * 65.f;
+
+    text3.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text3);
+
+    if (!controlsConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(controlsConfigTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
+
+    float torchX = configs[1].getPosition().x - 25.f;
+    float torchY = configs[1].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    controlsConfigSprites.push_back(torch);
+
+    configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
+
+    auto audio = configManager.getAudio();
+    configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void ControlsConfGS::handleInput(sf::Event event){
@@ -579,7 +694,14 @@ void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
 }
 
 void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
-    
+    for (const auto& sprite : controlsConfigSprites) {
+        window.draw(sprite);
+    }
+
+    for (const auto& text : configs) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
 }
 
 void ControlsConfGS::pause(){
@@ -658,8 +780,8 @@ void VolumeConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[4] = {"MASTER AUDIO", "MUSIC", "SOUNDS", "CONFIRM"};
-    for (int i = 0; i < 4; i++) {
+    std::string textos[3] = {"MASTER AUDIO", "MUSIC", "SOUNDS"};
+    for (int i = 0; i < 3; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textBounds = text.getLocalBounds();
@@ -671,6 +793,17 @@ void VolumeConfGS::init(){
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
     }
+
+    sf::Text text2(font, "CONFIRM", 30);
+    text2.setFillColor(sf::Color::Green);
+    textBounds = text2.getLocalBounds();
+
+    // Centers position
+    xPos = (gWindowWidth - textBounds.size.x) / 2;
+    yPos = 115.f + 3 * 65.f;
+
+    text2.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text2);
 
     if (!volumeConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
