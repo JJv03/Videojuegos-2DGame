@@ -677,7 +677,7 @@ void ControlsConfGS::init(){
     text3.setOutlineThickness(1.5);
     textBounds = text3.getLocalBounds();
 
-    xPos = (gWindowWidth / 2.f) - textBounds.size.x - 40.f;
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
     yPos = 315.f; // 120.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
@@ -690,7 +690,7 @@ void ControlsConfGS::init(){
     text4.setOutlineThickness(1.5);
     textBounds = text4.getLocalBounds();
 
-    xPos = (gWindowWidth / 2.f) - textBounds.size.x + 40.f;
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
     yPos = 315.f; // 120.f + 3 * 65.f;
 
     text4.setPosition(sf::Vector2f(xPos, yPos));
@@ -721,6 +721,10 @@ void ControlsConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (!waitingInput){ // If we are not waiting an input normal movement of the torch
+            if (keyPressed->scancode == controls.enter && ((position <= 4 && col == 0) || (position <= 3 && col == 1))){
+                waitingInput = true;
+            }
+            
             // Move down
             if (keyPressed->scancode == controls.down){
                 int maxRows = (col == 0) ? 6 : 5;
@@ -791,11 +795,52 @@ void ControlsConfGS::handleInput(sf::Event event){
                 std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
             }
         }
+        else{
+            if (col == 0){
+                switch (position){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+            }
+            else{ // col == 1
+                switch (position){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                }
+            }
+        }
     }
 }
 
 void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
-    
+    sf::Sprite torch = controlsConfigSprites.back();
+    controlsConfigSprites.pop_back();
+    if (waitingInput) {
+        blinkTimer += deltaTime;
+
+        if (blinkTimer >= blinkInterval) {
+            torch.setColor(torch.getColor() == sf::Color::Transparent ? sf::Color::White : sf::Color::Transparent);
+            blinkTimer = 0.0f;
+        }
+    } else {
+        // Si no estamos esperando input, aseguramos que la antorcha esté visible
+        torch.setColor(sf::Color::White);
+    }
+    controlsConfigSprites.push_back(torch);
 }
 
 void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -814,10 +859,11 @@ void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
         // Only add control text for options 1 to 9
         if (i >= 1 && i <= 9 && (i - 1) < currentControls.size()) {
             sf::Text controlText(label.getFont(), currentControls[i - 1], 15);
-            controlText.setFillColor(sf::Color(200, 200, 200));
+            controlText.setFillColor(sf::Color(255, 140, 0));
 
             sf::Vector2f pos = label.getPosition();
             pos.x += label.getLocalBounds().size.x + 10;
+            pos.y += 2.5;
             controlText.setPosition(pos);
 
             window.draw(controlText);
@@ -835,6 +881,9 @@ void ControlsConfGS::resume(){
 
 void ControlsConfGS::close(){
     if(debug) std::cout << "ESTADO: Controls Config CERRADO" << std::endl;
+    controlsConfigSprites.clear();
+    controlsConfigTextures.clear();
+    configs.clear();
 }
 
 ControlsConfGS::~ControlsConfGS() {}

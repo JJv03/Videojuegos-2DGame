@@ -141,6 +141,8 @@ private:
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
     std::string defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
     bool waitingInput;
+    float blinkTimer = 0.0f;
+    float blinkInterval = 0.25f;
 public:
     explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ControlsConfGS() override;
