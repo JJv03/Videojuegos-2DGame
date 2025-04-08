@@ -148,6 +148,7 @@ public:
     explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ControlsConfGS() override;
     void init() override;
+    void setDefault();
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;

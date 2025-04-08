@@ -722,12 +722,31 @@ void ControlsConfGS::init(){
     configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
+void ControlsConfGS::setDefault(){
+    right = defRight;
+    left = defLeft;
+    down = defDown;
+    up = defUp;
+    jump = defJump; 
+    attack = defAttack;
+    enter = defEnter;
+    escape = defEscape;
+    useSubWeapon = defUseSubWeapon;
+}
+
 void ControlsConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (!waitingInput){ // If we are not waiting an input normal movement of the torch
-            if (keyPressed->scancode == controls.enter && ((position <= 4 && col == 0) || (position <= 3 && col == 1))){
-                waitingInput = true;
+            if (keyPressed->scancode == controls.enter){
+                if ((position <= 4 && col == 0) || (position <= 3 && col == 1)){
+                    waitingInput = true;
+                }
+
+                if ((position == 5 && col == 0) || (position == 4 && col == 1)){
+                    std::cout << "Default" << std::endl;
+                    setDefault();
+                }
             }
             
             // Move down
