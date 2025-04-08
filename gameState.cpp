@@ -586,7 +586,7 @@ void ControlsConfGS::init(){
     defJump = "X";
     defAttack = "Z";
     defEnter = "Enter";
-    defEscape = "Escape";
+    defEscape = "Esc";
     defUseSubWeapon = "C";
 
     waitingInput = false;
@@ -714,12 +714,12 @@ void ControlsConfGS::init(){
 
     controlsConfigSprites.push_back(torch);
 
-    configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    configControlsManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
-    configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
+    configControlsManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
 
     auto audio = configManager.getAudio();
-    configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
+    configControlsManager.playMusic("menuMusic", configControlsManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void ControlsConfGS::setDefault(){
@@ -734,11 +734,23 @@ void ControlsConfGS::setDefault(){
     useSubWeapon = defUseSubWeapon;
 }
 
+bool ControlsConfGS::checkInputErrors(){
+    if (right == "Unknown" || left == "Unknown" || down == "Unknown" || 
+        up == "Unknown" || jump == "Unknown" || attack == "Unknown" || 
+        enter == "Unknown" || escape == "Unknown" || useSubWeapon == "Unknown") {
+        return true; // Si alguna es "Unknown", retornamos true
+    }
+    return false;
+}
+
 void ControlsConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (!waitingInput){ // If we are not waiting an input normal movement of the torch
             if (keyPressed->scancode == controls.enter){
+                auto audio = configManager.getAudio();
+                configControlsManager.playSound("menuEnter", configControlsManager.realVolume(audio.master_volume, audio.sound_volume));
+
                 if ((position <= 4 && col == 0) || (position <= 3 && col == 1)){
                     waitingInput = true;
                 }
@@ -746,6 +758,36 @@ void ControlsConfGS::handleInput(sf::Event event){
                 if ((position == 5 && col == 0) || (position == 4 && col == 1)){
                     std::cout << "Default" << std::endl;
                     setDefault();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                }
+
+                if (position == 6 && col == 0){
+                    std::cout << "Back" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                }
+
+                if (position == 5 && col == 1){
+                    std::cout << "Back and save :)" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    if (checkInputErrors()){
+                        std::cout << "At least one with a bad input, setting default" << std::endl;
+                        setDefault();
+                    }
+                    configManager::Controls newControls;
+                    newControls.right = configManager.stringToScancode(right);
+                    newControls.left = configManager.stringToScancode(left);
+                    newControls.down = configManager.stringToScancode(down);
+                    newControls.up = configManager.stringToScancode(up);
+                    newControls.jump = configManager.stringToScancode(jump); 
+                    newControls.attack = configManager.stringToScancode(attack);
+                    newControls.enter = configManager.stringToScancode(enter);
+                    newControls.escape = configManager.stringToScancode(escape);
+                    newControls.useSubWeapon = configManager.stringToScancode(useSubWeapon);
+
+                    configManager.setControls(newControls);
+                    configManager.saveConfiguration("config.json");
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
                 }
             }
             
@@ -1134,7 +1176,7 @@ void VolumeConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     
 }
 
-void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
+void VolumeConfGS::drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
     const int MAX_VOLUME = 10;
     const int SEGMENT_WIDTH = 13;
     const int SEGMENT_HEIGHT = 15;

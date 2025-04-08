@@ -58,7 +58,6 @@ void Castlevania::run(){
                 currentState->handleInput(*eventOpt);
             }
         }
-
         
         sf::View view = currentState->getView(window, camera);
         window.setView(view);

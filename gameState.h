@@ -137,7 +137,7 @@ private:
     sf::Font fontinputs;
     std::vector<sf::Text> configs;
     int position, col;
-    SoundManager configSoundManager;
+    SoundManager configControlsManager;
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
     std::string defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
@@ -149,6 +149,7 @@ public:
     ~ControlsConfGS() override;
     void init() override;
     void setDefault();
+    bool checkInputErrors();
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
@@ -172,6 +173,7 @@ public:
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos);
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
