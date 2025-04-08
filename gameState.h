@@ -135,7 +135,7 @@ class ControlsConfGS : public GameState{
 private:
     sf::Font font;
     std::vector<sf::Text> configs;
-    int position;
+    int position, col;
     SoundManager configSoundManager;
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;

@@ -241,7 +241,7 @@ void MenuGS::handleInput(sf::Event event){
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
 
-                position += 1;
+                position ++;
                 std::cout<<position<<std::endl;
 
                 float torchX = options[position].getPosition().x - 25.f;
@@ -257,7 +257,7 @@ void MenuGS::handleInput(sf::Event event){
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
 
-                position -= 1;
+                position --;
                 std::cout<<position<<std::endl;
 
                 float torchX = options[position].getPosition().x - 25.f;
@@ -469,7 +469,7 @@ void ConfigGS::handleInput(sf::Event event){
                 sf::Sprite torch = configSprites.back();
                 configSprites.pop_back();
 
-                position += 1;
+                position ++;
                 std::cout<<position<<std::endl;
 
                 float torchX = configs[position+1].getPosition().x - 25.f;
@@ -485,7 +485,7 @@ void ConfigGS::handleInput(sf::Event event){
                 sf::Sprite torch = configSprites.back();
                 configSprites.pop_back();
 
-                position -= 1;
+                position --;
                 std::cout<<position<<std::endl;
 
                 float torchX = configs[position+1].getPosition().x - 25.f;
@@ -584,6 +584,7 @@ void ControlsConfGS::init(){
 
     // Loads menu texture
     position = 0;
+    col = 0;
     if (!controlsConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -628,16 +629,18 @@ void ControlsConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[9] = {"RIGHT", "LEFT", "DOWN", "UP", "JUMP", "ATTACK", "ENTER", "ESCAPE", "SUBWEAPON"};
+    std::string textos[9] = {"RIGHT", "LEFT", "DOWN", "UP", "JUMP", "ATTACK", "SUBWEAPON", "ENTER", "ESCAPE"};
     for (int i = 0; i < 9; i++) {
         sf::Text text(font, textos[i], 20);
         text.setFillColor(sf::Color::White);
-        sf::FloatRect textBounds = text.getLocalBounds();
-
-        // Centers position
-        float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = 100.f + i * 30.f;
-
+    
+        int col = (i < 5) ? 0 : 1;               // Columna 0: izquierda, Columna 1: derecha
+        int row = (i < 5) ? i : i - 5;           // Índice de fila
+    
+        float spacingY = 30.f;                   // Espaciado vertical entre textos
+        float xPos = (col == 0) ? 50.f : gWindowWidth / 2.f + 15;
+        float yPos = 100.f + row * spacingY;
+    
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
     }
@@ -648,18 +651,18 @@ void ControlsConfGS::init(){
     textBounds = text2.getLocalBounds();
 
     xPos = (gWindowWidth - textBounds.size.x) / 2;
-    yPos = 115.f + 3 * 65.f;
+    yPos = 270.f;
 
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
 
     // CONFIRM
     sf::Text text3(font, "CONFIRM", 30);
-    text3.setFillColor(sf::Color::Green);
+    text3.setFillColor(sf::Color(0, 190, 0));
     textBounds = text3.getLocalBounds();
 
     xPos = (gWindowWidth - textBounds.size.x) / 2;
-    yPos = 115.f + 3 * 65.f;
+    yPos = 310.f; // 115.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
@@ -686,7 +689,58 @@ void ControlsConfGS::init(){
 }
 
 void ControlsConfGS::handleInput(sf::Event event){
-    
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        // Mover hacia abajo
+        if (keyPressed->scancode == controls.down){
+            int maxRows = (col == 0) ? 4 : 3; // izquierda tiene 5, derecha tiene 4
+            if (position < maxRows){
+                position++;
+            }
+        }
+
+        // Mover hacia arriba
+        if (keyPressed->scancode == controls.up){
+            if (position > 0) {
+                position--;
+            }
+        }
+
+        // Mover a la derecha
+        if (keyPressed->scancode == controls.right){
+            if (col == 0 && position <= 3){ // para que no pase a un índice inválido
+                col = 1;
+            }
+            else if (col == 0 && position >= 4){
+                position = 3;
+                col = 1;
+            }
+        }
+
+        // Mover a la izquierda
+        if (keyPressed->scancode == controls.left){
+            if (col == 1){
+                col = 0;
+            }
+        }
+
+        // Actualizar la posición de la antorcha
+        if (!controlsConfigSprites.empty()){
+            sf::Sprite torch = controlsConfigSprites.back();
+            controlsConfigSprites.pop_back();
+
+            // Calcular índice lineal en el vector `configs`
+            int index = (col == 0) ? position : 5 + position;
+
+            float torchX = configs[index + 1].getPosition().x - 25.f;
+            float torchY = configs[index + 1].getPosition().y + 2.f;
+            torch.setPosition(sf::Vector2f(torchX, torchY));
+
+            controlsConfigSprites.push_back(torch);
+
+            std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
+        }
+    }
 }
 
 void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
@@ -795,7 +849,7 @@ void VolumeConfGS::init(){
     }
 
     sf::Text text2(font, "CONFIRM", 30);
-    text2.setFillColor(sf::Color::Green);
+    text2.setFillColor(sf::Color(0, 190, 0));
     textBounds = text2.getLocalBounds();
 
     // Centers position
@@ -832,7 +886,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                 sf::Sprite torch = volumeConfigSprites.back();
                 volumeConfigSprites.pop_back();
 
-                position += 1;
+                position ++;
                 std::cout<<position<<std::endl;
 
                 float torchX = configs[position+1].getPosition().x - 25.f;
@@ -848,7 +902,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                 sf::Sprite torch = volumeConfigSprites.back();
                 volumeConfigSprites.pop_back();
 
-                position -= 1;
+                position --;
                 std::cout<<position<<std::endl;
 
                 float torchX = configs[position+1].getPosition().x - 25.f;
