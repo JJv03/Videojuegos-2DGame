@@ -641,7 +641,7 @@ void ControlsConfGS::init(){
     
         float spacingY = 30.f;
         float xPos = (col == 0) ? 50.f : gWindowWidth / 2.f + 15;
-        float yPos = 100.f + row * spacingY;
+        float yPos = 110.f + row * spacingY;
     
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
