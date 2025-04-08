@@ -579,6 +579,16 @@ void ControlsConfGS::init(){
     escape = configManager.scancodeToString(controls.escape);
     useSubWeapon = configManager.scancodeToString(controls.useSubWeapon);
 
+    defRight = "Right";
+    defLeft = "Left";
+    defDown = "Down";
+    defUp = "Up";
+    defJump = "X";
+    defAttack = "Z";
+    defEnter = "Enter";
+    defEscape = "Escape";
+    defUseSubWeapon = "C";
+
     waitingInput = false;
 
     this->m_viewSize.x = gMenuGS_size_x;
@@ -640,7 +650,7 @@ void ControlsConfGS::init(){
         int row = (i < 5) ? i : i - 5;
     
         float spacingY = 30.f;
-        float xPos = (col == 0) ? 50.f : gWindowWidth / 2.f + 15;
+        float xPos = (col == 0) ? 35.f : gWindowWidth / 2.f + 15;
         float yPos = 110.f + row * spacingY;
     
         text.setPosition(sf::Vector2f(xPos, yPos));
@@ -650,6 +660,8 @@ void ControlsConfGS::init(){
     // SET DEFAULT CONTROLS
     sf::Text text2(font, "DEFAULT", 30);
     text2.setFillColor(sf::Color(255, 165, 0));
+    text2.setOutlineColor(sf::Color(200, 110, 0));
+    text2.setOutlineThickness(1.5);
     textBounds = text2.getLocalBounds();
 
     xPos = (gWindowWidth - textBounds.size.x) / 2;
@@ -658,16 +670,31 @@ void ControlsConfGS::init(){
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
 
-    // CONFIRM
-    sf::Text text3(font, "CONFIRM", 30);
-    text3.setFillColor(sf::Color(0, 190, 0));
+    // BACK
+    sf::Text text3(font, "BACK", 30);
+    text3.setFillColor(sf::Color::White);
+    text3.setOutlineColor(sf::Color(128, 128, 128));
+    text3.setOutlineThickness(1.5);
     textBounds = text3.getLocalBounds();
 
-    xPos = (gWindowWidth - textBounds.size.x) / 2;
-    yPos = 310.f; // 115.f + 3 * 65.f;
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x - 40.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
+
+    // CONFIRM
+    sf::Text text4(font, "CONFIRM", 30);
+    text4.setFillColor(sf::Color(0, 190, 0));
+    text4.setOutlineColor(sf::Color(0, 100, 0));
+    text4.setOutlineThickness(1.5);
+    textBounds = text4.getLocalBounds();
+
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x + 40.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
+
+    text4.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text4);
 
     if (!controlsConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -718,11 +745,19 @@ void ControlsConfGS::handleInput(sf::Event event){
                     position = 3;
                     col = 1;
                 }
+                else if (col == 0 && position == 6){
+                    position = 5;
+                    col = 1;
+                }
             }
 
             // Move left
             if (keyPressed->scancode == controls.left){
                 if (col == 1 && position <= 3){
+                    col = 0;
+                }
+                else if(col == 1 && position == 5){
+                    position = 6;
                     col = 0;
                 }
             }
@@ -733,7 +768,10 @@ void ControlsConfGS::handleInput(sf::Event event){
                 controlsConfigSprites.pop_back();
 
                 int index = 0;
-                if (position == 6 || (position == 5 && col == 1)){
+                if (position == 5 && col == 1){
+                    index = 12;
+                }
+                else if (position == 6 && col == 0){
                     index = 11;
                 }
                 else if (position == 5){
@@ -765,9 +803,25 @@ void ControlsConfGS::draw(sf::RenderWindow& window, Camera& camera){
         window.draw(sprite);
     }
 
-    for (const auto& text : configs) {
-        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
-        window.draw(text);
+    std::vector<std::string> currentControls = {
+        right, left, down, up, jump, attack, useSubWeapon, enter, escape
+    };
+
+    for (size_t i = 0; i < configs.size(); ++i) {
+        const sf::Text& label = configs[i];
+        window.draw(label);
+
+        // Only add control text for options 1 to 9
+        if (i >= 1 && i <= 9 && (i - 1) < currentControls.size()) {
+            sf::Text controlText(label.getFont(), currentControls[i - 1], 15);
+            controlText.setFillColor(sf::Color(200, 200, 200));
+
+            sf::Vector2f pos = label.getPosition();
+            pos.x += label.getLocalBounds().size.x + 10;
+            controlText.setPosition(pos);
+
+            window.draw(controlText);
+        }
     }
 }
 
@@ -863,6 +917,8 @@ void VolumeConfGS::init(){
 
     sf::Text text2(font, "CONFIRM", 30);
     text2.setFillColor(sf::Color(0, 190, 0));
+    text2.setOutlineColor(sf::Color(0, 100, 0));
+    text2.setOutlineThickness(1.5);
     textBounds = text2.getLocalBounds();
 
     // Centers position
