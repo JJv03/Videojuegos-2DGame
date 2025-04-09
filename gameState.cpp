@@ -412,7 +412,7 @@ void ConfigGS::init(){
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
-    sf::Text text(font, "Configuration", 35);
+    sf::Text text(font, "CONFIGURATION", 35);
     text.setFillColor(sf::Color(122, 71, 22));
     text.setOutlineColor(sf::Color(255, 140, 0));
     text.setOutlineThickness(1.5); 
@@ -1080,10 +1080,10 @@ void VolumeConfGS::init(){
 
     volumeConfigSprites.push_back(torch);
 
-    configSoundManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    configVolumeManager.loadSound("menuEnter", "./assets/sounds/05.wav");
     
-    configSoundManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
-    configSoundManager.playMusic("menuMusic", configSoundManager.realVolume(audio.master_volume, audio.music_volume));
+    configVolumeManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
+    configVolumeManager.playMusic("menuMusic", configVolumeManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void VolumeConfGS::handleInput(sf::Event event){
@@ -1113,7 +1113,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                     if(soundVol < 100){
                         soundVol += 10;
                     }
-                    configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
+                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
                     break;
                 case 3:
                     if (col == 0){
@@ -1121,7 +1121,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                     }
                     break;
             }
-            configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
+            configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.left) {    
@@ -1140,7 +1140,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                     if(soundVol > 0){
                         soundVol -= 10;
                     }
-                    configSoundManager.playSound("menuEnter", configSoundManager.realVolume(masterVol, soundVol));
+                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
                     break;
                 case 3:
                     if (col == 1){
@@ -1148,13 +1148,13 @@ void VolumeConfGS::handleInput(sf::Event event){
                     }
                     break;
             }
-            configSoundManager.adjustAllMusicVolumes(configSoundManager.realVolume(masterVol, musicVol));
+            configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.enter) {
             if (position == 3 && col == 0){
                 auto audio = configManager.getAudio();
-                configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                 std::cout << "Road back to config menu" << std::endl;
@@ -1171,7 +1171,7 @@ void VolumeConfGS::handleInput(sf::Event event){
                 configManager.saveConfiguration("config.json");
 
                 auto audio = configManager.getAudio();
-                configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                 std::cout << "Road back to config menu after saving" << std::endl;
@@ -1269,13 +1269,210 @@ VolumeConfGS::~VolumeConfGS() {}
 // ======================================================
 //                      GAMEPLAY CONFIG STATE 
 // ======================================================
+std::unordered_map<std::string, sf::Texture> gameplayConfigTextures;
+std::vector<sf::Sprite> gameplayConfigSprites;
 
 void GameplayConfGS::init(){
     if(debug) std::cout << "ESTADO: Gameplay Config" << std::endl;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    position = 0;
+    col = 0;
+    video = configManager.getVideo().window_mode;
+    difficulty = configManager.getDifficulty().hard_mode;
+    cheats = configManager.getCheats().enabled;
+
+    if (!gameplayConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(gameplayConfigTextures["bg"]);
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = bg.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    bg.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    bg.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    gameplayConfigSprites.push_back(bg);
+
+    // Loads text font
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+    if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    sf::Text text(font, "GAMEPLAY", 35);
+    text.setFillColor(sf::Color(122, 71, 22));
+    text.setOutlineColor(sf::Color(255, 140, 0));
+    text.setOutlineThickness(1.5); 
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    // Centers position
+    float xPos = (gWindowWidth - textBounds.size.x) / 2;
+    float yPos = 70.f;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text);
+
+    // Defines menu options
+    std::string textos[3] = {"SCREEN MODE", "ENHANCED AI", "CHEATS"};
+    for (int i = 0; i < 3; i++) {
+        sf::Text text(font, textos[i], 30);
+        text.setFillColor(sf::Color::White);
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 45.f;
+        float yPos = 125.f + i * 55.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        configs.push_back(text);
+    }
+
+    // BACK
+    sf::Text text2(font, "BACK", 30);
+    text2.setFillColor(sf::Color::White);
+    text2.setOutlineColor(sf::Color(128, 128, 128));
+    text2.setOutlineThickness(1.5);
+    textBounds = text2.getLocalBounds();
+
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
+
+    text2.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text2);
+
+    // CONFIRM
+    sf::Text text3(font, "CONFIRM", 30);
+    text3.setFillColor(sf::Color(0, 190, 0));
+    text3.setOutlineColor(sf::Color(0, 100, 0));
+    text3.setOutlineThickness(1.5);
+    textBounds = text3.getLocalBounds();
+
+    xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
+    yPos = 315.f; // 120.f + 3 * 65.f;
+
+    text3.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text3);
+
+    if (!gameplayConfigTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(gameplayConfigTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
+
+    float torchX = configs[1].getPosition().x - 25.f;
+    float torchY = configs[1].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    gameplayConfigSprites.push_back(torch);
+
+    configGameplayManager.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    auto audio = configManager.getAudio();
+
+    configGameplayManager.loadMusic("menuMusic", "./assets/music/01Underground.mp3");
+    configGameplayManager.playMusic("menuMusic", configGameplayManager.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void GameplayConfGS::handleInput(sf::Event event){
-    
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == controls.down && position < 3) {    
+            position ++;
+        }
+
+        if (keyPressed->scancode == controls.up && position > 0) {    
+            position --;
+        }
+
+        if (keyPressed->scancode == controls.right && position == 3 && col == 0) {    
+            col = 1;
+        }
+
+        if (keyPressed->scancode == controls.left && position == 3 && col == 1) {    
+            col = 0;
+        }
+
+        if (keyPressed->scancode == controls.enter) {
+            auto audio = configManager.getAudio();
+            configGameplayManager.playSound("menuEnter", configGameplayManager.realVolume(audio.master_volume, audio.sound_volume));
+            if(position == 0){ // Window mode
+                video = !video;
+            }
+
+            if(position == 1){ // Diff
+                difficulty = !difficulty;
+            }
+
+            if(position == 2){ // Cheats
+                cheats = !cheats;
+            }
+
+            if (position == 3 && col == 0){
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                std::cout << "Road back to config menu" << std::endl;
+                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+            }
+
+            if (position == 3 && col == 1){ // Back to configs and save files
+                configManager::Video newVideo;
+                newVideo.window_mode = video;
+
+                configManager::Difficulty newDiff;
+                newDiff.hard_mode = difficulty;
+
+                configManager::Cheats newCheats;
+                newCheats.enabled = cheats;
+
+                configManager.setVideo(newVideo);
+                configManager.setDifficulty(newDiff);
+                configManager.setCheats(newCheats);
+                configManager.saveConfiguration("config.json");
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                std::cout << "Road back to config menu after saving" << std::endl;
+                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+            }
+        }
+
+        if (!gameplayConfigSprites.empty()) {
+            sf::Sprite torch = gameplayConfigSprites.back();
+            gameplayConfigSprites.pop_back();
+            float torchX = 0;
+            float torchY = 0;
+            if (position <= 2){
+                torchX = configs[position+1].getPosition().x - 25.f;
+                torchY = configs[position+1].getPosition().y + 2.f;
+            }
+            else{
+                torchX = configs[position+1+col].getPosition().x - 25.f;
+                torchY = configs[position+1+col].getPosition().y + 2.f;
+            }
+            torch.setPosition(sf::Vector2f(torchX, torchY));
+
+            gameplayConfigSprites.push_back(torch);
+        }
+        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
+    }
 }
 
 void GameplayConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
@@ -1283,7 +1480,32 @@ void GameplayConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
 }
 
 void GameplayConfGS::draw(sf::RenderWindow& window, Camera& camera){
-    
+    for (const auto& sprite : gameplayConfigSprites) {
+        window.draw(sprite);
+    }
+
+    for (const auto& text : configs) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
+
+    std::string boolTexts[3] = {
+        video ? "FSCRN" : "WINDOW",
+        difficulty ? "ON" : "OFF",
+        cheats ? "ON" : "OFF"
+    };
+
+    for (int i = 0; i < 3; i++) {
+        sf::Text statusText(fontinputs, boolTexts[i], 15);
+        statusText.setFillColor(sf::Color(255, 140, 0));
+
+        // Posición a la derecha del texto base
+        float x = configs[i + 1].getPosition().x + configs[i + 1].getLocalBounds().size.x + 20.f;
+        float y = configs[i + 1].getPosition().y + 5.f;
+        statusText.setPosition(sf::Vector2f(x, y));
+
+        window.draw(statusText);
+    }
 }
 
 void GameplayConfGS::pause(){
@@ -1296,6 +1518,9 @@ void GameplayConfGS::resume(){
 
 void GameplayConfGS::close(){
     if(debug) std::cout << "ESTADO: Gameplay Config CERRADO" << std::endl;
+    gameplayConfigSprites.clear();
+    gameplayConfigTextures.clear();
+    configs.clear();
 }
 
 GameplayConfGS::~GameplayConfGS() {}

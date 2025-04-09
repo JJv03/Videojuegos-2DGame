@@ -133,8 +133,7 @@ public:
 
 class ControlsConfGS : public GameState{
 private:
-    sf::Font font;
-    sf::Font fontinputs;
+    sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
     int position, col;
     SoundManager configControlsManager;
@@ -164,7 +163,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> configs;
     int position, col;
-    SoundManager configSoundManager;
+    SoundManager configVolumeManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;
 public:
@@ -183,11 +182,12 @@ public:
 
 class GameplayConfGS : public GameState{
 private:
-    sf::Font font;
+    sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
-    int position;
-    SoundManager configSoundManager;
+    int position, col;
+    SoundManager configGameplayManager;
     configManager &configManager;
+    bool video, difficulty, cheats;
 public:
     explicit GameplayConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~GameplayConfGS() override;

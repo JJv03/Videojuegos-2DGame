@@ -15,8 +15,9 @@ public:
         int sound_volume;
     };
 
+    // False = Window, True = Fullscreen
     struct Video {
-        std::string window_mode;
+        bool window_mode;
     };
 
     struct Controls {
