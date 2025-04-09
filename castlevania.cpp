@@ -13,6 +13,7 @@
 #include <chrono>
 #include <thread>
 #include "utils.h"
+#include "configManager.h"
 
 // constexpr int escala { 1 };
 // int minWindowWidth = 400;
@@ -24,8 +25,12 @@ Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(static_cast<flo
 void Castlevania::run(){
     states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
+    
+    configManager &configManager = configManager.getInstance();
 
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castleveina", sf::Style::Default);
+    auto state = configManager.getVideo().window_mode ? sf::State::Fullscreen : sf::State::Windowed;
+
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castlevania", state);
     //sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default, sf::State::Fullscreen);
     //window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
@@ -66,6 +71,14 @@ void Castlevania::run(){
         
         window.clear();
         currentState->draw(window, camera);
+        
+        auto newState = configManager.getVideo().window_mode ? sf::State::Fullscreen : sf::State::Windowed;
+        if (state != newState){
+            state = newState;
+            window.create(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castlevania", state);
+            window.setIcon(icon);
+        }
+
         window.display();
 
         states.processStateChanges();

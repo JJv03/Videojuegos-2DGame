@@ -22,6 +22,6 @@
         "hard_mode": false
     },
     "video": {
-        "window_mode": true
+        "window_mode": false
     }
 }
