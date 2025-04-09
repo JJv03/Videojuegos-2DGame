@@ -167,7 +167,7 @@ void Game::init()
     scoreText.setPosition(textPositions.back());
 
     // Time
-    sf::Text timeText(font, "TIME 300", gGUI_text_size);
+    sf::Text timeText(font, "TIME   0300", gGUI_text_size);
     timeText.setFillColor(gGUI_text_color);
     textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin + gGUI_position_y));
     timeText.setPosition(textPositions.back());
@@ -224,7 +224,9 @@ void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
         if (time < 0)
             time = 0;
         timeAccumulator = 0.0f;
-        texts[1].setString("TIME " + std::to_string(time));
+        std::stringstream timeScore;
+        timeScore << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
+        texts[1].setString(timeScore.str());
     }
 
     // Update score
@@ -303,6 +305,13 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 
+        sf::RectangleShape redBorder(sf::Vector2f(27, 17));
+        redBorder.setPosition(sf::Vector2f(140, -4));
+        redBorder.setFillColor(sf::Color::Transparent);
+        redBorder.setOutlineColor(sf::Color::Red);
+        redBorder.setOutlineThickness(2.f); // Puedes ajustar el grosor del borde
+        window.draw(redBorder);
+
         //collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
 }
@@ -310,10 +319,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth, sf::Vector2f virtualWorldset)
 {
     const int MAX_HEALTH = 16;
-    const int SEGMENT_WIDTH = 5;
-    const int SEGMENT_HEIGHT = 6;
-    const int SPACING = 2;
-    const float BORDER_THICKNESS = 1.0f;
+    const float SEGMENT_WIDTH = 3.5;
+    const float SEGMENT_HEIGHT = 6;
+    const float SPACING = 1.2;
+    const float BORDER_THICKNESS = 1.f;
     const sf::Vector2f PLAYER_POS(gGUI_PlayerHpBar_position_x + virtualWorldset.x,
                                   gGUI_PlayerHpBar_position_y + virtualWorldset.y);
     const sf::Vector2f BOSS_POS(gGUI_BossHpBar_position_x + virtualWorldset.x,
