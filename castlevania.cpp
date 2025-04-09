@@ -25,12 +25,13 @@ Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(static_cast<flo
 void Castlevania::run(){
     states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
-    
+
     configManager &configManager = configManager.getInstance();
 
-    auto state = configManager.getVideo().window_mode ? sf::State::Fullscreen : sf::State::Windowed;
+    sf::VideoMode screenMode = configManager.getVideo().window_mode ? sf::VideoMode::getDesktopMode() : sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight));
+    sf::State state = configManager.getVideo().window_mode ? sf::State::Fullscreen : sf::State::Windowed;
 
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castlevania", state);
+    sf::RenderWindow window(screenMode, "Castlevania", state);
     //sf::RenderWindow window(sf::VideoMode({gWindowWidth, gWindowHeight}), "Castleveina", sf::Style::Default, sf::State::Fullscreen);
     //window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
@@ -75,7 +76,8 @@ void Castlevania::run(){
         auto newState = configManager.getVideo().window_mode ? sf::State::Fullscreen : sf::State::Windowed;
         if (state != newState){
             state = newState;
-            window.create(sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight)), "Castlevania", state);
+            sf::VideoMode screenMode = configManager.getVideo().window_mode ? sf::VideoMode::getDesktopMode() : sf::VideoMode(sf::Vector2u(gWindowWidth, gWindowHeight));
+            window.create(screenMode, "Castlevania", state);
             window.setIcon(icon);
         }
 
