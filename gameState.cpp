@@ -163,6 +163,7 @@ void MenuGS::init(){
     // Loads menu texture
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
     position = 0;
+    exit = false;
     if (!menuTextures["menu"].loadFromFile("./assets/sprites/menu/menu2.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -284,6 +285,7 @@ void MenuGS::handleInput(sf::Event event){
                     break;
                 case 3:
                     std::cout<<"Bye bye :)"<<std::endl;
+                    exit = true;
                     //window.close();
                     break;
             }
@@ -307,6 +309,10 @@ void MenuGS::draw(sf::RenderWindow& window, Camera& camera){
     for (const auto& text : options) {
         // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
         window.draw(text);
+    }
+
+    if (exit){
+        window.close();
     }
 }
  

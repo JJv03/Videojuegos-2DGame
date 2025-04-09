@@ -83,6 +83,7 @@ private:
     int position;
     SoundManager menuSoundManager;
     configManager &configManager;
+    bool exit;
 public:
     explicit MenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~MenuGS() override;
