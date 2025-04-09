@@ -314,7 +314,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
 
         // Draw the black rectangle
-        sf::RectangleShape guiBackground(sf::Vector2f(gGUI_size_x + 10, gGUI_size_y));
+        sf::RectangleShape guiBackground(sf::Vector2f(gGUI_size_x, gGUI_size_y));
         guiBackground.setFillColor(gGUI_color);
         guiBackground.setPosition(guiPosition);
         window.draw(guiBackground);

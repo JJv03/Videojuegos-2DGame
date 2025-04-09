@@ -141,11 +141,9 @@ private:
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
     std::string defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
-    bool waitingInput, showPopUp;
-    float popUpTimer = 0.0;
-    float popUpInterval = 3.5;
-    float blinkTimer = 0.0;
-    float blinkInterval = 0.25;
+    bool waitingInput;
+    float blinkTimer = 0.0f;
+    float blinkInterval = 0.25f;
 public:
     explicit ControlsConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~ControlsConfGS() override;
