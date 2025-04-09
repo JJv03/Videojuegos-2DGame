@@ -8,6 +8,7 @@
 #include "configManager.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
+std::vector<sf::Sprite> gameSprites;
 
 // Constructor, destructor
 Game::Game()
@@ -190,11 +191,38 @@ void Game::init()
     textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_EnemyPositionYFactor) + gGUI_position_y));
     enemyText.setPosition(textPositions.back());
 
+    sf::Image heartImage;
+    if (!heartImage.loadFromFile("./assets/sprites/items/itemsObjects.png"))
+    {
+        std::cerr << "Error loading heart image" << std::endl;
+    }
+    heartImage.createMaskFromColor(gColorKeyGrey);
+
+    gTextures["heart"] = sf::Texture(heartImage, false);
+    
+    sf::Sprite heartSprite(gTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
+    heartSprite.setPosition(sf::Vector2f(180, -4));
+    gameSprites.push_back(heartSprite);
+
+    // Hearts
+    sf::Text hearts(font, "-00", gGUI_text_size);
+    hearts.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(189, -4));
+    hearts.setPosition(textPositions.back());
+
+    // Lives
+    sf::Text lives(font, "P-03", gGUI_text_size);
+    lives.setFillColor(gGUI_text_color);
+    textPositions.push_back(sf::Vector2f(181, 6));
+    lives.setPosition(textPositions.back());
+
     texts.push_back(scoreText);
     texts.push_back(timeText);
     texts.push_back(stageText);
     texts.push_back(playerText);
     texts.push_back(enemyText);
+    texts.push_back(hearts);
+    texts.push_back(lives);
 
     startStage(currentStage);
 }
@@ -224,15 +252,25 @@ void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
         if (time < 0)
             time = 0;
         timeAccumulator = 0.0f;
-        std::stringstream timeScore;
-        timeScore << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
-        texts[1].setString(timeScore.str());
+        std::stringstream timeStream;
+        timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
+        texts[1].setString(timeStream.str());
     }
 
     // Update score
     std::stringstream scoreStream;
     scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
     texts[0].setString(scoreStream.str());
+
+    // Update hearts
+    std::stringstream heartsStream;
+    heartsStream << "-" << std::setw(2) << std::setfill('0') << player.hearts; // Format with zeroes
+    texts[5].setString(heartsStream.str());
+
+    // Update lives
+    std::stringstream livesStream;
+    livesStream << "P-" << std::setw(2) << std::setfill('0') << player.lives; // Format with zeroes
+    texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
     //checkCollisions(viewPosition);
@@ -305,12 +343,19 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 
+        // Red rectangle
         sf::RectangleShape redBorder(sf::Vector2f(27, 17));
-        redBorder.setPosition(sf::Vector2f(140, -4));
+        redBorder.setPosition(sf::Vector2f(140 + virtualWorldOffset.x, -4 + virtualWorldOffset.y));
         redBorder.setFillColor(sf::Color::Transparent);
         redBorder.setOutlineColor(sf::Color::Red);
         redBorder.setOutlineThickness(2.f); // Puedes ajustar el grosor del borde
         window.draw(redBorder);
+
+        // For now the heart
+        sf::Sprite sprite(gameSprites[0]);
+        sf::Vector2f pos(180, -4);
+        sprite.setPosition(pos + virtualWorldOffset);
+        window.draw(sprite);
 
         //collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
