@@ -41,10 +41,10 @@ jobs:
           copy config.json dist\
 
       - name: Zip build folder
-        run: powershell Compress-Archive -Path dist\* -DestinationPath game-build.zip
+        run: powershell Compress-Archive -Path dist\* -DestinationPath Caslevania.zip
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: game-build
-          path: game-build.zip
+          name: Caslevania
+          path: Caslevania.zip
