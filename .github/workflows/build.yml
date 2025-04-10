@@ -3,7 +3,7 @@ name: Build C++ Project
 on:
   push:
     branches:
-      - '**'  # Ejecutar en cada push a cualquier rama
+      - '**'  # Ejecutar en cada push
 
 jobs:
   build:
@@ -13,22 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up MSVC environment
-        uses: ilammy/msvc-dev-cmd@v1
+      - name: Install MinGW (g++)
+        run: |
+          choco install mingw -y
+          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       - name: Set up SFML
         run: |
           mkdir C:\SFML
           xcopy /E /I SFML\* C:\SFML
 
-      - name: Build with make
+      - name: Build project with make
         run: make
 
       - name: Prepare dist folder
         run: |
           mkdir dist
-          copy build\*.exe dist\
-          copy build\*.dll dist\
+          copy build\game.exe dist\
+          for %%f in (build\*.dll) do copy %%f dist\
           xcopy /E /I assets dist\assets\
           copy config.json dist\
 
