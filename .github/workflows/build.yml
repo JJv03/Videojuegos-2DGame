@@ -36,7 +36,7 @@ jobs:
         powershell Compress-Archive -Path dist\* -DestinationPath game_build.zip
 
     - name: Subir ZIP como artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2  # Cambié aquí la versión a v2
       with:
         name: game-build
         path: game_build.zip
