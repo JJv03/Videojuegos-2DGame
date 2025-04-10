@@ -1,0 +1,42 @@
+name: Build and Package Game
+
+on:
+  push:
+    branches:
+      - main  # Ejecuta en cada push a la rama main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build project
+      run: |
+        make
+
+    - name: Prepare dist folder
+      run: |
+        mkdir dist
+        # Copiar el ejecutable
+        copy build\*.exe dist\
+        # Copiar las DLLs (de SFML y las tuyas si hay más)
+        copy build\*.dll dist\
+        # Copiar los assets
+        xcopy assets dist\assets /E /I
+        # Copiar config.json
+        copy config.json dist\
+        # (Opcional) Copiar también algún README o licencia si quieres
+        if exist README.md copy README.md dist\
+
+    - name: Crear ZIP del juego
+      run: |
+        powershell Compress-Archive -Path dist\* -DestinationPath game_build.zip
+
+    - name: Subir ZIP como artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: game-build
+        path: game_build.zip
