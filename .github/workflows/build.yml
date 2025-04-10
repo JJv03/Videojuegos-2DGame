@@ -3,7 +3,7 @@ name: Build C++ Project
 on:
   push:
     branches:
-      - '**'  # Ejecutar en cada push
+      - 'main'  # Ejecutar en cada push
 
 jobs:
   build:
@@ -43,8 +43,9 @@ jobs:
       - name: Zip build folder
         run: powershell Compress-Archive -Path dist\* -DestinationPath Caslevania.zip
 
-      - name: Upload zip artifact
-        uses: actions/upload-artifact@v4
+      - name: Create release and upload zip
+        uses: softprops/action-gh-release@v1
         with:
-          name: Caslevania
-          path: Caslevania.zip
+          files: Caslevania.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
