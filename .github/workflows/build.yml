@@ -40,12 +40,11 @@ jobs:
           xcopy /E /I assets dist\assets\
           copy config.json dist\
 
-      # Elimina este paso: No es necesario comprimir nuevamente, ya que 'actions/upload-artifact' se encargará
-      # - name: Zip build folder
-      #   run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip 
+      - name: Zip dist folder
+        run: powershell Compress-Archive -Path dist -DestinationPath Castlevania.zip
 
-      - name: Upload dist folder as artifact
+      - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
           name: Castlevania
-          path: dist
+          path: Castlevania.zip
