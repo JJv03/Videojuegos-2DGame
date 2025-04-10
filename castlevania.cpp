@@ -14,6 +14,7 @@
 #include <thread>
 #include "utils.h"
 #include "configManager.h"
+#include <fstream>
 
 // constexpr int escala { 1 };
 // int minWindowWidth = 400;
@@ -23,6 +24,13 @@
 Camera camera(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(static_cast<float>(gWindowWidth), static_cast<float>(gWindowHeight))));
 
 void Castlevania::run(){
+    std::ifstream archivo("./assets/DONOTDELETE/PLEASE/IBEGYOU/coconut.png");
+
+    if (!archivo) {  // Si no se puede abrir el archivo (no existe, por ejemplo)
+        std::cout << "THE COCONUT HAS DISAPPEARED..." << std::endl;
+        return;
+    }
+
     states.addState(std::make_unique<MenuGS>(&states));
     states.processStateChanges();
 
