@@ -348,7 +348,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         redBorder.setPosition(sf::Vector2f(140 + virtualWorldOffset.x, -4 + virtualWorldOffset.y));
         redBorder.setFillColor(sf::Color::Transparent);
         redBorder.setOutlineColor(sf::Color::Red);
-        redBorder.setOutlineThickness(2.f); // Puedes ajustar el grosor del borde
+        redBorder.setOutlineThickness(2.f);
         window.draw(redBorder);
 
         // For now the heart
