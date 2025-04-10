@@ -3,7 +3,7 @@ name: Build C++ Project
 on:
   push:
     branches:
-      - '**'  # Ejecutar en cada push
+      - 'main'  # Ejecutar en cada push
 
 jobs:
   build:
@@ -40,16 +40,12 @@ jobs:
           xcopy /E /I assets dist\assets\
           copy config.json dist\
 
-      - name: Create Castlevania folder
-        run: |
-          mkdir dist\Castlevania
-          xcopy /E /I dist\* dist\Castlevania\
+      # Elimina este paso: No es necesario comprimir nuevamente, ya que 'actions/upload-artifact' se encargará
+      # - name: Zip build folder
+      #   run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip 
 
-      - name: Zip Castlevania folder
-        run: powershell Compress-Archive -Path dist\Castlevania -DestinationPath Castlevania.zip
-
-      - name: Upload zip artifact
+      - name: Upload dist folder as artifact
         uses: actions/upload-artifact@v4
         with:
           name: Castlevania
-          path: Castlevania.zip
+          path: dist
