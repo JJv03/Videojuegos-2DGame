@@ -1,42 +1,40 @@
-name: Build and Package Game
+name: Build C++ Project
 
 on:
   push:
     branches:
-      - main  # Ejecuta en cada push a la rama main
+      - '**'  # En cada push a cualquier rama
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2  # Usamos la versión más estable de 'checkout'
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Build project
-      run: |
-        make
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Prepare dist folder
-      run: |
-        mkdir dist
-        # Copiar el ejecutable
-        copy build\*.exe dist\
-        # Copiar las DLLs (de SFML y las tuyas si hay más)
-        copy build\*.dll dist\
-        # Copiar los assets
-        xcopy assets dist\assets /E /I
-        # Copiar config.json
-        copy config.json dist\
-        # (Opcional) Copiar también algún README o licencia si quieres
-        if exist README.md copy README.md dist\
+      - name: Set up SFML
+        run: |
+          mkdir C:\SFML
+          xcopy /E /I SFML\* C:\SFML
 
-    - name: Crear ZIP del juego
-      run: |
-        powershell Compress-Archive -Path dist\* -DestinationPath game_build.zip
+      - name: Build with make
+        run: |
+          make
 
-    - name: Subir ZIP como artifact
-      uses: actions/upload-artifact@v1  # Usamos la versión más estable de 'upload-artifact'
-      with:
-        name: game-build
-        path: game_build.zip
+      - name: Package build
+        run: |
+          mkdir dist
+          copy build\*.exe dist\
+          copy build\*.dll dist\
+          xcopy /E /I assets dist\assets\
+          copy config.json dist\
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: game-build
+          path: dist
