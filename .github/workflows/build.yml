@@ -3,7 +3,7 @@ name: Build C++ Project
 on:
   push:
     branches:
-      - 'main'  # Ejecutar en cada push
+      - '**'  # Ejecutar en cada push
 
 jobs:
   build:
@@ -40,18 +40,12 @@ jobs:
           xcopy /E /I assets dist\assets\
           copy config.json dist\
 
-      - name: Zip build folder
-        run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip
+      # Elimina este paso: No es necesario comprimir nuevamente, ya que 'actions/upload-artifact' se encargará
+      # - name: Zip build folder
+      #   run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip 
 
-      - name: Create tag for release
-        run: |
-          # Crear una nueva etiqueta basada en el número de ejecución
-          git tag -a "v${{ github.run_number }}" -m "Release v${{ github.run_number }}"
-          git push origin "v${{ github.run_number }}"
-
-      - name: Create release and upload zip
-        uses: softprops/action-gh-release@v1
+      - name: Upload dist folder as artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: Castlevania.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: Castlevania
+          path: dist
