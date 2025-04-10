@@ -27,3 +27,5 @@ private:
     int getCellKeyFromCoords(int x, int y) const;
     std::vector<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
 };
+
+bool checkIntersection(const sf::FloatRect a, const sf::FloatRect b);

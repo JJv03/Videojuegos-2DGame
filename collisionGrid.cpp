@@ -77,10 +77,10 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf:
         for (size_t i = 0; i < entities.size(); ++i) {
             for (size_t j = i + 1; j < entities.size(); ++j) {
                 // TODO: detectar la colision entre los bounds de las entidades
-                //if (entities[i]->getBounds().intersects(entities[j]->getBounds())) { // IF COLLISION
-                //    entities[i]->onCollision(*entities[j]);
-                //    entities[j]->onCollision(*entities[i]);
-                //}
+                if (checkIntersection(entities[i]->getBounds(), entities[j]->getBounds())) {
+                    entities[i]->onCollision(*entities[j]);
+                    entities[j]->onCollision(*entities[i]);
+                }
             }
         }
     }
@@ -112,4 +112,18 @@ void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::Vector2f& view
             window.draw(cellShape);
         }
     }
+}
+
+
+bool checkIntersection(const sf::FloatRect a, const sf::FloatRect b) {
+    
+    if (a.position.x + a.size.x < b.position.x ||
+        a.position.x > b.position.x + b.size.x ||
+        a.position.y + a.size.y < b.position.y ||
+        a.position.y > b.position.y + b.size.y)
+    {
+        return false;
+    }
+    
+    return true;
 }

@@ -429,7 +429,6 @@ void Game::checkCollisions()
     enemyManager->checkCollisions(currentLevel, currentStage, tilemaps);
 }
 
-// vvvvvvv NO BORRAR vvvvvvv
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {
@@ -442,7 +441,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     allEntities.push_back(&player.subWeapon);
 
     // Add tiles
-    /*
+    
     for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
         for (auto& solidTile : solidTileRow){
             allEntities.push_back(&solidTile);
@@ -453,6 +452,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
 
     // Add enemies
+    /*
     for (auto& spawner : zombiesSpawner){
         for (auto& zombie : spawner.zombies){
             allEntities.push_back(&zombie);
@@ -466,7 +466,6 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     // ... ADD THE REST OF ENTITIES
 
     collisionGrid.checkCollisions(allEntities, viewPosition);
-    checkPlayerTileCollisions(); // quitar
 }
 
 void Game::checkPlayerMapBoundCollisions()

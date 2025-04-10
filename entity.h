@@ -23,6 +23,7 @@ public:
     std::shared_ptr<sf::Sprite> sprite;
 
     EntitySprite() = default;
-    virtual ~EntitySprite() = default;
     EntitySprite(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
+
+    virtual ~EntitySprite() = default;
 };

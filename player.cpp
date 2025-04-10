@@ -1,6 +1,8 @@
 #include "player.h"
 #include "globals.h"
 #include <iostream>
+#include "tile.h"
+#include "enemies/enemy.h"
 
 Player::Player()
 {
@@ -97,7 +99,15 @@ sf::FloatRect Player::getBounds() const {
 }
 
 void Player::onCollision(Entity& other){
-
+    if (SolidTile* player = dynamic_cast<SolidTile*>(&other)) {
+        std::cout << "Es un SolidTile\n";
+    }
+    else if (Enemy* enemy = dynamic_cast<Enemy*>(&other)) {
+        std::cout << "Es un Enemy\n";
+    }
+    else {
+        std::cout << "Tipo desconocido\n";
+    }
 }
 
 // ----------------------------- WHIP -----------------------------
