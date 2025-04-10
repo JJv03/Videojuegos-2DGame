@@ -67,18 +67,12 @@ private:
     // Function to process the enemy section in tilemap file
     void processFileEnemies(std::ifstream &file);
 
-    // Function to process the hitboxes of the solid tiles (for now)
-    void processFileHitboxes(std::ifstream &file);
-
     // Function that loads the textures of the breakable tiles
     static bool loadBreakableTextures();
 
 public:
     TileMap();
     ~TileMap();
-
-    // Hitboxes of the solid tiles (maybe breakableTiles should go inside this too)
-    std::vector<sf::FloatRect> m_solidTileHitboxes;
 
     // Matrix with the properties of each solid tile.
     std::vector<std::vector<SolidTile>> m_solidTiles;

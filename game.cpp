@@ -563,29 +563,20 @@ void Game::checkPlayerTileCollisions()
     // std::cout << "Ground: " << player.isOnGround << std::endl;
 
     // Solid tiles
-    if (!tilemaps[currentStage].m_solidTileHitboxes.empty())    // Optimized hitboxes
+    for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
     {
-        for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTileHitboxes)
+        for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
         {
-            computePlayerTileIntersection(hasCollided, tileBounds);
-        }
-    }
-    else
-    {
-        for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow; ++col)
-        {
-            for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn; ++row)
+            for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
             {
-                for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
-                {
-                    // ignore hitboxless tiles
-                    if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+                // ignore hitboxless tiles
+                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
 
-                    computePlayerTileIntersection(hasCollided, tileBounds);
-                }
+                computePlayerTileIntersection(hasCollided, tileBounds);
             }
         }
     }
+
 
     if (!hasCollided)
     { // If Simon is not colliding with any solid tile

@@ -14,5 +14,3 @@ breakable
 end_breakable
 enemies
 end_enemies
-hitboxes
-end_hitboxes

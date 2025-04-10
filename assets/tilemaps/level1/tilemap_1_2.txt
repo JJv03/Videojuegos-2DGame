@@ -18,5 +18,3 @@ enemies
 1,950.0,112.0
 0,1300.0,176.0,50.0,50.0
 end_enemies
-hitboxes
-end_hitboxes

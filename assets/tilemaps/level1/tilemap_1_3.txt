@@ -17,5 +17,3 @@ enemies
 2,136.f,112.f,50.0,50.0
 2,136.f,112.f,50.0,50.0
 end_enemies
-hitboxes
-end_hitboxes

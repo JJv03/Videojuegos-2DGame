@@ -13,5 +13,3 @@ end_breakable
 enemies
 0,203.f,176.f,50.0,50.0
 end_enemies
-hitboxes
-end_hitboxes

@@ -308,13 +308,65 @@ bool TileMap::load(int level, int stage)
             triangle[5].texCoords = sf::Vector2f(texX + gTileSize, texY + gTileSize);
 
             // Set the hitbox for the solid tile
-            sf::FloatRect hitbox = getHitboxForSolidTile(level, tileNumber);
-            hitbox.position.x += i * gTileSize;
-            hitbox.position.y += j * gTileSize;
+            sf::FloatRect newHitbox = getHitboxForSolidTile(level, tileNumber);
+            newHitbox.position.x += i * gTileSize;
+            newHitbox.position.y += j * gTileSize;
 
-            m_solidTiles[j][i].hitboxes.push_back(hitbox);
+            // Horizontal hitbox merge
+            if (i > 0)
+            {
+                for (auto &leftHitbox : m_solidTiles[j][i - 1].hitboxes)
+                {
+                    if (leftHitbox.position.y == newHitbox.position.y && leftHitbox.size.y == newHitbox.size.y &&
+                        leftHitbox.position.x + leftHitbox.size.x == newHitbox.position.x)
+                    {
+                        // Expand hitbox to the right
+                        newHitbox.position.x = leftHitbox.position.x;
+                        newHitbox.size.x += leftHitbox.size.x;
+
+                        // Left tile is now "empty" (the right-most tile will store the hitbox now)
+                        leftHitbox = sf::FloatRect();
+
+                        break;
+                    }
+                }
+                
+            }
+
+            m_solidTiles[j][i].hitboxes.push_back(newHitbox);
+            }
         }
-    }
+
+        // Vertical hitbox merge (Post-process)
+        for (int j = m_tilesPerColumn - 2; j >= 0; --j) // From second-to-last row, up-wards
+        {
+            for (int i = 0; i < m_tilesPerRow; ++i)
+            {
+                for (auto &currentHitbox : m_solidTiles[j][i].hitboxes)
+                {
+                    if (currentHitbox.size.x == 0 || currentHitbox.size.y == 0)
+                        continue;
+
+                    for (auto &belowHitbox : m_solidTiles[j + 1][i].hitboxes)
+                    {
+                        if (belowHitbox.size.x == 0 || belowHitbox.size.y == 0)
+                            continue;
+
+                        if (belowHitbox.position.x == currentHitbox.position.x &&
+                            belowHitbox.size.x == currentHitbox.size.x &&
+                            belowHitbox.position.y == currentHitbox.position.y + currentHitbox.size.y)
+                        {
+                            // Merge hitbox with the one below
+                            currentHitbox.size.y += belowHitbox.size.y;
+
+                            // Below-tile is now "empty" (the upper tile will store the hitbox now)
+                            belowHitbox = sf::FloatRect();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
     return true;
 }
@@ -333,6 +385,7 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
             }
         }
     }
+
 
     // Doors
     for (auto &doorEntry : this->m_doorTiles)
@@ -354,12 +407,6 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
             sf::RectangleShape rect = FloatRectToRectShape(hitbox);
             window.draw(rect);
         }
-    }
-
-    for (size_t i = 0; i < this->m_solidTileHitboxes.size(); ++i)
-    {
-        sf::RectangleShape rect = FloatRectToRectShape(this->m_solidTileHitboxes[i], 2);
-        window.draw(rect);
     }
 }
 
@@ -462,8 +509,6 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
     processFileBreakableTiles(file);
 
     processFileEnemies(file);
-
-    processFileHitboxes(file);
 
     file.close();
 }
@@ -788,56 +833,6 @@ void TileMap::processFileEnemies(std::ifstream &file)
         catch (const std::exception &e)
         {
             std::cerr << "Error processing enemy in line: " << line << ". Exception: " << e.what() << std::endl;
-        }
-    }
-}
-
-void TileMap::processFileHitboxes(std::ifstream &file)
-{
-    std::string line;
-    
-    // while (std::getline(file, line))
-    // {
-    //     if (line == "hitboxes")
-    //         break;
-    // }
-    std::getline(file, line);
-    if (line != "hitboxes")
-    {
-        std::cerr << "[Error] Expected 'hitboxes' but found: " << line << std::endl;
-        return;
-    }
-    
-    while (std::getline(file, line))
-    {
-        if (line == "end_hitboxes") break;
-        if (line.empty()) continue;
-        
-        std::stringstream ss(line);
-        std::string token;
-        std::vector<float> values;
-        
-        try {
-            while (std::getline(ss, token, ','))        // x , y, width, height
-            {
-                try {
-                    values.push_back(std::stof(token));
-                } catch (const std::exception &e) {
-                    std::cerr << "Error al procesar valor de hitbox extra: " << token << std::endl;
-                }
-            }
-            
-            if (values.size() != 4) {
-                std::cerr << "[ERROR] La línea de hitbox no contiene exactamente 4 números." << std::endl;
-                continue;
-            }
-            
-            sf::FloatRect hitbox({values[0], values[1]}, {values[2], values[3]});
-            m_solidTileHitboxes.push_back(hitbox);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "Error processing hitboxes in line: " << line << ". Exception: " << e.what() << std::endl;
         }
     }
 }
