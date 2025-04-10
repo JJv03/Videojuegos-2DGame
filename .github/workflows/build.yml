@@ -34,7 +34,7 @@ jobs:
           copy config.json dist\
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: game-build
           path: dist
