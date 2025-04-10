@@ -40,12 +40,30 @@ jobs:
           xcopy /E /I assets dist\assets\
           copy config.json dist\
 
-      # Elimina este paso: No es necesario comprimir nuevamente, ya que 'actions/upload-artifact' se encargará
-      # - name: Zip build folder
-      #   run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip 
+      - name: Create ZIP of dist folder
+        run: Compress-Archive -Path dist\* -DestinationPath Castlevania.zip
 
-      - name: Upload dist folder as artifact
+      - name: Upload ZIP as artifact
         uses: actions/upload-artifact@v4
         with:
           name: Castlevania
-          path: dist
+          path: Castlevania.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Castlevania
+          path: .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Castlevania Release ${{ github.run_number }}
+          files: Castlevania.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
