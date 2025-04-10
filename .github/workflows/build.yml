@@ -41,11 +41,17 @@ jobs:
           copy config.json dist\
 
       - name: Zip build folder
-        run: powershell Compress-Archive -Path dist\* -DestinationPath Caslevania.zip
+        run: powershell Compress-Archive -Path dist\* -DestinationPath Castlevania.zip
+
+      - name: Create tag for release
+        run: |
+          # Crear una nueva etiqueta basada en el número de ejecución
+          git tag -a "v${{ github.run_number }}" -m "Release v${{ github.run_number }}"
+          git push origin "v${{ github.run_number }}"
 
       - name: Create release and upload zip
         uses: softprops/action-gh-release@v1
         with:
-          files: Caslevania.zip
+          files: Castlevania.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
