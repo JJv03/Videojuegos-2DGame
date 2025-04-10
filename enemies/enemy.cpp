@@ -127,11 +127,6 @@ void Enemy::resetPosition()
 }
 
 // ------------------------- Entity functions -------------------------
-sf::FloatRect Enemy::getBounds() const
-{
-    return sf::FloatRect();
-}
-
 void Enemy::onCollision(Entity &other)
 {
 }

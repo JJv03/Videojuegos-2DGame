@@ -2,6 +2,7 @@
 #include "entity.h"
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 class CollisionGrid {
 public:
@@ -25,7 +26,8 @@ private:
     std::unordered_map<int, std::vector<Entity*>> cells;
 
     int getCellKeyFromCoords(int x, int y) const;
-    std::vector<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
+    std::unordered_set<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
 };
 
-bool checkIntersection(const sf::FloatRect a, const sf::FloatRect b);
+bool checkIntersections(const Entity& a, const Entity& b);
+bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b);

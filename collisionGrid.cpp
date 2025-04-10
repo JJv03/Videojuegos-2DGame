@@ -22,29 +22,29 @@ void CollisionGrid::addEntity(Entity* entity, const sf::Vector2f& viewPosition) 
     }
 }
 
-std::vector<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition) {
-    std::vector<int> keys;
-
-    sf::FloatRect bounds = entity.getBounds();
-    //std::cout << bounds.size.x << ", " << bounds.size.y << std::endl;
-    if (bounds.size.x == 0.f || bounds.size.y == 0.f){ return {}; }
-
+std::unordered_set<int> CollisionGrid::getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition) {
+    std::unordered_set<int> keys;
     float cellWidth = gGameGS_size_x / static_cast<float>(cellsPerRow);
     float cellHeight = gGameGS_size_y / static_cast<float>(cellsPerColumn);
 
-    int startX = static_cast<int>(std::floor((bounds.position.x - viewPosition.x) / cellWidth));
-    int startY = static_cast<int>(std::floor((bounds.position.y - viewPosition.y) / cellHeight));
-    int endX = static_cast<int>(std::floor((bounds.position.x + bounds.size.x - viewPosition.x) / cellWidth));
-    int endY = static_cast<int>(std::floor((bounds.position.y + bounds.size.y - viewPosition.y) / cellHeight));
+    for(sf::FloatRect bounds : entity.getBounds()){
+        //std::cout << bounds.size.x << ", " << bounds.size.y << std::endl;
+        if (bounds.size.x == 0.f || bounds.size.y == 0.f){ return {}; }
 
-    // Iterar sobre todas las celdas cubiertas por la entidad
-    for (int x = startX; x <= endX; ++x) {
-        for (int y = startY; y <= endY; ++y) {
-            // Ignorar celdas fuera del grid visible
-            if (x < 0 || x >= cellsPerRow || y < 0 || y >= cellsPerColumn)
-                continue;
+        int startX = static_cast<int>(std::floor((bounds.position.x - viewPosition.x) / cellWidth));
+        int startY = static_cast<int>(std::floor((bounds.position.y - viewPosition.y) / cellHeight));
+        int endX = static_cast<int>(std::floor((bounds.position.x + bounds.size.x - viewPosition.x) / cellWidth));
+        int endY = static_cast<int>(std::floor((bounds.position.y + bounds.size.y - viewPosition.y) / cellHeight));
 
-            keys.push_back(getCellKeyFromCoords(x, y));
+        // Iterar sobre todas las celdas cubiertas por la entidad
+        for (int x = startX; x <= endX; ++x) {
+            for (int y = startY; y <= endY; ++y) {
+                // Ignorar celdas fuera del grid visible
+                if (x < 0 || x >= cellsPerRow || y < 0 || y >= cellsPerColumn)
+                    continue;
+
+                keys.insert(getCellKeyFromCoords(x, y));
+            }
         }
     }
 
@@ -77,7 +77,7 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf:
         for (size_t i = 0; i < entities.size(); ++i) {
             for (size_t j = i + 1; j < entities.size(); ++j) {
                 // TODO: detectar la colision entre los bounds de las entidades
-                if (checkIntersection(entities[i]->getBounds(), entities[j]->getBounds())) {
+                if (checkIntersections(*entities[i], *entities[j])) {
                     entities[i]->onCollision(*entities[j]);
                     entities[j]->onCollision(*entities[i]);
                 }
@@ -115,15 +115,19 @@ void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::Vector2f& view
 }
 
 
-bool checkIntersection(const sf::FloatRect a, const sf::FloatRect b) {
+bool checkIntersections(const Entity& entityA, const Entity& entityB) {
     
-    if (a.position.x + a.size.x < b.position.x ||
-        a.position.x > b.position.x + b.size.x ||
-        a.position.y + a.size.y < b.position.y ||
-        a.position.y > b.position.y + b.size.y)
-    {
-        return false;
+    for(sf::FloatRect a : entityA.getBounds()){
+        for(sf::FloatRect b : entityB.getBounds()){
+            if(isIntersecting(a, b)) return true;
+        }
     }
-    
-    return true;
+    return false;
+}
+
+bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b){
+    return !(a.position.x + a.size.x < b.position.x ||
+             a.position.x > b.position.x + b.size.x ||
+             a.position.y + a.size.y < b.position.y ||
+             a.position.y > b.position.y + b.size.y);
 }

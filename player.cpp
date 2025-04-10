@@ -1,7 +1,6 @@
 #include "player.h"
 #include "globals.h"
 #include <iostream>
-#include "tile.h"
 #include "enemies/enemy.h"
 
 Player::Player()
@@ -94,21 +93,79 @@ void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
 }
 
 
-sf::FloatRect Player::getBounds() const {
-    return animationManager->getGlobalBounds();
+std::vector<sf::FloatRect> Player::getBounds() const {
+    return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
 void Player::onCollision(Entity& other){
-    if (SolidTile* player = dynamic_cast<SolidTile*>(&other)) {
-        std::cout << "Es un SolidTile\n";
+    if (SolidTile* solidTile = dynamic_cast<SolidTile*>(&other)) {
+        //std::cout << "Es un SolidTile\n";
+        this->onCollision_SolidTile(other);
     }
     else if (Enemy* enemy = dynamic_cast<Enemy*>(&other)) {
         std::cout << "Es un Enemy\n";
     }
-    else {
-        std::cout << "Tipo desconocido\n";
+}
+
+void Player::onCollision_SolidTile(Entity& solidTile){
+    sf::FloatRect playerBounds = this->sprite->getGlobalBounds();
+    std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
+
+    
+    for (auto tileBound : tileBounds){
+        if(const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound)){
+            const float overlapX = intersection->size.x;
+            const float overlapY = intersection->size.y;
+            //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+
+            if (overlapX < overlapY)    // Horizontal collision
+            { 
+                if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBound.position.x + tileBound.size.x * 0.5f))
+                {
+                    this->sprite->move({-overlapX, 0.f});
+                    playerBounds.position.x -= overlapX;
+                }
+                else
+                {
+                    this->sprite->move({overlapX, 0.f});
+                    playerBounds.position.x += overlapX;
+                }
+            }
+            else    // Vertical collision
+            { 
+                if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBound.position.y + tileBound.size.y * 0.5f))
+                { // Simon's feet are collisioning with the tile
+
+                    if (!this->isOnGround && this->verticalSpeed >= 0.0f)
+                    // if (player.verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
+                    { // If player is NOT going up
+
+                        // Option 1: adjust overlapedY and make it be .15f
+                        // float theoreticallyCorrectPositionY = player.sprite->getPosition().y - overlapY;
+                        // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
+                        // float moveY = theoreticallyCorrectPositionY - targetPositionY;
+
+                        // Option 2: read the tile and place the player on top of it, regardless of anything else
+                        float targetPositionY = tileBound.position.y - playerBounds.size.y + gSimonFeetCollisionNewHeight;
+                        float moveY = targetPositionY - playerBounds.position.y;
+
+                        this->sprite->move({0.f, moveY});
+                        playerBounds.position.y += moveY;
+                        this->verticalSpeed = 0.0f; // (For security) Simon stops falling
+                        this->isOnGround = true;    // Set Simon to be on ground
+                    }
+                }
+                else // Simon's head is collisioning with the tile
+                {
+                    this->sprite->move({0.f, overlapY});
+                    playerBounds.position.y += overlapY;
+                    this->verticalSpeed = 0.0f; // (For security) Simon starts falling
+                }
+            }
+        }
     }
 }
+
 
 // ----------------------------- WHIP -----------------------------
 Whip::Whip()
@@ -119,8 +176,8 @@ Whip::Whip()
     whipLvl = 1;
 }
 
-sf::FloatRect Whip::getBounds() const {
-    return animationManager->getGlobalBounds();
+std::vector<sf::FloatRect> Whip::getBounds() const {
+    return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
 void Whip::onCollision(Entity& other){
@@ -133,8 +190,8 @@ SubWeapon::SubWeapon()
     type = KNIFE;
 }
 
-sf::FloatRect SubWeapon::getBounds() const {
-    return sf::FloatRect();
+std::vector<sf::FloatRect> SubWeapon::getBounds() const {
+    return std::vector<sf::FloatRect>();
 }
 
 void SubWeapon::onCollision(Entity& other){

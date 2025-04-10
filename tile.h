@@ -25,7 +25,6 @@ public:
     ~SolidTile() = default;
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
     void onCollision(Entity& other) override;
 };
 
@@ -46,7 +45,6 @@ public:
     sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
     void onCollision(Entity& other) override;
 };
 
@@ -77,7 +75,6 @@ public:
     ~BreakableTile() = default;
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
     void onCollision(Entity& other) override;
 };
 

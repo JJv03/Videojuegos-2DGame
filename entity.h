@@ -12,7 +12,7 @@ public:
     virtual ~Entity() = default;
     Entity(std::vector<sf::FloatRect> &_hitboxes);
 
-    virtual sf::FloatRect getBounds() const = 0;
+    virtual std::vector<sf::FloatRect> getBounds() const;
     virtual void onCollision(Entity& other) = 0;
 };
 

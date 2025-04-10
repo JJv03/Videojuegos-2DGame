@@ -35,6 +35,5 @@ public:
     virtual void draw(sf::RenderWindow &window, bool debugDraw);
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
     void onCollision(Entity &other) override;
 };

@@ -45,7 +45,7 @@ public:
     ~Whip() = default;
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
+    std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity& other) override;
 };
 
@@ -101,7 +101,7 @@ public:
     Type type;
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
+    std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity& other) override;
 };
 
@@ -222,9 +222,10 @@ public:
 
     PlayerStateRef &getActiveState();
     void updateActivationZones();
+    void onCollision_SolidTile(Entity& solidTile);
 
     // Entity functions
-    sf::FloatRect getBounds() const override;
+    std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity& other) override;
 };
 
