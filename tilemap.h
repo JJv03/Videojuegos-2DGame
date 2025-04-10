@@ -6,8 +6,11 @@
 #include "globals.h"
 #include "entity.h"
 #include "tile.h"
+#include "item.h"
 
 using BreakableType = BreakableTile::Type;
+
+
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
@@ -37,6 +40,15 @@ private:
 
     // Saves the map's whole tileset texture
     sf::Texture m_tileset;
+
+    // Function to get the hitbox for a solid tile based on its ID
+    sf::FloatRect getHitboxForSolidTile(const int level, const int id) const;
+
+    // Function to get the hitbox for a breakable tile based on its ID
+    sf::FloatRect getHitboxForBreakableTile(const int id) const;
+
+    // Function to get the hitbox for a door tile based on its ID
+    sf::FloatRect getHitboxForDoorTile(const int id) const;
 
     // Method that allows doing window.draw(tilemap) (although this is not used, drawScene is prefered)
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
@@ -74,16 +86,6 @@ public:
     TileMap();
     ~TileMap();
 
-    // Matrix with the properties of each solid tile.
-    std::vector<std::vector<SolidTile>> m_solidTiles;
-
-    // Vector with the properties of each breakable tile
-    std::vector<BreakableTile> m_breakableTiles;
-
-    // Vector with the properties of each door tile
-    std::unordered_map<int, DoorTile> m_doorTiles;
-
-    // Struct with the data of enemies
     struct EnemyData
     {
         enum class Type
@@ -102,17 +104,23 @@ public:
     // Vector to store enemy data
     std::vector<EnemyData> m_enemyData;
 
+    // Vector to store the items in the tilemap
+    std::vector<std::shared_ptr<Item>> m_items;
+
+    // Matrix with the properties of each solid tile.
+    std::vector<std::vector<SolidTile>> m_solidTiles;
+
+    // Vector with the properties of each breakable tile
+    std::vector<BreakableTile> m_breakableTiles;
+
+    // Vector with the properties of each door tile
+    std::unordered_map<int, DoorTile> m_doorTiles;
+
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);
 
-    // Function to get the hitbox for a solid tile based on its ID
-    sf::FloatRect getHitboxForSolidTile(const int level, const int id) const;
-
-    // Function to get the hitbox for a breakable tile based on its ID
-    sf::FloatRect getHitboxForBreakableTile(const int id) const;
-
-    // Function to get the hitbox for a door tile based on its ID
-    sf::FloatRect getHitboxForDoorTile(const int id) const;
+    // Function that updates the items in the tilemap and erases the ones that have no lifeTime left
+    void updateItems(const float& deltaTime);
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow &window, Camera &camera);

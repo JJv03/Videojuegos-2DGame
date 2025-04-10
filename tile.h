@@ -1,5 +1,6 @@
 #pragma once
 #include "entity.h"
+#include "item.h"
 
 
 class Tile : public Entity
@@ -59,17 +60,10 @@ public:
         BREAKABLE_WALL = 2,
     };
 
-    enum class DropType {       // Types of items that can drop from breakable tiles. Only in this scope
-        NONE = 0,               // No item drops
-        DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc). Should be handled in game logic
-        CROWN = 2,
-        MEAT = 3,
-    };
-
     Type type;                      // Breakable type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
-    DropType dropItem = DropType::NONE;          // If the tile drops an item
+    DropType dropType = DropType::NONE;          // If the tile drops an item
 
     BreakableTile();
     ~BreakableTile() = default;

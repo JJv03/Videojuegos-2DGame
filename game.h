@@ -57,10 +57,13 @@ public:
     // Check all the possible collisions
     void checkCollisions();
     void checkCollisions(const sf::Vector2f &viewPosition);
-    void computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds);
 
-    // Check enemies collisions
-    void checkEnemiesCollisions();
+    // Check items collisions. An item only collides with what is below it and with a maximum of 2 tiles
+    void checkItemsCollisions();
+
+    // Check if the player is colliding with the tile that is passed
+    // as argument "tileBounds". If it is, set hasCollided to true
+    void computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds);
 
     // Check map bound collisions
     void checkPlayerMapBoundCollisions();
@@ -72,11 +75,15 @@ public:
     void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth,
                         sf::Vector2f virtualWorldset);
 
+    // Creates a drop item in a certain position
+    void createDropItem(sf::Vector2f itemPosition, DropType dropType);
+    
     // Starts stage number <stage> at current level
     int startStage(int stage, int fromDoor = 0);
 
     // Moves player from a door to another door
     int goToStage(int fromDoor);
+
 
 private:
     // All refered to the GUI

@@ -6,7 +6,6 @@
 #include <memory>
 
 using BreakableType = BreakableTile::Type;
-using DropType = BreakableTile::DropType;
 
 std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, TileMap::BreakableTypeHash> TileMap::breakableTextures;
 
@@ -371,6 +370,18 @@ bool TileMap::load(int level, int stage)
     return true;
 }
 
+void TileMap::updateItems(const float& deltaTime) {
+    for (auto it = m_items.begin(); it != m_items.end(); ) {
+        (*it)->update(deltaTime);
+
+        if ((*it)->m_lifeTime == 0.f) {
+            it = m_items.erase(it);     // erase and move iterator
+        } else {
+            ++it;   // just move iterator
+        }
+    }
+}
+
 void TileMap::drawHitboxes(sf::RenderWindow &window) const
 {
     // Solid tiles
@@ -391,6 +402,13 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
     for (auto &doorEntry : this->m_doorTiles)
     {
         sf::RectangleShape rect = FloatRectToRectShape(doorEntry.second.hitboxes[0], 1);
+        window.draw(rect);
+    }
+
+    // Items
+    for (auto &item : this->m_items)
+    {
+        sf::RectangleShape rect = FloatRectToRectShape(item->sprite->getGlobalBounds());
         window.draw(rect);
     }
 
@@ -426,7 +444,6 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
 {
     VisibleTileRange visibleTiles = calculateVisibleTileRange(window, m_tilesPerRow, m_tilesPerColumn);
 
-    // Drawing the tiles
     for (int row = visibleTiles.firstRow; row <= visibleTiles.lastRow; ++row)
     {
         for (int col = visibleTiles.firstCol; col <= visibleTiles.lastCol; ++col)
@@ -440,12 +457,13 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
 
     for (size_t i = 0; i < m_breakableTiles.size(); ++i)
     {
-        if (m_breakableTiles[i].isDestroyed)
-        {
-            continue;
-        }
-
+        if (m_breakableTiles[i].isDestroyed) continue;
         window.draw(*m_breakableTiles[i].sprite);
+    }
+
+    for (size_t i = 0; i < m_items.size(); ++i)
+    {
+        window.draw(*m_items[i]->sprite);
     }
 
     drawHitboxes(window);
@@ -720,10 +738,10 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             std::getline(ss, token, ',');
             int posY = std::stoi(token);
 
-            // Optional values: isBreakable and dropItem.
+            // Optional values: isBreakable and dropType.
             // By default, it is BREAKABLE and there is NO ITEM TO DROP (= NONE).
             bool isBreakable = true;
-            DropType dropItem = DropType::NONE;
+            DropType dropType = DropType::NONE;
 
             if (std::getline(ss, token, ','))
             {                                          // Optional value
@@ -732,7 +750,7 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             if (std::getline(ss, token, ','))
             { // Optional value
                 // Expecting an integer representing the type of item that can be dropped
-                dropItem = static_cast<DropType>(std::stoi(token));
+                dropType = static_cast<DropType>(std::stoi(token));
             }
 
             sf::Vector2f position(posX, posY);
@@ -747,7 +765,7 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             tile.hitboxes.push_back(hitbox);
             tile.type = static_cast<BreakableType>(breakableType);
             tile.isBreakable = isBreakable;
-            tile.dropItem = dropItem;
+            tile.dropType = dropType;
 
             // Sprite
             auto texture = breakableTextures[tile.type];

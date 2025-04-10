@@ -1,11 +1,13 @@
-#include "game.h"
 #include <iostream>
 #include <cmath>
 #include <optional>
 #include <sstream>
+#include "game.h"
 #include "globals.h"
 #include "utils.h"
 #include "configManager.h"
+#include "item.h"
+
 
 std::unordered_map<std::string, sf::Texture> gTextures;
 std::vector<sf::Sprite> gameSprites;
@@ -150,6 +152,15 @@ void Game::init()
     player.subWeapon.animationManager = knifeAnimationManager;
     player.subWeapon.animationManager->playAnimation(knifeIdle);
 
+
+    // Load item textures
+    if (!loadItemTextures())
+    {
+        throw std::runtime_error("Failed to load item textures.");
+    }
+
+
+
     // --------------------------------------------------
     // GUI
     // --------------------------------------------------
@@ -240,6 +251,9 @@ void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
     player.update(deltaTime);
 
     enemyManager->update(deltaTime, currentLevel, currentStage);
+
+    tilemaps[currentStage].updateItems(deltaTime);
+
 
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
@@ -421,6 +435,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
 
 void Game::checkCollisions()
 {
+    checkItemsCollisions();
 
     checkPlayerMapBoundCollisions();
 
@@ -466,6 +481,45 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     // ... ADD THE REST OF ENTITIES
 
     collisionGrid.checkCollisions(allEntities, viewPosition);
+}
+
+void Game::checkItemsCollisions()
+{
+    for (auto &item : tilemaps[currentStage].m_items)
+    {
+        int maxCollisions = 2;
+
+        if (item->m_isOnGround) continue;   // Skip if item is already on ground
+
+        for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow && maxCollisions > 0; ++col)
+        {
+            for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn && maxCollisions > 0; ++row)
+            {
+                sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitboxes[0];
+                
+                // ignore hitboxless tiles
+                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+
+                sf::FloatRect itemBounds = item->sprite->getGlobalBounds();
+                if (const std::optional<sf::FloatRect> intersection = itemBounds.findIntersection(tileBounds))
+                {
+                    maxCollisions--;
+                    const float overlapX = intersection->size.x;
+                    const float overlapY = intersection->size.y;
+
+                    if (overlapX >= overlapY)     // Vertical collision
+                    { 
+                        if ((itemBounds.position.y + itemBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
+                        {   // Bottom collision
+                            item->sprite->move({0.f, -overlapY});
+                            itemBounds.position.y -= overlapY;
+                            item->m_isOnGround = true;      // Set item to be on ground
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Game::checkPlayerMapBoundCollisions()
@@ -583,6 +637,59 @@ void Game::checkPlayerTileCollisions()
         // std::cout << "NO COLISIONS" << std::endl;
     }
 
+    // Simon collects items
+    for (auto it = tilemaps[currentStage].m_items.begin(); it != tilemaps[currentStage].m_items.end(); )
+    {
+        sf::FloatRect itemBounds = (*it)->sprite->getGlobalBounds();
+        sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
+        
+        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(itemBounds))
+        {
+            // player.collectItem((*it)->type);     // PENDING
+            it = tilemaps[currentStage].m_items.erase(it); // erase item from vector and move iterator
+        }
+        else
+        {
+            ++it; // move iterator
+        }
+    }
+
+    // Breakable tiles: first we check Simon collisions
+    // for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
+    // {
+    //     // Breakable tiles only have 1 hitbox
+    //     sf::FloatRect tileBounds = breakableTile.hitboxes[0];
+
+    //     // ignore hitboxless tiles
+    //     if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+
+    //     if (breakableTile.isDestroyed) continue;
+
+    //     computePlayerTileIntersection(hasCollided, tileBounds);
+    // }
+
+    // Breakable tiles: second we check whip collisions
+    if (player.isAttacking) {
+        for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
+        {
+            if (breakableTile.isDestroyed) continue;
+            
+            sf::FloatRect tileBounds = breakableTile.hitboxes[0];   // Breakable tiles only have 1 hitbox
+
+            // ignore hitboxless tiles
+            if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+            
+            sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
+            if (const std::optional<sf::FloatRect> intersection = whipBounds.findIntersection(tileBounds))
+            {
+                if (breakableTile.isBreakable) {
+                    breakableTile.isDestroyed = true;
+                    createDropItem(breakableTile.sprite->getPosition(), breakableTile.dropType);
+                }
+            }
+        }
+    }
+
     // Door tiles
     // i+1 = stage number
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
@@ -636,6 +743,17 @@ void Game::checkPlayerTileCollisions()
                 std::cout << "ERROR: Stage doesn't correspond to any door stages" << std::endl;
             }
         }
+    }
+}
+
+// -------------------------------------------------------------------------------------
+//                                    AUXILIARY FUNCTIONS
+// -------------------------------------------------------------------------------------
+
+void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType) {
+    std::shared_ptr<Item> item = ::createDropItem(dropType, itemPosition);
+    if (item) {
+        tilemaps[currentStage].m_items.push_back(std::move(item));
     }
 }
 
