@@ -23,6 +23,11 @@ jobs:
           mkdir C:\SFML
           xcopy /E /I SFML\* C:\SFML
 
+      - name: Create build subdirectories
+        run: |
+          if (!(Test-Path -Path "build")) { New-Item -ItemType Directory -Path "build" }
+          if (!(Test-Path -Path "build/enemies")) { New-Item -ItemType Directory -Path "build/enemies" }
+
       - name: Build project with make
         run: make
 
