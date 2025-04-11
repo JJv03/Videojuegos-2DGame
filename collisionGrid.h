@@ -6,6 +6,11 @@
 
 class CollisionGrid {
 public:
+    struct CellEntities {
+        std::vector<Entity*> statics;
+        std::vector<Entity*> dynamics;
+    };
+
     CollisionGrid();
     CollisionGrid(int cellsPerRow, int cellsPerColumn);
 
@@ -23,11 +28,12 @@ public:
 private:
     int cellsPerRow, cellsPerColumn;
 
-    std::unordered_map<int, std::vector<Entity*>> cells;
+    std::unordered_map<int, CellEntities> cells;
 
     int getCellKeyFromCoords(int x, int y) const;
     std::unordered_set<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
 };
+
 
 bool checkIntersections(const Entity& a, const Entity& b);
 bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b);

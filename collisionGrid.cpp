@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include "globals.h"
+#include "tile.h"
 
 CollisionGrid::CollisionGrid() 
     : cellsPerRow(9), cellsPerColumn(9) {}
@@ -18,7 +19,11 @@ int CollisionGrid::getColumns() { return cellsPerColumn; }
 
 void CollisionGrid::addEntity(Entity* entity, const sf::Vector2f& viewPosition) {
     for (int key : getCellKeysContainingEntity(*entity, viewPosition)) {
-        cells[key].push_back(entity);
+        if(dynamic_cast<Tile*>(entity)){ // Tile = Static entity
+            cells[key].statics.push_back(entity);
+        } else {
+            cells[key].dynamics.push_back(entity);
+        }
     }
 }
 
@@ -59,27 +64,45 @@ int CollisionGrid::getCellKeyFromCoords(int x, int y) const {
     return x + y * cellsPerRow;
 }
 
-void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf::Vector2f& viewPosition) {
-    cells.clear();
 
+void CollisionGrid::checkCollisions(std::vector<Entity*>& allEntities, const sf::Vector2f& viewPosition) {
+
+    // 1. Check collisions between static and dynamic entities
+    cells.clear();
     for(auto& entity : allEntities){
         addEntity(entity, viewPosition);
     }
 
-    //std::cout << "All Entities Size: " << allEntities.size() << std::endl;
+    for (auto& [key, cellEntities] : cells) {
+        if (cellEntities.statics.size() + cellEntities.dynamics.size() < 2) continue;
 
-    for (auto& [key, entities] : cells) {
-        //std::cout << "Cell " << key << " - Size: " << entities.size() << std::endl;
+        for (Entity* d : cellEntities.dynamics) {
+            for (Entity* s : cellEntities.statics) {
+                if (checkIntersections(*d, *s)) {
+                    d->onCollision(*s);
+                    s->onCollision(*d);
+                }
+            }
+        }
+    }
 
-        if (entities.size() < 2) continue;
 
-        // Check collisions without repeating
-        for (size_t i = 0; i < entities.size(); ++i) {
-            for (size_t j = i + 1; j < entities.size(); ++j) {
-                // TODO: detectar la colision entre los bounds de las entidades
-                if (checkIntersections(*entities[i], *entities[j])) {
-                    entities[i]->onCollision(*entities[j]);
-                    entities[j]->onCollision(*entities[i]);
+
+    // 2. Check collisions between dynamic entities
+    cells.clear();
+    for(auto& entity : allEntities){
+        addEntity(entity, viewPosition);
+    }
+
+    //std::cout << "Cell " << key << " - Size: " << entities.size() << std::endl;
+    for (auto& [key, cellEntities] : cells) {
+        if (cellEntities.dynamics.size() < 2) continue;
+
+        for (size_t i = 0; i < cellEntities.dynamics.size(); ++i) {
+            for (size_t j = i + 1; j < cellEntities.dynamics.size(); ++j) {
+                if (checkIntersections(*cellEntities.dynamics[i], *cellEntities.dynamics[j])) {
+                    cellEntities.dynamics[i]->onCollision(*cellEntities.dynamics[j]);
+                    cellEntities.dynamics[j]->onCollision(*cellEntities.dynamics[i]);
                 }
             }
         }
@@ -100,7 +123,7 @@ void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::Vector2f& view
 
             // Colorea la celda si tiene entidades
             int cellKey = getCellKeyFromCoords(x, y);
-            if (!cells[cellKey].empty()) {
+            if (!cells[cellKey].dynamics.empty() || !cells[cellKey].statics.empty()) {
                 cellShape.setFillColor(sf::Color(0, 255, 0, 100)); // Verde semi-transparente
             } else {
                 cellShape.setFillColor(sf::Color(0, 0, 0, 0)); // Transparente
