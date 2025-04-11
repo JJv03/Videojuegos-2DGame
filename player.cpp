@@ -4,6 +4,7 @@
 #include "enemies/enemy.h"
 #include "game.h"
 
+
 Player::Player()
 {
     activeState = std::make_unique<PlayerIdleState>();
@@ -46,7 +47,6 @@ void Player::handleInput(sf::Event event)
 
 void Player::update(float deltaTime)
 {
-    
     getActiveState()->update(*this, deltaTime);
     updateActivationZones();
 }
@@ -58,7 +58,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {    
-    //newState->hello();
+    newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);
@@ -101,7 +101,9 @@ std::vector<sf::FloatRect> Player::getBounds() const {
 void Player::onCollision(Entity& other, Game& game){
     if (dynamic_cast<SolidTile*>(&other)) {
         //std::cout << "Es un SolidTile\n";
-        this->onCollision_SolidTile(other);
+        if(!this->onCollision_SolidTile(other)){
+            this->isOnGround = false; // If Simon is not colliding with any solid tile
+        }
     }
     else if (dynamic_cast<Enemy*>(&other)) {
         std::cout << "Es un Enemy\n";
@@ -111,10 +113,11 @@ void Player::onCollision(Entity& other, Game& game){
     }
 }
 
-void Player::onCollision_SolidTile(Entity& solidTile){
+bool Player::onCollision_SolidTile(Entity& solidTile){
     sf::FloatRect playerBounds = this->sprite->getGlobalBounds();
     std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
 
+    bool hasCollided = false;
     
     for (auto tileBound : tileBounds){
         if(const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound)){
@@ -157,6 +160,7 @@ void Player::onCollision_SolidTile(Entity& solidTile){
                         playerBounds.position.y += moveY;
                         this->verticalSpeed = 0.0f; // (For security) Simon stops falling
                         this->isOnGround = true;    // Set Simon to be on ground
+                        hasCollided = true;
                     }
                 }
                 else // Simon's head is collisioning with the tile
@@ -168,6 +172,8 @@ void Player::onCollision_SolidTile(Entity& solidTile){
             }
         }
     }
+
+    return hasCollided;
 }
 
 

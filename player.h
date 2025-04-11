@@ -167,7 +167,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(275, 21), sf::Vector2(16, 32)), 0.2f}};
 
     std::vector<AnimationManager::Frame> jumpFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 32)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
 
     std::vector<AnimationManager::Frame> duckFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
@@ -221,7 +221,7 @@ public:
 
     PlayerStateRef &getActiveState();
     void updateActivationZones();
-    void onCollision_SolidTile(Entity& solidTile);
+    bool onCollision_SolidTile(Entity& solidTile);
     void onCollision_DoorTile(int doorId, Game& game);
 
     // Entity functions

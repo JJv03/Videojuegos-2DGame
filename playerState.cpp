@@ -52,7 +52,8 @@ void PlayerIdleState::init(Player& player)
     player.isOnStairs = false;
     player.attackedFinished = false;
     player.isBeingHurt = false;
-    player.isDead = false;    
+    player.isDead = false;  
+    player.isOnGround = false;  
 }
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
@@ -229,6 +230,7 @@ PlayerWalkState::PlayerWalkState() : PlayerState()
 
 void PlayerWalkState::init(Player& player)
 {
+    player.isOnGround = false;
 }
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
@@ -362,6 +364,8 @@ PlayerJumpState::PlayerJumpState() : PlayerState()
 
 void PlayerJumpState::init(Player& player)
 {
+    player.isOnGround = false;
+
     if (player.isWalking) {
         player.horizontalSpeed = (player.dir == RIGHT) ? gPlayerMovementSpeed : -gPlayerMovementSpeed;
     } else {
