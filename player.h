@@ -64,7 +64,7 @@ public:
 
     AnimationManager *animationManager{nullptr};
 
-    std::vector<AnimationManager::Frame> knifeFrames{
+    std::vector<AnimationManager::Frame> daggerFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(354, 477), sf::Vector2(16, 16)), 0.1f},
     };
 
@@ -75,7 +75,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(566, 477), sf::Vector2(16, 16)), 0.1f},
     };
 
-    std::vector<AnimationManager::Frame> holyFrames{
+    std::vector<AnimationManager::Frame> firebombFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(587, 477), sf::Vector2(8, 16)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(596, 477), sf::Vector2(8, 16)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(605, 477), sf::Vector2(8, 16)), 0.1f},
@@ -84,7 +84,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(640, 477), sf::Vector2(16, 16)), 0.1f},
     };
 
-    std::vector<AnimationManager::Frame> crossFrames{
+    std::vector<AnimationManager::Frame> boomerangFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
     };
 
