@@ -401,7 +401,7 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
     // Doors
     for (auto &doorEntry : this->m_doorTiles)
     {
-        sf::RectangleShape rect = FloatRectToRectShape(doorEntry.second.hitboxes[0], 1);
+        sf::RectangleShape rect = FloatRectToRectShape(doorEntry.hitboxes[0], 1);
         window.draw(rect);
     }
 
@@ -683,8 +683,8 @@ void TileMap::processFileDoorTiles(std::ifstream &file)
             door.hitboxes.push_back(hitbox);
             door.type = static_cast<DoorTile::Type>(doorType);
             door.playerAparition = aparition;
-
-            m_doorTiles[doorId] = door;
+            door.doorId = doorId;
+            m_doorTiles.push_back(door);
         }
         catch (const std::invalid_argument &)
         {

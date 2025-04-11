@@ -71,7 +71,7 @@ public:
 
     Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
     
     void update(const float& deltaTime);
 

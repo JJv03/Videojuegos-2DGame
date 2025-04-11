@@ -127,6 +127,7 @@ void Enemy::resetPosition()
 }
 
 // ------------------------- Entity functions -------------------------
-void Enemy::onCollision(Entity &other)
+void Enemy::onCollision(Entity& other, Game& game)
 {
+    
 }

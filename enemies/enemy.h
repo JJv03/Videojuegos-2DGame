@@ -35,5 +35,5 @@ public:
     virtual void draw(sf::RenderWindow &window, bool debugDraw);
 
     // Entity functions
-    void onCollision(Entity &other) override;
+    void onCollision(Entity& other, Game& game) override;
 };

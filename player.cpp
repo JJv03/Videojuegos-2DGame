@@ -2,6 +2,7 @@
 #include "globals.h"
 #include <iostream>
 #include "enemies/enemy.h"
+#include "game.h"
 
 Player::Player()
 {
@@ -97,13 +98,16 @@ std::vector<sf::FloatRect> Player::getBounds() const {
     return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
-void Player::onCollision(Entity& other){
-    if (SolidTile* solidTile = dynamic_cast<SolidTile*>(&other)) {
+void Player::onCollision(Entity& other, Game& game){
+    if (dynamic_cast<SolidTile*>(&other)) {
         //std::cout << "Es un SolidTile\n";
         this->onCollision_SolidTile(other);
     }
-    else if (Enemy* enemy = dynamic_cast<Enemy*>(&other)) {
+    else if (dynamic_cast<Enemy*>(&other)) {
         std::cout << "Es un Enemy\n";
+    }
+    else if(DoorTile* doorTile = dynamic_cast<DoorTile*>(&other)){
+        this->onCollision_DoorTile(doorTile->doorId, game);
     }
 }
 
@@ -167,6 +171,10 @@ void Player::onCollision_SolidTile(Entity& solidTile){
 }
 
 
+void Player::onCollision_DoorTile(int doorId, Game& game){
+    game.activateDoorTile(doorId);
+}
+
 // ----------------------------- WHIP -----------------------------
 Whip::Whip()
 {
@@ -180,7 +188,7 @@ std::vector<sf::FloatRect> Whip::getBounds() const {
     return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
-void Whip::onCollision(Entity& other){
+void Whip::onCollision(Entity& other, Game& game){
 
 }
 
@@ -194,6 +202,6 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const {
     return std::vector<sf::FloatRect>();
 }
 
-void SubWeapon::onCollision(Entity& other){
+void SubWeapon::onCollision(Entity& other, Game& game){
 
 }

@@ -17,7 +17,7 @@ Game::Game()
 {
     Player player;
     tilemaps = TilemapManager();
-    collisionGrid = CollisionGrid();
+    collisionGrid = CollisionGrid(this);
 }
 
 // Initializes a new game from the beggining
@@ -447,26 +447,27 @@ void Game::checkCollisions()
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {
-    // Descomentar cuando esté implementado y borrar el checkCollisions antiguo
-    allEntities.clear();
+    // 1. Add tiles (static entities)
+    staticEntities.clear();
 
-    // Add player and weapons
-    allEntities.push_back(&player);
-    allEntities.push_back(&player.whip);
-    allEntities.push_back(&player.subWeapon);
-
-    // Add tiles
-    
     for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
         for (auto& solidTile : solidTileRow){
-            allEntities.push_back(&solidTile);
+            staticEntities.push_back(&solidTile);
         }
     }
-    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) allEntities.push_back(&doorTile.second);
-    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) allEntities.push_back(&breakableTile);
+    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) staticEntities.push_back(&doorTile);
+    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) staticEntities.push_back(&breakableTile);
 
 
-    // Add enemies
+    // 2. Add everything else (dynamic entities)
+    dynamicEntities.clear();
+
+    //      Add player and weapons
+    dynamicEntities.push_back(&player);
+    dynamicEntities.push_back(&player.whip);
+    dynamicEntities.push_back(&player.subWeapon);
+
+    //       Add enemies
     /*
     for (auto& spawner : zombiesSpawner){
         for (auto& zombie : spawner.zombies){
@@ -480,7 +481,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     // ... ADD THE REST OF ENTITIES
 
-    collisionGrid.checkCollisions(allEntities, viewPosition);
+    collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }
 
 void Game::checkItemsCollisions()
@@ -695,12 +696,12 @@ void Game::checkPlayerTileCollisions()
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
     for (auto &doorEntry : tilemaps[currentStage].m_doorTiles)
     {
-        sf::FloatRect doorBounds = doorEntry.second.hitboxes[0];
+        sf::FloatRect doorBounds = doorEntry.hitboxes[0];
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(doorBounds))
         {
 
-            int doorId = doorEntry.first;
+            int doorId = doorEntry.doorId;
 
             if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
             {
@@ -746,6 +747,50 @@ void Game::checkPlayerTileCollisions()
     }
 }
 
+
+void Game::activateDoorTile(int doorId)
+{
+    if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
+    {
+        std::cout << "NEXT STAGE" << std::endl;
+        isLoading = true;
+
+        if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
+        {
+            startStage(tilemaps.doors[doorId].next_stage, doorId);
+        }
+        else
+        {
+            startStage(tilemaps.doors[doorId].next_stage);
+        }
+    }
+    else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
+    {
+        std::cout << "PREVIOUS STAGE" << std::endl;
+        isLoading = true;
+
+        if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
+        {
+            startStage(tilemaps.doors[doorId].prev_stage, doorId);
+        }
+        else
+        {
+            startStage(tilemaps.doors[doorId].prev_stage);
+        }
+    }
+    else if (100 == tilemaps.doors[doorId].next_stage)
+    {
+        std::cout << "NEXT LEVEL" << std::endl;
+        isLoading = true;
+        currentLevel += 1;
+        tilemaps.loadLevel(currentLevel);
+        enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+    }
+    else
+    {
+        std::cout << "ERROR: Stage doesn't correspond to any door stages" << std::endl;
+    }
+}
 // -------------------------------------------------------------------------------------
 //                                    AUXILIARY FUNCTIONS
 // -------------------------------------------------------------------------------------
@@ -761,7 +806,7 @@ void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType) {
 //                                    DEBUG TILEMAP
 // -------------------------------------------------------------------------------------
 
-int Game::startStage(int stage, int fromDoor)
+int Game::startStage(int stage, int fromStairs)
 {
     if (unsigned(stage) > tilemaps.tilemaps.size())
     {
@@ -772,13 +817,18 @@ int Game::startStage(int stage, int fromDoor)
     currentStage = stage;
 
     std::cout << "Current stage: " << currentStage << std::endl;
-    if (fromDoor == 0)
+    if (fromStairs == 0)
     {
         player.sprite->setPosition(tilemaps[currentStage].initialPosition);
     }
     else
     {
-        player.sprite->setPosition(tilemaps[currentStage].m_doorTiles[fromDoor].playerAparition);
+        for(auto& door : tilemaps[currentStage].m_doorTiles) {
+            if (door.doorId == fromStairs) {
+                player.sprite->setPosition(door.playerAparition);
+                break;
+            }
+        }
     }
 
     return stage;

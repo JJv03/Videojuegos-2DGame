@@ -1,7 +1,9 @@
 #pragma once
 #include "entity.h"
 #include "item.h"
+#include "player.h"
 
+class Game; // forward declaration
 
 class Tile : public Entity
 {
@@ -26,7 +28,7 @@ public:
     ~SolidTile() = default;
 
     // Entity functions
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
 };
 
 // -------------------------------------------------
@@ -42,11 +44,12 @@ public:
     DoorTile();
     ~DoorTile() = default;
 
+    int doorId;
     Type type;                      // Door type
     sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
 
     // Entity functions
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
 };
 
 // -------------------------------------------------
@@ -69,7 +72,8 @@ public:
     ~BreakableTile() = default;
 
     // Entity functions
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
+    void onCollision_Whip(Whip& whip, Game& game);
 };
 
 

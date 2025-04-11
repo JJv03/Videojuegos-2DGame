@@ -21,7 +21,8 @@ public:
 
     // Where all entities will be temporarily stored in order to
     // check their collisions
-    std::vector<Entity *> allEntities;
+    std::vector<Entity*> staticEntities;
+    std::vector<Entity*> dynamicEntities;
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
@@ -79,10 +80,12 @@ public:
     void createDropItem(sf::Vector2f itemPosition, DropType dropType);
     
     // Starts stage number <stage> at current level
-    int startStage(int stage, int fromDoor = 0);
+    int startStage(int stage, int fromStairs = 0);
 
     // Moves player from a door to another door
     int goToStage(int fromDoor);
+
+    void activateDoorTile(int doorId);
 
 
 private:

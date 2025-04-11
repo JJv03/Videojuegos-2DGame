@@ -114,7 +114,7 @@ public:
     std::vector<BreakableTile> m_breakableTiles;
 
     // Vector with the properties of each door tile
-    std::unordered_map<int, DoorTile> m_doorTiles;
+    std::vector<DoorTile> m_doorTiles;
 
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);

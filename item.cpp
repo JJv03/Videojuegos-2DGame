@@ -21,7 +21,7 @@ std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTex
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes):
           m_type(_type), m_isOnGround(false), m_lifeTime(5.0f), EntitySprite(_sprite, _hitboxes) {}
 
-void Item::onCollision(Entity& other) {
+void Item::onCollision(Entity& other, Game& game) {
 
 }
 

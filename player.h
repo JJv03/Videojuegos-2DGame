@@ -7,9 +7,8 @@
 #include "globals.h"
 #include "entity.h"
 
-
-
 class PlayerState;
+class Game;
 
 enum PlayerDirection
 {
@@ -46,7 +45,7 @@ public:
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
 };
 
 
@@ -98,11 +97,11 @@ public:
     SubWeapon();
     ~SubWeapon() = default;
 
-    SubWeaponType type;
+    SubWeaponType  type;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
 };
 
 
@@ -223,9 +222,10 @@ public:
     PlayerStateRef &getActiveState();
     void updateActivationZones();
     void onCollision_SolidTile(Entity& solidTile);
+    void onCollision_DoorTile(int doorId, Game& game);
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other) override;
+    void onCollision(Entity& other, Game& game) override;
 };
 

@@ -4,15 +4,13 @@
 #include <unordered_map>
 #include <unordered_set>
 
+class Game; // forward declaration
+
 class CollisionGrid {
 public:
-    struct CellEntities {
-        std::vector<Entity*> statics;
-        std::vector<Entity*> dynamics;
-    };
-
     CollisionGrid();
-    CollisionGrid(int cellsPerRow, int cellsPerColumn);
+    CollisionGrid(Game* game);
+    CollisionGrid(Game* game, int cellsPerRow, int cellsPerColumn);
 
     void setRows(const int& newRows);
     void setColumns(const int& newColumns);
@@ -21,14 +19,20 @@ public:
     int getColumns();
 
     void addEntity(Entity* entity, const sf::Vector2f& viewPosition);
+    void addStaticEntity(Entity* entity, const sf::Vector2f& viewPosition);
+    void addDynamicEntity(Entity* entity, const sf::Vector2f& viewPosition);
+    
     void clear();
-    void checkCollisions(std::vector<Entity*>& allEntities, const sf::Vector2f& viewPosition);
+    void checkCollisions(std::vector<Entity*>& staticEntities, std::vector<Entity*>& dynamicEntities, const sf::Vector2f& viewPosition);
     void drawCells(sf::RenderWindow& window, const sf::Vector2f& upperLeftCorner);
     
 private:
+    Game* gameRef = nullptr;
     int cellsPerRow, cellsPerColumn;
 
-    std::unordered_map<int, CellEntities> cells;
+    std::unordered_map<int, std::vector<Entity*>> cellsWithStatics;
+    std::unordered_map<int, std::vector<Entity*>> cellsWithDynamics;
+
 
     int getCellKeyFromCoords(int x, int y) const;
     std::unordered_set<int> getCellKeysContainingEntity(const Entity& entity, const sf::Vector2f& viewPosition);
