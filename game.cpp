@@ -145,8 +145,8 @@ void Game::init()
     }
 
     // Add animations (similar to whip)
-    knifeAnimationManager->addAnimation(knifeThrowing, player.subWeapon.knifeFrames, false);
-    knifeAnimationManager->addAnimation(knifeIdle, player.subWeapon.knifeFrames, false);
+    knifeAnimationManager->addAnimation(knifeThrowing, player.subWeapon.daggerFrames, false);
+    knifeAnimationManager->addAnimation(knifeIdle, player.subWeapon.daggerFrames, false);
 
     // Assign animation managers
     player.subWeapon.animationManager = knifeAnimationManager;
@@ -236,6 +236,7 @@ void Game::init()
     texts.push_back(lives);
 
     startStage(currentStage);
+    player.setState(std::make_unique<PlayerIdleState>());
 }
 
 // Effects changes depending on the input of the player
@@ -289,6 +290,13 @@ void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
     //checkCollisions(viewPosition);
     checkCollisions();
+    
+    if (isLoading)
+    {
+        player.setState(std::make_unique<PlayerIdleState>());
+        
+        //player.isOnGround = false;
+    }
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
@@ -808,6 +816,7 @@ void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType) {
 
 int Game::startStage(int stage, int fromStairs)
 {
+
     if (unsigned(stage) > tilemaps.tilemaps.size())
     {
         std::cerr << "ERROR: Level " << currentLevel << ", stage " << stage << " doesn't exist";
