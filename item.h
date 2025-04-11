@@ -6,26 +6,57 @@
 
 // All the collectable items in the game
 enum class ItemType {
+    // Subweapons
+    DAGGER,
+    AXE,
+    FIRE_BOMB,  // Holy water
+    BOOMERANG,
+    STOPWATCH,
+
+
+    // Collectables
     MORNING_STAR,
+
     SMALL_HEART,
     BIG_HEART,
+
     RED_MONEY_BAG,
     PURPLE_MONEY_BAG,
     WHITE_MONEY_BAG,
+    
+
+    // Special collectables
     ROSARY,
     INVISIBILITY_POTION,
+
     PORK_CHOP,
+
     DOUBLE_SHOT,
     TRIPLE_SHOT,
+
+    FLASHING_MONEY_BAG,
+    CROWN,
+    CHEST,
+    MOAI,
+    
+    MAGIC_CRYSTAL,
+    
+    ONEUP,
 };
 
 enum class DropType {       // Types of items that can drop from breakable tiles.
     NONE = 0,               // No item drops
-    DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc). Should be handled in game logic
-    MORNING_STAR = 2,
+    DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc).
+    WEAPON = 2,             
     CROWN = 3,
-    MEAT = 4,
+    FLASHING_MONEY_BAG = 4,
+    CHEST = 5,
+    MOAI = 6,
+    PORK_CHOP = 7,
+    DOUBLE_SHOT = 8,
+    TRIPLE_SHOT = 9,
 };
+
 
 
 class Item : public EntitySprite {

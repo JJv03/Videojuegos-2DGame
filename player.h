@@ -53,13 +53,13 @@ public:
 class SubWeapon : public EntitySprite
 {
 public:
-    enum Type
+    enum class SubWeaponType
     {
         NONE,
-        KNIFE,
+        BOOMERANG,
+        DAGGER,
         AXE,
-        HOLY_WATER,
-        CROSS,
+        FIRE_BOMB,
         STOPWATCH,
     };
 
@@ -98,7 +98,7 @@ public:
     SubWeapon();
     ~SubWeapon() = default;
 
-    Type type;
+    SubWeaponType type;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;

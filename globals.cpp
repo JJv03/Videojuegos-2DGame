@@ -69,5 +69,9 @@ const float gGameGS_position_x = 0.0f;
 const float gGameGS_position_y = gGUI_position_y;
 
 
+// ============ ITEM VARIABLES =============
+const float gItemGravity = 100.f;
+
+
 // ============ PLAYER VARIABLES =============
 const float gPlayerMovementSpeed = 60.0f;

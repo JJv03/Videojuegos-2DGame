@@ -2,10 +2,10 @@
 #include <unordered_map>
 #include <iostream>
 #include <memory>
+#include <random>
 #include "item.h"
-#include "entity.h"
+#include "globals.h"
 
-constexpr float GRAVITY = 100.f;
 
 struct ItemTypeHash {       // Hash function for the items enum to texture
     std::size_t operator()(const ItemType& t) const {
@@ -14,6 +14,7 @@ struct ItemTypeHash {       // Hash function for the items enum to texture
 };
 
 std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
+
 
 
 
@@ -32,7 +33,7 @@ void Item::update(const float& deltaTime) {
     }
 
     if (!m_isOnGround) {
-        sprite->move({0.f, GRAVITY * deltaTime});
+        sprite->move({0.f, gItemGravity * deltaTime});
     }
 }
 
@@ -50,43 +51,149 @@ sf::Vector2f Item::getPosition() const {
 
 
 bool loadItemTextures() {
-    sf::Image image;
-    if (!image.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
-    image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+    sf::Image image1;
+    if (!image1.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
+    image1.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
-    auto morningStarTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({1, 1}, {16, 16}));
+    auto daggerTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 18}, {16, 16}));
+    itemTextures[ItemType::DAGGER] = daggerTexture;
+
+    auto axeTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 18}, {16, 16}));
+    itemTextures[ItemType::AXE] = axeTexture;
+
+    auto fireBombTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({35, 18}, {16, 16}));
+    itemTextures[ItemType::FIRE_BOMB] = fireBombTexture;
+
+    auto boomerangTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({52, 18}, {16, 16}));
+    itemTextures[ItemType::BOOMERANG] = boomerangTexture;
+
+    auto stopwatchTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({103, 18}, {16, 16}));
+    itemTextures[ItemType::STOPWATCH] = stopwatchTexture;
+
+
+
+    auto morningStarTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 1}, {16, 16}));
     itemTextures[ItemType::MORNING_STAR] = morningStarTexture;
 
-    auto smallHeartTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({18, 1}, {8, 8}));
+    auto smallHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 1}, {8, 8}));
     itemTextures[ItemType::SMALL_HEART] = smallHeartTexture;
 
-    auto bigHeartTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({29, 6}, {12, 10}));
+    auto bigHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({29, 6}, {12, 10}));
     itemTextures[ItemType::BIG_HEART] = bigHeartTexture;
 
-    auto redMoneyBagTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({44, 1}, {16, 16}));
+    auto redMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({44, 1}, {16, 16}));
     itemTextures[ItemType::RED_MONEY_BAG] = redMoneyBagTexture;
 
-    auto purpleMoneyBagTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({61, 1}, {16, 16}));
+    auto purpleMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({61, 1}, {16, 16}));
     itemTextures[ItemType::PURPLE_MONEY_BAG] = purpleMoneyBagTexture;
 
-    auto whiteMoneyBagTexture = std::make_shared<sf::Texture>(image, false, sf::IntRect({78, 1}, {16, 16}));
+    auto whiteMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({78, 1}, {16, 16}));
     itemTextures[ItemType::WHITE_MONEY_BAG] = whiteMoneyBagTexture;
+
+
+
+    auto rosaryTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({35, 35}, {16, 16}));
+    itemTextures[ItemType::ROSARY] = rosaryTexture;
+
+    auto invisibilityPotionTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 35}, {16, 16}));
+    itemTextures[ItemType::INVISIBILITY_POTION] = invisibilityPotionTexture;
+    
+    auto porkChopTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 35}, {16, 16}));
+    itemTextures[ItemType::PORK_CHOP] = porkChopTexture;
+
+
+
+    auto doubleShotTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({120, 18}, {16, 16}));
+    itemTextures[ItemType::DOUBLE_SHOT] = doubleShotTexture;
+
+    auto tripleShotTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 18}, {16, 16}));
+    itemTextures[ItemType::TRIPLE_SHOT] = tripleShotTexture;
+
+
+
+    //auto flashingMoneyBag = std::make_shared<sf::Texture>(image1, false, sf::IntRect({69, 35}, {16, 16}));
+    itemTextures[ItemType::FLASHING_MONEY_BAG] = redMoneyBagTexture;
+    
+    auto crownTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({69, 35}, {16, 16}));
+    itemTextures[ItemType::CROWN] = crownTexture;
+
+    auto chestTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 35}, {16, 16}));
+    itemTextures[ItemType::CHEST] = chestTexture;
+
+    auto moaiTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 35}, {16, 16}));
+    itemTextures[ItemType::MOAI] = moaiTexture;
+    
+
+    
+    auto oneUpTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({52, 35}, {16, 16}));
+    itemTextures[ItemType::ONEUP] = oneUpTexture;
+
 
     return true;
 }
 
 std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position) {
+    static std::random_device rd;
+    static std::mt19937 rng(rd());
+    
     ItemType type;
 
     switch (dropType) {
         case DropType::NONE:
             return nullptr;                 // No item to drop
-        case DropType::DEFAULT:
-            type = ItemType::RED_MONEY_BAG; // Default item drop
+        
+        case DropType::DEFAULT: {
+            static const std::vector<ItemType> defaultDropItems = {
+                ItemType::RED_MONEY_BAG,
+                ItemType::SMALL_HEART,
+                ItemType::BIG_HEART,
+                ItemType::MORNING_STAR,
+            };
+            std::uniform_int_distribution<size_t> dist(0, defaultDropItems.size() - 1);
+            type = defaultDropItems[dist(rng)];
             break;
-        case DropType::MORNING_STAR:
-            type = ItemType::MORNING_STAR;
+        }
+        
+        case DropType::WEAPON: {
+            static const std::vector<ItemType> weaponDropItems = {
+                ItemType::MORNING_STAR,
+                ItemType::DAGGER,
+                ItemType::STOPWATCH,
+                ItemType::ROSARY,
+            };
+            std::uniform_int_distribution<size_t> dist(0, weaponDropItems.size() - 1);
+            type = weaponDropItems[dist(rng)];
             break;
+        }
+
+        case DropType::CROWN:
+            type = ItemType::CROWN;
+            break;
+
+        case DropType::FLASHING_MONEY_BAG:
+            type = ItemType::FLASHING_MONEY_BAG;
+            break;
+        
+        case DropType::CHEST:
+            type = ItemType::CHEST;
+            break;
+
+        case DropType::MOAI:
+            type = ItemType::MOAI;
+            break;
+
+        case DropType::PORK_CHOP:
+            type = ItemType::PORK_CHOP;
+            break;
+        
+        case DropType::DOUBLE_SHOT:
+            type = ItemType::DOUBLE_SHOT;
+            break;
+
+        case DropType::TRIPLE_SHOT:
+            type = ItemType::TRIPLE_SHOT;
+            break;
+
         default:
             std::cerr << "Unknown drop type: " << static_cast<int>(dropType) << std::endl;
             return nullptr;

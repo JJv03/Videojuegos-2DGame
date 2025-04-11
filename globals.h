@@ -70,6 +70,10 @@ extern const float gGameGS_position_x;
 extern const float gGameGS_position_y;
 
 
+// ============ ITEM VARIABLES =============
+extern const float gItemGravity;
+
+
 // ============ PLAYER VARIABLES =============
 extern const float gPlayerMovementSpeed;
 
