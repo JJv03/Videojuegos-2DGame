@@ -1,0 +1,24 @@
+Slide 1:
+	* Castle
+	* Dracula
+	* Fume
+	* Forest
+	* Moon
+Slide 2:
+	* Back
+	* Belmont
+	* Fire
+Slide 3:
+	* BackDracula
+	* Hand
+	* Coffin
+Slide 4:
+	* Castle
+	* Whip
+	* Moon
+	* Fume
+Slide 5:
+	* backCastle
+	* Dracula
+	* Belmont
+	* Fume
