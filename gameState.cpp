@@ -1590,11 +1590,18 @@ GameplayConfGS::~GameplayConfGS() {}
 // ======================================================
 std::unordered_map<std::string, sf::Texture> initAnimationTextures;
 std::vector<sf::Sprite> initAnimationSprites;
+AnimationManager* belmont { nullptr };
+AnimationManager* simon { nullptr };
+AnimationManager* fire { nullptr };
 
 void InitAnimationGS::init(){
     if(debug) std::cout << "ESTADO: Init animation" << std::endl;
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
+
+    // ======================================================
+    //                      BACKGROUNDS [0-3] 
+    // ======================================================
 
     // CASTLE 0
     if (!initAnimationTextures["castle"].loadFromFile("./assets/initAnimation/castle.png")) {
@@ -1619,10 +1626,6 @@ void InitAnimationGS::init(){
     castle.setPosition(sf::Vector2f(xPosition, yPosition));
 
     initAnimationSprites.push_back(castle);
-
-    // ======================================================
-    //                      BACKGROUNDS [0-3] 
-    // ======================================================
 
     // BACK 1
     if (!initAnimationTextures["back"].loadFromFile("./assets/initAnimation/back.png")) {
@@ -1796,27 +1799,77 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text5);
 
     // ======================================================
-    //                      OTHER ASSETS [9-8] 
+    //                      WITH GREEN [9-11] 
     // ======================================================
 
-    // TEXT5 8
-    if (!initAnimationTextures["text5"].loadFromFile("./assets/initAnimation/text5.png")) {
-        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    // COFFIN 9
+    sf::Image coffinImg;
+    if (!coffinImg.loadFromFile("./assets/initAnimation/coffin.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
-    sf::Sprite text5(initAnimationTextures["text5"]);
+    coffinImg.createMaskFromColor(sf::Color(0, 128, 0));
+    initAnimationTextures["coffin"] = sf::Texture(coffinImg, false);
+    sf::Sprite coffin(initAnimationTextures["coffin"]);
 
-    text5.setScale(sf::Vector2f(0.4, 0.4));
+    coffin.setScale(sf::Vector2f(1, 1));
 
-    spriteBounds = text5.getGlobalBounds();
+    spriteBounds = coffin.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
     yPosition = (gWindowHeight - spriteHeight) / 2;
 
-    text5.setPosition(sf::Vector2f(xPosition, yPosition));
+    coffin.setPosition(sf::Vector2f(xPosition, yPosition));
 
-    initAnimationSprites.push_back(text5);
+    initAnimationSprites.push_back(coffin);
+
+    // DRACULA 10
+    sf::Image draculaImg;
+    if (!draculaImg.loadFromFile("./assets/initAnimation/dracula.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    draculaImg.createMaskFromColor(sf::Color(0, 128, 0));
+    initAnimationTextures["dracula"] = sf::Texture(draculaImg, false);
+    sf::Sprite dracula(initAnimationTextures["dracula"]);
+
+    dracula.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = dracula.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    dracula.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(dracula);
+
+    // MOON 11
+    sf::Image moonImg;
+    if (!moonImg.loadFromFile("./assets/initAnimation/moon.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    moonImg.createMaskFromColor(sf::Color(0, 128, 0));
+    initAnimationTextures["moon"] = sf::Texture(moonImg, false);
+    sf::Sprite moon(initAnimationTextures["moon"]);
+
+    moon.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = moon.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    moon.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(moon);
 
 
     // ======================================================
