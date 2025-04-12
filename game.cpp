@@ -283,7 +283,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    // checkCollisions(viewPosition);
+    //checkCollisions(viewPosition);
     checkCollisions();
 
     if (isLoading)
@@ -471,16 +471,9 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     dynamicEntities.push_back(&player.whip);
     dynamicEntities.push_back(&player.subWeapon);
 
-    //       Add enemies
-    /*
-    for (auto& spawner : zombiesSpawner){
-        for (auto& zombie : spawner.zombies){
-            allEntities.push_back(&zombie);
-        }
-    }
-    for (auto& leo : leopard) allEntities.push_back(&leo);
-    for (auto& b : bat) allEntities.push_back(&b);
-    */
+    //      Add enemies
+    for(auto& enemy : enemyManager->getEnemies()) dynamicEntities.push_back(enemy);
+    
     // for (auto& item : items) allEntities.push_back(&item);
 
     // ... ADD THE REST OF ENTITIES

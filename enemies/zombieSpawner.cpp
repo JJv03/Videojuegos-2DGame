@@ -22,7 +22,7 @@ void ZombieSpawner::init()
         for (int i = 0; i < 3; i++)
         {
             zombies.push_back(createZombie(spawnPosition));
-            zombies.back().isActive = false; // Start inactive
+            zombies.back()->isActive = false; // Start inactive
         }
     }
     catch (const std::exception &e)
@@ -42,7 +42,7 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
     for (const auto &zombie : zombies)
     {
-        if (zombie.isActive)
+        if (zombie->isActive)
         {
             allZombiesInactive = false;
             break;
@@ -88,8 +88,8 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
             if (zombieSpawnTimers <= 0.0f)
             {
                 // Position and activate zombie
-                zombies[i].movePositionToBorder(playerActivationZone, dist);
-                zombies[i].isActive = true;
+                zombies[i]->movePositionToBorder(playerActivationZone, dist);
+                zombies[i]->isActive = true;
                 zombiesToSpawn[i] = false;
                 dist += 20; // Offset next zombie
             }
@@ -99,11 +99,11 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     // Update active zombies
     for (auto &zombie : zombies)
     {
-        if (zombie.isActive)
+        if (zombie->isActive)
         {
             bool zombieInsideDeactivationZone = false;
 
-            for (const auto &hitbox : zombie.hitboxes)
+            for (const auto &hitbox : zombie->hitboxes)
             {
                 if (playerDeactivationZone.findIntersection(hitbox).has_value())
                 {
@@ -114,12 +114,12 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
             if (!zombieInsideDeactivationZone)
             {
-                zombie.isActive = false;
-                zombie.resetPosition();
+                zombie->isActive = false;
+                zombie->resetPosition();
             }
             else
             {
-                zombie.update(deltaTime);
+                zombie->update(deltaTime);
             }
         }
     }
@@ -130,9 +130,9 @@ void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const Til
 {
     for (auto &zombie : zombies)
     {
-        if (zombie.isActive)
+        if (zombie->isActive)
         {
-            zombie.checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
+            zombie->checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
         }
     }
 }
@@ -142,9 +142,9 @@ void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)
 {
     for (auto &zombie : zombies)
     {
-        if (zombie.sprite && zombie.isActive)
+        if (zombie->sprite && zombie->isActive)
         {
-            zombie.draw(window, debugDraw);
+            zombie->draw(window, debugDraw);
         }
     }
 

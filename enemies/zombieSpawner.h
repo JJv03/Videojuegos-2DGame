@@ -28,7 +28,7 @@ private:
     std::vector<bool> zombiesToSpawn;
 
 public:
-    std::vector<Zombie> zombies; // Managed zombie instances
+    std::vector<Zombie*> zombies; // Managed zombie instances
 
     size_t level; // Current game level
     size_t stage; // Current stage
