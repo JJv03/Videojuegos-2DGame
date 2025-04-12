@@ -1597,8 +1597,22 @@ void InitAnimationGS::init(){
     this->m_viewSize.y = gMenuGS_size_y;
 
     slide = 1;
+
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+    sf::Text text(font, "Press Enter to skip...", 9);
+    text.setFillColor(sf::Color(255, 255, 255, 125));
+
+    // Centers position
+    float xPos = 250;
+    float yPos = 385;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    warning.push_back(text);
     // ======================================================
-    //                      BACKGROUNDS [0-3] 
+    //                      BACKGROUNDS [0-3]
     // ======================================================
 
     // CASTLE 0
@@ -2069,10 +2083,26 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
         default: return;
     }
 
+    float fadeDuration = 1.5f;
+    float alpha = 255.0f;
+
+    if (timer < fadeDuration) {
+        alpha = (timer / fadeDuration) * 255.0f; // Fade in
+    } else if (timer > (timerInterval - fadeDuration)) {
+        alpha = ((timerInterval - timer) / fadeDuration) * 255.0f; // Fade out
+    }
+
+    alpha = std::clamp(alpha, 0.0f, 255.0f); // asegurar rango válido
+
     for (int idx : spriteIndices) {
         sf::Sprite sprite = initAnimationSprites[idx];
+        sf::Color color = sprite.getColor();
+        color.a = static_cast<uint8_t>(alpha);
+        sprite.setColor(color);
         window.draw(sprite);
     }
+
+    window.draw(warning[0]);
 }
 
 void InitAnimationGS::pause(){

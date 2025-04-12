@@ -208,9 +208,11 @@ class InitAnimationGS : public GameState{
 private:
     SoundManager initAnimSounds;
     configManager &configManager;
+    sf::Font font;
+    std::vector<sf::Text> warning;
     int slide;
-    float timer = 0.0;
-    float timerInterval = 7.0;
+    float timer = 0.0f;
+    float timerInterval = 9.0f;
 public:
     explicit InitAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitAnimationGS() override;

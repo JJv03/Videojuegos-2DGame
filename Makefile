@@ -29,4 +29,5 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 # Limpieza de archivos generados
 clean:
 	del "$(OBJ_DIR)\*.o"
-	del "$(EXEC)"
+	del "$(OBJ_DIR)\enemies\*.o"
+	del "$(OBJ_DIR)\*.exe"
