@@ -69,29 +69,6 @@ PlayerStateRef &Player::getActiveState()
     return activeState;
 }
 
-/*void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
-{
-    sf::Vector2f playerPos = sprite->getPosition();
-
-    sf::Vector2f windowSize = {static_cast<float>(gWindowWidth), static_cast<float>(gWindowHeight)};
-
-    // Calcular las dimensiones de las zonas en función del tamaño de la ventana
-    float activationWidth = static_cast<int>(windowSize.x);           // 100% del ancho de la ventana
-    float activationHeight = static_cast<int>(windowSize.y);          // 100% de la altura de la ventana
-    float deactivationWidth = static_cast<int>(windowSize.x * 1.4f);  // 140% del ancho de la ventana
-    float deactivationHeight = static_cast<int>(windowSize.y * 1.4f); // 140% de la altura de la ventana
-
-    gPlayerActivationZone = sf::FloatRect(
-        {playerPos.x - activationWidth / 2.0f,
-         playerPos.y - activationHeight / 2.0f},
-        {activationWidth, activationHeight});
-
-    gPlayerDeactivationZone = sf::FloatRect(
-        {playerPos.x - deactivationWidth / 2.0f,
-         playerPos.y - deactivationHeight / 2.0f},
-        {deactivationWidth, deactivationHeight});
-}*/
-
 void Player::updateActivationZones(const sf::Vector2f &viewPosition)
 {
     // Size of the visible game view
@@ -115,6 +92,31 @@ void Player::updateActivationZones(const sf::Vector2f &viewPosition)
         {centerPos.x - deactivationWidth / 2.0f,
          centerPos.y - deactivationHeight / 2.0f},
         {deactivationWidth, deactivationHeight});
+}
+
+PlayerPosition Player::getPlayerOffsetPosition()
+{
+    const sf::FloatRect playerBounds = this->sprite->getGlobalBounds();
+    const sf::Vector2f playerCenter = {
+        playerBounds.position.x + playerBounds.size.x / 2.f,
+        playerBounds.position.y + playerBounds.size.y / 2.f};
+
+    sf::Vector2f zoneCenter = {
+        gPlayerActivationZone.position.x + gPlayerActivationZone.size.x / 2.0f,
+        gPlayerActivationZone.position.y + gPlayerActivationZone.size.y / 2.0f};
+
+    float toleranceX = gPlayerActivationZone.size.x * 0.05f;
+
+    if (playerCenter.x < zoneCenter.x - toleranceX)
+    {
+        return PlayerPosition::LEFT;
+    }
+    else if (playerCenter.x > zoneCenter.x + toleranceX)
+    {
+        return PlayerPosition::RIGHT;
+    }
+
+    return PlayerPosition::CENTER;
 }
 
 std::vector<sf::FloatRect> Player::getBounds() const
