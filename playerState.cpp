@@ -470,7 +470,7 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerJumpState::end(Player& player)
 {
-    
+    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerJumpState::hello(){
