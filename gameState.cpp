@@ -1583,3 +1583,84 @@ void GameplayConfGS::close(){
 }
 
 GameplayConfGS::~GameplayConfGS() {}
+
+
+// ======================================================
+//                      INITIAL ANIMATION STATE 
+// ======================================================
+std::unordered_map<std::string, sf::Texture> initAnimationTextures;
+std::vector<sf::Sprite> initAnimationSprites;
+
+void InitAnimationGS::init(){
+    if(debug) std::cout << "ESTADO: Init animation" << std::endl;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    if (!initAnimationTextures["back"].loadFromFile("./assets/initAnimation/back.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite back(initAnimationTextures["back"]);
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = back.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    back.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    back.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(back);
+
+    initAnimSounds.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    auto audio = configManager.getAudio();
+
+    initAnimSounds.loadMusic("menuMusic", "./assets/music/03AVisionofDarkSecrets.mp3");
+    initAnimSounds.playMusic("menuMusic", initAnimSounds.realVolume(audio.master_volume, audio.music_volume));
+}
+
+void InitAnimationGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if(keyPressed->scancode == controls.enter){
+            std::cout << "Skipping animation, going to menu" << std::endl;
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        }
+    }
+}
+
+void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    
+}
+
+void InitAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
+    for (const auto& sprite : initAnimationSprites) {
+        window.draw(sprite);
+    }
+}
+
+void InitAnimationGS::pause(){
+    if(debug) std::cout << "ESTADO: Config PAUSADO" << std::endl;
+}
+
+void InitAnimationGS::resume(){
+    if(debug) std::cout << "ESTADO: Config REANUDADO" << std::endl;
+}
+
+void InitAnimationGS::close(){
+    if(debug) std::cout << "ESTADO: Config CERRADO" << std::endl;
+    initAnimationSprites.clear();
+    initAnimationTextures.clear();
+}
+
+InitAnimationGS::~InitAnimationGS() {}
