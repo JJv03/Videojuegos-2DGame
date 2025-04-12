@@ -7,14 +7,7 @@
 #include "globals.h"
 
 
-struct ItemTypeHash {       // Hash function for the items enum to texture
-    std::size_t operator()(const ItemType& t) const {
-        return std::hash<int>()(static_cast<int>(t));
-    }
-};
-
 std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
-
 
 
 

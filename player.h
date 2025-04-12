@@ -6,6 +6,8 @@
 #include "animationManager.h"
 #include "globals.h"
 #include "entity.h"
+#include "item.h"
+
 
 class PlayerState;
 class Game;
@@ -50,16 +52,6 @@ public:
 class SubWeapon : public EntitySprite
 {
 public:
-    enum class SubWeaponType
-    {
-        NONE,
-        BOOMERANG,
-        DAGGER,
-        AXE,
-        FIRE_BOMB,
-        STOPWATCH,
-    };
-
     AnimationManager *animationManager{nullptr};
 
     std::vector<AnimationManager::Frame> daggerFrames{
@@ -93,7 +85,7 @@ public:
     SubWeapon();
     ~SubWeapon() = default;
 
-    SubWeaponType type;
+    ItemType type;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
@@ -143,6 +135,7 @@ public:
     // Weapons
     Whip whip;
     SubWeapon subWeapon;
+    ItemType subWeaponType = ItemType::NONE;
 
     // Activation zone
     sf::FloatRect gPlayerActivationZone;

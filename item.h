@@ -6,6 +6,8 @@
 
 // All the collectable items in the game
 enum class ItemType {
+    NONE,
+
     // Subweapons
     DAGGER,
     AXE,
@@ -57,6 +59,15 @@ enum class DropType {       // Types of items that can drop from breakable tiles
     TRIPLE_SHOT = 9,
 };
 
+
+struct ItemTypeHash {       // Hash function for the items enum to texture
+    std::size_t operator()(const ItemType& t) const {
+        return std::hash<int>()(static_cast<int>(t));
+    }
+};
+
+
+extern std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
 
 
 class Item : public EntitySprite {

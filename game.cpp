@@ -9,7 +9,7 @@
 #include "item.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
-std::vector<sf::Sprite> gameSprites;
+
 
 // Constructor, destructor
 Game::Game()
@@ -165,7 +165,7 @@ void Game::init()
         std::cout << "No se ha encontrado la fuente" << std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
-
+        
     float margin = gGUI_size_x * gGUI_MarginFactor;
 
     // Score
@@ -209,7 +209,8 @@ void Game::init()
 
     sf::Sprite heartSprite(gTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
     heartSprite.setPosition(sf::Vector2f(180, -4));
-    gameSprites.push_back(heartSprite);
+    guiHeartSprite = std::make_shared<sf::Sprite>(heartSprite);
+
 
     // Hearts
     sf::Text hearts(font, "-00", gGUI_text_size);
@@ -233,6 +234,9 @@ void Game::init()
 
     startStage(currentStage);
     player.setState(std::make_unique<PlayerIdleState>());
+
+    // GUI subweapon
+    guiSubWeaponSprite = std::make_shared<sf::Sprite>(*itemTextures[ItemType::DAGGER]);
 }
 
 // Effects changes depending on the input of the player
@@ -285,6 +289,9 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
     //checkCollisions(viewPosition);
     checkCollisions();
+
+    // Update the subweapon sprite item
+    guiSubWeaponSprite->setTexture(*itemTextures[player.subWeaponType]);
 
     if (isLoading)
     {
@@ -350,6 +357,28 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         // Draw the health bars
         drawHealthBars(window, player.health, 16, virtualWorldOffset); // CHANGE FOR BOSS HEALTH!!!!!
 
+        // Subweapon box (the red rectangle)
+        sf::RectangleShape redBorder(sf::Vector2f(gGUI_subweaponBox_size_x, gGUI_subweaponBox_size_y));
+        sf::Vector2f redBorderPosition(gGUI_subweaponBox_offset_position_x + virtualWorldOffset.x,
+                                       gGUI_subweaponBox_offset_position_y + virtualWorldOffset.y);
+        redBorder.setPosition(redBorderPosition);
+        redBorder.setFillColor(sf::Color::Transparent);
+        redBorder.setOutlineColor(sf::Color::Red);
+        redBorder.setOutlineThickness(2.f);
+        window.draw(redBorder);
+
+        // Draw the subweapon in the box
+        if (player.subWeaponType != ItemType::NONE) {
+            redBorderPosition.x += 5.f;
+            guiSubWeaponSprite->setPosition(redBorderPosition);
+            window.draw(*guiSubWeaponSprite);
+        }
+
+        // Draw the heart counter icon
+        guiHeartSprite->setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
+        window.draw(*guiHeartSprite);
+
+
         // PLAYER and ENTITIES =====================================
 
         player.draw(window);
@@ -358,20 +387,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
-
-        // Red rectangle
-        sf::RectangleShape redBorder(sf::Vector2f(27, 17));
-        redBorder.setPosition(sf::Vector2f(140 + virtualWorldOffset.x, -4 + virtualWorldOffset.y));
-        redBorder.setFillColor(sf::Color::Transparent);
-        redBorder.setOutlineColor(sf::Color::Red);
-        redBorder.setOutlineThickness(2.f);
-        window.draw(redBorder);
-
-        // For now the heart
-        sf::Sprite sprite(gameSprites[0]);
-        sf::Vector2f pos(180, -4);
-        sprite.setPosition(pos + virtualWorldOffset);
-        window.draw(sprite);
 
         // collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
@@ -441,7 +456,7 @@ void Game::checkCollisions()
 
     checkPlayerMapBoundCollisions();
 
-    checkPlayerTileCollisions();
+    checkPlayerCollisions();
 
     enemyManager->checkCollisions(currentLevel, currentStage, tilemaps);
 }
@@ -607,7 +622,7 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
     }
 }
 
-void Game::checkPlayerTileCollisions()
+void Game::checkPlayerCollisions()
 {
     bool hasCollided = false;
 
@@ -645,7 +660,7 @@ void Game::checkPlayerTileCollisions()
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(itemBounds))
         {
-            // player.collectItem((*it)->type);     // PENDING
+            player.subWeaponType = (*it)->m_type;
             it = tilemaps[currentStage].m_items.erase(it); // erase item from vector and move iterator
         }
         else

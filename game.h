@@ -69,8 +69,8 @@ public:
     // Check map bound collisions
     void checkPlayerMapBoundCollisions();
 
-    // Check collisions with the tilemap
-    void checkPlayerTileCollisions();
+    // Check collisions with the tilemap and items
+    void checkPlayerCollisions();
 
     // Draw healthBar
     void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth,
@@ -89,10 +89,14 @@ public:
 
 
 private:
-    // All refered to the GUI
+    // ----- All refered to the GUI -----
     sf::Font font;
     std::vector<sf::Text> texts;
     std::vector<sf::Vector2f> textPositions;
+
+    // Subweapon sprite
+    std::shared_ptr<sf::Sprite> guiSubWeaponSprite;
+    std::shared_ptr<sf::Sprite> guiHeartSprite;
 
     // Vectors with the diferents rectangles of each HealthBar
     std::vector<sf::RectangleShape> playerHealthBar;

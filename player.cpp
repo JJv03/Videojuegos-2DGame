@@ -234,7 +234,7 @@ void Whip::onCollision(Entity &other, Game &game)
 // ----------------------------- SUBWEAPON -----------------------------
 SubWeapon::SubWeapon()
 {
-    type = SubWeaponType::DAGGER;
+    type = ItemType::DAGGER;
 }
 
 std::vector<sf::FloatRect> SubWeapon::getBounds() const

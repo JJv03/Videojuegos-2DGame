@@ -42,6 +42,14 @@ extern const float gGUI_position_x;
 extern const float gGUI_position_y;
 extern const sf::Color gGUI_color;
 
+extern const float gGUI_subweaponBox_size_x;
+extern const float gGUI_subweaponBox_size_y;
+extern const float gGUI_subweaponBox_size_x;
+extern const float gGUI_subweaponBox_offset_position_x;
+extern const float gGUI_subweaponBox_offset_position_y;
+
+extern const float gGUI_heartCounter_position_x;
+extern const float gGUI_heartCounter_position_y;
 
 extern const unsigned int gGUI_text_size;
 extern const sf::Color gGUI_text_color;
