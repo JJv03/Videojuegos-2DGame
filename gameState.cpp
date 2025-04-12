@@ -1596,6 +1596,7 @@ void InitAnimationGS::init(){
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
+    slide = 1;
     // ======================================================
     //                      BACKGROUNDS [0-3] 
     // ======================================================
@@ -2029,10 +2030,47 @@ void InitAnimationGS::handleInput(sf::Event event){
 }
 
 void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    timer += deltaTime;
+
+    if(timer >= timerInterval){
+        slide ++;
+        timer = 0.0f;
+    }
+
+    if(slide >= 6){
+        std::cout << "Animation finished, going to menu" << std::endl;
+        stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+    }
 }
 
 void InitAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
-    for (const auto& sprite : initAnimationSprites) {
+    drawSlide(window);
+}
+
+void InitAnimationGS::drawSlide(sf::RenderWindow& window){
+    std::vector<int> spriteIndices;
+
+    switch(slide){
+        // Castle, Dracula, Fume, Forest, Moon, Text1
+        case 1: spriteIndices = {0, 10, 13, 12, 11, 4}; break;
+
+        // Back, Belmont, Fire, Text2
+        case 2: spriteIndices = {1, 15, 16, 5}; break;
+
+        // BackDracula, Hand, Coffin, Text3
+        case 3: spriteIndices = {2, 14, 9, 6}; break;
+
+        // Castle, Whip, Fume, Forest, Moon, Text4
+        case 4: spriteIndices = {0, 17, 13, 12, 11, 7}; break;
+
+        // Night,  Dracula, Belmont, Fume, Moon, Text5
+        case 5: spriteIndices = {3, 10, 15, 13, 11, 8}; break;
+        
+        default: return;
+    }
+
+    for (int idx : spriteIndices) {
+        sf::Sprite sprite = initAnimationSprites[idx];
         window.draw(sprite);
     }
 }

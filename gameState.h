@@ -208,6 +208,9 @@ class InitAnimationGS : public GameState{
 private:
     SoundManager initAnimSounds;
     configManager &configManager;
+    int slide;
+    float timer = 0.0;
+    float timerInterval = 7.0;
 public:
     explicit InitAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitAnimationGS() override;
@@ -215,6 +218,7 @@ public:
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
+    void drawSlide(sf::RenderWindow& window);
     void pause() override;
     void resume() override;
     void close() override;
