@@ -8,12 +8,18 @@
 #include "entity.h"
 #include "item.h"
 
-
 class PlayerState;
 class Game;
 
 enum PlayerDirection
 {
+    LEFT,
+    RIGHT,
+};
+
+enum class PlayerPosition
+{
+    CENTER,
     LEFT,
     RIGHT,
 };
@@ -210,6 +216,7 @@ public:
 
     PlayerStateRef &getActiveState();
     void updateActivationZones(const sf::Vector2f &viewPosition);
+    PlayerPosition getPlayerOffsetPosition();
     bool onCollision_SolidTile(Entity &solidTile);
     void onCollision_DoorTile(int doorId, Game &game);
 

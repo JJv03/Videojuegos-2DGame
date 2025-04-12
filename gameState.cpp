@@ -1799,7 +1799,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text5);
 
     // ======================================================
-    //                      WITH GREEN [9-11] 
+    //                      WITH CHROMA [9-14] 
     // ======================================================
 
     // COFFIN 9
@@ -1871,6 +1871,80 @@ void InitAnimationGS::init(){
 
     initAnimationSprites.push_back(moon);
 
+    // FOREST 12
+    sf::Image forestImg;
+    if (!forestImg.loadFromFile("./assets/initAnimation/forest.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    forestImg.createMaskFromColor(sf::Color(24, 60, 92));
+    initAnimationTextures["forest"] = sf::Texture(forestImg, false);
+    sf::Sprite forest(initAnimationTextures["forest"]);
+
+    forest.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = forest.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    forest.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(forest);
+
+    // FUME 13
+    sf::Image fumeImg;
+    if (!fumeImg.loadFromFile("./assets/initAnimation/fume.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    fumeImg.createMaskFromColor(sf::Color(84, 109, 142));
+    initAnimationTextures["fume"] = sf::Texture(fumeImg, false);
+    sf::Sprite fume(initAnimationTextures["fume"]);
+
+    fume.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = fume.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    fume.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(fume);
+
+    // HAND 14
+    sf::Image handImg;
+    if (!handImg.loadFromFile("./assets/initAnimation/hand.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    handImg.createMaskFromColor(sf::Color(116, 116, 116));
+    initAnimationTextures["hand"] = sf::Texture(handImg, false);
+    sf::Sprite hand(initAnimationTextures["hand"]);
+
+    hand.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = hand.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    hand.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(hand);
+
+    // ======================================================
+    //                      ANIMATIONS [15-17] 
+    // ======================================================
+
+    
 
     // ======================================================
     //                      SOUND AND MUSIC 
