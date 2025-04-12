@@ -21,7 +21,6 @@ void AnimationManager::playAnimation(animationID id) {
     }
 }
 
-
 void AnimationManager::update( float deltaTime) {
     if (!currentAnimation || currentAnimation->frames.empty()) return;
 
@@ -44,6 +43,18 @@ void AnimationManager::update( float deltaTime) {
         sprite.setTextureRect(currentAnimation->frames[currentFrame].rect);
 
     }
+    if (blinking) {
+        blinkTimer += deltaTime;
+        if (blinkTimer >= blinkInterval) {
+            blinkTimer = 0.f;
+            visible = !visible;
+
+            sf::Color color = sprite.getColor();
+            color = visible ? sf::Color::White : sf::Color::Transparent;
+            sprite.setColor(color);
+        }
+    }
+
 }
 
 bool AnimationManager::isPlaying(animationID id){
@@ -72,4 +83,14 @@ sf::FloatRect AnimationManager::getGlobalBounds(){
             return sf::FloatRect();
         }
     return sprite.getGlobalBounds();
+}
+
+void AnimationManager::setBlinking(bool enable, float interval) {
+    // animManager.setBlinking(true, 0.15f); Blink every 0.15 seconds
+    // animManager.setBlinking(false, 0.f); Stop blinking
+    blinking = enable;
+    blinkInterval = interval;
+    blinkTimer = 0.f;
+    visible = true;
+    sprite.setColor(sf::Color::White);
 }

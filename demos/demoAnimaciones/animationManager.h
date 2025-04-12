@@ -9,11 +9,20 @@ enum animationID{
     // Simon
     idleSimon,
     walkSimon,
+    walkSlowSimon,
     jumpSimon,
     stairUpSimon,
     stairDownSimon,
     hurtSimon,
     deathSimon,
+    attackSimon,
+    duckSimon,
+    attackFloorSimon,
+    invulnerableSimon,
+    
+    //Whip
+    whipLvl1StandingJumping,
+    whipNoAttack,
     
     // Enemies
     walkZombie,
@@ -25,8 +34,13 @@ enum animationID{
 
     // Bosses
     sleepPhantomBat,
-    flyPhantomBat
+    flyPhantomBat,
+
+    // Secondary weapon
+    knifeIdle,
+    knifeThrowing
 };
+
 
 class AnimationManager {
 public:
@@ -86,10 +100,30 @@ public:
      */
     bool isPlaying(animationID id);
 
+    bool isAnimationFinished() const;
+
+    void resetAnimation();
+
+    int getCurrentFrameIndex();
+
+    void setAnimationSpeed(float multiplier);
+
+    sf::FloatRect getGlobalBounds();
+    
+    void setBlinking(bool enable, float interval);
+
 private:
     sf::Sprite& sprite;
     std::unordered_map<animationID, Animation> animations;
     Animation* currentAnimation;
     float elapsedTime;
+    
     std::size_t currentFrame;
+    float speedMultiplier;
+
+    bool blinking = false;
+    float blinkInterval = 0.1f;
+    float blinkTimer = 0.f;
+    bool visible = true;
 };
+
