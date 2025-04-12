@@ -1590,9 +1590,6 @@ GameplayConfGS::~GameplayConfGS() {}
 // ======================================================
 std::unordered_map<std::string, sf::Texture> initAnimationTextures;
 std::vector<sf::Sprite> initAnimationSprites;
-AnimationManager* belmont { nullptr };
-AnimationManager* simon { nullptr };
-AnimationManager* fire { nullptr };
 
 void InitAnimationGS::init(){
     if(debug) std::cout << "ESTADO: Init animation" << std::endl;
@@ -1940,11 +1937,74 @@ void InitAnimationGS::init(){
 
     initAnimationSprites.push_back(hand);
 
-    // ======================================================
-    //                      ANIMATIONS [15-17] 
-    // ======================================================
+    // BELMONT 15
+    sf::Image belmontImg;
+    if (!belmontImg.loadFromFile("./assets/initAnimation/belmont.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    belmontImg.createMaskFromColor(sf::Color(84,109,142));
+    initAnimationTextures["belmont"] = sf::Texture(belmontImg, false);
+    sf::Sprite belmont(initAnimationTextures["belmont"]);
 
-    
+    belmont.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = belmont.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    belmont.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(belmont);
+
+    // FIRE 16
+    sf::Image fireImg;
+    if (!fireImg.loadFromFile("./assets/initAnimation/fire.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    fireImg.createMaskFromColor(sf::Color(84,109,142));
+    initAnimationTextures["fire"] = sf::Texture(fireImg, false);
+    sf::Sprite fire(initAnimationTextures["fire"]);
+
+    fire.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = fire.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    fire.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(fire);
+
+    // WHIP 17
+    sf::Image whipImg;
+    if (!whipImg.loadFromFile("./assets/initAnimation/whip.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    whipImg.createMaskFromColor(sf::Color(84,109,142));
+    initAnimationTextures["whip"] = sf::Texture(whipImg, false);
+    sf::Sprite whip(initAnimationTextures["whip"]);
+
+    whip.setScale(sf::Vector2f(1, 1));
+
+    spriteBounds = whip.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    whip.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(whip);
 
     // ======================================================
     //                      SOUND AND MUSIC 
@@ -1969,7 +2029,6 @@ void InitAnimationGS::handleInput(sf::Event event){
 }
 
 void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
-    
 }
 
 void InitAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -1990,6 +2049,8 @@ void InitAnimationGS::close(){
     if(debug) std::cout << "ESTADO: Init animation CERRADO" << std::endl;
     initAnimationSprites.clear();
     initAnimationTextures.clear();
+    initAnimationAnimatedSprites.clear();
+    initAnimationAnimatedTextures.clear();
 }
 
 InitAnimationGS::~InitAnimationGS() {}
