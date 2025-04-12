@@ -8,7 +8,6 @@
 #include "configManager.h"
 #include "item.h"
 
-
 std::unordered_map<std::string, sf::Texture> gTextures;
 std::vector<sf::Sprite> gameSprites;
 
@@ -152,14 +151,11 @@ void Game::init()
     player.subWeapon.animationManager = knifeAnimationManager;
     player.subWeapon.animationManager->playAnimation(knifeIdle);
 
-
     // Load item textures
     if (!loadItemTextures())
     {
         throw std::runtime_error("Failed to load item textures.");
     }
-
-
 
     // --------------------------------------------------
     // GUI
@@ -210,7 +206,7 @@ void Game::init()
     heartImage.createMaskFromColor(gColorKeyGrey);
 
     gTextures["heart"] = sf::Texture(heartImage, false);
-    
+
     sf::Sprite heartSprite(gTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
     heartSprite.setPosition(sf::Vector2f(180, -4));
     gameSprites.push_back(heartSprite);
@@ -246,15 +242,14 @@ void Game::handleInput(sf::Event event)
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
+void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
-    player.update(deltaTime);
+    player.update(deltaTime, viewPosition);
 
     enemyManager->update(deltaTime, currentLevel, currentStage);
 
     tilemaps[currentStage].updateItems(deltaTime);
-
 
     static float timeAccumulator = 0.0f;
     timeAccumulator += deltaTime;
@@ -288,14 +283,14 @@ void Game::update(float deltaTime, const sf::Vector2f& viewPosition)
     texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    //checkCollisions(viewPosition);
+    // checkCollisions(viewPosition);
     checkCollisions();
-    
+
     if (isLoading)
     {
         player.setState(std::make_unique<PlayerIdleState>());
-        
-        //player.isOnGround = false;
+
+        // player.isOnGround = false;
     }
 }
 
@@ -326,7 +321,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         {
             window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
         }
-
 
         // =========================================
         // ================== GUI ==================
@@ -362,8 +356,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         enemyManager->draw(window, currentLevel, currentStage);
 
-        window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
-        window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
+        // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
+        // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 
         // Red rectangle
         sf::RectangleShape redBorder(sf::Vector2f(27, 17));
@@ -379,7 +373,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         sprite.setPosition(pos + virtualWorldOffset);
         window.draw(sprite);
 
-        //collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
+        // collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
 }
 
@@ -452,20 +446,22 @@ void Game::checkCollisions()
     enemyManager->checkCollisions(currentLevel, currentStage, tilemaps);
 }
 
-
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
-    for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
-        for (auto& solidTile : solidTileRow){
+    for (auto &solidTileRow : tilemaps[currentStage].m_solidTiles)
+    {
+        for (auto &solidTile : solidTileRow)
+        {
             staticEntities.push_back(&solidTile);
         }
     }
-    for (auto& doorTile : tilemaps[currentStage].m_doorTiles) staticEntities.push_back(&doorTile);
-    for (auto& breakableTile : tilemaps[currentStage].m_breakableTiles) staticEntities.push_back(&breakableTile);
-
+    for (auto &doorTile : tilemaps[currentStage].m_doorTiles)
+        staticEntities.push_back(&doorTile);
+    for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
+        staticEntities.push_back(&breakableTile);
 
     // 2. Add everything else (dynamic entities)
     dynamicEntities.clear();
@@ -498,16 +494,18 @@ void Game::checkItemsCollisions()
     {
         int maxCollisions = 2;
 
-        if (item->m_isOnGround) continue;   // Skip if item is already on ground
+        if (item->m_isOnGround)
+            continue; // Skip if item is already on ground
 
         for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow && maxCollisions > 0; ++col)
         {
             for (int row = 0; row < tilemaps[currentStage].m_tilesPerColumn && maxCollisions > 0; ++row)
             {
                 sf::FloatRect tileBounds = tilemaps[currentStage].m_solidTiles[row][col].hitboxes[0];
-                
+
                 // ignore hitboxless tiles
-                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f)
+                    continue;
 
                 sf::FloatRect itemBounds = item->sprite->getGlobalBounds();
                 if (const std::optional<sf::FloatRect> intersection = itemBounds.findIntersection(tileBounds))
@@ -516,13 +514,13 @@ void Game::checkItemsCollisions()
                     const float overlapX = intersection->size.x;
                     const float overlapY = intersection->size.y;
 
-                    if (overlapX >= overlapY)     // Vertical collision
-                    { 
+                    if (overlapX >= overlapY) // Vertical collision
+                    {
                         if ((itemBounds.position.y + itemBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
-                        {   // Bottom collision
+                        { // Bottom collision
                             item->sprite->move({0.f, -overlapY});
                             itemBounds.position.y -= overlapY;
-                            item->m_isOnGround = true;      // Set item to be on ground
+                            item->m_isOnGround = true; // Set item to be on ground
                         }
                     }
                 }
@@ -558,7 +556,7 @@ void Game::checkPlayerMapBoundCollisions()
     */
 }
 
-void Game::computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds)
+void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect &tileBounds)
 {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
     if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBounds))
@@ -567,10 +565,10 @@ void Game::computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect 
 
         const float overlapX = intersection->size.x;
         const float overlapY = intersection->size.y;
-        //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+        // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
-        if (overlapX < overlapY)    // Horizontal collision
-        { 
+        if (overlapX < overlapY) // Horizontal collision
+        {
             if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
             {
                 player.sprite->move({-overlapX, 0.f});
@@ -582,8 +580,8 @@ void Game::computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect 
                 playerBounds.position.x += overlapX;
             }
         }
-        else    // Vertical collision
-        { 
+        else // Vertical collision
+        {
             if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
             { // Simon's feet are collisioning with the tile
 
@@ -632,13 +630,13 @@ void Game::checkPlayerTileCollisions()
             for (sf::FloatRect tileBounds : tilemaps[currentStage].m_solidTiles[row][col].hitboxes)
             {
                 // ignore hitboxless tiles
-                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
+                if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f)
+                    continue;
 
                 computePlayerTileIntersection(hasCollided, tileBounds);
             }
         }
     }
-
 
     if (!hasCollided)
     { // If Simon is not colliding with any solid tile
@@ -647,11 +645,11 @@ void Game::checkPlayerTileCollisions()
     }
 
     // Simon collects items
-    for (auto it = tilemaps[currentStage].m_items.begin(); it != tilemaps[currentStage].m_items.end(); )
+    for (auto it = tilemaps[currentStage].m_items.begin(); it != tilemaps[currentStage].m_items.end();)
     {
         sf::FloatRect itemBounds = (*it)->sprite->getGlobalBounds();
         sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
-        
+
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(itemBounds))
         {
             // player.collectItem((*it)->type);     // PENDING
@@ -678,20 +676,24 @@ void Game::checkPlayerTileCollisions()
     // }
 
     // Breakable tiles: second we check whip collisions
-    if (player.isAttacking) {
+    if (player.isAttacking)
+    {
         for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
         {
-            if (breakableTile.isDestroyed) continue;
-            
-            sf::FloatRect tileBounds = breakableTile.hitboxes[0];   // Breakable tiles only have 1 hitbox
+            if (breakableTile.isDestroyed)
+                continue;
+
+            sf::FloatRect tileBounds = breakableTile.hitboxes[0]; // Breakable tiles only have 1 hitbox
 
             // ignore hitboxless tiles
-            if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
-            
+            if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f)
+                continue;
+
             sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
             if (const std::optional<sf::FloatRect> intersection = whipBounds.findIntersection(tileBounds))
             {
-                if (breakableTile.isBreakable) {
+                if (breakableTile.isBreakable)
+                {
                     breakableTile.isDestroyed = true;
                     createDropItem(breakableTile.sprite->getPosition(), breakableTile.dropType);
                 }
@@ -755,7 +757,6 @@ void Game::checkPlayerTileCollisions()
     }
 }
 
-
 void Game::activateDoorTile(int doorId)
 {
     if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
@@ -803,9 +804,11 @@ void Game::activateDoorTile(int doorId)
 //                                    AUXILIARY FUNCTIONS
 // -------------------------------------------------------------------------------------
 
-void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType) {
+void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType)
+{
     std::shared_ptr<Item> item = ::createDropItem(dropType, itemPosition);
-    if (item) {
+    if (item)
+    {
         tilemaps[currentStage].m_items.push_back(std::move(item));
     }
 }
@@ -832,8 +835,10 @@ int Game::startStage(int stage, int fromStairs)
     }
     else
     {
-        for(auto& door : tilemaps[currentStage].m_doorTiles) {
-            if (door.doorId == fromStairs) {
+        for (auto &door : tilemaps[currentStage].m_doorTiles)
+        {
+            if (door.doorId == fromStairs)
+            {
                 player.sprite->setPosition(door.playerAparition);
                 break;
             }

@@ -4,7 +4,6 @@
 #include "enemies/enemy.h"
 #include "game.h"
 
-
 Player::Player()
 {
     activeState = std::make_unique<PlayerIdleState>();
@@ -45,10 +44,10 @@ void Player::handleInput(sf::Event event)
     getActiveState()->handleInput(*this, event);
 }
 
-void Player::update(float deltaTime)
+void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
     getActiveState()->update(*this, deltaTime);
-    updateActivationZones();
+    updateActivationZones(viewPosition);
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -57,7 +56,7 @@ void Player::draw(sf::RenderWindow &window)
 }
 
 void Player::setState(PlayerStateRef newState)
-{    
+{
     newState->hello();
 
     this->activeState->end(*this);
@@ -70,7 +69,7 @@ PlayerStateRef &Player::getActiveState()
     return activeState;
 }
 
-void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
+/*void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
 {
     sf::Vector2f playerPos = sprite->getPosition();
 
@@ -91,42 +90,75 @@ void Player::updateActivationZones() // AAAAAAAAAAAAAAAAAAAAAAAAAH WTF IS THIS
         {playerPos.x - deactivationWidth / 2.0f,
          playerPos.y - deactivationHeight / 2.0f},
         {deactivationWidth, deactivationHeight});
+}*/
+
+void Player::updateActivationZones(const sf::Vector2f &viewPosition)
+{
+    // Size of the visible game view
+    float activationWidth = gGameVisibleWorld_size_x;
+    float activationHeight = gGameVisibleWorld_size_y;
+    float deactivationWidth = activationWidth * 1.6f;
+    float deactivationHeight = activationHeight * 1.6f;
+
+    // Center of current view
+    sf::Vector2f centerPos = {
+        viewPosition.x + activationWidth / 2.0f,
+        viewPosition.y + activationHeight / 2.0f};
+
+    // Activation focused on the center of the view
+    gPlayerActivationZone = sf::FloatRect(
+        {centerPos.x - activationWidth / 2.0f,
+         centerPos.y - activationHeight / 2.0f},
+        {activationWidth, activationHeight});
+
+    gPlayerDeactivationZone = sf::FloatRect(
+        {centerPos.x - deactivationWidth / 2.0f,
+         centerPos.y - deactivationHeight / 2.0f},
+        {deactivationWidth, deactivationHeight});
 }
 
-
-std::vector<sf::FloatRect> Player::getBounds() const {
+std::vector<sf::FloatRect> Player::getBounds() const
+{
     return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
-void Player::onCollision(Entity& other, Game& game){
-    if (dynamic_cast<SolidTile*>(&other)) {
-        //std::cout << "Es un SolidTile\n";
-        if(!this->onCollision_SolidTile(other)){
+void Player::onCollision(Entity &other, Game &game)
+{
+    if (dynamic_cast<SolidTile *>(&other))
+    {
+        // std::cout << "Es un SolidTile\n";
+        if (!this->onCollision_SolidTile(other))
+        {
             this->isOnGround = false; // If Simon is not colliding with any solid tile
         }
     }
-    else if (dynamic_cast<Enemy*>(&other)) {
+    else if (dynamic_cast<Enemy *>(&other))
+    {
         std::cout << "Es un Enemy\n";
     }
-    else if(DoorTile* doorTile = dynamic_cast<DoorTile*>(&other)){
+    else if (DoorTile *doorTile = dynamic_cast<DoorTile *>(&other))
+    {
         this->onCollision_DoorTile(doorTile->doorId, game);
     }
 }
 
-bool Player::onCollision_SolidTile(Entity& solidTile){
+bool Player::onCollision_SolidTile(Entity &solidTile)
+{
     sf::FloatRect playerBounds = this->sprite->getGlobalBounds();
     std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
 
     bool hasCollided = false;
-    
-    for (auto tileBound : tileBounds){
-        if(const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound)){
+
+    for (auto tileBound : tileBounds)
+    {
+        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound))
+        {
             const float overlapX = intersection->size.x;
             const float overlapY = intersection->size.y;
-            //std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
+            // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
-            if (overlapX < overlapY)    // Horizontal collision
-            { 
+            if (overlapX < overlapY) // Horizontal collision
+            {
                 if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBound.position.x + tileBound.size.x * 0.5f))
                 {
                     this->sprite->move({-overlapX, 0.f});
@@ -138,8 +170,8 @@ bool Player::onCollision_SolidTile(Entity& solidTile){
                     playerBounds.position.x += overlapX;
                 }
             }
-            else    // Vertical collision
-            { 
+            else // Vertical collision
+            {
                 if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBound.position.y + tileBound.size.y * 0.5f))
                 { // Simon's feet are collisioning with the tile
 
@@ -176,8 +208,8 @@ bool Player::onCollision_SolidTile(Entity& solidTile){
     return hasCollided;
 }
 
-
-void Player::onCollision_DoorTile(int doorId, Game& game){
+void Player::onCollision_DoorTile(int doorId, Game &game)
+{
     game.activateDoorTile(doorId);
 }
 
@@ -190,12 +222,13 @@ Whip::Whip()
     whipLvl = 1;
 }
 
-std::vector<sf::FloatRect> Whip::getBounds() const {
+std::vector<sf::FloatRect> Whip::getBounds() const
+{
     return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
-void Whip::onCollision(Entity& other, Game& game){
-
+void Whip::onCollision(Entity &other, Game &game)
+{
 }
 
 // ----------------------------- SUBWEAPON -----------------------------
@@ -204,10 +237,11 @@ SubWeapon::SubWeapon()
     type = SubWeaponType::DAGGER;
 }
 
-std::vector<sf::FloatRect> SubWeapon::getBounds() const {
+std::vector<sf::FloatRect> SubWeapon::getBounds() const
+{
     return std::vector<sf::FloatRect>();
 }
 
-void SubWeapon::onCollision(Entity& other, Game& game){
-
+void SubWeapon::onCollision(Entity &other, Game &game)
+{
 }

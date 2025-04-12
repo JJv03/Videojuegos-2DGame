@@ -18,7 +18,6 @@ enum PlayerDirection
 
 typedef std::unique_ptr<PlayerState> PlayerStateRef;
 
-
 class Whip : public EntitySprite
 {
 public:
@@ -45,9 +44,8 @@ public:
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity &other, Game &game) override;
 };
-
 
 class SubWeapon : public EntitySprite
 {
@@ -92,18 +90,15 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
     };
 
-    
-
     SubWeapon();
     ~SubWeapon() = default;
 
-    SubWeaponType  type;
+    SubWeaponType type;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity &other, Game &game) override;
 };
-
 
 class Player : public EntitySprite
 {
@@ -171,7 +166,7 @@ public:
 
     std::vector<AnimationManager::Frame> duckFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
-        
+
     std::vector<AnimationManager::Frame> walkFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 32)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 32)), 0.1f},
@@ -213,19 +208,18 @@ public:
     ~Player() = default;
 
     void handleInput(sf::Event event);
-    void update(float deltaTime);        
-    void draw(sf::RenderWindow &window); 
-    
+    void update(float deltaTime, const sf::Vector2f &viewPosition);
+    void draw(sf::RenderWindow &window);
+
     // Finishes the current state, replaces it with <newState> and initializes this new state
     void setState(PlayerStateRef newState);
 
     PlayerStateRef &getActiveState();
-    void updateActivationZones();
-    bool onCollision_SolidTile(Entity& solidTile);
-    void onCollision_DoorTile(int doorId, Game& game);
+    void updateActivationZones(const sf::Vector2f &viewPosition);
+    bool onCollision_SolidTile(Entity &solidTile);
+    void onCollision_DoorTile(int doorId, Game &game);
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity &other, Game &game) override;
 };
-
