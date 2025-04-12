@@ -42,13 +42,13 @@ public:
     void resetPosition() override;
 
     // Move bat to spawn position
-    void movePositionToBorder(const sf::FloatRect &playerActivationZone);
+    void movePositionToBorder(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds);
 
     // Render bat and debug info
     void draw(sf::RenderWindow &window, bool debugDraw) override;
 
     // Update bat logic (spawn, movement, etc.)
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
 
     // Handle collisions
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,

@@ -28,7 +28,7 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone);
+            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getGlobalBounds());
         }
     }
 }
@@ -147,20 +147,24 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     }
 }
 
+std::vector<Enemy *> EnemyManager::getEnemies() const
+{
+    std::vector<Enemy *> allEnemies;
 
-std::vector<Enemy*> EnemyManager::getEnemies() const{
-    std::vector<Enemy*> allEnemies;
-
-    for (auto& spawner : zombiesSpawner) {
-        for (auto& zombie : spawner.zombies) {
+    for (auto &spawner : zombiesSpawner)
+    {
+        for (auto &zombie : spawner.zombies)
+        {
             allEnemies.push_back(zombie);
         }
     }
-    
-    for (auto& l : leopard) {
+
+    for (auto &l : leopard)
+    {
         allEnemies.push_back(l);
     }
-    for (auto& b : bat) {
+    for (auto &b : bat)
+    {
         allEnemies.push_back(b);
     }
 
