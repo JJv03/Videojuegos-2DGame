@@ -8,6 +8,8 @@ Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     originalPosition = sprite->getPosition();
 }
 
+
+//BORRAR?
 void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hitbox)
 {
     // Tilemap collisions
@@ -71,6 +73,65 @@ void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hi
                                 h.position.y += overlapY;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+void Enemy::onCollision_SolidTile(Entity &solidTile)
+{
+    sf::FloatRect enemyHitbox = this->sprite->getGlobalBounds();
+    std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
+
+    bool hasCollided = false;
+
+    for (auto tileBound : tileBounds)
+    {
+        if (tileBound.size.x == 0 || tileBound.size.y == 0) continue;
+
+        if (const std::optional<sf::FloatRect> intersection = enemyHitbox.findIntersection(tileBound))
+        {
+            float overlapX = intersection->size.x;
+            float overlapY = intersection->size.y;
+
+            const float minHeightThreshold = 0.25f;
+
+            // Handle horizontal collision (left/right)
+            if (overlapX < overlapY && overlapY > minHeightThreshold)
+            {
+                if (enemyHitbox.position.x < tileBound.position.x + tileBound.size.x / 2.f)
+                {
+                    // Left
+                    sprite->move({-overlapX, 0.f});
+                    for (auto &h : hitboxes)
+                        h.position.x -= overlapX;
+                }
+                else
+                {
+                    // Right
+                    sprite->move({overlapX, 0.f});
+                    for (auto &h : hitboxes)
+                        h.position.x += overlapX;
+                }
+                speed.x = -speed.x; // Reverse horizontal direction on collision
+            }
+            else // Vertical collision (up/down)
+            {
+                if (enemyHitbox.position.y < tileBound.position.y + tileBound.size.y / 2.f)
+                {
+                    // Up
+                    sprite->move({0.f, -overlapY});
+                    for (auto &h : hitboxes)
+                        h.position.y -= overlapY;
+                    isOnGround = true;
+                }
+                else
+                {
+                    // Down
+                    sprite->move({0.f, overlapY});
+                    for (auto &h : hitboxes)
+                        h.position.y += overlapY;
                 }
             }
         }

@@ -1,7 +1,7 @@
 #include "createEnemies.h"
 
 // Creates a zombie enemy with proper sprite and hitbox setup
-Zombie createZombie(const sf::Vector2f &position)
+Zombie* createZombie(const sf::Vector2f &position)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect ZOMBIE_SPRITE_REGION = {{1, 28}, {16, 32}};
@@ -41,11 +41,11 @@ Zombie createZombie(const sf::Vector2f &position)
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
 
-    return Zombie(zombieSprite, hitboxes);
+    return new Zombie(zombieSprite, hitboxes);
 }
 
 // Creates a leopard enemy with level-specific settings
-Leopard createLeopard(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+Leopard* createLeopard(const sf::Vector2f &position, const size_t &level, const size_t &stage)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect LEOPARD_SPRITE_REGION = {{56, 11}, {24, 16}};
@@ -85,11 +85,11 @@ Leopard createLeopard(const sf::Vector2f &position, const size_t &level, const s
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
 
-    return Leopard(leopardSprite, hitboxes, level, stage);
+    return new Leopard(leopardSprite, hitboxes, level, stage);
 }
 
 // Creates a bat enemy with spawn zone parameters
-Bat createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+Bat* createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect BAT_SPRITE_REGION = {{184, 11}, {16, 16}};
@@ -129,5 +129,5 @@ Bat createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize,
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
 
-    return Bat(batSprite, hitboxes, position, zoneSize, level, stage);
+    return new Bat(batSprite, hitboxes, position, zoneSize, level, stage);
 }

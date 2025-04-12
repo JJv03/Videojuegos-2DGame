@@ -207,6 +207,28 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
     }
 }
 
+void Leopard::onCollision(Entity &other, Game &game)
+{
+    if (!isActive || !sprite)
+        return;
+
+    isOnGround = false;
+
+    if(dynamic_cast<SolidTile*>(&other))
+    {
+        std::cout << "LEOPARDO COLISIONA" << std::endl;
+        onCollision_SolidTile(other);
+    }
+    else if (dynamic_cast<Whip*>(&other))
+    {
+        // Something?
+    }
+    else if (dynamic_cast<Player*>(&other))
+    {
+        // Something?
+    }
+}
+
 // Reset to initial state
 void Leopard::resetPosition()
 {

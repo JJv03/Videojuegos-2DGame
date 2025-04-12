@@ -19,16 +19,16 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
     }
     for (auto &leopard : leopard)
     {
-        if (leopard.level == currentLevel && leopard.stage == currentStage)
+        if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard.update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getPosition());
+            leopard->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getPosition());
         }
     }
     for (auto &bat : bat)
     {
-        if (bat.level == currentLevel && bat.stage == currentStage)
+        if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat.update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone);
+            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone);
         }
     }
 }
@@ -48,16 +48,16 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
     }
     for (auto &leopard : leopard)
     {
-        if (leopard.level == currentLevel && leopard.stage == currentStage)
+        if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard.checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
+            leopard->checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
         }
     }
     for (auto &bat : bat)
     {
-        if (bat.level == currentLevel && bat.stage == currentStage)
+        if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat.checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
+            bat->checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
         }
     }
 }
@@ -74,16 +74,16 @@ void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, con
     }
     for (auto &leopard : leopard)
     {
-        if (leopard.level == currentLevel && leopard.stage == currentStage)
+        if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard.draw(window, true);
+            leopard->draw(window, true);
         }
     }
     for (auto &bat : bat)
     {
-        if (bat.level == currentLevel && bat.stage == currentStage)
+        if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat.draw(window, true);
+            bat->draw(window, true);
         }
     }
 }
@@ -145,4 +145,24 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
         std::cerr << "Unknown level for enemy loading: " << level << std::endl;
         break;
     }
+}
+
+
+std::vector<Enemy*> EnemyManager::getEnemies() const{
+    std::vector<Enemy*> allEnemies;
+
+    for (auto& spawner : zombiesSpawner) {
+        for (auto& zombie : spawner.zombies) {
+            allEnemies.push_back(zombie);
+        }
+    }
+    
+    for (auto& l : leopard) {
+        allEnemies.push_back(l);
+    }
+    for (auto& b : bat) {
+        allEnemies.push_back(b);
+    }
+
+    return allEnemies;
 }

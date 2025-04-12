@@ -36,4 +36,6 @@ public:
 
     // Entity functions
     void onCollision(Entity& other, Game& game) override;
+
+    void onCollision_SolidTile(Entity &solidTile);
 };
