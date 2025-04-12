@@ -660,8 +660,8 @@ void Game::checkPlayerCollisions()
         sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(itemBounds))
-        {
-            player.subWeaponType = (*it)->m_type;
+        {   
+            handleSimonInteractionWithItem((*it)->m_type);
             it = tilemaps[currentStage].m_items.erase(it); // erase item from vector and move iterator
         }
         else
@@ -819,6 +819,54 @@ void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType)
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));
+    }
+}
+
+
+void Game::handleSimonInteractionWithItem(ItemType itemType)
+{
+    if (isSubweaponItem(itemType))
+    {
+        player.subWeaponType = itemType;
+    }
+    // else if (itemType == ItemType::MORNING_STAR)
+    // {
+
+    // }
+    else if (itemType == ItemType::SMALL_HEART)
+    {
+        player.hearts += 1;
+    }
+    else if (itemType == ItemType::LARGE_HEART)
+    {
+        player.hearts += 5;
+    }
+    else if (isScoringItem(itemType))
+    {
+        player.score += getItemScore(itemType);
+    }
+    // else if (itemType == ItemType::INVISIBILITY_POTION) {
+    //
+    // }
+    else if (itemType == ItemType::PORK_CHOP) {
+        player.health += 6;
+        if (player.health > player.maxHealth)
+            player.health = player.maxHealth;
+    }
+    // else if (itemType == ItemType::DOUBLE_SHOT)
+    // {
+    //     player.subWeaponType = ItemType::DOUBLE_SHOT;
+    // }
+    // else if (itemType == ItemType::TRIPLE_SHOT)
+    // {
+    //     player.subWeaponType = ItemType::TRIPLE_SHOT;
+    // }
+    else if (itemType == ItemType::MAGIC_CRYSTAL) {
+        return;
+    }
+    else if (itemType == ItemType::ONEUP)
+    {
+        player.lives += 1;
     }
 }
 

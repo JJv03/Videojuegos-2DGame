@@ -71,8 +71,8 @@ bool loadItemTextures() {
     auto smallHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 1}, {8, 8}));
     itemTextures[ItemType::SMALL_HEART] = smallHeartTexture;
 
-    auto bigHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({29, 6}, {12, 10}));
-    itemTextures[ItemType::BIG_HEART] = bigHeartTexture;
+    auto largeHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({29, 6}, {12, 10}));
+    itemTextures[ItemType::LARGE_HEART] = largeHeartTexture;
 
     auto redMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({44, 1}, {16, 16}));
     itemTextures[ItemType::RED_MONEY_BAG] = redMoneyBagTexture;
@@ -125,6 +125,57 @@ bool loadItemTextures() {
     return true;
 }
 
+
+bool isSubweaponItem(ItemType type) {
+    if (type == ItemType::DAGGER ||
+        type == ItemType::AXE ||
+        type == ItemType::FIRE_BOMB ||
+        type == ItemType::BOOMERANG ||
+        type == ItemType::STOPWATCH) {
+        return true;
+    }
+
+    return false;
+}
+
+
+bool isScoringItem(ItemType type) {
+    if (type == ItemType::RED_MONEY_BAG ||
+        type == ItemType::PURPLE_MONEY_BAG ||
+        type == ItemType::WHITE_MONEY_BAG ||
+        type == ItemType::FLASHING_MONEY_BAG ||
+        type == ItemType::CROWN ||
+        type == ItemType::CHEST ||
+        type == ItemType::MOAI) {
+        return true;
+    }
+
+    return false;
+}
+
+
+int getItemScore(ItemType item) {
+    switch (item) {
+        case ItemType::RED_MONEY_BAG:
+            return 100;
+        case ItemType::PURPLE_MONEY_BAG:
+            return 400;
+        case ItemType::WHITE_MONEY_BAG:
+            return 700;
+        case ItemType::FLASHING_MONEY_BAG:
+            return 1000;
+        case ItemType::CROWN:
+            return 2000;
+        case ItemType::CHEST:
+            return 2000;
+        case ItemType::MOAI:
+            return 4000;
+        default:
+            return 0;
+    }
+}
+
+
 std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position) {
     static std::random_device rd;
     static std::mt19937 rng(rd());
@@ -139,7 +190,7 @@ std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position) {
             static const std::vector<ItemType> defaultDropItems = {
                 ItemType::RED_MONEY_BAG,
                 ItemType::SMALL_HEART,
-                ItemType::BIG_HEART,
+                ItemType::LARGE_HEART,
                 ItemType::MORNING_STAR,
             };
             std::uniform_int_distribution<size_t> dist(0, defaultDropItems.size() - 1);

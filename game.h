@@ -78,6 +78,9 @@ public:
 
     // Creates a drop item in a certain position
     void createDropItem(sf::Vector2f itemPosition, DropType dropType);
+
+    // Handles the interaction of Simon with an item
+    void handleSimonInteractionWithItem(ItemType itemType);
     
     // Starts stage number <stage> at current level
     int startStage(int stage, int fromStairs = 0);

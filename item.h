@@ -20,7 +20,7 @@ enum class ItemType {
     MORNING_STAR,
 
     SMALL_HEART,
-    BIG_HEART,
+    LARGE_HEART,
 
     RED_MONEY_BAG,
     PURPLE_MONEY_BAG,
@@ -96,6 +96,15 @@ public:
 
 // Loads the textures of the items
 bool loadItemTextures();
+
+// Returns 'true' if the item is a subweapon. Else 'false'
+bool isSubweaponItem(ItemType type);
+
+// Returns 'true' if the item gives score points to Simon. Else 'false'
+bool isScoringItem(ItemType type);
+
+// Returns the score of an item. If the item is not a scoring item, returns 0
+int getItemScore(ItemType item);
 
 // Returns a new item based on the drop type
 std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position);
