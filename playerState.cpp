@@ -76,7 +76,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
             if (player.isPressingUp)
             {
-                if(player.hearts>1 && player.subWeapon.type != SubWeapon::SubWeaponType::NONE){
+                if(player.hearts>1 && player.subWeapon.type != ItemType::NONE){
                     player.isAttacking = true;
                     player.hasToPressAgain = false;
                     player.setState(state<AttackSecondary>());
