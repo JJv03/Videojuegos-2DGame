@@ -1583,3 +1583,286 @@ void GameplayConfGS::close(){
 }
 
 GameplayConfGS::~GameplayConfGS() {}
+
+
+// ======================================================
+//                      INITIAL ANIMATION STATE 
+// ======================================================
+std::unordered_map<std::string, sf::Texture> initAnimationTextures;
+std::vector<sf::Sprite> initAnimationSprites;
+
+void InitAnimationGS::init(){
+    if(debug) std::cout << "ESTADO: Init animation" << std::endl;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // CASTLE 0
+    if (!initAnimationTextures["castle"].loadFromFile("./assets/initAnimation/castle.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite castle(initAnimationTextures["castle"]);
+
+    sf::FloatRect spriteBounds = castle.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    castle.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    castle.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(castle);
+
+    // ======================================================
+    //                      BACKGROUNDS [0-3] 
+    // ======================================================
+
+    // BACK 1
+    if (!initAnimationTextures["back"].loadFromFile("./assets/initAnimation/back.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite back(initAnimationTextures["back"]);
+
+    spriteBounds = back.getLocalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    scaleFactor = gWindowHeight / spriteHeight;
+
+    back.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    scaledWidth = spriteWidth * scaleFactor;
+    scaledHeight = spriteHeight * scaleFactor;
+
+    xPosition = (gWindowWidth - scaledWidth) / 2;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    back.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(back);
+
+    // BACKDRACULA 2
+    if (!initAnimationTextures["backDracula"].loadFromFile("./assets/initAnimation/backDracula.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite backDracula(initAnimationTextures["backDracula"]);
+
+    spriteBounds = backDracula.getLocalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    scaleFactor = gWindowHeight / spriteHeight;
+
+    backDracula.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    scaledWidth = spriteWidth * scaleFactor;
+    scaledHeight = spriteHeight * scaleFactor;
+
+    xPosition = (gWindowWidth - scaledWidth) / 2;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    backDracula.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(backDracula);
+
+    // NIGHT 3
+    if (!initAnimationTextures["night"].loadFromFile("./assets/initAnimation/night.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite night(initAnimationTextures["night"]);
+
+    spriteBounds = night.getLocalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    scaleFactor = gWindowHeight / spriteHeight;
+
+    night.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    scaledWidth = spriteWidth * scaleFactor;
+    scaledHeight = spriteHeight * scaleFactor;
+
+    xPosition = (gWindowWidth - scaledWidth) / 2;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    night.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(night);
+
+    // ======================================================
+    //                      TEXTS [4-8] 
+    // ======================================================
+
+    // TEXT1 4
+    if (!initAnimationTextures["text1"].loadFromFile("./assets/initAnimation/text1.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text1(initAnimationTextures["text1"]);
+
+    text1.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text1.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text1.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text1);
+
+    // TEXT2 5
+    if (!initAnimationTextures["text2"].loadFromFile("./assets/initAnimation/text2.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text2(initAnimationTextures["text2"]);
+
+    text2.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text2.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text2.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text2);
+
+    // TEXT3 6
+    if (!initAnimationTextures["text3"].loadFromFile("./assets/initAnimation/text3.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text3(initAnimationTextures["text3"]);
+
+    text3.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text3.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text3.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text3);
+
+    // TEXT4 7
+    if (!initAnimationTextures["text4"].loadFromFile("./assets/initAnimation/text4.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text4(initAnimationTextures["text4"]);
+
+    text4.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text4.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text4.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text4);
+
+    // TEXT5 8
+    if (!initAnimationTextures["text5"].loadFromFile("./assets/initAnimation/text5.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text5(initAnimationTextures["text5"]);
+
+    text5.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text5.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text5.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text5);
+
+    // ======================================================
+    //                      OTHER ASSETS [9-8] 
+    // ======================================================
+
+    // TEXT5 8
+    if (!initAnimationTextures["text5"].loadFromFile("./assets/initAnimation/text5.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite text5(initAnimationTextures["text5"]);
+
+    text5.setScale(sf::Vector2f(0.4, 0.4));
+
+    spriteBounds = text5.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    xPosition = (gWindowWidth - spriteWidth) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2;
+
+    text5.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initAnimationSprites.push_back(text5);
+
+
+    // ======================================================
+    //                      SOUND AND MUSIC 
+    // ======================================================
+
+    initAnimSounds.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    auto audio = configManager.getAudio();
+
+    initAnimSounds.loadMusic("menuMusic", "./assets/music/03AVisionofDarkSecrets.mp3");
+    initAnimSounds.playMusic("menuMusic", initAnimSounds.realVolume(audio.master_volume, audio.music_volume));
+}
+
+void InitAnimationGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if(keyPressed->scancode == controls.enter){
+            std::cout << "Skipping animation, going to menu" << std::endl;
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        }
+    }
+}
+
+void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    
+}
+
+void InitAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
+    for (const auto& sprite : initAnimationSprites) {
+        window.draw(sprite);
+    }
+}
+
+void InitAnimationGS::pause(){
+    if(debug) std::cout << "ESTADO: Init animation PAUSADO" << std::endl;
+}
+
+void InitAnimationGS::resume(){
+    if(debug) std::cout << "ESTADO: Init animation REANUDADO" << std::endl;
+}
+
+void InitAnimationGS::close(){
+    if(debug) std::cout << "ESTADO: Init animation CERRADO" << std::endl;
+    initAnimationSprites.clear();
+    initAnimationTextures.clear();
+}
+
+InitAnimationGS::~InitAnimationGS() {}
