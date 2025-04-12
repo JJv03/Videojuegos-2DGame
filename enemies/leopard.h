@@ -47,8 +47,8 @@ public:
     void draw(sf::RenderWindow &window, bool debugDraw) override;
 
     // Update leopard logic (spawn, movement, etc.)
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::Vector2f &playerPos);
-
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect>& simonBounds);
     // Handle collisions
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                          const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);

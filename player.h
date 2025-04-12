@@ -219,6 +219,7 @@ public:
     PlayerPosition getPlayerOffsetPosition();
     bool onCollision_SolidTile(Entity &solidTile);
     void onCollision_DoorTile(int doorId, Game &game);
+    void onCollision_Item(Entity &entityItem);
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;

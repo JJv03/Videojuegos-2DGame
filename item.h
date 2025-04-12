@@ -82,8 +82,6 @@ public:
 
     Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
-    void onCollision(Entity& other, Game& game) override;
-    
     void update(const float& deltaTime);
 
     void draw(sf::RenderWindow& window);
@@ -91,6 +89,10 @@ public:
     ItemType getType() const;
 
     sf::Vector2f getPosition() const;
+
+    void onCollision(Entity& other, Game& game) override;
+
+    void onCollision_SolidTile(Entity& other);
 };
 
 
@@ -107,4 +109,4 @@ bool isScoringItem(ItemType type);
 int getItemScore(ItemType item);
 
 // Returns a new item based on the drop type
-std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position);
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position);

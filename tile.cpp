@@ -1,4 +1,5 @@
 #include "tile.h"
+#include "game.h"
 
 // -------------------------- TILE (virtual) --------------------------
 Tile::Tile(){
@@ -55,6 +56,7 @@ void BreakableTile::onCollision_Whip(Whip& whip, Game& game){
    
     if (this->isBreakable) {
         this->isDestroyed = true;
-        createDropItem(this->dropType, this->sprite->getPosition());
+        this->generatesItem = true;
+        game.createDropItem(this->sprite->getPosition(), this->dropType);
     }
 }

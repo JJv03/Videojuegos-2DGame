@@ -9,7 +9,6 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 // Update all active enemies in current level/stage
 void EnemyManager::update(float deltaTime, const size_t currentLevel, const size_t currentStage)
 {
-
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
@@ -21,7 +20,7 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
     {
         if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getPosition());
+            leopard->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getPosition(), playerPtr->getBounds());
         }
     }
     for (auto &bat : bat)
@@ -33,12 +32,16 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
     }
 }
 
+// BORRAR
 // Handle collisions for all enemies in current level/stage
 void EnemyManager::checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps)
 {
+
+    // Todo esto ya se hace en collisionGrid, en el onCollision de cada enemigo
+    
     sf::FloatRect playerBounds = playerPtr->sprite->getGlobalBounds();
     sf::FloatRect whipBounds = playerPtr->whip.sprite->getGlobalBounds();
-
+    
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
@@ -46,6 +49,8 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
             zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
         }
     }
+    
+
     for (auto &leopard : leopard)
     {
         if (leopard->level == currentLevel && leopard->stage == currentStage)
@@ -53,6 +58,7 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
             leopard->checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
         }
     }
+
     for (auto &bat : bat)
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
@@ -147,24 +153,20 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     }
 }
 
-std::vector<Enemy *> EnemyManager::getEnemies() const
-{
-    std::vector<Enemy *> allEnemies;
 
-    for (auto &spawner : zombiesSpawner)
-    {
-        for (auto &zombie : spawner.zombies)
-        {
+std::vector<Enemy*> EnemyManager::getEnemies() const{
+    std::vector<Enemy*> allEnemies;
+
+    for (auto& spawner : zombiesSpawner) {
+        for (auto& zombie : spawner.zombies) {
             allEnemies.push_back(zombie);
         }
     }
-
-    for (auto &l : leopard)
-    {
+    
+    for (auto& l : leopard) {
         allEnemies.push_back(l);
     }
-    for (auto &b : bat)
-    {
+    for (auto& b : bat) {
         allEnemies.push_back(b);
     }
 

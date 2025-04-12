@@ -4,7 +4,6 @@
 #include <vector>
 #include "camera.h"
 #include "globals.h"
-#include "entity.h"
 #include "tile.h"
 #include "item.h"
 

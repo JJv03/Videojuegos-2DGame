@@ -5,7 +5,9 @@
 #include <random>
 #include "item.h"
 #include "globals.h"
-
+#include "tile.h"
+#include "player.h"
+#include "game.h"
 
 std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
 
@@ -14,9 +16,6 @@ std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTex
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes):
           m_type(_type), m_isOnGround(false), m_lifeTime(5.0f), EntitySprite(_sprite, _hitboxes) {}
 
-void Item::onCollision(Entity& other, Game& game) {
-
-}
 
 void Item::update(const float& deltaTime) {
     if (m_lifeTime > 0.f) {       // Item can disappear
@@ -40,6 +39,38 @@ ItemType Item::getType() const {
 
 sf::Vector2f Item::getPosition() const {
     return sprite->getPosition();
+}
+
+
+void Item::onCollision(Entity& other, Game& game) {
+    if (dynamic_cast<SolidTile*>(&other)) {
+        onCollision_SolidTile(other);
+    } else if (dynamic_cast<Player*>(&other)){
+        this->m_lifeTime = 0.f;
+    }
+}
+
+void Item::onCollision_SolidTile(Entity& other){
+    sf::FloatRect tileBounds = other.getBounds()[0];
+
+    if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) return;
+
+    sf::FloatRect itemBounds = this->sprite->getGlobalBounds();
+    if (const std::optional<sf::FloatRect> intersection = itemBounds.findIntersection(tileBounds))
+    {
+        const float overlapX = intersection->size.x;
+        const float overlapY = intersection->size.y;
+
+        if (overlapX >= overlapY) // Vertical collision
+        {
+            if ((itemBounds.position.y + itemBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
+            { // Bottom collision
+                this->sprite->move({0.f, -overlapY});
+                itemBounds.position.y -= overlapY;
+                this->m_isOnGround = true; // Set item to be on ground
+            }
+        }
+    }
 }
 
 
@@ -176,7 +207,7 @@ int getItemScore(ItemType item) {
 }
 
 
-std::shared_ptr<Item> createDropItem(DropType dropType, sf::Vector2f position) {
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
     static std::random_device rd;
     static std::mt19937 rng(rd());
     

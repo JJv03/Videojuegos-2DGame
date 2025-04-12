@@ -39,4 +39,6 @@ public:
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    void onCollision(Entity &other, Game &game) override;
 };

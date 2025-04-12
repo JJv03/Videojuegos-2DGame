@@ -11,3 +11,7 @@ EntitySprite::EntitySprite(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 std::vector<sf::FloatRect> Entity::getBounds() const{
     return hitboxes;
 }
+
+std::vector<sf::FloatRect> EntitySprite::getBounds() const{
+    return std::vector<sf::FloatRect>({sprite.get()->getGlobalBounds()});
+}

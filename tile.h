@@ -3,7 +3,8 @@
 #include "item.h"
 #include "player.h"
 
-class Game; // forward declaration
+class Game;
+void createDropItemAfterBrokenTile(sf::Vector2f itemPosition, DropType dropType);
 
 class Tile : public Entity
 {
@@ -66,6 +67,8 @@ public:
     Type type;                      // Breakable type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
+    bool generatesItem = false;     // If the tile generates an item when destroyed
+    
     DropType dropType = DropType::NONE;          // If the tile drops an item
 
     BreakableTile();

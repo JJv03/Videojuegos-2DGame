@@ -26,6 +26,7 @@ public:
 
     EntitySprite() = default;
     EntitySprite(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);
+    std::vector<sf::FloatRect> getBounds() const override;
 
     virtual ~EntitySprite() = default;
 };

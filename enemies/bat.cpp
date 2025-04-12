@@ -14,7 +14,8 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
 }
 
 // Update bat logic: handle spawning, movement, and deactivation
-void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
+void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
+                    const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
 {
     // SPAWN LOGIC: activate bat when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -93,6 +94,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
     }
 }
 
+// BORRAR
 // Handle collisions
 void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                           const bool playerIsAtacking, const float playerDamage)
@@ -150,7 +152,8 @@ void Bat::resetPosition()
 }
 
 // Move bat to spawn position at the edge of player's activation zone
-void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds)
+void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone,
+                                const sf::FloatRect &playerBounds)
 {
 
     if (!sprite)
@@ -225,5 +228,24 @@ void Bat::updateAnimation(float deltaTime)
     else if (currentSpeed.x > 0)
     {
         sprite->setScale({-1.0f, 1.0f});
+    }
+}
+
+
+void Bat::onCollision(Entity &other, Game &game) {
+    if (!isActive || !sprite) return;
+
+
+    if (Whip* whip = dynamic_cast<Whip*>(&other))
+    {
+        if(applyDamage(whip->whipDmg))
+        {
+            resetPosition();    
+        }
+    }
+    else if (dynamic_cast<Player*>(&other))
+    {
+        isActive = false;
+        resetPosition();
     }
 }

@@ -138,6 +138,44 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
     }
 }
 
+
+
+bool Enemy::checkForLedge(Entity& solidTile){
+    if (!isOnGround || std::abs(speed.x) < 0.1f)
+    return false;
+
+    // Check area in movement direction
+    float offsetX = (speed.x > 0) ? hitboxes[0].size.x + 10.0f : -10.0f;
+
+    sf::Vector2f checkPoint = {
+        hitboxes[0].position.x + offsetX,
+        hitboxes[0].position.y + hitboxes[0].size.y + 5.0f};
+
+    // Small rectangle to check collision with the ground
+    sf::FloatRect checkRect = sf::FloatRect(
+        {checkPoint.x - 5.0f, checkPoint.y},
+        {10.0f, 10.0f});
+
+    const float minHeightThreshold = 5.0f; // Vertical tolerance
+
+    for (const auto &hitbox : solidTile.hitboxes)
+    {
+        if (hitbox.size.x == 0 || hitbox.size.y == 0)
+            continue;
+
+        if (const std::optional<sf::FloatRect> intersection = checkRect.findIntersection(hitbox))
+        {
+            if (intersection->size.y >= minHeightThreshold)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
 void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
 {
     window.draw(*sprite); // Draw the enemy sprite
@@ -187,8 +225,15 @@ void Enemy::resetPosition()
     speed = {-75.0f, 0.0f};
 }
 
-// ------------------------- Entity functions -------------------------
-void Enemy::onCollision(Entity& other, Game& game)
+
+bool Enemy::applyDamage(float damage)
 {
-    
+    life -= damage;
+    if (life <= 0.0f)
+    {
+        isActive = false;
+        return true; // Enemy defeated
+    }
+
+    return false; // Enemy still alive
 }

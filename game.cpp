@@ -287,8 +287,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    //checkCollisions(viewPosition);
-    checkCollisions();
+    checkCollisions(viewPosition);
+    //checkCollisions();
 
     // Update the subweapon sprite item
     guiSubWeaponSprite->setTexture(*itemTextures[player.subWeaponType]);
@@ -447,6 +447,7 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
     }
 }
 
+
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
@@ -463,7 +464,10 @@ void Game::checkCollisions()
 }
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
-{
+{   
+    // Cálculo aparte porque no entra en CollisionGrid
+    checkPlayerMapBoundCollisions();
+
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
@@ -490,12 +494,13 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     //      Add enemies
     for(auto& enemy : enemyManager->getEnemies()) dynamicEntities.push_back(enemy);
     
-    // for (auto& item : items) allEntities.push_back(&item);
+    for(auto& item : tilemaps[currentStage].m_items) dynamicEntities.push_back(item.get());
 
     // ... ADD THE REST OF ENTITIES
 
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }
+
 
 void Game::checkItemsCollisions()
 {
@@ -815,14 +820,14 @@ void Game::activateDoorTile(int doorId)
 
 void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType)
 {
-    std::shared_ptr<Item> item = ::createDropItem(dropType, itemPosition);
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition);
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));
     }
 }
 
-
+// BORRAR
 void Game::handleSimonInteractionWithItem(ItemType itemType)
 {
     if (isSubweaponItem(itemType))

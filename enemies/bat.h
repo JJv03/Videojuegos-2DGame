@@ -48,7 +48,8 @@ public:
     void draw(sf::RenderWindow &window, bool debugDraw) override;
 
     // Update bat logic (spawn, movement, etc.)
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone,
+                    const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
 
     // Handle collisions
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
@@ -56,4 +57,6 @@ public:
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    void onCollision(Entity &other, Game &game) override;
 };

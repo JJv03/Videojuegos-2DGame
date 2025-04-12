@@ -3,6 +3,7 @@
 #include <iostream>
 #include "enemies/enemy.h"
 #include "game.h"
+#include "item.h"
 
 Player::Player()
 {
@@ -58,7 +59,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    newState->hello();
+    //newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);
@@ -137,11 +138,17 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (dynamic_cast<Enemy *>(&other))
     {
-        std::cout << "Es un Enemy\n";
+        //std::cout << "Player colisiona con un Enemy\n";
     }
-    else if (DoorTile *doorTile = dynamic_cast<DoorTile *>(&other))
+    else if (DoorTile* doorTile = dynamic_cast<DoorTile*>(&other))
     {
         this->onCollision_DoorTile(doorTile->doorId, game);
+    }    
+    else if (dynamic_cast<Item*>(&other)){
+        this->onCollision_Item(other);
+    }
+    else {
+        //std::cout << "No se\n"; 
     }
 }
 
@@ -214,6 +221,58 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
 void Player::onCollision_DoorTile(int doorId, Game &game)
 {
     game.activateDoorTile(doorId);
+}
+
+void Player::onCollision_Item(Entity &entityItem)
+{
+    Item* item = dynamic_cast<Item*>(&entityItem);
+    if (item == nullptr) return; // Impossible
+
+    ItemType itemType = item->getType();
+
+    if (isSubweaponItem(itemType))
+    {
+        this->subWeaponType = itemType;
+    }
+    // else if (itemType == ItemType::MORNING_STAR)
+    // {
+
+    // }
+    else if (itemType == ItemType::SMALL_HEART)
+    {
+        this->hearts += 1;
+    }
+    else if (itemType == ItemType::LARGE_HEART)
+    {
+        this->hearts += 5;
+    }
+    else if (isScoringItem(itemType))
+    {
+        this->score += getItemScore(itemType);
+    }
+    // else if (itemType == ItemType::INVISIBILITY_POTION) {
+    //
+    // }
+    else if (itemType == ItemType::PORK_CHOP) {
+        this->health += 6;
+        if (this->health > this->maxHealth)
+            this->health = this->maxHealth;
+    }
+    // else if (itemType == ItemType::DOUBLE_SHOT)
+    // {
+    //     this->subWeaponType = ItemType::DOUBLE_SHOT;
+    // }
+    // else if (itemType == ItemType::TRIPLE_SHOT)
+    // {
+    //     this->subWeaponType = ItemType::TRIPLE_SHOT;
+    // }
+    else if (itemType == ItemType::MAGIC_CRYSTAL) {
+        return;
+    }
+    else if (itemType == ItemType::ONEUP)
+    {
+        this->lives += 1;
+    }
 }
 
 // ----------------------------- WHIP -----------------------------
