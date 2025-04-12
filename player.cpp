@@ -24,6 +24,7 @@ Player::Player()
     died = false;
 
     // Stats
+    maxHealth = 16;
     health = 16;
     lives = 3;
     score = 0;
@@ -236,7 +237,7 @@ void Whip::onCollision(Entity &other, Game &game)
 // ----------------------------- SUBWEAPON -----------------------------
 SubWeapon::SubWeapon()
 {
-    type = ItemType::DAGGER;
+    type = ItemType::NONE;
 }
 
 std::vector<sf::FloatRect> SubWeapon::getBounds() const

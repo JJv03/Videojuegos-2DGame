@@ -121,6 +121,7 @@ public:
 
     // Stats
     float damage = 1.0f;
+    int maxHealth;
     int health;
     int lives;
     int score;
