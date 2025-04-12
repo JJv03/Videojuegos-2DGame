@@ -2049,8 +2049,6 @@ void InitAnimationGS::close(){
     if(debug) std::cout << "ESTADO: Init animation CERRADO" << std::endl;
     initAnimationSprites.clear();
     initAnimationTextures.clear();
-    initAnimationAnimatedSprites.clear();
-    initAnimationAnimatedTextures.clear();
 }
 
 InitAnimationGS::~InitAnimationGS() {}
