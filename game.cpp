@@ -364,12 +364,13 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         redBorder.setPosition(redBorderPosition);
         redBorder.setFillColor(sf::Color::Transparent);
         redBorder.setOutlineColor(sf::Color::Red);
-        redBorder.setOutlineThickness(2.f);
+        redBorder.setOutlineThickness(1.f);
         window.draw(redBorder);
 
         // Draw the subweapon in the box
         if (player.subWeaponType != ItemType::NONE) {
             redBorderPosition.x += 5.f;
+            //redBorderPosition.y -= 2.f;
             guiSubWeaponSprite->setPosition(redBorderPosition);
             window.draw(*guiSubWeaponSprite);
         }

@@ -42,7 +42,7 @@ const float gGUI_position_y = -gGUI_size_y + gOverlapedTileSize;
 const sf::Color gGUI_color = sf::Color::Black;
 
 const float gGUI_subweaponBox_size_x = 27.f;
-const float gGUI_subweaponBox_size_y = 16.f;
+const float gGUI_subweaponBox_size_y = 17.f;
 const float gGUI_subweaponBox_offset_position_x = 140.f;
 const float gGUI_subweaponBox_offset_position_y = -4.f;
 
