@@ -172,27 +172,31 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
     sf::FloatRect playerBounds = this->sprite->getGlobalBounds();
     std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
 
-    bool hasCollided = false;
-
-    // Algoritmo viejo
-    /*
+    bool hasCollided = this->isOnGround;
+    
     for (auto tileBound : tileBounds)
     {
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound))
         {
             const float overlapX = intersection->size.x;
             const float overlapY = intersection->size.y;
-            // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
-            if (overlapX < overlapY) // Horizontal collision
+            bool simonIsTouchingGround = false;
+            if (overlapY < 7.65f) {
+                simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBound.position.y + tileBound.size.y));
+            }
+
+            if (overlapX < overlapY && (! simonIsTouchingGround)) // Horizontal collision
             {
                 if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBound.position.x + tileBound.size.x * 0.5f))
                 {
+                    std::cout << "Right collision" << std::endl;
                     this->sprite->move({-overlapX, 0.f});
                     playerBounds.position.x -= overlapX;
                 }
                 else
                 {
+                    std::cout << "Left collision" << std::endl;
                     this->sprite->move({overlapX, 0.f});
                     playerBounds.position.x += overlapX;
                 }
@@ -201,8 +205,10 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
             {
                 if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBound.position.y + tileBound.size.y * 0.5f))
                 { // Simon's feet are collisioning with the tile
+                    
+                    if (this->verticalSpeed >= 0.0f)
+                    //std::cout << "Floor collision" << std::endl;
 
-                    if (!this->isOnGround && this->verticalSpeed >= 0.0f)
                     // if (player.verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
                     { // If player is NOT going up
 
@@ -224,6 +230,7 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                 }
                 else // Simon's head is collisioning with the tile
                 {
+                    std::cout << "Ceiling collision" << std::endl;
                     this->sprite->move({0.f, overlapY});
                     playerBounds.position.y += overlapY;
                     this->verticalSpeed = 0.0f; // (For security) Simon starts falling
@@ -231,9 +238,9 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
             }
         }
     }
-    */
-
     
+
+    /*
     for (auto tileBound : tileBounds){
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound)){
             const float overlapX = intersection->size.x;
@@ -305,6 +312,7 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
             }
         }
     }
+    */
 
     return hasCollided;
 }

@@ -109,8 +109,6 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    player.isOnGround = false;
-
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -240,8 +238,6 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerWalkState::update(Player& player, float deltaTime)
 {
-    player.isOnGround = false;
-
     player.sprite->move({0.f,gPlayerGravity*deltaTime});
     
     if(player.dir == RIGHT){

@@ -288,8 +288,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    checkCollisions(viewPosition);
-    //checkCollisions();
+    //checkCollisions(viewPosition);
+    checkCollisions();
 
     // Update the subweapon sprite item
     guiSubWeaponSprite->setTexture(*itemTextures[player.subWeaponType]);
