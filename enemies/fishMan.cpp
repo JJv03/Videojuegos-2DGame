@@ -115,17 +115,6 @@ void FishMan::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
             }
         }
     }
-
-    // Check player collisions
-    for (const auto &hitbox : hitboxes)
-    {
-        if (hitbox.findIntersection(simonBounds))
-        {
-            isActive = false;
-            resetPosition();
-            break;
-        }
-    }
 }
 
 void FishMan::onCollision(Entity &other, Game &game)
@@ -146,8 +135,6 @@ void FishMan::onCollision(Entity &other, Game &game)
     }
     else if (dynamic_cast<Player *>(&other))
     {
-        isActive = false;
-        resetPosition();
     }
 }
 

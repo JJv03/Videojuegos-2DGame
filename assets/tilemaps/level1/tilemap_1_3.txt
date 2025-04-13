@@ -15,5 +15,5 @@ breakable
 end_breakable
 enemies
 2,136.f,112.f,50.0,50.0
-2,136.f,112.f,50.0,50.0
+2,395.f,112.f,50.0,50.0
 end_enemies

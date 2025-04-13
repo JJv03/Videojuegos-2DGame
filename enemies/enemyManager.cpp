@@ -30,6 +30,13 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
             bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getGlobalBounds());
         }
     }
+    for (auto &fishman : fishman)
+    {
+        if (fishman->level == currentLevel && fishman->stage == currentStage)
+        {
+            fishman->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getGlobalBounds());
+        }
+    }
 }
 
 // BORRAR
@@ -38,10 +45,10 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
 {
 
     // Todo esto ya se hace en collisionGrid, en el onCollision de cada enemigo
-    
+
     sf::FloatRect playerBounds = playerPtr->sprite->getGlobalBounds();
     sf::FloatRect whipBounds = playerPtr->whip.sprite->getGlobalBounds();
-    
+
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
@@ -49,8 +56,6 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
             zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
         }
     }
-    
-
     for (auto &leopard : leopard)
     {
         if (leopard->level == currentLevel && leopard->stage == currentStage)
@@ -58,12 +63,18 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
             leopard->checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
         }
     }
-
     for (auto &bat : bat)
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
         {
             bat->checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
+        }
+    }
+    for (auto &fishman : fishman)
+    {
+        if (fishman->level == currentLevel && fishman->stage == currentStage)
+        {
+            fishman->checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
         }
     }
 }
@@ -92,6 +103,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, con
             bat->draw(window, true);
         }
     }
+    for (auto &fishman : fishman)
+    {
+        if (fishman->level == currentLevel && fishman->stage == currentStage)
+        {
+            fishman->draw(window, true);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -101,6 +119,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     zombiesSpawner.clear();
     leopard.clear();
     bat.clear();
+    fishman.clear();
 
     switch (level)
     {
@@ -136,6 +155,14 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         level, currentStage));
                     break;
 
+                case 3: // Fishman
+                    fishman.push_back(createFishManSpawner(
+                        enemyData.position,
+                        sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
+                                     enemyData.height > 0 ? enemyData.height : 50.f),
+                        level, currentStage));
+                    break;
+
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
                     break;
@@ -153,21 +180,28 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     }
 }
 
+std::vector<Enemy *> EnemyManager::getEnemies() const
+{
+    std::vector<Enemy *> allEnemies;
 
-std::vector<Enemy*> EnemyManager::getEnemies() const{
-    std::vector<Enemy*> allEnemies;
-
-    for (auto& spawner : zombiesSpawner) {
-        for (auto& zombie : spawner.zombies) {
+    for (auto &spawner : zombiesSpawner)
+    {
+        for (auto &zombie : spawner.zombies)
+        {
             allEnemies.push_back(zombie);
         }
     }
-    
-    for (auto& l : leopard) {
+    for (auto &l : leopard)
+    {
         allEnemies.push_back(l);
     }
-    for (auto& b : bat) {
+    for (auto &b : bat)
+    {
         allEnemies.push_back(b);
+    }
+    for (auto &f : fishman)
+    {
+        allEnemies.push_back(f);
     }
 
     return allEnemies;

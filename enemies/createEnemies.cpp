@@ -1,7 +1,7 @@
 #include "createEnemies.h"
 
 // Creates a zombie enemy with proper sprite and hitbox setup
-Zombie* createZombie(const sf::Vector2f &position)
+Zombie *createZombie(const sf::Vector2f &position)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect ZOMBIE_SPRITE_REGION = {{1, 28}, {16, 32}};
@@ -45,7 +45,7 @@ Zombie* createZombie(const sf::Vector2f &position)
 }
 
 // Creates a leopard enemy with level-specific settings
-Leopard* createLeopard(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+Leopard *createLeopard(const sf::Vector2f &position, const size_t &level, const size_t &stage)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect LEOPARD_SPRITE_REGION = {{56, 11}, {24, 16}};
@@ -89,7 +89,7 @@ Leopard* createLeopard(const sf::Vector2f &position, const size_t &level, const 
 }
 
 // Creates a bat enemy with spawn zone parameters
-Bat* createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+Bat *createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect BAT_SPRITE_REGION = {{184, 11}, {16, 16}};
@@ -130,4 +130,48 @@ Bat* createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize
     };
 
     return new Bat(batSprite, hitboxes, position, zoneSize, level, stage);
+}
+
+// Creates a fishman enemy with spawn zone parameters
+FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect FISHMAN_SPRITE_REGION = {{309, 28}, {16, 32}};
+    const float HITBOX_WIDTH = 15.f;
+    const float HITBOX_HEIGHT = 30.f;
+
+    // Load and process sprite texture
+    sf::Image fishmanImage;
+    if (!fishmanImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
+    {
+        std::cerr << "Error cargando la imagen del fishman" << std::endl;
+        throw std::runtime_error("Error cargando la imagen del fishman");
+    }
+    fishmanImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
+
+    sf::Texture *fishmanTexture = new sf::Texture();
+    if (!fishmanTexture->loadFromImage(fishmanImage))
+    {
+        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
+        delete fishmanTexture;
+        throw std::runtime_error("Error cargando la textura desde la imagen");
+    }
+
+    // Configure sprite
+    auto fishmanSprite = std::make_shared<sf::Sprite>(*fishmanTexture);
+    fishmanSprite->setTextureRect(FISHMAN_SPRITE_REGION);
+    fishmanSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = fishmanSprite->getLocalBounds();
+    fishmanSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    return new FishMan(fishmanSprite, hitboxes, position, zoneSize, level, stage);
 }

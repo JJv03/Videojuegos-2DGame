@@ -13,4 +13,8 @@ end_doors
 breakable
 end_breakable
 enemies
+3,50.f,160.f,50.0,50.0
+3,175.f,160.f,50.0,50.0
+3,300.f,160.f,50.0,50.0
+3,425.f,160.f,50.0,50.0
 end_enemies

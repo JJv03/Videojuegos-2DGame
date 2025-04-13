@@ -11,8 +11,9 @@ class EnemyManager
 private:
     // Enemies vector
     std::vector<ZombieSpawner> zombiesSpawner;
-    std::vector<Leopard*> leopard;
-    std::vector<Bat*> bat;
+    std::vector<Leopard *> leopard;
+    std::vector<Bat *> bat;
+    std::vector<FishMan *> fishman;
 
     // Reference to player
     Player *playerPtr;
@@ -27,8 +28,8 @@ public:
     void update(float deltaTime, const size_t currentLevel, const size_t currentStage);
     void checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps);
     void draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage);
-    
-    std::vector<Enemy*> getEnemies() const; // Get all enemies
+
+    std::vector<Enemy *> getEnemies() const; // Get all enemies
 
     // Level loading system
     void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);
