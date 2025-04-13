@@ -117,7 +117,7 @@ public:
     bool isBeingHurt;
     bool hasToPressAgain;
     bool isPressingUp;
-    bool died;
+    bool hasDied;
 
     // Stats
     float damage = 1.0f;
@@ -138,6 +138,9 @@ public:
 
     float verticalSpeed;
     float horizontalSpeed;
+
+    sf::Clock revivingClock;
+    bool deathRestart;
 
     // Weapons
     Whip whip;

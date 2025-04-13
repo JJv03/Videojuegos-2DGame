@@ -22,11 +22,12 @@ Player::Player()
     verticalSpeed = 0.0f;
     horizontalSpeed = 0.0f;
     isPressingUp = false;
-    died = false;
+    hasDied = false;
+    deathRestart = false;
 
     // Stats
     maxHealth = 16;
-    health = 16;
+    health = maxHealth;
     lives = 3;
     score = 0;
     hearts = 5;
@@ -59,7 +60,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    //newState->hello();
+    newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);

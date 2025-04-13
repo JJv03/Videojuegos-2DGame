@@ -17,6 +17,9 @@ const float gGameVisibleWorld_size_y = 192.f; // Considering the overlaped half-
 
 const float gSimonFeetCollisionNewHeight = 0.15f;
 
+const float gLoadingTime = 0.5f; // Loading starting a stage
+const float gRevivingTime = 2.0f; // Reviving time after dying
+
 // ============ IMAGE / TEXTURE / SPRITE =============
 const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);

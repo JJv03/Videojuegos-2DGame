@@ -19,6 +19,8 @@ extern const float gGameVisibleWorld_size_y;
 
 extern const float gSimonFeetCollisionNewHeight;    // Height above the corresponding tile at which Simon is placed after his feet are collide
 
+extern const float gLoadingTime;                  // Loading starting a stage
+extern const float gRevivingTime;                 // Reviving time after dying
 
 // ============ IMAGE / TEXTURE / SPRITE =============
 extern const sf::Color gColorKeyGrey;

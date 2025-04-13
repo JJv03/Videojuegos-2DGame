@@ -32,6 +32,7 @@ public:
 
     // std::vector<Item> items;
 
+    sf::Clock revivingClock;
     sf::Clock loadingClock;
     bool isLoading = false;
 
@@ -47,6 +48,9 @@ public:
 
     // Updates the game logic, graphics, etc
     void update(float deltaTime, const sf::Vector2f &viewPosition);
+
+    // Updates in-game GUI time with <time> attribute
+    void updateGUITime();
 
     // Renders the game
     void draw(sf::RenderWindow &window, Camera &camera);
@@ -90,7 +94,11 @@ public:
 
     void activateDoorTile(int doorId);
 
+    void restartStage();
 
+    void restartLevel();
+
+    
 private:
     // ----- All refered to the GUI -----
     sf::Font font;

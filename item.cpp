@@ -99,7 +99,7 @@ bool loadItemTextures() {
     auto morningStarTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 1}, {16, 16}));
     itemTextures[ItemType::MORNING_STAR] = morningStarTexture;
 
-    auto smallHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 1}, {8, 8}));
+    auto smallHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 1}, {8, 16}));
     itemTextures[ItemType::SMALL_HEART] = smallHeartTexture;
 
     auto largeHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({29, 6}, {12, 10}));

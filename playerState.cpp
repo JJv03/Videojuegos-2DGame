@@ -105,14 +105,12 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
                 player.setState(state<Hurt>());
             }
             else{
-                player.isDead = true;
                 player.setState(state<Dead>());
             }
             
         }
 
         if(keyPressed->scancode == KEY_DEAD){ //|| player.health==0){
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -185,7 +183,6 @@ void PlayerIdleState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -329,7 +326,6 @@ void PlayerWalkState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -425,7 +421,6 @@ void PlayerJumpState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -572,7 +567,6 @@ void PlayerDuckState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -854,7 +848,6 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -1017,7 +1010,6 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -1191,7 +1183,6 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
             player.setState(state<Hurt>());
         }
         else{
-            player.isDead = true;
             player.setState(state<Dead>());
         }
     }
@@ -1362,6 +1353,8 @@ void PlayerDeadState::init(Player& player)
     player.animationManager->playAnimation(player.currentAnimation);
     // Initial position adjustment for first frame
     player.sprite->move(sf::Vector2f(0.f, 8.f));
+    player.isDead = true;
+    player.deathRestart = true;
 }
 
 void PlayerDeadState::handleInput(Player& player, sf::Event event)
@@ -1370,7 +1363,7 @@ void PlayerDeadState::handleInput(Player& player, sf::Event event)
     {
         if (KeyReleased->scancode == KEY_REVIVE)
         {
-            player.died = false;
+            player.hasDied = false;
             player.isDead = false;
             player.health = 1; // Reset health to 1
             player.sprite->move(sf::Vector2f(0.f, -16.f)); // Move back up
@@ -1383,7 +1376,7 @@ void PlayerDeadState::handleInput(Player& player, sf::Event event)
 
 void PlayerDeadState::update(Player& player, float deltaTime)
 {
-    if(!player.died){
+    if(!player.hasDied){
         player.currentAnimation=deathSimon;
         if (!player.animationManager->isPlaying(player.currentAnimation))
         {
@@ -1400,12 +1393,9 @@ void PlayerDeadState::update(Player& player, float deltaTime)
             player.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x, player.sprite->getPosition().y+8.f)
             );
-            player.died = true;
         }
         player.animationManager->update(deltaTime);
-        
     }
-    
 }
 
 void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
@@ -1415,7 +1405,8 @@ void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerDeadState::end(Player& player)
 {
-    
+    player.isDead = false;
+    player.hasDied = false;
 }
 
 void PlayerDeadState::hello(){

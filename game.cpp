@@ -247,7 +247,7 @@ void Game::handleInput(sf::Event event)
 
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
-{
+{   
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime, viewPosition);
 
@@ -263,13 +263,15 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
-        if (time < 0)
-            time = 0;
+        if (time == 0 && !player.isDead){
+            player.setState(std::make_unique<PlayerDeadState>());
+        }
+
+      
         timeAccumulator = 0.0f;
-        std::stringstream timeStream;
-        timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
-        texts[1].setString(timeStream.str());
+        updateGUITime();
     }
+
 
     // Update score
     std::stringstream scoreStream;
@@ -299,7 +301,35 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 
         // player.isOnGround = false;
     }
+
+    if (player.deathRestart)
+    {
+        player.deathRestart = false;
+        revivingClock.restart();
+    }
+    
+    if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
+    {
+        player.lives -= 1;
+        std::cout << "Player lives: " << player.lives << std::endl;
+        player.health = player.maxHealth;
+        player.setState(std::make_unique<PlayerIdleState>());
+        isLoading = true;
+        if(player.lives >= 0){
+            restartStage();
+        } else {
+            restartLevel();
+        }
+    }
 }
+
+void Game::updateGUITime()
+{
+    std::stringstream timeStream;
+    timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
+    texts[1].setString(timeStream.str());
+}
+
 
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow &window, Camera &camera)
@@ -311,7 +341,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         loadingClock.restart();
     }
 
-    if (loadingClock.getElapsedTime().asSeconds() < 0.5f)
+    if (loadingClock.getElapsedTime().asSeconds() < gLoadingTime)
     {
         sf::RectangleShape blackScreen(camera.getView(window.getSize()).getSize());
         blackScreen.setFillColor(sf::Color::Black);
@@ -927,4 +957,58 @@ int Game::goToStage(int fromDoor)
     }
 
     return fromDoor;
+}
+
+void Game::restartStage()
+{
+    std::cout << "Current stage: " << currentStage << std::endl;
+
+    for(auto& tilemap : tilemaps.tilemaps)
+    {
+        tilemap.m_items.clear();
+
+        for(auto& breakableTile: tilemap.m_breakableTiles)
+        {
+            breakableTile.isBreakable = true;
+            breakableTile.isDestroyed = false;
+        }
+    }
+    
+    time = 300;
+    updateGUITime();
+    
+    player.dir = PlayerDirection::RIGHT;
+    player.health = player.maxHealth;
+    player.subWeaponType = ItemType::NONE;
+    player.hearts = 5;
+
+    player.sprite->setPosition(tilemaps[currentStage].initialPosition);
+}
+
+void Game::restartLevel()
+{
+    std::cout << "Current stage: " << currentStage << std::endl;
+
+    for(auto& tilemap : tilemaps.tilemaps)
+    {
+        tilemap.m_items.clear();
+
+        for(auto& breakableTile: tilemap.m_breakableTiles)
+        {
+            breakableTile.isBreakable = true;
+            breakableTile.isDestroyed = false;
+        }
+    }
+    
+    time = 300;
+    updateGUITime();
+
+    player.dir = PlayerDirection::RIGHT;
+    player.health = player.maxHealth;
+    player.subWeaponType = ItemType::NONE;
+    player.hearts = 5;
+    player.score = 0;
+    player.lives = 3;
+    
+    startStage(1);
 }
