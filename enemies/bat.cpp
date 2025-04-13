@@ -249,3 +249,8 @@ void Bat::onCollision(Entity &other, Game &game) {
         resetPosition();
     }
 }
+
+void Bat::hello() const
+{
+    std::cout << "Soy Bat" << std::endl;
+}

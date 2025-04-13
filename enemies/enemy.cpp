@@ -237,3 +237,8 @@ bool Enemy::applyDamage(float damage)
 
     return false; // Enemy still alive
 }
+
+void Enemy::hello() const
+{
+    std::cout << "Soy Enemy" << std::endl;
+}

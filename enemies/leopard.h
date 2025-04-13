@@ -60,4 +60,6 @@ public:
 
     // Update detection area
     void updateVisionField();
+
+    void hello() const override;
 };

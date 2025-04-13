@@ -55,4 +55,6 @@ public:
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    void hello() const override;
 };

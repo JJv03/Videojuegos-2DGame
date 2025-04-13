@@ -4,6 +4,7 @@
 #include "enemies/enemy.h"
 #include "game.h"
 #include "item.h"
+#include <cmath>
 
 Player::Player()
 {
@@ -137,9 +138,23 @@ void Player::onCollision(Entity &other, Game &game)
             this->isOnGround = false; // If Simon is not colliding with any solid tile
         }
     }
-    else if (dynamic_cast<Enemy *>(&other))
-    {
-        //std::cout << "Player colisiona con un Enemy\n";
+    else if (Enemy *enemy = dynamic_cast<Enemy *>(&other))
+    {   
+        enemy->hello();
+        if(!this->isInvulnerable){
+            this->health = std::max(this->health - enemy->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isJumping = true;
+                this->verticalSpeed = -gPlayerJumpForce;
+                this->isOnGround = false;
+                this->setState(std::make_unique<PlayerHurtState>());
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
     }
     else if (DoorTile* doorTile = dynamic_cast<DoorTile*>(&other))
     {
@@ -276,6 +291,10 @@ void Player::onCollision_Item(Entity &entityItem)
     }
 }
 
+void Player::hello() const {
+    std::cout << "Soy Player" << std::endl;
+}
+
 // ----------------------------- WHIP -----------------------------
 Whip::Whip()
 {
@@ -294,6 +313,11 @@ void Whip::onCollision(Entity &other, Game &game)
 {
 }
 
+void Whip::hello() const {
+    std::cout << "Soy Whip" << std::endl;
+}
+
+
 // ----------------------------- SUBWEAPON -----------------------------
 SubWeapon::SubWeapon()
 {
@@ -307,4 +331,8 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
+}
+
+void SubWeapon::hello() const {
+    std::cout << "Soy SubWeapon" << std::endl;
 }

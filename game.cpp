@@ -78,7 +78,6 @@ void Game::init()
     player.currentAnimation = idleSimon;
 
     // Enemies -------------------------------------------------------------
-
     enemyManager = new EnemyManager(&player);
     enemyManager->loadEnemiesFromLevel(1, tilemaps);
 
@@ -522,7 +521,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     dynamicEntities.push_back(&player.subWeapon);
 
     //      Add enemies
-    for(auto& enemy : enemyManager->getEnemies()) dynamicEntities.push_back(enemy);
+    for(auto& enemy : enemyManager->getEnemies(currentLevel, currentStage)) dynamicEntities.push_back(enemy);
     
     for(auto& item : tilemaps[currentStage].m_items) dynamicEntities.push_back(item.get());
 

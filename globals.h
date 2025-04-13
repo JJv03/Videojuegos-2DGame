@@ -86,6 +86,7 @@ extern const float gItemGravity;
 
 // ============ PLAYER VARIABLES =============
 extern const float gPlayerMovementSpeed;
-
+extern const float gPlayerGravity;
+extern const float gPlayerJumpForce;
 
 // ============ CONFIGURATION VARIABLES (maybe???) =============

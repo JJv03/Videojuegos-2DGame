@@ -313,3 +313,8 @@ void Leopard::updateAnimation(float deltaTime)
         sprite->setScale({-1.0f, 1.0f});
     }
 }
+
+void Leopard::hello() const
+{
+    std::cout << "Soy Leopard" << std::endl;
+}

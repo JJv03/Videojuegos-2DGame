@@ -93,6 +93,8 @@ public:
     void onCollision(Entity& other, Game& game) override;
 
     void onCollision_SolidTile(Entity& other);
+
+    void hello() const override;
 };
 
 

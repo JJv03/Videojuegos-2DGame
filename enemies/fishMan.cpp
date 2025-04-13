@@ -230,3 +230,8 @@ void FishMan::updateAnimation(float deltaTime)
         sprite->setScale({-1.0f, 1.0f});
     }
 }
+
+void FishMan::hello() const
+{
+    std::cout << "Soy FishMan" << std::endl;
+}

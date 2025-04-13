@@ -53,6 +53,7 @@ public:
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
+    void hello() const override;
 };
 
 class SubWeapon : public EntitySprite
@@ -96,6 +97,7 @@ public:
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
+    void hello() const override;
 };
 
 class Player : public EntitySprite
@@ -227,4 +229,5 @@ public:
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
+    void hello() const override;
 };

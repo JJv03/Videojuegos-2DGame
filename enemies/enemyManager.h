@@ -29,7 +29,7 @@ public:
     void checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps);
     void draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage);
 
-    std::vector<Enemy *> getEnemies() const; // Get all enemies
+    std::vector<Enemy *> getEnemies(int currentLevel, int currentStage) const; // Get all enemies
 
     // Level loading system
     void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);

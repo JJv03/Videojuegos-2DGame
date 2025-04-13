@@ -41,4 +41,6 @@ public:
     bool applyDamage(float damageAmount);
 
     bool checkForLedge(Entity& solidTile);
+
+    void hello() const override;
 };

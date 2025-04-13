@@ -59,4 +59,6 @@ public:
     void updateAnimation(float deltaTime);
 
     void onCollision(Entity &other, Game &game) override;
+
+    void hello() const override;
 };

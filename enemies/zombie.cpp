@@ -170,3 +170,8 @@ void Zombie::onCollision(Entity &other, Game &game)
         // Something?
     }
 }
+
+void Zombie::hello() const
+{
+    std::cout << "Soy Zombie" << std::endl;
+}

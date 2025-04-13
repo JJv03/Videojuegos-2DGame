@@ -287,3 +287,8 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
     return std::make_shared<Item>(type, sprite, hitboxes);
 }
+
+
+void Item::hello() const {
+    std::cout << "Soy Item" << std::endl;
+}

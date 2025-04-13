@@ -11,6 +11,7 @@ class Tile : public Entity
 public:
     Tile();
     ~Tile() = default;
+    void hello() const override;
 };
 
 class TileSprite : public EntitySprite
@@ -30,6 +31,7 @@ public:
 
     // Entity functions
     void onCollision(Entity& other, Game& game) override;
+    void hello() const override;
 };
 
 // -------------------------------------------------
@@ -51,6 +53,7 @@ public:
 
     // Entity functions
     void onCollision(Entity& other, Game& game) override;
+    void hello() const override;
 };
 
 // -------------------------------------------------
@@ -77,6 +80,7 @@ public:
     // Entity functions
     void onCollision(Entity& other, Game& game) override;
     void onCollision_Whip(Whip& whip, Game& game);
+    void hello() const override;
 };
 
 

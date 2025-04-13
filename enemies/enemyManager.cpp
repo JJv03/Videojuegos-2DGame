@@ -180,28 +180,41 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     }
 }
 
-std::vector<Enemy *> EnemyManager::getEnemies() const
+std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage) const
 {
     std::vector<Enemy *> allEnemies;
 
     for (auto &spawner : zombiesSpawner)
     {
-        for (auto &zombie : spawner.zombies)
-        {
-            allEnemies.push_back(zombie);
+        if(spawner.level == currentLevel && spawner.stage == currentStage){
+            for (auto &z : spawner.zombies)
+            {
+                if(z->isActive){
+                    allEnemies.push_back(z);
+                }
+            }
         }
     }
     for (auto &l : leopard)
     {
-        allEnemies.push_back(l);
+        if(l->level == currentLevel && l->stage == currentStage && l->isActive)
+        {
+            allEnemies.push_back(l);
+        }
     }
     for (auto &b : bat)
     {
-        allEnemies.push_back(b);
+        if(b->level == currentLevel && b->stage == currentStage && b->isActive)
+        {
+            allEnemies.push_back(b);
+        }
     }
     for (auto &f : fishman)
     {
-        allEnemies.push_back(f);
+        if(f->level == currentLevel && f->stage == currentStage && f->isActive)
+        {
+            allEnemies.push_back(f);
+        }
     }
 
     return allEnemies;

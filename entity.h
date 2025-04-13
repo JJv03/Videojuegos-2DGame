@@ -16,6 +16,7 @@ public:
 
     virtual std::vector<sf::FloatRect> getBounds() const;
     virtual void onCollision(Entity& other, Game& game) = 0;
+    virtual void hello() const;
 };
 
 

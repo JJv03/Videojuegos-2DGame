@@ -6,6 +6,10 @@ Tile::Tile(){
     
 }
 
+void Tile::hello() const {
+    std::cout << "Soy Tile" << std::endl;
+}
+
 // -------------------------- TILE SPRITE (virtual) --------------------------
 
 TileSprite::TileSprite(){
@@ -22,6 +26,10 @@ void SolidTile::onCollision(Entity& other, Game& game){
 
 }
 
+void SolidTile::hello() const {
+    std::cout << "Soy SolidTile" << std::endl;
+}
+
 // -------------------------- DOOR TILE --------------------------
 
 DoorTile::DoorTile() : Tile() {
@@ -31,6 +39,10 @@ DoorTile::DoorTile() : Tile() {
 
 void DoorTile::onCollision(Entity& other, Game& game){
 
+}
+
+void DoorTile::hello() const {
+    std::cout << "Soy DoorTile" << std::endl;
 }
 
 // -------------------------- BREAKABLE TILE --------------------------
@@ -59,4 +71,8 @@ void BreakableTile::onCollision_Whip(Whip& whip, Game& game){
         this->generatesItem = true;
         game.createDropItem(this->sprite->getPosition(), this->dropType);
     }
+}
+
+void BreakableTile::hello() const {
+    std::cout << "Soy BreakableTile" << std::endl;
 }

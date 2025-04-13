@@ -1,13 +1,13 @@
 #include "playerState.h"
 #include <iostream>
+#include "globals.h"
+
 using namespace std;
 
 template <typename T>
 std::unique_ptr<T> state() {
     return std::make_unique<T>();
 }
-constexpr float GRAVITY { 450.0f };       
-constexpr float JUMP_FORCE { 205.0f };    
 
 using Idle = PlayerIdleState;
 using Walk = PlayerWalkState;
@@ -68,7 +68,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
     
         if (keyPressed->scancode == controls.jump) {
             player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
+            player.verticalSpeed = -gPlayerJumpForce;
             player.isOnGround = false;
             player.setState(state<Jump>());
         }
@@ -95,24 +95,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
             player.isPressingUp = true;
         }
 
-        if(keyPressed->scancode == KEY_HURT || player.isBeingHurt){
-            player.health--;
-            if (player.health>0)
-            {
-                player.isJumping = true;
-                player.verticalSpeed = -JUMP_FORCE;
-                player.isOnGround = false;
-                player.setState(state<Hurt>());
-            }
-            else{
-                player.setState(state<Dead>());
-            }
-            
-        }
-
-        if(keyPressed->scancode == KEY_DEAD){ //|| player.health==0){
-            player.setState(state<Dead>());
-        }
+        
     }
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
         if (keyReleased->scancode == controls.attack) {
@@ -140,9 +123,9 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         player.setState(state<Walk>());
     }
 
-    if (!player.isOnGround)     // HABRIA QUE QUITARLO
+    if (!player.isOnGround)
     {
-        player.sprite->move({0.f,GRAVITY*deltaTime});
+        player.sprite->move({0.f, gPlayerGravity * deltaTime});
     }
     player.currentAnimation = idleSimon;
     
@@ -169,21 +152,6 @@ void PlayerIdleState::update(Player& player, float deltaTime)
             player.sprite->setColor(sf::Color::White);
         } else {
             player.invulnerableTimeCounter += deltaTime;
-        }
-    }
-    
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
         }
     }
 }
@@ -252,7 +220,7 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         if (keyPressed->scancode == controls.jump) {
             player.isJumping = true;
             player.isOnGround = false;
-            player.verticalSpeed = -JUMP_FORCE;
+            player.verticalSpeed = -gPlayerJumpForce;
             player.setState(state<Jump>());
         }
     
@@ -277,7 +245,7 @@ void PlayerWalkState::update(Player& player, float deltaTime)
     
     if (!player.isOnGround)      // HABRIA QUE QUITARLO
     {
-        player.sprite->move({0.f,GRAVITY*deltaTime});
+        player.sprite->move({0.f,gPlayerGravity*deltaTime});
     }
     
     if(player.dir == RIGHT){
@@ -315,20 +283,7 @@ void PlayerWalkState::update(Player& player, float deltaTime)
         }
     }
     
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
-        }
-    }
+    
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
@@ -388,7 +343,7 @@ void PlayerJumpState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = jumpSimon;
 
-    player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
+    player.verticalSpeed += gPlayerGravity * deltaTime* 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
     if (player.isInvulnerable)
@@ -410,20 +365,6 @@ void PlayerJumpState::update(Player& player, float deltaTime)
         }
     }
     
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
-        }
-    }
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
@@ -527,7 +468,7 @@ void PlayerDuckState::update(Player& player, float deltaTime)
 {
     if (!player.isOnGround)
     {
-        player.sprite->move({0.f,GRAVITY*deltaTime*deltaTime});
+        player.sprite->move({0.f,gPlayerGravity*deltaTime*deltaTime});
     }
 
     player.currentAnimation = duckSimon;
@@ -553,21 +494,6 @@ void PlayerDuckState::update(Player& player, float deltaTime)
             player.sprite->setColor(sf::Color::White);
         } else {
             player.invulnerableTimeCounter += deltaTime;
-        }
-    }
-    
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
         }
     }
 }
@@ -837,21 +763,6 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         }
     }
     
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
-        }
-    }
-    
     if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
@@ -943,7 +854,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     player.whip.animationManager->update(deltaTime);
 
     // Apply gravity
-    player.verticalSpeed += GRAVITY * deltaTime;
+    player.verticalSpeed += gPlayerGravity * deltaTime;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
     
@@ -999,21 +910,6 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         }
     }
     
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
-        }
-    }
-
     // If Simon was walking before jumping, move in the x direction
     if (player.isWalking)
     {
@@ -1172,20 +1068,6 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         }
     }
     
-    if(player.isBeingHurt && !player.isInvulnerable){
-        // ir a hurt state
-        player.health--;
-        if (player.health>0)
-        {
-            player.isJumping = true;
-            player.verticalSpeed = -JUMP_FORCE;
-            player.isOnGround = false;
-            player.setState(state<Hurt>());
-        }
-        else{
-            player.setState(state<Dead>());
-        }
-    }
     if (player.animationManager->isPlaying(attackFloorSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
@@ -1268,10 +1150,10 @@ PlayerHurtState::PlayerHurtState() : PlayerState()
 
 void PlayerHurtState::init(Player& player)
 {
-    cout << "init hurt" << endl;
-    cout << "herido, ahora tengo esta salud:  " << player.health << endl;
+    //cout << "init hurt" << endl;
+    //cout << "herido, ahora tengo esta salud:  " << player.health << endl;
     player.isBeingHurt = true; 
-    
+    player.isInvulnerable = true;
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -1282,7 +1164,7 @@ void PlayerHurtState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = hurtSimon;
 
-    player.verticalSpeed += GRAVITY * deltaTime* 1.2f;
+    player.verticalSpeed += gPlayerGravity * deltaTime * 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
     
@@ -1297,9 +1179,6 @@ void PlayerHurtState::update(Player& player, float deltaTime)
         player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
     }
     
-    
-
-
     // Play jump animation if not already playing
     if (!player.animationManager->isPlaying(player.currentAnimation))
     {
@@ -1315,7 +1194,6 @@ void PlayerHurtState::update(Player& player, float deltaTime)
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
-        player.isInvulnerable = true;
         player.setState(state<Idle>());
     }   
 
@@ -1354,24 +1232,12 @@ void PlayerDeadState::init(Player& player)
     // Initial position adjustment for first frame
     player.sprite->move(sf::Vector2f(0.f, 8.f));
     player.isDead = true;
+    player.isInvulnerable = true;
     player.deathRestart = true;
 }
 
 void PlayerDeadState::handleInput(Player& player, sf::Event event)
 {
-    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
-    {
-        if (KeyReleased->scancode == KEY_REVIVE)
-        {
-            player.hasDied = false;
-            player.isDead = false;
-            player.health = 1; // Reset health to 1
-            player.sprite->move(sf::Vector2f(0.f, -16.f)); // Move back up
-            player.sprite->setPosition(sf::Vector2f(100.f,160.f));
-            player.currentAnimation = idleSimon;
-            player.setState(state<Idle>());
-        }
-    }
 }
 
 void PlayerDeadState::update(Player& player, float deltaTime)
