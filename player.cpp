@@ -182,7 +182,7 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
             const float overlapY = intersection->size.y;
 
             bool simonIsTouchingGround = false;
-            if (overlapY < 7.65f) {
+            if (overlapY < 7.66f) {
                 simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBound.position.y + tileBound.size.y));
             }
 
@@ -190,13 +190,14 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
             {
                 if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBound.position.x + tileBound.size.x * 0.5f))
                 {
-                    std::cout << "Right collision" << std::endl;
+                    
+                    //std::cout << "Right collision" << std::endl;
                     this->sprite->move({-overlapX, 0.f});
                     playerBounds.position.x -= overlapX;
                 }
                 else
                 {
-                    std::cout << "Left collision" << std::endl;
+                    //std::cout << "Left collision" << std::endl;
                     this->sprite->move({overlapX, 0.f});
                     playerBounds.position.x += overlapX;
                 }
@@ -230,10 +231,13 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                 }
                 else // Simon's head is collisioning with the tile
                 {
-                    std::cout << "Ceiling collision" << std::endl;
-                    this->sprite->move({0.f, overlapY});
-                    playerBounds.position.y += overlapY;
-                    this->verticalSpeed = 0.0f; // (For security) Simon starts falling
+                    if (overlapY >= 1.f){
+                        //std::cout << overlapY << ", " << overlapX << std::endl;
+                        //std::cout << "Ceiling collision" << std::endl;
+                        this->sprite->move({0.f, overlapY});
+                        playerBounds.position.y += overlapY;
+                        this->verticalSpeed = 0.0f; // (For security) Simon starts falling
+                    }
                 }
             }
         }

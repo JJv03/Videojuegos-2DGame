@@ -288,8 +288,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     texts[6].setString(livesStream.str());
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    //checkCollisions(viewPosition);
-    checkCollisions();
+    checkCollisions(viewPosition);
+    //checkCollisions();
 
     // Update the subweapon sprite item
     guiSubWeaponSprite->setTexture(*itemTextures[player.subWeaponType]);
@@ -611,7 +611,7 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
 
         // Mejora para no mover a Simon horizontalmente si tiene el 99% de su cuerpo sobre un tile
         bool simonIsTouchingGround = false;
-        if (overlapY < 7.65f) {
+        if (overlapY < 7.66f) {
             simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBounds.position.y + tileBounds.size.y));
                 
         }
@@ -652,9 +652,11 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
             }
             else // Simon's head is collisioning with the tile
             {
-                player.sprite->move({0.f, overlapY});
-                playerBounds.position.y += overlapY;
-                player.verticalSpeed = 0.0f; // (For security) Simon starts falling
+                if (overlapY >= 1.f){
+                    player.sprite->move({0.f, overlapY});
+                    playerBounds.position.y += overlapY;
+                    player.verticalSpeed = 0.0f; // (For security) Simon starts falling
+                }
             }
         }
     }
