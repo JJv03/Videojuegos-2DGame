@@ -61,7 +61,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    newState->hello();
+    //newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);
@@ -140,7 +140,6 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (Enemy *enemy = dynamic_cast<Enemy *>(&other))
     {   
-        enemy->hello();
         if(!this->isInvulnerable){
             this->health = std::max(this->health - enemy->damage, 0.f);
 
