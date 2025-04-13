@@ -174,6 +174,8 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
 
     bool hasCollided = false;
 
+    // Algoritmo viejo
+    /*
     for (auto tileBound : tileBounds)
     {
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound))
@@ -209,7 +211,7 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                         // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
                         // float moveY = theoreticallyCorrectPositionY - targetPositionY;
 
-                        // Option 2: read the tile and place the player on top of it, regardless of anything else
+                        // Option 2: read the tile and place the player on position.y of it, regardless of anything else
                         float targetPositionY = tileBound.position.y - playerBounds.size.y + gSimonFeetCollisionNewHeight;
                         float moveY = targetPositionY - playerBounds.position.y;
 
@@ -225,6 +227,80 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                     this->sprite->move({0.f, overlapY});
                     playerBounds.position.y += overlapY;
                     this->verticalSpeed = 0.0f; // (For security) Simon starts falling
+                }
+            }
+        }
+    }
+    */
+
+    
+    for (auto tileBound : tileBounds){
+        if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(tileBound)){
+            const float overlapX = intersection->size.x;
+            const float overlapY = intersection->size.y;
+
+             // Checks the direction in which the tile is intersecting with the player
+            sf::Vector2f playerCenter = {
+                playerBounds.position.x + playerBounds.size.x / 2.f,
+                playerBounds.position.y + playerBounds.size.y / 2.f
+            };
+
+            sf::Vector2f tileCenter = {
+                tileBound.position.x + tileBound.size.x / 2.f,
+                tileBound.position.y + tileBound.size.y / 2.f
+            };
+
+            float deltaX = playerCenter.x - tileCenter.x;
+            float deltaY = playerCenter.y - tileCenter.y;
+
+            if (overlapX > 0 && overlapY > 0)
+            {
+                if(deltaY < 0 && overlapX > 1.f) // Player is above the tile
+                {
+                    //std::cout << "Floor collision" << std::endl;                 
+                    float targetPositionY = tileBound.position.y - playerBounds.size.y + 1.f; // Ajuste pequeño para asegurarse de que Simón quede encima
+                    float moveY = targetPositionY - playerBounds.position.y;
+                    this->sprite->move({0.f, moveY});
+                    playerBounds.position.y += moveY;
+
+                    this->verticalSpeed = 0.f;  // Detener la caída (Simón está en el suelo)
+                    this->isOnGround = true;    // Establecer que Simón está en el suelo
+                    hasCollided = true;
+                }
+                else
+                {
+                    // Horizontal collision
+                    if (overlapX < overlapY)
+                    {
+
+                        if (deltaX < 0)  // Right collision (Player -> Tile)
+                        {
+                            //std::cout << "Right collision" << std::endl;                 
+
+                            this->sprite->move({-overlapX, 0.f});
+                            playerBounds.position.x -= overlapX;
+                        }
+                        else // Left collision (Tile <- Player)
+                        {
+                            //std::cout << "Left collision" << std::endl;                 
+
+                            this->sprite->move({overlapX, 0.f});
+                            playerBounds.position.x += overlapX;
+                        }
+                    }
+                    // Vertical collision
+                    else
+                    {
+                        if (deltaY > 0) // Ceiling collision (Floor collision already checked)
+                        {    
+                            //std::cout << "Ceiling collision" << std::endl; 
+                            this->sprite->move({0.f, overlapY});  // Empujamos a Simón hacia abajo
+                            playerBounds.position.y += overlapY;
+
+                            this->verticalSpeed = 0.f;
+                        }               
+                            
+                    }
                 }
             }
         }

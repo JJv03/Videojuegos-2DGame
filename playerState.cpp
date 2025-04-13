@@ -109,7 +109,8 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    
+    player.isOnGround = false;
+
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -195,7 +196,6 @@ PlayerWalkState::PlayerWalkState() : PlayerState()
 
 void PlayerWalkState::init(Player& player)
 {
-    player.isOnGround = false;
 }
 
 void PlayerWalkState::handleInput(Player& player, sf::Event event)
@@ -242,11 +242,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerWalkState::update(Player& player, float deltaTime)
 {
-    
-    if (!player.isOnGround)      // HABRIA QUE QUITARLO
-    {
-        player.sprite->move({0.f,gPlayerGravity*deltaTime});
-    }
+    player.isOnGround = false;
+
+    player.sprite->move({0.f,gPlayerGravity*deltaTime});
     
     if(player.dir == RIGHT){
         player.sprite->move({deltaTime * gPlayerMovementSpeed, 0.f});
@@ -315,8 +313,6 @@ PlayerJumpState::PlayerJumpState() : PlayerState()
 
 void PlayerJumpState::init(Player& player)
 {
-    player.isOnGround = false;
-
     if (player.isWalking) {
         player.horizontalSpeed = (player.dir == RIGHT) ? gPlayerMovementSpeed : -gPlayerMovementSpeed;
     } else {
@@ -326,7 +322,6 @@ void PlayerJumpState::init(Player& player)
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
 {
-    
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.attack) {
