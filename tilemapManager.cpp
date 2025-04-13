@@ -82,3 +82,15 @@ void TilemapManager::loadLevel(int level) {
     }
 }
 
+void TilemapManager::restartBreakableTiles(){
+    for(auto& tilemap : tilemaps)
+    {
+        tilemap.m_items.clear();
+
+        for(auto& breakableTile: tilemap.m_breakableTiles)
+        {
+            breakableTile.isBreakable = true;
+            breakableTile.isDestroyed = false;
+        }
+    }
+}

@@ -33,4 +33,6 @@ public:
 
     // Level loading system
     void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);
+
+    void restartEnemies(int currentLevel, int currentStage);
 };

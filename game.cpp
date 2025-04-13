@@ -962,16 +962,11 @@ void Game::restartStage()
 {
     std::cout << "Current stage: " << currentStage << std::endl;
 
-    for(auto& tilemap : tilemaps.tilemaps)
-    {
-        tilemap.m_items.clear();
+    
 
-        for(auto& breakableTile: tilemap.m_breakableTiles)
-        {
-            breakableTile.isBreakable = true;
-            breakableTile.isDestroyed = false;
-        }
-    }
+    tilemaps.restartBreakableTiles();
+
+    enemyManager->restartEnemies(currentLevel, currentStage);
     
     time = 300;
     updateGUITime();

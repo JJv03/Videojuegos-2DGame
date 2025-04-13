@@ -1271,6 +1271,8 @@ void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerDeadState::end(Player& player)
 {
+    player.isInvulnerable = false;
+    player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
     player.hasDied = false;
 }

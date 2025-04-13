@@ -219,3 +219,43 @@ std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage
 
     return allEnemies;
 }
+
+
+void EnemyManager::restartEnemies(int currentLevel, int currentStage){
+    for (auto &zombieSpawner : zombiesSpawner)
+    {
+        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
+        {
+            for(auto &zombie : zombieSpawner.zombies)
+            {
+                zombie->isActive = false;
+                zombie->resetPosition();
+            }
+        }
+    }
+    for (auto &leopard : leopard)
+    {
+        if (leopard->level == currentLevel && leopard->stage == currentStage)
+        {
+            leopard->isActive = false;
+            leopard->resetPosition();
+        }
+    }
+    for (auto &bat : bat)
+    {
+        if (bat->level == currentLevel && bat->stage == currentStage)
+        {
+            bat->isActive = false;
+            bat->resetPosition();
+        }
+    }
+    for (auto &fishman : fishman)
+    {
+        if (fishman->level == currentLevel && fishman->stage == currentStage)
+        {
+            fishman->isActive = false;
+            fishman->resetPosition();
+        }
+    }
+}
+
