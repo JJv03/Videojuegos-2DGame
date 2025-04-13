@@ -124,10 +124,8 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         player.setState(state<Walk>());
     }
 
-    if (!player.isOnGround)
-    {
-        player.sprite->move({0.f, gPlayerGravity * deltaTime});
-    }
+    player.sprite->move({0.f, gPlayerGravity * deltaTime});
+
     player.currentAnimation = idleSimon;
     
     if (!player.animationManager->isPlaying(player.currentAnimation)){

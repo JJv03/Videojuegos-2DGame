@@ -608,17 +608,14 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
 
         const float overlapX = intersection->size.x;
         const float overlapY = intersection->size.y;
-        // std::cout << "Overlap: " << overlapX << ", " << overlapY << std::endl;
 
         // Mejora para no mover a Simon horizontalmente si tiene el 99% de su cuerpo sobre un tile
-        // bool simonIsTouchingGround = false;
-        // if (overlapY < 7.65f) {
-        //     simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBounds.position.y + tileBounds.size.y));
+        bool simonIsTouchingGround = false;
+        if (overlapY < 7.65f) {
+            simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBounds.position.y + tileBounds.size.y));
                 
-        // }
-        // std::cout << "Simon is touching ground: " << simonIsTouchingGround << std::endl;
-        // if (overlapX < overlapY && (! simonIsTouchingGround)) // Horizontal collision
-        if (overlapX < overlapY) // Horizontal collision
+        }
+        if (overlapX < overlapY && (! simonIsTouchingGround)) // Horizontal collision
         {
             if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
             {
@@ -635,9 +632,7 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
         {
             if ((playerBounds.position.y + playerBounds.size.y * 0.5f) < (tileBounds.position.y + tileBounds.size.y * 0.5f))
             { // Simon's feet are collisioning with the tile
-
-                if (!player.isOnGround && player.verticalSpeed >= 0.0f)
-                // if (player.verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
+                if (player.verticalSpeed >= 0.0f)
                 { // If player is NOT going up
 
                     // Option 1: adjust overlapedY and make it be .15f
