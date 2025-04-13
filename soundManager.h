@@ -56,6 +56,11 @@ public:
     void stopMusic(const std::string& id);
 
     /**
+     * @brief Stops all currently playing music tracks.
+     */
+    void stopAllMusic();
+
+    /**
      * @brief Plays a sequence of two music tracks. The second track plays after the first ends.
      * @param firstId The unique identifier for the first music track.
      * @param secondId The unique identifier for the second music track.

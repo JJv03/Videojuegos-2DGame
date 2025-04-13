@@ -2046,6 +2046,18 @@ void InitAnimationGS::handleInput(sf::Event event){
 void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     timer += deltaTime;
 
+    float alphaMin = 25.f;
+    float alphaMax = 125.f;
+    float amplitude = (alphaMax - alphaMin) / 2.f;
+    float midpoint = (alphaMax + alphaMin) / 2.f;
+    float speed = 2.f; // velocidad del parpadeo
+
+    float oscillation = std::sin(timer * speed); // varía entre -1 y 1
+    float alpha = midpoint + amplitude * oscillation; // varía entre 25 y 125
+
+    alpha = std::clamp(alpha, 25.f, 125.f);
+    warning[0].setFillColor(sf::Color(255, 255, 255, alpha));
+
     if(timer >= timerInterval){
         slide ++;
         timer = 0.0f;
@@ -2059,6 +2071,7 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
 
 void InitAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
     drawSlide(window);
+    window.draw(warning[0]);
 }
 
 void InitAnimationGS::drawSlide(sf::RenderWindow& window){
@@ -2101,8 +2114,6 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
         sprite.setColor(color);
         window.draw(sprite);
     }
-
-    window.draw(warning[0]);
 }
 
 void InitAnimationGS::pause(){

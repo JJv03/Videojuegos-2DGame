@@ -6,6 +6,7 @@
 #include "./enemies/enemyManager.h"
 #include "item.h"
 #include "collisionGrid.h"
+#include "configManager.h"
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game
@@ -13,6 +14,7 @@ class Game
 private:
     SoundManager gameSoundManager;
     int time = 300;
+    configManager &configManager;
 
 public:
     Player player;
@@ -97,6 +99,8 @@ public:
     void restartStage();
 
     void restartLevel();
+
+    void setLevelMusic(int level);
 
     
 private:

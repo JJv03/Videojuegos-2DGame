@@ -5,14 +5,13 @@
 #include "game.h"
 #include "globals.h"
 #include "utils.h"
-#include "configManager.h"
 #include "item.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
 
 
 // Constructor, destructor
-Game::Game()
+Game::Game() : configManager(configManager::getInstance())
 {
     Player player;
     tilemaps = TilemapManager();
@@ -25,11 +24,8 @@ void Game::init()
     currentLevel = gStartingLevel;
     currentStage = gStartingStage;
 
-    configManager &configManager = configManager::getInstance();
-    auto audio = configManager.getAudio();
-
-    gameSoundManager.loadMusic("gameMusic", "./assets/music/03Vampire_Killer.mp3");
-    gameSoundManager.playMusic("gameMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+    gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
+    gameSoundManager.loadMusic("deadMusic", "./assets/music/13Player_Miss.mp3");
 
     tilemaps.loadLevel(currentLevel);
 
@@ -305,6 +301,9 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     {
         player.deathRestart = false;
         revivingClock.restart();
+        gameSoundManager.stopAllMusic();
+        auto audio = configManager.getAudio();
+        gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
     
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
@@ -924,6 +923,8 @@ int Game::startStage(int stage, int fromStairs)
 
     currentStage = stage;
 
+    setLevelMusic(currentLevel);
+
     std::cout << "Current stage: " << currentStage << std::endl;
     if (fromStairs == 0)
     {
@@ -959,7 +960,7 @@ void Game::restartStage()
 {
     std::cout << "Current stage: " << currentStage << std::endl;
 
-    
+    setLevelMusic(currentLevel);
 
     tilemaps.restartBreakableTiles();
 
@@ -1002,4 +1003,14 @@ void Game::restartLevel()
     player.lives = 3;
     
     startStage(1);
+}
+
+void Game::setLevelMusic(int level){
+    // Music for the game
+    auto audio = configManager.getAudio();
+    switch (level){
+    case 1:
+        gameSoundManager.playMusic("vampireKiller", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+        break;
+    }
 }

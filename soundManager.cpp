@@ -73,6 +73,11 @@ void SoundManager::playMusic(const std::string& id, float volume, bool loop) {
         return;
     }
 
+    if (musicTracks[id].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
+
     musicTracks[id].setLooping(loop);
     musicTracks[id].setVolume(volume);
     musicTracks[id].play();
@@ -81,6 +86,12 @@ void SoundManager::playMusic(const std::string& id, float volume, bool loop) {
 void SoundManager::stopMusic(const std::string& id) {
     if (musicTracks.find(id) != musicTracks.end()) {
         musicTracks[id].stop();
+    }
+}
+
+void SoundManager::stopAllMusic() {
+    for (auto& [id, music] : musicTracks) {
+        music.stop();
     }
 }
 
