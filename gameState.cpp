@@ -1596,7 +1596,7 @@ void InitAnimationGS::init(){
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
-    slide = 4;
+    slide = 1;
 
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
@@ -1725,10 +1725,6 @@ void InitAnimationGS::init(){
 
     text1.setScale(sf::Vector2f(0.5, 0.5));
 
-    spriteBounds = text1.getGlobalBounds();
-    spriteWidth = spriteBounds.size.x;
-    spriteHeight = spriteBounds.size.y;
-
     text1.setPosition(sf::Vector2f(5, 25));
 
     initAnimationSprites.push_back(text1);
@@ -1743,7 +1739,6 @@ void InitAnimationGS::init(){
 
     spriteBounds = text2.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
-    spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
     yPosition = 300;
@@ -1779,14 +1774,7 @@ void InitAnimationGS::init(){
 
     text4.setScale(sf::Vector2f(0.5, 0.5));
 
-    spriteBounds = text4.getGlobalBounds();
-    spriteWidth = spriteBounds.size.x;
-    spriteHeight = spriteBounds.size.y;
-
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
-
-    text4.setPosition(sf::Vector2f(xPosition, yPosition));
+    text4.setPosition(sf::Vector2f(5, 25));
 
     initAnimationSprites.push_back(text4);
 
@@ -1803,7 +1791,7 @@ void InitAnimationGS::init(){
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    yPosition = ((gWindowHeight - spriteHeight) / 2) + 125;
 
     text5.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -2022,14 +2010,14 @@ void InitAnimationGS::init(){
     initAnimationTextures["whip"] = sf::Texture(whipImg, false);
     sf::Sprite whip(initAnimationTextures["whip"]);
 
-    whip.setScale(sf::Vector2f(1, 1));
+    whip.setScale(sf::Vector2f(2.3, 2.3));
 
     spriteBounds = whip.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    xPosition = ((gWindowWidth - spriteWidth) / 2) - 150;
+    yPosition = ((gWindowHeight - spriteHeight) / 2) + 15;
 
     whip.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -2079,7 +2067,7 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     }
 
     switch (slide){
-        case 1: {
+        case 1:{
             // Move Dracula
             sf::Sprite& dracula = initAnimationSprites[10];
             sf::Vector2f pos = dracula.getPosition();
@@ -2122,13 +2110,55 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             break;
         }
 
-        case 4:
+        case 4:{
+            sf::Sprite& fume = initAnimationSprites[13];
+            sf::Vector2f pos = fume.getPosition();
 
+            pos.x -= 1.f;
+            fume.setPosition(pos);
+            
+            sf::Sprite& whip = initAnimationSprites[17];
+            pos = whip.getPosition();
+            float max = (gWindowWidth - pos.x) / 2;
+
+            if(pos.x < max){
+                pos.x += 1.f;
+                if (pos.x > max) pos.x = max;
+                whip.setPosition(pos);
+            }
+            
             break;
+        }
+        
+        case 5:{
+            // Move fume
+            sf::Sprite& fume = initAnimationSprites[13];
+            sf::Vector2f pos = fume.getPosition();
 
-        case 5:
+            pos.x -= 1.f;
+            fume.setPosition(pos);
 
+            // Move Belmont
+            sf::Sprite& belmont = initAnimationSprites[15];
+            pos = belmont.getPosition();
+
+            if(pos.x > 235.f){
+                pos.x -= 1.f;
+                if (pos.x < 235.f) pos.x = 235.f;
+                belmont.setPosition(pos);
+            }
+
+            // Move Dracula
+            sf::Sprite& dracula = initAnimationSprites[10];
+            pos = dracula.getPosition();
+
+            if (pos.x < 0.f) {
+                pos.x += 1.f;
+                if (pos.x > 0.f) pos.x = 0.f;
+                dracula.setPosition(pos);
+            }
             break;
+        }
 
         case 6:
             stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
@@ -2196,22 +2226,25 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
 }
 
 void InitAnimationGS::resetMovingSprites(){
-    sf::Sprite& dracula = initAnimationSprites[10];
-    float spriteHeight = dracula.getGlobalBounds().size.y;
-    dracula.setPosition(sf::Vector2f(-100, spriteHeight));
-
     sf::Sprite& fume = initAnimationSprites[13];
 
-    spriteHeight = fume.getGlobalBounds().size.y;
+    float spriteHeight = fume.getGlobalBounds().size.y;
 
     float yPosition = ((gWindowHeight - spriteHeight) / 2) + 70;
 
     fume.setPosition(sf::Vector2f(0, yPosition));
 
-    if(slide > 2){
+    if(slide == 5){
+        fume.setPosition(sf::Vector2f(0, yPosition - 25));
+
+        sf::Sprite& dracula = initAnimationSprites[10];
+        float spriteHeight = dracula.getGlobalBounds().size.y - 55;
+        dracula.setPosition(sf::Vector2f(-115, spriteHeight));
+        
         sf::Sprite& belmont = initAnimationSprites[15];
-        belmont.setScale(sf::Vector2f(1.1, 1.1));
-        belmont.setPosition(sf::Vector2f(0, 0));
+        belmont.setScale(sf::Vector2f(1.4, 1.4));
+        spriteHeight = dracula.getGlobalBounds().size.y - 60;
+        belmont.setPosition(sf::Vector2f(350, spriteHeight));
     }
 
 }
