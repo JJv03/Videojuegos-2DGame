@@ -237,7 +237,8 @@ void MenuGS::init(){
 void MenuGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.down && position < 3) {    
+        if (keyPressed->scancode == controls.down && position < 3) {
+            timeOut = 0;
             if (!menuSprites.empty()) {
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
@@ -254,6 +255,7 @@ void MenuGS::handleInput(sf::Event event){
         }
 
         if (keyPressed->scancode == controls.up && position > 0) {    
+            timeOut = 0;
             if (!menuSprites.empty()) {
                 sf::Sprite torch = menuSprites.back();
                 menuSprites.pop_back();
@@ -286,16 +288,19 @@ void MenuGS::handleInput(sf::Event event){
                 case 3:
                     std::cout<<"Bye bye :)"<<std::endl;
                     exit = true;
-                    //window.close();
                     break;
             }
-            //stateMachine->replaceState(std::make_unique<PauseGS>(stateMachine));
         }
     }
 }
 
 void MenuGS::update(float deltaTime, const sf::Vector2f& viewPosition){
-    
+    timeOut += deltaTime;
+
+    if (timeOut >= timeInterval) { // X seconds to restart animation
+        std::cout << "Reproduce again the initAnimation" << std::endl;
+        stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
+    }
 }
 
 void MenuGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -2188,8 +2193,8 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
         // Castle, Whip, Fume, Forest, Moon, Text4
         case 4: spriteIndices = {0, 17, 13, 12, 11, 7}; break;
 
-        // Night,  Dracula, Belmont, Fume, Moon, Text5
-        case 5: spriteIndices = {3, 10, 15, 13, 11, 8}; break;
+        // Night, Moon, Dracula, Belmont, Fume, Text5
+        case 5: spriteIndices = {3, 11, 10, 15, 13, 8}; break;
         
         default: return;
     }

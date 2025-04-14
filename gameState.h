@@ -84,6 +84,8 @@ private:
     SoundManager menuSoundManager;
     configManager &configManager;
     bool exit;
+    float timeOut = 0.0f;
+    float timeInterval = 30.f;
 public:
     explicit MenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~MenuGS() override;
