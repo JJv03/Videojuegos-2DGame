@@ -65,6 +65,8 @@ public:
     void checkCollisions();
     void checkCollisions(const sf::Vector2f &viewPosition);
 
+    void checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities);
+
     // Check items collisions. An item only collides with what is below it and with a maximum of 2 tiles
     void checkItemsCollisions();
 

@@ -493,19 +493,9 @@ void Game::checkCollisions()
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {   
-    // Cálculo aparte porque no entra en CollisionGrid
-    checkPlayerMapBoundCollisions();
-
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
-    for (auto &solidTileRow : tilemaps[currentStage].m_solidTiles)
-    {
-        for (auto &solidTile : solidTileRow)
-        {
-            staticEntities.push_back(&solidTile);
-        }
-    }
     for (auto &doorTile : tilemaps[currentStage].m_doorTiles)
         staticEntities.push_back(&doorTile);
     for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
@@ -526,7 +516,26 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     // ... ADD THE REST OF ENTITIES
 
+
+    // Cálculo aparte porque no entra en CollisionGrid
+    checkPlayerMapBoundCollisions();
+    checkSolidTileCollisions(dynamicEntities);
+    
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
+}
+
+void Game::checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities){
+
+    for(auto& e : dynamicEntities){
+        for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
+            for (auto &t : solidTileRow){
+                if (checkIntersections(*e, t)) {
+                    e->onCollision(t, *this);
+                    t.onCollision(*e, *this);
+                }
+            }
+        }
+    }
 }
 
 
