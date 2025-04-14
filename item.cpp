@@ -114,7 +114,7 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::STOPWATCH] = sf::IntRect({103, 18}, {16, 16});
 
     item_To_TextureRect[ItemType::MORNING_STAR] = sf::IntRect({1, 1}, {16, 16});
-    item_To_TextureRect[ItemType::SMALL_HEART] = sf::IntRect({18, 1}, {8, 8});
+    item_To_TextureRect[ItemType::SMALL_HEART] = sf::IntRect({18, 1}, {8, 16});
     item_To_TextureRect[ItemType::LARGE_HEART] = sf::IntRect({29, 6}, {12, 10});
     item_To_TextureRect[ItemType::RED_MONEY_BAG] = sf::IntRect({44, 1}, {16, 16});
     item_To_TextureRect[ItemType::PURPLE_MONEY_BAG] = sf::IntRect({61, 1}, {16, 16});
@@ -300,6 +300,9 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             static const std::vector<ItemType> weaponDropItems = {
                 ItemType::MORNING_STAR,
                 ItemType::DAGGER,
+                ItemType::AXE,
+                ItemType::FIRE_BOMB,
+                ItemType::BOOMERANG,
                 ItemType::STOPWATCH,
                 ItemType::ROSARY,
             };
