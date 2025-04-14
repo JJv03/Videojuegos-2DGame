@@ -31,12 +31,12 @@ private:
     int currentFrame = 0;
 
 public:
-    size_t level; // Current game level
-    size_t stage; // Current stage within level
+    int level; // Current game level
+    int stage; // Current stage within level
 
     Bat() = default;
     Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-        const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage);
+        const sf::Vector2f &zoneSize, const int &level, const int &stage);
 
     // Reset bat to initial state
     void resetPosition() override;
@@ -49,7 +49,7 @@ public:
 
     // Update bat logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                    const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
+                const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
 
     // Handle collisions
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,

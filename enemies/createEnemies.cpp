@@ -138,7 +138,7 @@ FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &
     // Sprite sheet coordinates and dimensions
     const sf::IntRect FISHMAN_SPRITE_REGION = {{309, 28}, {16, 32}};
     const float HITBOX_WIDTH = 15.f;
-    const float HITBOX_HEIGHT = 30.f;
+    const float HITBOX_HEIGHT = 28.f;
 
     // Load and process sprite texture
     sf::Image fishmanImage;

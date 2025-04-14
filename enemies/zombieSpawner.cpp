@@ -3,7 +3,7 @@
 #include <ctime>
 
 // Initialize spawner with position, zone, and RNG
-ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference)
+ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const int &level, const int &stage, std::mt19937 &rngReference)
     : spawnPosition(position), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
       rng(rngReference), zombieCountDist(1, 3), level(level), stage(stage)
 {

@@ -17,7 +17,7 @@ const float gGameVisibleWorld_size_y = 192.f; // Considering the overlaped half-
 
 const float gSimonFeetCollisionNewHeight = 0.15f;
 
-const float gLoadingTime = 0.5f; // Loading starting a stage
+const float gLoadingTime = 0.5f;  // Loading starting a stage
 const float gRevivingTime = 2.0f; // Reviving time after dying
 
 // ============ IMAGE / TEXTURE / SPRITE =============
@@ -26,7 +26,7 @@ const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
-int gStartingStage = 1;
+int gStartingStage = 4;
 
 const float gTileSize = 32.f;
 

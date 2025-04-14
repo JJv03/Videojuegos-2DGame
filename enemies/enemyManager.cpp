@@ -7,7 +7,7 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 }
 
 // Update all active enemies in current level/stage
-void EnemyManager::update(float deltaTime, const size_t currentLevel, const size_t currentStage)
+void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage)
 {
     for (auto &zombieSpawner : zombiesSpawner)
     {
@@ -41,7 +41,7 @@ void EnemyManager::update(float deltaTime, const size_t currentLevel, const size
 
 // BORRAR
 // Handle collisions for all enemies in current level/stage
-void EnemyManager::checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps)
+void EnemyManager::checkCollisions(const int currentLevel, const int currentStage, const TilemapManager tilemaps)
 {
 
     // Todo esto ya se hace en collisionGrid, en el onCollision de cada enemigo
@@ -80,7 +80,7 @@ void EnemyManager::checkCollisions(const size_t currentLevel, const size_t curre
 }
 
 // Render all enemies in current level/stage with debug visuals
-void EnemyManager::draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage)
+void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const int currentStage)
 {
     for (auto &zombieSpawner : zombiesSpawner)
     {
@@ -186,10 +186,12 @@ std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage
 
     for (auto &spawner : zombiesSpawner)
     {
-        if(spawner.level == currentLevel && spawner.stage == currentStage){
+        if (spawner.level == currentLevel && spawner.stage == currentStage)
+        {
             for (auto &z : spawner.zombies)
             {
-                if(z->isActive){
+                if (z->isActive)
+                {
                     allEnemies.push_back(z);
                 }
             }
@@ -197,21 +199,21 @@ std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage
     }
     for (auto &l : leopard)
     {
-        if(l->level == currentLevel && l->stage == currentStage && l->isActive)
+        if (l->level == currentLevel && l->stage == currentStage && l->isActive)
         {
             allEnemies.push_back(l);
         }
     }
     for (auto &b : bat)
     {
-        if(b->level == currentLevel && b->stage == currentStage && b->isActive)
+        if (b->level == currentLevel && b->stage == currentStage && b->isActive)
         {
             allEnemies.push_back(b);
         }
     }
     for (auto &f : fishman)
     {
-        if(f->level == currentLevel && f->stage == currentStage && f->isActive)
+        if (f->level == currentLevel && f->stage == currentStage && f->isActive)
         {
             allEnemies.push_back(f);
         }
@@ -220,13 +222,13 @@ std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage
     return allEnemies;
 }
 
-
-void EnemyManager::restartEnemies(int currentLevel, int currentStage){
+void EnemyManager::restartEnemies(int currentLevel, int currentStage)
+{
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            for(auto &zombie : zombieSpawner.zombies)
+            for (auto &zombie : zombieSpawner.zombies)
             {
                 zombie->isActive = false;
                 zombie->resetPosition();
@@ -258,4 +260,3 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage){
         }
     }
 }
-
