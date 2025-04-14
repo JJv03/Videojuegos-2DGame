@@ -21,6 +21,7 @@ using AttackJump = PlayerAttackJumpState;
 using AttackDuck = PlayerAttackDuckState;
 using AttackStairs = PlayerAttackStairState;
 using AttackSecondary = PlayerAttackSecondaryState;
+using AttackJumpSecondary = PlayerAttackJumpSecondaryState;
 using Hurt = PlayerHurtState;
 using Invulnerable = PlayerInvulnerableState;
 using Dead = PlayerDeadState;
@@ -218,6 +219,15 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
             player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
         }
+
+        if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
+            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+                player.isAttacking = true;
+                player.hasToPressAgain = false;
+                player.hearts -= 1;
+                player.setState(state<AttackSecondary>());
+            }
+        }
     }
     
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
@@ -316,6 +326,15 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
             player.attackedFinished = false;
             player.hasToPressAgain = true;
             player.setState(state<AttackJump>());
+        }
+
+        if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
+            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+                player.isAttacking = true;
+                player.hasToPressAgain = false;
+                player.hearts -= 1;
+                player.setState(state<AttackJumpSecondary>());
+            }
         }
 
     }
@@ -1310,7 +1329,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
     if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
         SubWeapon secundaria;
         //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::BOOMERANG;
+        secundaria.type = ItemType::DAGGER;
         secundaria.animationManager = player.subWeapon.animationManager;
         secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
         secundaria.direction = player.dir;
@@ -1370,3 +1389,130 @@ void PlayerAttackSecondaryState::hello(){
 // --------------------------------------------------------------
 
 
+// ---------------------------- ATTACK JUMP SECONDARY ----------------------------
+
+PlayerAttackJumpSecondaryState::PlayerAttackJumpSecondaryState() : PlayerState()
+{
+}
+
+void PlayerAttackJumpSecondaryState::init(Player& player)
+{
+    if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
+        player.animationManager->playAnimation(attackSimon);
+    }
+    if (player.isWalking) {
+        player.horizontalSpeed = (player.dir == RIGHT) ? gPlayerMovementSpeed : -gPlayerMovementSpeed;
+    } else {
+        player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
+    }
+
+    player.isAttacking = true;
+    player.attackedFinished = false;
+    player.hasToPressAgain = false;
+}
+
+void PlayerAttackJumpSecondaryState::handleInput(Player& player, sf::Event event)
+{
+    
+    auto controls = configManager.getControls();
+    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (KeyReleased->scancode == controls.useSubWeapon)
+        {
+            player.hasToPressAgain = true;
+        }
+        
+    }
+    
+}
+
+void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
+{   
+    player.currentAnimation = attackSimon;
+
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        player.animationManager->playAnimation(player.currentAnimation);
+    }
+
+    player.animationManager->update(deltaTime);
+    player.verticalSpeed += gPlayerGravity * deltaTime;
+    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
+
+    if (player.isWalking)
+    {
+        if (player.dir == RIGHT)
+        {
+            player.horizontalSpeed = gPlayerMovementSpeed;
+            player.sprite->move({player.horizontalSpeed* deltaTime, 0.f});
+        }
+        else
+        {
+            player.horizontalSpeed = -gPlayerMovementSpeed;
+            player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
+        }
+    }
+   
+    if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
+        SubWeapon secundaria;
+        //secundaria.type = player.subWeaponType;
+        secundaria.type = ItemType::DAGGER;
+        secundaria.animationManager = player.subWeapon.animationManager;
+        secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
+        secundaria.direction = player.dir;
+        sf::Vector2f spawnPos = player.sprite->getPosition();
+        if (player.dir == RIGHT) {
+            secundaria.sprite->setScale({1.f, 1.f}); 
+        } else {
+            secundaria.sprite->setScale({-1.f, 1.f});
+        }
+        spawnPos.y -= 30.f; 
+
+        if (secundaria.type == ItemType::AXE) {
+            secundaria.verticalSpeed = -450.f; 
+            secundaria.animationManager->playAnimation(axeThrowing); 
+        } else if (secundaria.type == ItemType::DAGGER) {
+            secundaria.verticalSpeed = 0.f;
+            secundaria.animationManager->playAnimation(daggerThrowing);
+        } else if (secundaria.type == ItemType::BOOMERANG) {
+            secundaria.horizontalSpeed = 250.f; 
+            secundaria.animationManager->playAnimation(boomerangThrowing);
+        } else if (secundaria.type == ItemType::FIRE_BOMB) {
+            secundaria.verticalSpeed = -250.f;
+            secundaria.animationManager->playAnimation(fireBombThrowing);
+        } else if (secundaria.type == ItemType::STOPWATCH) {
+            player.hearts -= 4; 
+        } 
+
+        secundaria.sprite->setPosition(spawnPos);
+        player.activeSubWeapons.push_back(secundaria);
+        player.weaponIsActive = true;
+    }
+
+    
+    
+    if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
+    {
+        player.isAttacking = false;
+        player.attackedFinished = true;
+        player.currentAnimation = jumpSimon;
+        player.setState(state<Jump>());
+    }
+}
+
+void PlayerAttackJumpSecondaryState::draw(Player& player, sf::RenderWindow &window)
+{
+    window.draw(*player.sprite);
+    window.draw(*player.subWeapon.sprite);
+}
+
+void PlayerAttackJumpSecondaryState::end(Player& player)
+{
+    
+}
+
+void PlayerAttackJumpSecondaryState::hello(){
+    std::cout << "PLAYER STATE: Attack Secondary" << std::endl;
+}
+
+// --------------------------------------------------------------
