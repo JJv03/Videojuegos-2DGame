@@ -78,6 +78,29 @@ void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &t
     }
 }
 
+void Zombie::onCollision(Entity &other, Game &game)
+{
+    if (!isActive || !sprite)
+        return;
+
+    if (dynamic_cast<SolidTile *>(&other))
+    {
+        // std::cout << "ZOMBIE COLISIONA" << std::endl;
+        onCollision_SolidTile(other);
+    }
+    else if (Whip *whip = dynamic_cast<Whip *>(&other))
+    {
+        if (applyDamage(whip->whipDmg))
+        {
+            resetPosition();
+        }
+    }
+    else if (dynamic_cast<Player *>(&other))
+    {
+        // Something?
+    }
+}
+
 // Reset to initial state
 void Zombie::resetPosition()
 {
@@ -145,29 +168,6 @@ void Zombie::updateAnimation(float deltaTime)
     else if (currentSpeed.x > 0)
     {
         sprite->setScale({-1.0f, 1.0f});
-    }
-}
-
-
-void Zombie::onCollision(Entity &other, Game &game)
-{
-    if (!isActive || !sprite) return;
-
-    if(dynamic_cast<SolidTile*>(&other))
-    {
-        //std::cout << "ZOMBIE COLISIONA" << std::endl;
-        onCollision_SolidTile(other);
-    }
-    else if (Whip* whip = dynamic_cast<Whip*>(&other))
-    {
-        if(applyDamage(whip->whipDmg))
-        {
-            resetPosition();    
-        }
-    }
-    else if (dynamic_cast<Player*>(&other))
-    {
-        // Something?
     }
 }
 

@@ -137,6 +137,25 @@ void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &
     }
 }
 
+void Bat::onCollision(Entity &other, Game &game)
+{
+    if (!isActive || !sprite)
+        return;
+
+    if (Whip *whip = dynamic_cast<Whip *>(&other))
+    {
+        if (applyDamage(whip->whipDmg))
+        {
+            resetPosition();
+        }
+    }
+    else if (dynamic_cast<Player *>(&other))
+    {
+        isActive = false;
+        resetPosition();
+    }
+}
+
 // Reset bat to initial state
 void Bat::resetPosition()
 {
@@ -228,25 +247,6 @@ void Bat::updateAnimation(float deltaTime)
     else if (currentSpeed.x > 0)
     {
         sprite->setScale({-1.0f, 1.0f});
-    }
-}
-
-void Bat::onCollision(Entity &other, Game &game)
-{
-    if (!isActive || !sprite)
-        return;
-
-    if (Whip *whip = dynamic_cast<Whip *>(&other))
-    {
-        if (applyDamage(whip->whipDmg))
-        {
-            resetPosition();
-        }
-    }
-    else if (dynamic_cast<Player *>(&other))
-    {
-        isActive = false;
-        resetPosition();
     }
 }
 

@@ -71,10 +71,8 @@ public:
     void update(float deltaTime, const sf::FloatRect &playerActivationZone,
                 const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
 
-    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                         const bool playerIsAtacking, const float playerDamage);
-
     // Handle collisions - only with ground
+    void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds, const bool playerIsAtacking, const float playerDamage);
     void onCollision(Entity &other, Game &game) override;
 
     // Face the player direction

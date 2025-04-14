@@ -36,11 +36,10 @@ public:
 
     // Handle collisions
     void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
+    void onCollision(Entity &other, Game &game) override;
 
     // Update animation frame
     void updateAnimation(float deltaTime);
 
-    void onCollision(Entity &other, Game &game) override;
-    
     void hello() const override;
 };
