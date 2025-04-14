@@ -32,7 +32,6 @@ public:
     // Gestor de enemigos
     EnemyManager *enemyManager;
 
-    // std::vector<Item> items;
 
     sf::Clock revivingClock;
     sf::Clock loadingClock;

@@ -235,7 +235,7 @@ void Game::init()
     player.setState(std::make_unique<PlayerIdleState>());
 
     // GUI subweapon
-    guiSubWeaponSprite = std::make_shared<sf::Sprite>(*itemTextures[ItemType::DAGGER]);
+    guiSubWeaponSprite = getItemSprite(ItemType::NONE);
 }
 
 // Effects changes depending on the input of the player
@@ -292,7 +292,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     //checkCollisions();
 
     // Update the subweapon sprite item
-    guiSubWeaponSprite->setTexture(*itemTextures[player.subWeaponType]);
+    guiSubWeaponSprite = getItemSprite(player.subWeaponType);
 
     if (isLoading)
     {
