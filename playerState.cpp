@@ -98,6 +98,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         if(keyReleased->scancode == controls.up){
             player.isPressingUp = false;
         }
+        
     }
 }
 
@@ -236,6 +237,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
             player.isWalking = false;
             player.setState(state<Idle>());
         }
+        if (keyReleased->scancode == controls.attack) {
+            player.hasToPressAgain = true;
+        }
     }
 }
 
@@ -338,6 +342,15 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
     }
+    if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
+        if (keyReleased->scancode == controls.down){
+            player.isDucking = false;
+            player.setState(state<Idle>());
+        }       
+        if (keyReleased->scancode == controls.attack) {
+            player.hasToPressAgain = true;
+        }
+    } 
 }
 
 void PlayerJumpState::update(Player& player, float deltaTime)
@@ -710,8 +723,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
 
     }
-    player.animationManager->update(deltaTime);
-    player.whip.animationManager->update(deltaTime);
+    player.animationManager->update(deltaTime*1.5f);
+    player.whip.animationManager->update(deltaTime*1.5f);
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         if (player.dir == RIGHT) {
@@ -851,8 +864,8 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     }
     //player.animationManager->setAnimationSpeed(2.0f); // 2x speed
     //player.whip.animationManager->setAnimationSpeed(2.0f); // 2x speed
-    player.animationManager->update(deltaTime);
-    player.whip.animationManager->update(deltaTime);
+    player.animationManager->update(deltaTime*1.5f);
+    player.whip.animationManager->update(deltaTime*1.5f);
 
     // Apply gravity
     player.verticalSpeed += gPlayerGravity * deltaTime;
@@ -1014,8 +1027,8 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
 
     }
-    player.animationManager->update(deltaTime);
-    player.whip.animationManager->update(deltaTime);
+    player.animationManager->update(deltaTime*1.5f);
+    player.whip.animationManager->update(deltaTime*1.5f);
 
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
