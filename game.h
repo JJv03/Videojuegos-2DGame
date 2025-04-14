@@ -5,6 +5,7 @@
 #include "soundManager.h"
 #include "./enemies/enemyManager.h"
 #include "item.h"
+#include "globals.h"
 #include "collisionGrid.h"
 #include "configManager.h"
 
@@ -13,7 +14,7 @@ class Game
 {
 private:
     SoundManager gameSoundManager;
-    int time = 300;
+    int time = gLevelTimeLimit;
     configManager &configManager;
 
 public:

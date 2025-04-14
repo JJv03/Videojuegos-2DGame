@@ -108,8 +108,7 @@ public:
 
 private:
     std::unique_ptr<AnimationManager> m_animationManager{nullptr};
-    std::vector<AnimationManager::Frame> m_animationFrames{};
-    //animationID m_currentAnimation;
+    AnimationManager::Animation m_animation;        // This item's animation
 };
 
 

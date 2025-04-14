@@ -6,6 +6,8 @@
 #include <string>
 
 enum animationID{
+    notRelevant,
+
     // Simon
     idleSimon,
     walkSimon,
@@ -42,8 +44,6 @@ enum animationID{
     fireBombThrowing,
     stopwatchThrowing,
     boomerangThrowing,
-
-    flashingBag
 };
 
 
@@ -93,6 +93,12 @@ public:
     void playAnimation(animationID id);
 
     /**
+     * @brief Starts playing an animation.
+     * @param animation Struct with the frames and parameters of the animation.
+     */
+    void playAnimation(Animation& animation);
+
+    /**
      * @brief Updates the animation based on elapsed time.
      * @param deltaTime Time elapsed since the last update (in seconds).
      */
@@ -116,6 +122,8 @@ public:
     sf::FloatRect getGlobalBounds();
     
     void setBlinking(bool enable, float interval);
+
+    bool isBlinking() const;
 
 private:
     sf::Sprite& sprite;

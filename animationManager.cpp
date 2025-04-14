@@ -21,6 +21,13 @@ void AnimationManager::playAnimation(animationID id) {
     }
 }
 
+void AnimationManager::playAnimation(Animation& animation) {
+    currentAnimation = &animation;
+    currentFrame = 0;
+    elapsedTime = 0.f;
+    sprite.setTextureRect(currentAnimation->frames[0].rect);
+}
+
 void AnimationManager::update(float deltaTime) {
     if (!currentAnimation || currentAnimation->frames.empty()) return;
 
@@ -92,4 +99,8 @@ void AnimationManager::setBlinking(bool enable, float interval) {
     blinkTimer = 0.f;
     visible = true;
     sprite.setColor(sf::Color::White);
+}
+
+bool AnimationManager::isBlinking() const {
+    return blinking;
 }

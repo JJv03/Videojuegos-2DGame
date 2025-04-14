@@ -24,9 +24,12 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
            EntitySprite(_sprite, _hitboxes), m_type(_type), m_isOnGround(false), m_lifeTime(_lifeTime)
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
-    m_animationFrames = std::move(_animationFrames);
-    m_animationManager->addAnimation(flashingBag, m_animationFrames, true);
-    m_animationManager->playAnimation(flashingBag);
+
+    m_animation.id = notRelevant;
+    m_animation.frames = std::move(_animationFrames);
+    m_animation.loop = true;
+
+    m_animationManager->playAnimation(m_animation);
 }
 
 
@@ -35,6 +38,10 @@ void Item::update(const float& deltaTime) {
         m_lifeTime -= deltaTime;
         if (m_lifeTime < 0.f)     // Prevent negative lifetime because it's not a permanent item
             m_lifeTime = 0.f;
+        
+        if (m_lifeTime <= 1.f && !m_animationManager->isBlinking()) {
+            m_animationManager->setBlinking(true, 0.1f);
+        }
     }
 
     if (!m_isOnGround) {
@@ -107,7 +114,7 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::STOPWATCH] = sf::IntRect({103, 18}, {16, 16});
 
     item_To_TextureRect[ItemType::MORNING_STAR] = sf::IntRect({1, 1}, {16, 16});
-    item_To_TextureRect[ItemType::SMALL_HEART] = sf::IntRect({18, 1}, {8, 16});
+    item_To_TextureRect[ItemType::SMALL_HEART] = sf::IntRect({18, 1}, {8, 8});
     item_To_TextureRect[ItemType::LARGE_HEART] = sf::IntRect({29, 6}, {12, 10});
     item_To_TextureRect[ItemType::RED_MONEY_BAG] = sf::IntRect({44, 1}, {16, 16});
     item_To_TextureRect[ItemType::PURPLE_MONEY_BAG] = sf::IntRect({61, 1}, {16, 16});
@@ -124,6 +131,8 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::CROWN] = sf::IntRect({69, 35}, {16, 16});
     item_To_TextureRect[ItemType::CHEST] = sf::IntRect({137, 35}, {16, 16});
     item_To_TextureRect[ItemType::MOAI] = sf::IntRect({137, 35}, {16, 16});    
+
+    item_To_TextureRect[ItemType::MAGIC_CRYSTAL] = sf::IntRect({95, 1}, {16, 16});   
 
     item_To_TextureRect[ItemType::ONEUP] = sf::IntRect({52, 35}, {16, 16});
 
@@ -182,13 +191,93 @@ int getItemScore(ItemType item) {
 }
 
 
+const std::vector<AnimationManager::Frame>& getItemAnimationFrames(ItemType type) {
+    using Frame = AnimationManager::Frame;
+
+    static const std::unordered_map<ItemType, std::vector<Frame>> itemTypeToAnimation = {
+        { ItemType::DAGGER, {
+            { item_To_TextureRect.at(ItemType::DAGGER), gLevelTimeLimit },
+        }},
+        { ItemType::AXE, {
+            { item_To_TextureRect.at(ItemType::AXE), gLevelTimeLimit },
+        }},
+        { ItemType::FIRE_BOMB, {
+            { item_To_TextureRect.at(ItemType::FIRE_BOMB), gLevelTimeLimit },
+        }},
+        { ItemType::BOOMERANG, {
+            { item_To_TextureRect.at(ItemType::BOOMERANG), gLevelTimeLimit },
+        }},
+        { ItemType::STOPWATCH, {
+            { item_To_TextureRect.at(ItemType::STOPWATCH), gLevelTimeLimit },
+        }},
+        { ItemType::MORNING_STAR, {
+            { item_To_TextureRect.at(ItemType::MORNING_STAR), gLevelTimeLimit },
+        }},
+        { ItemType::SMALL_HEART, {
+            { item_To_TextureRect.at(ItemType::SMALL_HEART), gLevelTimeLimit },
+        }},
+        { ItemType::LARGE_HEART, {
+            { item_To_TextureRect.at(ItemType::LARGE_HEART), gLevelTimeLimit },
+        }},
+        { ItemType::RED_MONEY_BAG, {
+            { item_To_TextureRect.at(ItemType::RED_MONEY_BAG), gLevelTimeLimit },
+        }},
+        { ItemType::PURPLE_MONEY_BAG, {
+            { item_To_TextureRect.at(ItemType::PURPLE_MONEY_BAG), gLevelTimeLimit },
+        }},
+        { ItemType::WHITE_MONEY_BAG, {
+            { item_To_TextureRect.at(ItemType::WHITE_MONEY_BAG), gLevelTimeLimit },
+        }},
+        { ItemType::ROSARY, {
+            { item_To_TextureRect.at(ItemType::ROSARY), gLevelTimeLimit },
+        }},
+        { ItemType::INVISIBILITY_POTION, {
+            { item_To_TextureRect.at(ItemType::INVISIBILITY_POTION), gLevelTimeLimit },
+        }},
+        { ItemType::PORK_CHOP, {
+            { item_To_TextureRect.at(ItemType::PORK_CHOP), gLevelTimeLimit },
+        }},
+        { ItemType::DOUBLE_SHOT, {
+            { item_To_TextureRect.at(ItemType::DOUBLE_SHOT), gLevelTimeLimit },
+        }},
+        { ItemType::TRIPLE_SHOT, {
+            { item_To_TextureRect.at(ItemType::TRIPLE_SHOT), gLevelTimeLimit },
+        }},
+        { ItemType::FLASHING_MONEY_BAG, {
+            { item_To_TextureRect.at(ItemType::RED_MONEY_BAG),    0.1f },
+            { item_To_TextureRect.at(ItemType::PURPLE_MONEY_BAG), 0.1f },
+            { item_To_TextureRect.at(ItemType::WHITE_MONEY_BAG),  0.1f },
+        }},
+        { ItemType::CROWN, {
+            { item_To_TextureRect.at(ItemType::CROWN), gLevelTimeLimit },
+        }},
+        { ItemType::CHEST, {
+            { item_To_TextureRect.at(ItemType::CHEST), gLevelTimeLimit },
+        }},
+        { ItemType::MOAI, {
+            { item_To_TextureRect.at(ItemType::MOAI), gLevelTimeLimit },
+        }},
+        { ItemType::MAGIC_CRYSTAL, {
+            { item_To_TextureRect.at(ItemType::MAGIC_CRYSTAL), gLevelTimeLimit },
+        }},
+        { ItemType::ONEUP, {
+            { item_To_TextureRect.at(ItemType::ONEUP), gLevelTimeLimit },
+        }},
+    };
+
+    static const std::vector<Frame> empty;
+
+    auto it = itemTypeToAnimation.find(type);
+    return (it != itemTypeToAnimation.end()) ? it->second : empty;
+}
+
+
 std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
     static std::random_device rd;       // we only want 1 instance of random_device
     static std::mt19937 rng(rd());
     
     ItemType type;
     float lifeTime = 5.f;
-    std::vector<AnimationManager::Frame> animationFrames;
 
     switch (dropType) {
         case DropType::NONE:
@@ -226,11 +315,6 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
 
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
-            
-            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::RED_MONEY_BAG], 0.1f});
-            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::PURPLE_MONEY_BAG], 0.1f});
-            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::WHITE_MONEY_BAG], 0.1f});
-
             break;
         
         case DropType::CHEST:
@@ -263,11 +347,10 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
 
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
 
-    if (animationFrames.size() > 0) {
+    std::vector<AnimationManager::Frame> animationFrames = getItemAnimationFrames(type);
+    if (animationFrames.size() > 0)
         return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
-    }
     return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
-    
 }
 
 

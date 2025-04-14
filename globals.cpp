@@ -15,14 +15,16 @@ const unsigned int gWindowHeight = 400;
 const float gGameVisibleWorld_size_x = 256.f;
 const float gGameVisibleWorld_size_y = 192.f; // Considering the overlaped half-tile
 
-const float gSimonFeetCollisionNewHeight = 0.15f;
+const float gLevelTimeLimit = 300.f;
 
-const float gLoadingTime = 0.5f;  // Loading starting a stage
-const float gRevivingTime = 2.0f; // Reviving time after dying
+const float gLoadingTime = 0.5f;
+const float gRevivingTime = 2.0f;
+
 
 // ============ IMAGE / TEXTURE / SPRITE =============
 const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
+
 
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
@@ -31,6 +33,7 @@ int gStartingStage = 1;
 const float gTileSize = 32.f;
 
 const float gOverlapedTileSize = gTileSize / 2.f;
+
 
 // ============ GUI VARIABLES =============
 const float gGUI_size_x = gGameVisibleWorld_size_x; // +1px for error margin
@@ -62,6 +65,7 @@ const float gGUI_PlayerHpBar_position_y = 31.f - gGUI_size_y;
 const float gGUI_BossHpBar_position_x = 55.f;
 const float gGUI_BossHpBar_position_y = 40.f - gGUI_size_y;
 
+
 // ============ GAME STATE VARIABLES =============
 const float gMenuGS_size_x = 400.0f;
 const float gMenuGS_size_y = 400.0f;
@@ -73,10 +77,14 @@ const float gGameGS_size_y = gGUI_size_y + gGameVisibleWorld_size_y - gOverlaped
 const float gGameGS_position_x = 0.0f;
 const float gGameGS_position_y = gGUI_position_y;
 
+
 // ============ ITEM VARIABLES =============
 const float gItemGravity = 100.f;
 
+
 // ============ PLAYER VARIABLES =============
+const float gSimonFeetCollisionNewHeight = 0.15f;
+
 const float gPlayerMovementSpeed = 60.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 205.0f;
