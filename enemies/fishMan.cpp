@@ -1,10 +1,11 @@
 #include "fishman.h"
 #include <iostream>
 #include <cmath>
+#include <random>
 
 // Constructor: Initialize fishman with sprite, hitboxes, position, and game level/stage
 FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                 const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+                 const sf::Vector2f &zoneSize, const int &level, const int &stage)
     : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize), level(level), stage(stage)
 {
     speed = FISHMAN_SPEED;
@@ -31,8 +32,7 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
     if (playerInZone && !isActive && !spawnerActive)
     {
-        fishManSpawnTimers = 1.5f; // Delay before spawning
-
+        fishManSpawnTimers = 3.0f;
         fishManToSpawn = true;
     }
 
@@ -43,46 +43,150 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         if (fishManSpawnTimers <= 0.0f)
         {
-            movePositionToBorder(playerActivationZone, playerBounds);
+            moveToSpawnPosition(playerActivationZone, playerBounds);
+
+            currentState = State::JUMPING;
+            startJump();
 
             isActive = true;
             fishManToSpawn = false;
         }
     }
 
-    // MOVEMENT LOGIC: Movement and oscillation when active
+    // MOVEMENT & STATE LOGIC
     if (isActive)
     {
+        applyGravity(deltaTime);
 
-        bool zombieInsideDeactivationZone = false;
-
+        // Check if enemy is out of deactivation zone
+        bool enemyInsideDeactivationZone = false;
         for (const auto &hitbox : hitboxes)
         {
             if (playerDeactivationZone.findIntersection(hitbox).has_value())
             {
-                zombieInsideDeactivationZone = true;
+                enemyInsideDeactivationZone = true;
                 break;
             }
         }
 
-        if (!zombieInsideDeactivationZone)
+        if (!enemyInsideDeactivationZone)
         {
-
             isActive = false;
             resetPosition();
+            return;
         }
-        else
+
+        // Handle different states
+        switch (currentState)
         {
-            float horizontalSpeed = speed.x * deltaTime;
-            sprite->move({horizontalSpeed, 0.f});
+        case State::SPAWNING:
+            currentState = State::JUMPING;
+            startJump();
+            break;
+
+        case State::JUMPING:
+        {
+            float verticalSpeed = -speed.y * deltaTime;
+            sprite->move({0.f, verticalSpeed});
             for (auto &hitbox : hitboxes)
             {
-                hitbox.position.x += horizontalSpeed;
+                hitbox.position.y += verticalSpeed;
             }
 
-            updateAnimation(deltaTime);
+            if (isOnGround)
+            {
+                currentState = State::WALKING;
+
+                facePlayer(playerBounds);
+                speed.y = 0;
+                attackTimer = 0.0f;
+            }
         }
+        break;
+
+        case State::WALKING:
+        {
+            if (speed.y != 0)
+            {
+                sprite->move({0.f, -speed.y * deltaTime});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.y -= speed.y * deltaTime;
+                }
+            }
+            else if (speed.x != 0)
+            {
+                sprite->move({speed.x * deltaTime * 2, 0.f});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.x += speed.x * deltaTime * 2;
+                }
+            }
+
+            attackTimer += deltaTime;
+            if (attackTimer >= ATTACK_INTERVAL)
+            {
+                startAttackPause();
+                facePlayer(playerBounds);
+            }
+        }
+        break;
+
+        case State::PAUSED_FOR_ATTACK:
+            pauseTimer -= deltaTime;
+            if (pauseTimer <= 0.0f)
+            {
+                // AQUI SE LANZA EL PROYECTIL
+                currentState = State::WALKING;
+                attackTimer = 0.0f;
+            }
+            break;
+        }
+
+        updateAnimation(deltaTime);
     }
+
+    // Right before checkCollisions
+    isOnGround = false;
+}
+
+// Face the player direction
+void FishMan::facePlayer(const sf::FloatRect &playerBounds)
+{
+    if (!sprite)
+        return;
+
+    // Get center positions
+    float fishmanCenterX = sprite->getPosition().x;
+    float playerCenterX = playerBounds.position.x + playerBounds.size.x / 2.0f;
+
+    // Set direction based on relative position
+    if (playerCenterX < fishmanCenterX)
+    {
+        // Player is to the left
+        speed.x = -std::abs(speed.x);
+        sprite->setScale({1.0f, 1.0f});
+    }
+    else
+    {
+        // Player is to the right
+        speed.x = std::abs(speed.x);
+        sprite->setScale({-1.0f, 1.0f});
+    }
+}
+
+// Enter attack mode
+void FishMan::startAttackPause()
+{
+    currentState = State::PAUSED_FOR_ATTACK;
+    pauseTimer = ATTACK_PAUSE_TIME;
+}
+
+// Initiate the jump when spawning
+void FishMan::startJump()
+{
+    speed.y = JUMP_VELOCITY;
+    isOnGround = false;
 }
 
 // BORRAR
@@ -92,47 +196,31 @@ void FishMan::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
 {
     if (!isActive || !sprite)
         return;
-
-    for (auto &hitbox : hitboxes)
-    {
-
-        // Check weapon collisions
-        if (playerIsAtacking)
-        {
-
-            if (weaponBounds.findIntersection(hitbox).has_value())
-            {
-                std::cout << "Vida = " << life << std::endl;
-                life -= playerDamage;
-                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
-                if (life <= 0.0f)
-                {
-                    isActive = false;
-                    resetPosition();
-                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
-                    break;
-                }
-            }
-        }
-    }
 }
 
+// Handle collisions - only with ground
 void FishMan::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)
         return;
 
+    // Collision with solid tiles (ground only)
     if (dynamic_cast<SolidTile *>(&other))
     {
-        onCollision_SolidTile(other);
+        if (speed.y <= 0)
+        {
+            onCollision_OnlyGround(other);
+        }
     }
-    if (Whip *whip = dynamic_cast<Whip *>(&other))
+    // Collision with Whip (player attack)
+    else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
         if (applyDamage(whip->whipDmg))
         {
             resetPosition();
         }
     }
+    // Collision with Player
     else if (dynamic_cast<Player *>(&other))
     {
     }
@@ -146,28 +234,41 @@ void FishMan::resetPosition()
     speed = FISHMAN_SPEED;
     life = FISHMAN_LIFE;
 
+    currentState = State::SPAWNING;
     spawnTime = 0.0f;
+    attackTimer = 0.0f;
+    pauseTimer = 0.0f;
 
     animTimer = 0.0f;
     currentFrame = 0;
+
+    isOnGround = false;
 }
 
-// Move fishman to spawn position at the edge of player's activation zone
-void FishMan::movePositionToBorder(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds)
+// Move fishman to spawn position randomly within activation zone
+void FishMan::moveToSpawnPosition(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds)
 {
-
     if (!sprite)
         return;
 
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x;
-    float playerCenterY = playerBounds.position.y + playerBounds.size.y / 2.0f;
-    float alignedY = playerCenterY - 5.0f;
+    // Calculate bounds for random spawn
+    float minX = playerActivationZone.position.x + 25.0f;
+    float maxX = playerActivationZone.position.x + playerActivationZone.size.x - 50.0f;
+
+    // Random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> xDist(minX, maxX);
 
     // Save original position
     sf::Vector2f oldPosition = sprite->getPosition();
 
+    // Generate random X position
+    float randomX = xDist(gen);
+    float alignedY = playerActivationZone.position.y + playerActivationZone.size.y;
+
     // New position
-    sf::Vector2f newPosition(rightEdgeX, alignedY);
+    sf::Vector2f newPosition(randomX, alignedY);
     sprite->setPosition(newPosition);
 
     // Update hitboxes to match new position
@@ -176,6 +277,9 @@ void FishMan::movePositionToBorder(const sf::FloatRect &playerActivationZone, co
     {
         hitbox.position += offset;
     }
+
+    // Face the player initially
+    facePlayer(playerBounds);
 }
 
 // Render fishman and debug info (spawn zone)
@@ -209,23 +313,34 @@ void FishMan::updateAnimation(float deltaTime)
     if (animTimer >= ANIM_FRAME_TIME)
     {
         animTimer = 0.0f;
-        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
 
-        /*if (currentFrame == 0) {
+        // Different animations based on state
+        /*switch (currentState)
+        {
+        case State::JUMPING:
+            currentFrame = 0;
+            break;
 
-        } else {
+        case State::WALKING:
+            currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
+            break;
 
+        case State::PAUSED_FOR_ATTACK:
+            currentFrame = 1;
+            break;
+
+        default:
+            currentFrame = 0;
+            break;
         }*/
     }
 
     // Flip sprite based on movement direction
-    sf::Vector2f currentSpeed = speed;
-
-    if (currentSpeed.x < 0)
+    if (speed.x < 0)
     {
         sprite->setScale({1.0f, 1.0f});
     }
-    else if (currentSpeed.x > 0)
+    else if (speed.x > 0)
     {
         sprite->setScale({-1.0f, 1.0f});
     }

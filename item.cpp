@@ -9,7 +9,8 @@
 #include "player.h"
 #include "game.h"
 
-std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
+std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
+sf::Texture itemAtlas;
 
 
 
@@ -94,79 +95,37 @@ bool loadItemTextures() {
     sf::Image image1;
     if (!image1.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
     image1.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+    if (!itemAtlas.loadFromImage(image1)) return false;
+    itemAtlas.setSmooth(false);
 
-    auto daggerTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 18}, {16, 16}));
-    itemTextures[ItemType::DAGGER] = daggerTexture;
-
-    auto axeTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 18}, {16, 16}));
-    itemTextures[ItemType::AXE] = axeTexture;
-
-    auto fireBombTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({35, 18}, {16, 16}));
-    itemTextures[ItemType::FIRE_BOMB] = fireBombTexture;
-
-    auto boomerangTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({52, 18}, {16, 16}));
-    itemTextures[ItemType::BOOMERANG] = boomerangTexture;
-
-    auto stopwatchTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({103, 18}, {16, 16}));
-    itemTextures[ItemType::STOPWATCH] = stopwatchTexture;
-
-
-
-    auto morningStarTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 1}, {16, 16}));
-    itemTextures[ItemType::MORNING_STAR] = morningStarTexture;
-
-    auto smallHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 1}, {8, 16}));
-    itemTextures[ItemType::SMALL_HEART] = smallHeartTexture;
-
-    auto largeHeartTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({29, 6}, {12, 10}));
-    itemTextures[ItemType::LARGE_HEART] = largeHeartTexture;
-
-    auto redMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({44, 1}, {16, 16}));
-    itemTextures[ItemType::RED_MONEY_BAG] = redMoneyBagTexture;
-
-    auto purpleMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({61, 1}, {16, 16}));
-    itemTextures[ItemType::PURPLE_MONEY_BAG] = purpleMoneyBagTexture;
-
-    auto whiteMoneyBagTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({78, 1}, {16, 16}));
-    itemTextures[ItemType::WHITE_MONEY_BAG] = whiteMoneyBagTexture;
-
-
-
-    auto rosaryTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({35, 35}, {16, 16}));
-    itemTextures[ItemType::ROSARY] = rosaryTexture;
-
-    auto invisibilityPotionTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({18, 35}, {16, 16}));
-    itemTextures[ItemType::INVISIBILITY_POTION] = invisibilityPotionTexture;
+    item_To_TextureRect[ItemType::NONE] = sf::IntRect({0, 0}, {0, 0});      // No item, won't draw anything
     
-    auto porkChopTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({1, 35}, {16, 16}));
-    itemTextures[ItemType::PORK_CHOP] = porkChopTexture;
+    item_To_TextureRect[ItemType::DAGGER] = sf::IntRect({1, 18}, {16, 16});
+    item_To_TextureRect[ItemType::AXE] = sf::IntRect({18, 18}, {16, 16});
+    item_To_TextureRect[ItemType::FIRE_BOMB] = sf::IntRect({35, 18}, {16, 16});
+    item_To_TextureRect[ItemType::BOOMERANG] = sf::IntRect({52, 18}, {16, 16});
+    item_To_TextureRect[ItemType::STOPWATCH] = sf::IntRect({103, 18}, {16, 16});
 
+    item_To_TextureRect[ItemType::MORNING_STAR] = sf::IntRect({1, 1}, {16, 16});
+    item_To_TextureRect[ItemType::SMALL_HEART] = sf::IntRect({18, 1}, {8, 16});
+    item_To_TextureRect[ItemType::LARGE_HEART] = sf::IntRect({29, 6}, {12, 10});
+    item_To_TextureRect[ItemType::RED_MONEY_BAG] = sf::IntRect({44, 1}, {16, 16});
+    item_To_TextureRect[ItemType::PURPLE_MONEY_BAG] = sf::IntRect({61, 1}, {16, 16});
+    item_To_TextureRect[ItemType::WHITE_MONEY_BAG] = sf::IntRect({78, 1}, {16, 16});
 
+    item_To_TextureRect[ItemType::ROSARY] = sf::IntRect({35, 35}, {16, 16});
+    item_To_TextureRect[ItemType::INVISIBILITY_POTION] = sf::IntRect({18, 35}, {16, 16});
+    item_To_TextureRect[ItemType::PORK_CHOP] = sf::IntRect({1, 35}, {16, 16});
 
-    auto doubleShotTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({120, 18}, {16, 16}));
-    itemTextures[ItemType::DOUBLE_SHOT] = doubleShotTexture;
+    item_To_TextureRect[ItemType::DOUBLE_SHOT] = sf::IntRect({120, 18}, {16, 16});
+    item_To_TextureRect[ItemType::TRIPLE_SHOT] = sf::IntRect({137, 18}, {16, 16});
 
-    auto tripleShotTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 18}, {16, 16}));
-    itemTextures[ItemType::TRIPLE_SHOT] = tripleShotTexture;
+    item_To_TextureRect[ItemType::FLASHING_MONEY_BAG] = item_To_TextureRect[ItemType::RED_MONEY_BAG];
+    item_To_TextureRect[ItemType::CROWN] = sf::IntRect({69, 35}, {16, 16});
+    item_To_TextureRect[ItemType::CHEST] = sf::IntRect({137, 35}, {16, 16});
+    item_To_TextureRect[ItemType::MOAI] = sf::IntRect({137, 35}, {16, 16});    
 
-
-
-    //auto flashingMoneyBag = std::make_shared<sf::Texture>(image1, false, sf::IntRect({69, 35}, {16, 16}));
-    itemTextures[ItemType::FLASHING_MONEY_BAG] = redMoneyBagTexture;
-    
-    auto crownTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({69, 35}, {16, 16}));
-    itemTextures[ItemType::CROWN] = crownTexture;
-
-    auto chestTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 35}, {16, 16}));
-    itemTextures[ItemType::CHEST] = chestTexture;
-
-    auto moaiTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({137, 35}, {16, 16}));
-    itemTextures[ItemType::MOAI] = moaiTexture;
-    
-
-    
-    auto oneUpTexture = std::make_shared<sf::Texture>(image1, false, sf::IntRect({52, 35}, {16, 16}));
-    itemTextures[ItemType::ONEUP] = oneUpTexture;
+    item_To_TextureRect[ItemType::ONEUP] = sf::IntRect({52, 35}, {16, 16});
 
 
     return true;
@@ -268,9 +227,9 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
             
-            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({44, 1}, {16, 16}), 0.1f});   // Red money
-            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({61, 1}, {16, 16}), 0.1f});   // Purple money
-            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({78, 1}, {16, 16}), 0.1f});   // White money
+            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::RED_MONEY_BAG], 0.1f});
+            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::PURPLE_MONEY_BAG], 0.1f});
+            animationFrames.push_back(AnimationManager::Frame{item_To_TextureRect[ItemType::WHITE_MONEY_BAG], 0.1f});
 
             break;
         
@@ -295,18 +254,11 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             break;
 
         default:
-            std::cerr << "Unknown drop type: " << static_cast<int>(dropType) << std::endl;
+            std::cerr << "[ERROR] Unknown drop type: " << static_cast<int>(dropType) << std::endl;
             return nullptr;
     }
 
-    auto iterator = itemTextures.find(type);
-    if (iterator == itemTextures.end()) {
-        std::cerr << "Texture for item type not found.\n";
-        return nullptr;
-    }
-
-    auto texture = iterator->second;
-    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(*texture);
+    std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);
     sprite->setPosition(position);
 
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
@@ -316,6 +268,21 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
     }
     return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
     
+}
+
+
+std::shared_ptr<sf::Sprite> getItemSprite(ItemType type) {
+    auto iterator = item_To_TextureRect.find(type);
+    if (iterator == item_To_TextureRect.end()) {
+        std::cerr << "[ERROR] Texture for item type \"" << static_cast<int>(type) << "\" not found." << std::endl;
+        return nullptr;
+    }
+
+    sf::IntRect textureRect = iterator->second;
+    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(itemAtlas);
+    sprite->setTextureRect(textureRect);
+
+    return sprite;
 }
 
 

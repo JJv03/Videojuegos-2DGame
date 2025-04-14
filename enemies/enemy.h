@@ -35,12 +35,13 @@ public:
     virtual void draw(sf::RenderWindow &window, bool debugDraw);
 
     void onCollision_SolidTile(Entity &solidTile);
+    void onCollision_OnlyGround(Entity &solidTile);
 
     // Applies damage to the enemy and returns true if the enemy is defeated
     // Returns false if the enemy is still alive
     bool applyDamage(float damageAmount);
 
-    bool checkForLedge(Entity& solidTile);
+    bool checkForLedge(Entity &solidTile);
 
     void hello() const override;
 };

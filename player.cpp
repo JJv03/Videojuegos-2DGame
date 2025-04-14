@@ -25,6 +25,8 @@ Player::Player()
     isPressingUp = false;
     hasDied = false;
     deathRestart = false;
+
+    // Secondary weapon
     weaponIsActive = false;
 
     // Stats
@@ -394,14 +396,14 @@ void Player::updateActiveSubWeapons(float deltaTime) {
     
     for (auto& subW : activeSubWeapons) {
         
+        subW.lifeTime -= deltaTime;
         if (subW.type == ItemType::AXE)
         {
             float speed = 150.f * deltaTime;
             subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
             subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
             subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
-            if (subW.animationManager->isPlaying(axeThrowing))
-            {
+            if (subW.animationManager && !subW.animationManager->isPlaying(axeThrowing)) {
                 subW.animationManager->playAnimation(axeThrowing);
             }
             subW.animationManager->update(deltaTime);
@@ -433,16 +435,17 @@ void Player::updateActiveSubWeapons(float deltaTime) {
         }
     }
     
+    // Borrado por tiempo de vida
     bool wasErased = !activeSubWeapons.empty();
     activeSubWeapons.erase(
         std::remove_if(activeSubWeapons.begin(), activeSubWeapons.end(),
             [](const SubWeapon& subW) {
-                return subW.sprite->getPosition().x < 0 || 
-                       subW.sprite->getPosition().x > gWindowWidth;
+                return subW.lifeTime <= 0.f;
             }),
         activeSubWeapons.end());
 
     if (wasErased && activeSubWeapons.empty()) {
+        
         this->weaponIsActive = false;
     }
 }

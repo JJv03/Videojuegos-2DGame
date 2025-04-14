@@ -28,12 +28,12 @@ private:
     std::vector<bool> zombiesToSpawn;
 
 public:
-    std::vector<Zombie*> zombies; // Managed zombie instances
+    std::vector<Zombie *> zombies; // Managed zombie instances
 
-    size_t level; // Current game level
-    size_t stage; // Current stage
+    int level; // Current game level
+    int stage; // Current stage
 
-    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference);
+    ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const int &level, const int &stage, std::mt19937 &rngReference);
 
     // Initialize zombies
     void init();

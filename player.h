@@ -98,6 +98,7 @@ public:
     PlayerDirection direction;
     float verticalSpeed = 0.f;
     float horizontalSpeed = 0.f;
+    float lifeTime = 0.5f;
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
@@ -127,6 +128,7 @@ public:
 
     // Secondary weapon
     bool weaponIsActive;
+    
 
     // Stats
     float damage = 1.0f;

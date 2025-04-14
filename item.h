@@ -62,14 +62,18 @@ enum class DropType {       // Types of items that can drop from breakable tiles
 };
 
 
-struct ItemTypeHash {       // Hash function for the items enum to texture
+// Hash function for the items enum to texture
+struct ItemTypeHash {
     std::size_t operator()(const ItemType& t) const {
         return std::hash<int>()(static_cast<int>(t));
     }
 };
 
+// Texture rects for each item type
+extern std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 
-extern std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTextures;
+// All the items are in the same texture 'atlas'
+extern sf::Texture itemAtlas;
 
 
 class Item : public EntitySprite {
@@ -109,7 +113,7 @@ private:
 };
 
 
-// Loads the textures of the items
+// Loads the texture and the texture rectangle of all the items
 bool loadItemTextures();
 
 // Returns 'true' if the item is a subweapon. Else 'false'
@@ -123,3 +127,6 @@ int getItemScore(ItemType item);
 
 // Returns a new item based on the drop type
 std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position);
+
+// Returns the sprite of an item based on the item type
+std::shared_ptr<sf::Sprite> getItemSprite(ItemType type);

@@ -3,7 +3,7 @@
 #include <cmath>
 
 // Initialize leopard with stats and vision field
-Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const size_t &level, const size_t &stage)
+Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
     : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
     speed = {0.0f, 0.0f};
@@ -87,7 +87,7 @@ void Leopard::jump()
 
 // Main update loop
 void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                    const sf::Vector2f &playerPos, const std::vector<sf::FloatRect>& simonBounds)
+                     const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds)
 {
     playerPosition = playerPos;
 
@@ -183,7 +183,8 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                               const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
 {
-    if (!isActive || !sprite) return;
+    if (!isActive || !sprite)
+        return;
 
     playerDetected = visionField.findIntersection(simonBounds).has_value();
 
@@ -220,11 +221,12 @@ void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRe
 
 void Leopard::onCollision(Entity &other, Game &game)
 {
-    if (!isActive || !sprite) return;
+    if (!isActive || !sprite)
+        return;
 
-    if(dynamic_cast<SolidTile*>(&other))
+    if (dynamic_cast<SolidTile *>(&other))
     {
-        //std::cout << "LEOPARDO COLISIONA" << std::endl;
+        // std::cout << "LEOPARDO COLISIONA" << std::endl;
         onCollision_SolidTile(other);
 
         if (isOnGround && Enemy::checkForLedge(other))
@@ -232,19 +234,18 @@ void Leopard::onCollision(Entity &other, Game &game)
             jump();
         }
     }
-    else if (Whip* whip = dynamic_cast<Whip*>(&other))
+    else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if(applyDamage(whip->whipDmg))
+        if (applyDamage(whip->whipDmg))
         {
-            resetPosition();    
+            resetPosition();
         }
     }
-    else if (dynamic_cast<Player*>(&other))
+    else if (dynamic_cast<Player *>(&other))
     {
         // Something?
     }
 }
-
 
 // Reset to initial state
 void Leopard::resetPosition()

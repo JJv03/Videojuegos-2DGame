@@ -8,8 +8,7 @@ Enemy::Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     originalPosition = sprite->getPosition();
 }
 
-
-//BORRAR?
+// BORRAR?
 void Enemy::checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hitbox)
 {
     // Tilemap collisions
@@ -84,11 +83,10 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
     sf::FloatRect enemyHitbox = this->sprite->getGlobalBounds();
     std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
 
-    bool hasCollided = false;
-
     for (auto tileBound : tileBounds)
     {
-        if (tileBound.size.x == 0 || tileBound.size.y == 0) continue;
+        if (tileBound.size.x == 0 || tileBound.size.y == 0)
+            continue;
 
         if (const std::optional<sf::FloatRect> intersection = enemyHitbox.findIntersection(tileBound))
         {
@@ -138,11 +136,41 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
     }
 }
 
+void Enemy::onCollision_OnlyGround(Entity &solidTile)
+{
+    sf::FloatRect enemyHitbox = this->sprite->getGlobalBounds();
+    std::vector<sf::FloatRect> tileBounds = solidTile.getBounds();
 
+    for (auto tileBound : tileBounds)
+    {
+        if (tileBound.size.x == 0 || tileBound.size.y == 0)
+            continue;
 
-bool Enemy::checkForLedge(Entity& solidTile){
+        if (const std::optional<sf::FloatRect> intersection = enemyHitbox.findIntersection(tileBound))
+        {
+            float enemyBottom = enemyHitbox.position.y + enemyHitbox.size.y;
+            float tileTop = tileBound.position.y;
+
+            float overlapY = intersection->size.y;
+            if (enemyBottom >= tileTop && enemyBottom <= tileTop + overlapY + 5.0f)
+            {
+                float newY = tileTop - enemyHitbox.size.y;
+                float deltaY = newY - enemyHitbox.position.y;
+
+                sprite->move({0.f, deltaY});
+                for (auto &h : hitboxes)
+                    h.position.y += deltaY;
+
+                isOnGround = true;
+            }
+        }
+    }
+}
+
+bool Enemy::checkForLedge(Entity &solidTile)
+{
     if (!isOnGround || std::abs(speed.x) < 0.1f)
-    return false;
+        return false;
 
     // Check area in movement direction
     float offsetX = (speed.x > 0) ? hitboxes[0].size.x + 10.0f : -10.0f;
@@ -174,7 +202,6 @@ bool Enemy::checkForLedge(Entity& solidTile){
 
     return true;
 }
-
 
 void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
 {
@@ -224,7 +251,6 @@ void Enemy::resetPosition()
 
     speed = {-75.0f, 0.0f};
 }
-
 
 bool Enemy::applyDamage(float damage)
 {

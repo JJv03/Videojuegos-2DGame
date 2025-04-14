@@ -34,11 +34,11 @@ private:
     void jump();                                // Jump action
 
 public:
-    size_t level; // Current game level
-    size_t stage; // Current stage
+    int level; // Current game level
+    int stage; // Current stage
 
     Leopard() = default;
-    Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const size_t &level, const size_t &stage);
+    Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage);
 
     // Reset leopard to initial state
     void resetPosition() override;
@@ -48,7 +48,7 @@ public:
 
     // Update leopard logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect>& simonBounds);
+                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds);
     // Handle collisions
     void checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
                          const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);

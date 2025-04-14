@@ -25,9 +25,9 @@ public:
     EnemyManager(Player *player); // Initialize with player reference
 
     // Core game loop functions
-    void update(float deltaTime, const size_t currentLevel, const size_t currentStage);
-    void checkCollisions(const size_t currentLevel, const size_t currentStage, const TilemapManager tilemaps);
-    void draw(sf::RenderWindow &window, const size_t currentLevel, const size_t currentStage);
+    void update(float deltaTime, const int currentLevel, const int currentStage);
+    void checkCollisions(const int currentLevel, const int currentStage, const TilemapManager tilemaps);
+    void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
 
     std::vector<Enemy *> getEnemies(int currentLevel, int currentStage) const; // Get all enemies
 
