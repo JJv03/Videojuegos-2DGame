@@ -5,15 +5,18 @@
 
 // Constructor: Initialize fishman with sprite, hitboxes, position, and game level/stage
 FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                 const sf::Vector2f &zoneSize, const int &level, const int &stage)
-    : Enemy(_sprite, _hitboxes), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize), level(level), stage(stage)
+                 const sf::Vector2f &zoneSize, const int &level, const int &stage, std::mt19937 &rngReference)
+    : Enemy(_sprite, _hitboxes),
+      spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
+      rng(rngReference),
+      level(level),
+      stage(stage)
 {
     speed = FISHMAN_SPEED;
     life = FISHMAN_LIFE;
     score = FISHMAN_SCORE;
     damage = FISHMAN_DAMAGE;
 }
-
 // Update fishman logic: handle spawning, movement, and deactivation
 void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
                      const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
@@ -252,19 +255,16 @@ void FishMan::moveToSpawnPosition(const sf::FloatRect &playerActivationZone, con
         return;
 
     // Calculate bounds for random spawn
-    float minX = playerActivationZone.position.x + 25.0f;
-    float maxX = playerActivationZone.position.x + playerActivationZone.size.x - 50.0f;
+    float minX = playerActivationZone.position.x + 20.0f;
+    float maxX = playerActivationZone.position.x + playerActivationZone.size.x - 20.0f;
 
     // Random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> xDist(minX, maxX);
+    std::uniform_real_distribution<float> xDist(minX, maxX);
+    float randomX = xDist(rng);
 
     // Save original position
     sf::Vector2f oldPosition = sprite->getPosition();
 
-    // Generate random X position
-    float randomX = xDist(gen);
     float alignedY = playerActivationZone.position.y + playerActivationZone.size.y;
 
     // New position

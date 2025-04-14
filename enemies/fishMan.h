@@ -1,6 +1,7 @@
 #pragma once
 
 #include "enemy.h"
+#include <random>
 
 class FishMan : public Enemy
 {
@@ -46,13 +47,16 @@ private:
     float animTimer = 0.0f;
     int currentFrame = 0;
 
+    // Generador de números aleatorios
+    std::mt19937 &rng;
+
 public:
     int level; // Current game level
     int stage; // Current stage within level
 
     FishMan() = default;
     FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-            const sf::Vector2f &zoneSize, const int &level, const int &stage);
+            const sf::Vector2f &zoneSize, const int &level, const int &stage, std::mt19937 &rngReference);
 
     // Reset fishman to initial state
     void resetPosition() override;

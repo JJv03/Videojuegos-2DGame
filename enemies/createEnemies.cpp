@@ -133,7 +133,7 @@ Bat *createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize
 }
 
 // Creates a fishman enemy with spawn zone parameters
-FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage, std::mt19937 &rngReference)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect FISHMAN_SPRITE_REGION = {{309, 28}, {16, 32}};
@@ -173,5 +173,5 @@ FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
 
-    return new FishMan(fishmanSprite, hitboxes, position, zoneSize, level, stage);
+    return new FishMan(fishmanSprite, hitboxes, position, zoneSize, level, stage, rngReference);
 }

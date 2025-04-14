@@ -160,7 +160,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         enemyData.position,
                         sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
                                      enemyData.height > 0 ? enemyData.height : 50.f),
-                        level, currentStage));
+                        level, currentStage, globalRng));
                     break;
 
                 default:
