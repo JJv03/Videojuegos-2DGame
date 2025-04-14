@@ -1727,10 +1727,7 @@ void InitAnimationGS::init(){
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
-
-    text1.setPosition(sf::Vector2f(xPosition, yPosition));
+    text1.setPosition(sf::Vector2f(15, 35));
 
     initAnimationSprites.push_back(text1);
 
@@ -1847,13 +1844,13 @@ void InitAnimationGS::init(){
     initAnimationTextures["dracula"] = sf::Texture(draculaImg, false);
     sf::Sprite dracula(initAnimationTextures["dracula"]);
 
-    dracula.setScale(sf::Vector2f(1, 1));
+    dracula.setScale(sf::Vector2f(2, 2));
 
     spriteBounds = dracula.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
+    xPosition = -100;
     yPosition = (gWindowHeight - spriteHeight) / 2;
 
     dracula.setPosition(sf::Vector2f(xPosition, yPosition));
@@ -1870,14 +1867,14 @@ void InitAnimationGS::init(){
     initAnimationTextures["moon"] = sf::Texture(moonImg, false);
     sf::Sprite moon(initAnimationTextures["moon"]);
 
-    moon.setScale(sf::Vector2f(1, 1));
+    moon.setScale(sf::Vector2f(1.3, 1.3));
 
     spriteBounds = moon.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    xPosition = 325;
+    yPosition = 25;
 
     moon.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1893,16 +1890,19 @@ void InitAnimationGS::init(){
     initAnimationTextures["forest"] = sf::Texture(forestImg, false);
     sf::Sprite forest(initAnimationTextures["forest"]);
 
-    forest.setScale(sf::Vector2f(1, 1));
-
-    spriteBounds = forest.getGlobalBounds();
+    spriteBounds = forest.getLocalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    scaleFactor = gWindowWidth / spriteWidth;
+
+    forest.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    xPosition = 0.f;
+    yPosition = gWindowHeight - (spriteHeight * scaleFactor);
 
     forest.setPosition(sf::Vector2f(xPosition, yPosition));
+
 
     initAnimationSprites.push_back(forest);
 
@@ -1916,14 +1916,14 @@ void InitAnimationGS::init(){
     initAnimationTextures["fume"] = sf::Texture(fumeImg, false);
     sf::Sprite fume(initAnimationTextures["fume"]);
 
-    fume.setScale(sf::Vector2f(1, 1));
+    fume.setScale(sf::Vector2f(2, 2));
 
     spriteBounds = fume.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    xPosition = 0;
+    yPosition = ((gWindowHeight - spriteHeight) / 2) + 70;
 
     fume.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -2063,9 +2063,47 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
         timer = 0.0f;
     }
 
-    if(slide >= 6){
-        std::cout << "Animation finished, going to menu" << std::endl;
-        stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+    switch (slide){
+        case 1: {
+            // Move Dracula
+            sf::Sprite& dracula = initAnimationSprites[10];
+            sf::Vector2f pos = dracula.getPosition();
+
+            if (pos.x < 0.f) {
+                pos.x += 1.f;
+                if (pos.x > 0.f) pos.x = 0.f;
+                dracula.setPosition(pos);
+            }
+
+            // Move fume
+            sf::Sprite& smoke = initAnimationSprites[13];
+            pos = smoke.getPosition();
+
+            pos.x -= 1.f;
+            smoke.setPosition(pos);
+            break;
+        }
+
+        case 2:
+
+            break;
+        
+        case 3:
+
+            break;
+        
+        case 4:
+
+            break;
+
+        case 5:
+
+            break;
+
+        case 6:
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+            std::cout << "Animation finished, going to menu" << std::endl;
+            break;
     }
 }
 
