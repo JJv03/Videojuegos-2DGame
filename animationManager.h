@@ -38,7 +38,10 @@ enum animationID{
 
     // Secondary weapon
     knifeIdle,
-    knifeThrowing
+    knifeThrowing,
+
+    // Items
+    flashingBag
 };
 
 

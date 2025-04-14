@@ -24,6 +24,8 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
     m_animationFrames = std::move(_animationFrames);
+    m_animationManager->addAnimation(flashingBag, m_animationFrames, true);
+    m_animationManager->playAnimation(flashingBag);
 }
 
 
