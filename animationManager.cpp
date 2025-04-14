@@ -21,7 +21,7 @@ void AnimationManager::playAnimation(animationID id) {
     }
 }
 
-void AnimationManager::update( float deltaTime) {
+void AnimationManager::update(float deltaTime) {
     if (!currentAnimation || currentAnimation->frames.empty()) return;
 
     elapsedTime += deltaTime*speedMultiplier;
@@ -54,7 +54,6 @@ void AnimationManager::update( float deltaTime) {
             sprite.setColor(color);
         }
     }
-
 }
 
 bool AnimationManager::isPlaying(animationID id){

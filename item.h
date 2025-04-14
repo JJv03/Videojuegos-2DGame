@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 #include "entity.h"
+#include "animationManager.h"
+
 
 // All the collectable items in the game
 enum class ItemType {
@@ -80,7 +82,11 @@ public:
                         // If it is 0, the item is removed from the game
                         // If it is -1, the item NEVER disappears
 
-    Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
+    Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+         const float _lifeTime);
+
+    Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+         std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime);
 
     void update(const float& deltaTime);
 
@@ -95,6 +101,11 @@ public:
     void onCollision_SolidTile(Entity& other);
 
     void hello() const override;
+
+private:
+    std::unique_ptr<AnimationManager> m_animationManager{nullptr};
+    std::vector<AnimationManager::Frame> m_animationFrames{};
+    //animationID m_currentAnimation;
 };
 
 

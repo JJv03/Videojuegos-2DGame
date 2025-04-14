@@ -13,8 +13,18 @@ std::unordered_map<ItemType, std::shared_ptr<sf::Texture>, ItemTypeHash> itemTex
 
 
 
-Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes):
-          m_type(_type), m_isOnGround(false), m_lifeTime(5.0f), EntitySprite(_sprite, _hitboxes) {}
+Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+           const float _lifeTime = 5.0f): EntitySprite(_sprite, _hitboxes), m_type(_type),
+           m_isOnGround(false), m_lifeTime(_lifeTime) {}
+
+
+Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+           std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime = 5.0f):
+           EntitySprite(_sprite, _hitboxes), m_type(_type), m_isOnGround(false), m_lifeTime(_lifeTime)
+{
+    m_animationManager = std::make_unique<AnimationManager>(*sprite);
+    m_animationFrames = std::move(_animationFrames);
+}
 
 
 void Item::update(const float& deltaTime) {
@@ -26,6 +36,10 @@ void Item::update(const float& deltaTime) {
 
     if (!m_isOnGround) {
         sprite->move({0.f, gItemGravity * deltaTime});
+    }
+
+    if (m_animationManager != nullptr) {
+        m_animationManager->update(deltaTime);
     }
 }
 
@@ -208,10 +222,12 @@ int getItemScore(ItemType item) {
 
 
 std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
-    static std::random_device rd;
+    static std::random_device rd;       // we only want 1 instance of random_device
     static std::mt19937 rng(rd());
     
     ItemType type;
+    float lifeTime = 5.f;
+    std::vector<AnimationManager::Frame> animationFrames;
 
     switch (dropType) {
         case DropType::NONE:
@@ -226,6 +242,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             };
             std::uniform_int_distribution<size_t> dist(0, defaultDropItems.size() - 1);
             type = defaultDropItems[dist(rng)];
+            if (type == ItemType::MORNING_STAR) lifeTime = -1.f; // Permanent item
             break;
         }
         
@@ -238,6 +255,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             };
             std::uniform_int_distribution<size_t> dist(0, weaponDropItems.size() - 1);
             type = weaponDropItems[dist(rng)];
+            if (type == ItemType::MORNING_STAR) lifeTime = -1.f; // Permanent item
             break;
         }
 
@@ -247,6 +265,11 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
 
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
+            
+            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({44, 1}, {16, 16}), 0.1f});   // Red money
+            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({61, 1}, {16, 16}), 0.1f});   // Purple money
+            animationFrames.push_back(AnimationManager::Frame{sf::IntRect({78, 1}, {16, 16}), 0.1f});   // White money
+
             break;
         
         case DropType::CHEST:
@@ -285,7 +308,12 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
     sprite->setPosition(position);
 
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
-    return std::make_shared<Item>(type, sprite, hitboxes);
+
+    if (animationFrames.size() > 0) {
+        return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
+    }
+    return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
+    
 }
 
 
