@@ -81,7 +81,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
                 player.hearts -= 1;
@@ -329,7 +329,7 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
                 player.hearts -= 1;
@@ -1328,24 +1328,30 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
    
     if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
         SubWeapon secundaria;
+
         //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::DAGGER;
-        secundaria.animationManager = player.subWeapon.animationManager;
+        secundaria.type = ItemType::AXE;
+
         secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
+        
         secundaria.direction = player.dir;
         sf::Vector2f spawnPos = player.sprite->getPosition();
-        if (player.dir == RIGHT) {
-            secundaria.sprite->setScale({1.f, 1.f}); 
-        } else {
-            secundaria.sprite->setScale({-1.f, 1.f});
-        }
         spawnPos.y -= 30.f; 
+        secundaria.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
 
+        
         if (secundaria.type == ItemType::AXE) {
             secundaria.verticalSpeed = -450.f; 
+            secundaria.lifeTime = 1.0f;
+            
+            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
+            secundaria.sprite->setPosition(spawnPos);
+            secundaria.animationManager->addAnimation(axeThrowing, secundaria.axeFrames, true); 
             secundaria.animationManager->playAnimation(axeThrowing); 
         } else if (secundaria.type == ItemType::DAGGER) {
             secundaria.verticalSpeed = 0.f;
+            
+            secundaria.sprite->setPosition(spawnPos);
             secundaria.animationManager->playAnimation(daggerThrowing);
         } else if (secundaria.type == ItemType::BOOMERANG) {
             secundaria.horizontalSpeed = 250.f; 
@@ -1357,8 +1363,8 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
             player.hearts -= 4; 
         } 
 
-        secundaria.sprite->setPosition(spawnPos);
-        player.activeSubWeapons.push_back(secundaria);
+        
+        player.activeSubWeapons.push_back(std::move(secundaria));
         player.weaponIsActive = true;
     }
     
@@ -1436,6 +1442,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
     }
 
     player.animationManager->update(deltaTime);
+
     player.verticalSpeed += gPlayerGravity * deltaTime;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
@@ -1455,24 +1462,30 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
    
     if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
         SubWeapon secundaria;
+
         //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::DAGGER;
-        secundaria.animationManager = player.subWeapon.animationManager;
+        secundaria.type = ItemType::AXE;
+
         secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
+        
         secundaria.direction = player.dir;
         sf::Vector2f spawnPos = player.sprite->getPosition();
-        if (player.dir == RIGHT) {
-            secundaria.sprite->setScale({1.f, 1.f}); 
-        } else {
-            secundaria.sprite->setScale({-1.f, 1.f});
-        }
         spawnPos.y -= 30.f; 
+        secundaria.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
 
+        
         if (secundaria.type == ItemType::AXE) {
             secundaria.verticalSpeed = -450.f; 
+            secundaria.lifeTime = 1.0f;
+            
+            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
+            secundaria.sprite->setPosition(spawnPos);
+            secundaria.animationManager->addAnimation(axeThrowing, secundaria.axeFrames, true); 
             secundaria.animationManager->playAnimation(axeThrowing); 
         } else if (secundaria.type == ItemType::DAGGER) {
             secundaria.verticalSpeed = 0.f;
+            
+            secundaria.sprite->setPosition(spawnPos);
             secundaria.animationManager->playAnimation(daggerThrowing);
         } else if (secundaria.type == ItemType::BOOMERANG) {
             secundaria.horizontalSpeed = 250.f; 
@@ -1484,8 +1497,8 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
             player.hearts -= 4; 
         } 
 
-        secundaria.sprite->setPosition(spawnPos);
-        player.activeSubWeapons.push_back(secundaria);
+        
+        player.activeSubWeapons.push_back(std::move(secundaria));
         player.weaponIsActive = true;
     }
 

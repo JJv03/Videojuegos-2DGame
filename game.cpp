@@ -96,7 +96,7 @@ void Game::init()
     player.whip.sprite = whipSprite;
     player.whip.hitboxes.push_back(player.whip.sprite.get()->getLocalBounds());
 
-    // Inicializar whip AnimationManager ----------------------------------------------------------------
+    // Inicialize whip AnimationManager ----------------------------------------------------------------
     AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite);
 
     if (!whipAnimationManager)
@@ -125,14 +125,17 @@ void Game::init()
 
     // Create subweapon sprite
     auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
-    subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
-    //subweaponSprite->setTextureRect(sf::IntRect({515, 477}, {16, 16}));
+    //subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
+    subweaponSprite->setTextureRect(sf::IntRect({515, 477}, {16, 16}));
+    subweaponSprite->setPosition({-20.f, 171.f});
+
+    //subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
     // Set up the subweapon (subweapon)
     player.subWeapon.sprite = subweaponSprite;
     player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
 
     // Initialize subweapon AnimationManager
-    AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite);
+    /*AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite);
     if (!subweaponAnimationManager)
     {
         std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
@@ -149,7 +152,7 @@ void Game::init()
     // Assign animation managers
     player.subWeapon.animationManager = subweaponAnimationManager;
     //player.subWeapon.animationManager->playAnimation(daggerThrowing);
-
+    */
     // Load item textures
     if (!loadItemTextures())
     {
