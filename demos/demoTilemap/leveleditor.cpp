@@ -9,7 +9,9 @@ const int MAP_WIDTH = 24;
 const int MAP_HEIGHT = 6;
 const int TILESET_WIDTH = 10;
 const int TILESET_HEIGHT = 8;
-const int MARGIN = 1;
+const int MARGIN = 4;
+const int OUTER_MARGIN = 2;
+
 
 class Game {
 public:
@@ -84,8 +86,8 @@ private:
                 int tu = tileIndex % tilesPerRow;
                 int tv = tileIndex / tilesPerRow;
 
-                int texX = tu * (TILE_SIZE + MARGIN);
-                int texY = tv * (TILE_SIZE + MARGIN);
+                int texX = OUTER_MARGIN + tu * (TILE_SIZE + MARGIN);
+                int texY = OUTER_MARGIN + tv * (TILE_SIZE + MARGIN);
 
                 tileSprite.setTextureRect(sf::IntRect({texX, texY}, {TILE_SIZE, TILE_SIZE}));
                 tileSprite.setPosition({j * TILE_SIZE, i * TILE_SIZE});
@@ -107,8 +109,8 @@ private:
                     int tu = tileIndex % tilesPerRow;
                     int tv = tileIndex / tilesPerRow;
 
-                    int texX = tu * (TILE_SIZE + MARGIN);
-                    int texY = tv * (TILE_SIZE + MARGIN);
+                    int texX = OUTER_MARGIN + tu * (TILE_SIZE + MARGIN);
+                    int texY = OUTER_MARGIN + tv * (TILE_SIZE + MARGIN);
 
                     tileSprite.setTextureRect(sf::IntRect({texX, texY}, {TILE_SIZE, TILE_SIZE}));
                     tileSprite.setPosition({400 + j * TILE_SIZE, i * TILE_SIZE});
