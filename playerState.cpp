@@ -32,9 +32,9 @@ using Dead = PlayerDeadState;
 // constexpr auto KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 // Keys 4 hurt and dead just to animate and see the logic, after collitions with enemies are done change it
-constexpr auto KEY_HURT = sf::Keyboard::Scancode::H;
-constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
-constexpr auto KEY_REVIVE = sf::Keyboard::Scancode::R;
+//constexpr auto KEY_HURT = sf::Keyboard::Scancode::H;
+//constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
+//constexpr auto KEY_REVIVE = sf::Keyboard::Scancode::R;
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
 // ---------------------------- IDLE ----------------------------
@@ -74,25 +74,18 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
     
         if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
-            if (player.isPressingUp)
-            {
-                if(player.hearts>1 && player.subWeapon.type != ItemType::NONE){
-                    player.isAttacking = true;
-                    player.hasToPressAgain = false;
-                    player.setState(state<AttackSecondary>());
-                }
-                
-            }else{
-                player.isAttacking = true;
-                player.hasToPressAgain = false;
-                player.setState(state<AttackIdle>());
-            }
-            
-            
+            player.isAttacking = true;
+            player.hasToPressAgain = false;
+            player.setState(state<AttackIdle>());
         }
 
-        if(keyPressed->scancode == controls.up){
-            player.isPressingUp = true;
+        if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
+            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+                player.isAttacking = true;
+                player.hasToPressAgain = false;
+                player.hearts -= 1;
+                player.setState(state<AttackSecondary>());
+            }
         }
 
         
@@ -1009,30 +1002,30 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
-                             player.sprite->getPosition().y + 4)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x + 24, 
+                             player.sprite->getPosition().y + 4)  
             );
-            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
-                             player.sprite->getPosition().y + 4)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x - 24, 
+                             player.sprite->getPosition().y + 4)  
             );
-            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
     } else {
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x - 16, 
+                             player.sprite->getPosition().y)  
             );
-            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x + 16, 
+                             player.sprite->getPosition().y)  
             );
-            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
     }
 
@@ -1139,8 +1132,7 @@ PlayerHurtState::PlayerHurtState() : PlayerState()
 
 void PlayerHurtState::init(Player& player)
 {
-    //cout << "init hurt" << endl;
-    //cout << "herido, ahora tengo esta salud:  " << player.health << endl;
+
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
 }
@@ -1168,7 +1160,6 @@ void PlayerHurtState::update(Player& player, float deltaTime)
         player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
     }
     
-    // Play jump animation if not already playing
     if (!player.animationManager->isPlaying(player.currentAnimation))
     {
         player.animationManager->playAnimation(player.currentAnimation);
@@ -1280,10 +1271,8 @@ PlayerAttackSecondaryState::PlayerAttackSecondaryState() : PlayerState()
 
 void PlayerAttackSecondaryState::init(Player& player)
 {
-    std::cout << "secondary " << std::endl;
     if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
         player.animationManager->playAnimation(attackSimon);
-        player.subWeapon.animationManager->playAnimation(knifeThrowing);
     }
 
     player.isAttacking = true;
@@ -1297,75 +1286,61 @@ void PlayerAttackSecondaryState::handleInput(Player& player, sf::Event event)
     auto controls = configManager.getControls();
     if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == controls.attack)
+        if (KeyReleased->scancode == controls.useSubWeapon)
         {
             player.hasToPressAgain = true;
         }
-        if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-            if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
-                (keyReleased->scancode == controls.left && player.dir == LEFT)) {
-                player.isWalking = false;
-            }
-        }
+        
     }
     
 }
 
 void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
-{
+{   
     player.currentAnimation = attackSimon;
-    static bool subWeaponLaunched = false;
-    static float subWeaponTimer = 0.0f;
-    const float subWeaponSpeed = 250.0f; // Reduced by 50% (from 300 to 150)
-    const float subWeaponDuration = 2.0f; // 2 seconds duration
 
-    // Update the timer
-    subWeaponTimer += deltaTime;
-    cout << subWeaponTimer << endl;
-
-    // Reset everything if timer exceeds duration
-    if (subWeaponTimer >= subWeaponDuration) {
-        subWeaponLaunched = false;
-        subWeaponTimer = 0.0f;
-        player.subWeapon.sprite->setPosition(sf::Vector2f(-1000.f, -1000.f)); // Move off-screen
-    }
-
+    
     if (!player.animationManager->isPlaying(player.currentAnimation)){
         player.animationManager->playAnimation(player.currentAnimation);
     }
 
     player.animationManager->update(deltaTime);
-    float direction = (player.dir == RIGHT) ? 1.0f : -1.0f;
 
-    // Check if we've reached frame 4 and haven't launched the subweapon yet
-    if (player.animationManager->getCurrentFrameIndex() == 4 && !subWeaponLaunched) {
-        // Reset timer when launching new subweapon
-        subWeaponTimer = 0.0f;
-        
-        // Set subweapon position to player's current position
-        player.subWeapon.sprite->setPosition(
-            sf::Vector2f(player.sprite->getPosition().x,
-                         player.sprite->getPosition().y - 25));
-        
-        player.subWeapon.sprite->setScale(sf::Vector2f(direction, 1.f));
-        
-        // Play the throwing animation
-        if (!player.subWeapon.animationManager->isPlaying(knifeThrowing)) {
-            player.subWeapon.animationManager->playAnimation(knifeThrowing);
+   
+    if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
+        SubWeapon secundaria;
+        //secundaria.type = player.subWeaponType;
+        secundaria.type = ItemType::BOOMERANG;
+        secundaria.animationManager = player.subWeapon.animationManager;
+        secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
+        secundaria.direction = player.dir;
+        sf::Vector2f spawnPos = player.sprite->getPosition();
+        if (player.dir == RIGHT) {
+            secundaria.sprite->setScale({1.f, 1.f}); 
+        } else {
+            secundaria.sprite->setScale({-1.f, 1.f});
         }
-        
-        subWeaponLaunched = true;
-    }
+        spawnPos.y -= 30.f; 
 
-    // Update subweapon only if it's active and timer hasn't expired
-    if (subWeaponLaunched && subWeaponTimer < subWeaponDuration) {
-        player.subWeapon.animationManager->update(deltaTime);
-        
-        // Move subweapon horizontally based on player direction
-        player.subWeapon.sprite->move(sf::Vector2f(direction * subWeaponSpeed * deltaTime, 0.f));
-    } else {
-        // Move subweapon off-screen when not active
-        player.subWeapon.sprite->setPosition(sf::Vector2f(-1000.0f, -1000.0f));
+        if (secundaria.type == ItemType::AXE) {
+            secundaria.verticalSpeed = -450.f; 
+            secundaria.animationManager->playAnimation(axeThrowing); 
+        } else if (secundaria.type == ItemType::DAGGER) {
+            secundaria.verticalSpeed = 0.f;
+            secundaria.animationManager->playAnimation(daggerThrowing);
+        } else if (secundaria.type == ItemType::BOOMERANG) {
+            secundaria.horizontalSpeed = 250.f; 
+            secundaria.animationManager->playAnimation(boomerangThrowing);
+        } else if (secundaria.type == ItemType::FIRE_BOMB) {
+            secundaria.verticalSpeed = -250.f;
+            secundaria.animationManager->playAnimation(fireBombThrowing);
+        } else if (secundaria.type == ItemType::STOPWATCH) {
+            player.hearts -= 4; 
+        } 
+
+        secundaria.sprite->setPosition(spawnPos);
+        player.activeSubWeapons.push_back(secundaria);
+        player.weaponIsActive = true;
     }
     
     if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())

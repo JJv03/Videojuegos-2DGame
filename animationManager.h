@@ -37,10 +37,12 @@ enum animationID{
     flyPhantomBat,
 
     // Secondary weapon
-    knifeIdle,
-    knifeThrowing,
+    daggerThrowing,
+    axeThrowing,
+    fireBombThrowing,
+    stopwatchThrowing,
+    boomerangThrowing,
 
-    // Items
     flashingBag
 };
 

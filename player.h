@@ -82,7 +82,9 @@ public:
     };
 
     std::vector<AnimationManager::Frame> boomerangFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(401, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(418, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(435, 477), sf::Vector2(16, 16)), 0.1f},
     };
 
     std::vector<AnimationManager::Frame> stopwatchFrames{
@@ -93,7 +95,9 @@ public:
     ~SubWeapon() = default;
 
     ItemType type;
-
+    PlayerDirection direction;
+    float verticalSpeed = 0.f;
+    float horizontalSpeed = 0.f;
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
@@ -105,7 +109,7 @@ class Player : public EntitySprite
 public:
     animationID currentAnimation;
     PlayerStateRef activeState;
-
+    std::vector<SubWeapon> activeSubWeapons;
     PlayerDirection dir;
 
     bool isOnGround;
@@ -120,6 +124,9 @@ public:
     bool hasToPressAgain;
     bool isPressingUp;
     bool hasDied;
+
+    // Secondary weapon
+    bool weaponIsActive;
 
     // Stats
     float damage = 1.0f;
@@ -230,4 +237,7 @@ public:
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
     void hello() const override;
+
+    // SubWeapon functions
+    void updateActiveSubWeapons(float deltaTime);
 };

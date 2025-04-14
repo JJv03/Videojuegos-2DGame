@@ -25,6 +25,7 @@ Player::Player()
     isPressingUp = false;
     hasDied = false;
     deathRestart = false;
+    weaponIsActive = false;
 
     // Stats
     maxHealth = 16;
@@ -52,11 +53,15 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
     getActiveState()->update(*this, deltaTime);
     updateActivationZones(viewPosition);
+    updateActiveSubWeapons(deltaTime);
 }
 
 void Player::draw(sf::RenderWindow &window)
 {
     getActiveState()->draw(*this, window);
+    for (auto& subW : activeSubWeapons) {
+        window.draw(*subW.sprite);
+    }
 }
 
 void Player::setState(PlayerStateRef newState)
@@ -380,6 +385,66 @@ void Player::onCollision_Item(Entity &entityItem)
 
 void Player::hello() const {
     std::cout << "Soy Player" << std::endl;
+}
+
+void Player::updateActiveSubWeapons(float deltaTime) {
+    if (activeSubWeapons.empty()) {
+        return;
+    }
+    
+    for (auto& subW : activeSubWeapons) {
+        
+        if (subW.type == ItemType::AXE)
+        {
+            float speed = 150.f * deltaTime;
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
+            subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+            subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
+            if (subW.animationManager->isPlaying(axeThrowing))
+            {
+                subW.animationManager->playAnimation(axeThrowing);
+            }
+            subW.animationManager->update(deltaTime);
+        }else if (subW.type == ItemType::FIRE_BOMB){
+            float speed = 150.f * deltaTime;
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
+            subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+            subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
+            if (subW.animationManager->isPlaying(fireBombThrowing))
+            {
+                subW.animationManager->playAnimation(fireBombThrowing);
+            }
+            subW.animationManager->update(deltaTime);
+        }else if(subW.type == ItemType::BOOMERANG){
+            subW.horizontalSpeed -= deltaTime * 0.5f;
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(horizontalSpeed, 0.f) : sf::Vector2f(-horizontalSpeed, 0.f)); 
+            if (subW.animationManager->isPlaying(boomerangThrowing))
+            {
+                subW.animationManager->playAnimation(boomerangThrowing);
+            }
+            subW.animationManager->update(deltaTime);
+        }
+        else if (subW.type == ItemType::STOPWATCH){
+
+        }
+        else{
+            float speed = 350.f * deltaTime;
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
+        }
+    }
+    
+    bool wasErased = !activeSubWeapons.empty();
+    activeSubWeapons.erase(
+        std::remove_if(activeSubWeapons.begin(), activeSubWeapons.end(),
+            [](const SubWeapon& subW) {
+                return subW.sprite->getPosition().x < 0 || 
+                       subW.sprite->getPosition().x > gWindowWidth;
+            }),
+        activeSubWeapons.end());
+
+    if (wasErased && activeSubWeapons.empty()) {
+        this->weaponIsActive = false;
+    }
 }
 
 // ----------------------------- WHIP -----------------------------

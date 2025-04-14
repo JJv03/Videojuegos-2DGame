@@ -113,38 +113,42 @@ void Game::init()
     player.whip.animationManager->playAnimation(whipNoAttack);
 
     // Secondary weapons ----------------------------------------------------------------
-    // Load knife image
-    sf::Image knifeImage;
-    if (!knifeImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    // Load subweapon weapon image
+    sf::Image subweaponImage;
+    if (!subweaponImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
     {
-        std::cerr << "Error loading knife image" << std::endl;
+        std::cerr << "Error loading subweapon image" << std::endl;
     }
-    knifeImage.createMaskFromColor(gColorKeyGrey);
-    knifeImage.createMaskFromColor(gColorKeyGreen);
-    gTextures["knife"] = sf::Texture(knifeImage, false);
+    subweaponImage.createMaskFromColor(gColorKeyGrey);
+    subweaponImage.createMaskFromColor(gColorKeyGreen);
+    gTextures["subweapon"] = sf::Texture(subweaponImage, false);
 
-    // Create knife sprite
-    auto knifeSprite = std::make_shared<sf::Sprite>(gTextures["knife"]);
-    knifeSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
-
-    // Set up the subweapon (knife)
-    player.subWeapon.sprite = knifeSprite;
+    // Create subweapon sprite
+    auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
+    subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
+    //subweaponSprite->setTextureRect(sf::IntRect({515, 477}, {16, 16}));
+    // Set up the subweapon (subweapon)
+    player.subWeapon.sprite = subweaponSprite;
     player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
 
-    // Initialize knife AnimationManager
-    AnimationManager *knifeAnimationManager = new AnimationManager(*player.subWeapon.sprite);
-    if (!knifeAnimationManager)
+    // Initialize subweapon AnimationManager
+    AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite);
+    if (!subweaponAnimationManager)
     {
-        std::cerr << "Error: Failed to initialize Knife AnimationManager!" << std::endl;
+        std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
     }
 
     // Add animations (similar to whip)
-    knifeAnimationManager->addAnimation(knifeThrowing, player.subWeapon.daggerFrames, false);
-    knifeAnimationManager->addAnimation(knifeIdle, player.subWeapon.daggerFrames, false);
+    subweaponAnimationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames);
+    subweaponAnimationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false);
+    
+    subweaponAnimationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false);
+    //subweaponAnimationManager->addAnimation(stunThrowing, player.subWeapon.stopwatchFrames, false);
+    subweaponAnimationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames, false);
 
     // Assign animation managers
-    player.subWeapon.animationManager = knifeAnimationManager;
-    player.subWeapon.animationManager->playAnimation(knifeIdle);
+    player.subWeapon.animationManager = subweaponAnimationManager;
+    //player.subWeapon.animationManager->playAnimation(daggerThrowing);
 
     // Load item textures
     if (!loadItemTextures())
