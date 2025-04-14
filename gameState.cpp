@@ -1649,12 +1649,13 @@ void InitAnimationGS::init(){
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    scaleFactor = gWindowHeight / spriteHeight;
+    float scaleFactorWidth = gWindowWidth / spriteWidth;
+    float scaleFactorHeight = gWindowHeight / spriteHeight;
 
-    back.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+    back.setScale(sf::Vector2f(scaleFactorWidth, scaleFactorHeight));
 
-    scaledWidth = spriteWidth * scaleFactor;
-    scaledHeight = spriteHeight * scaleFactor;
+    scaledWidth = spriteWidth * scaleFactorWidth;
+    scaledHeight = spriteHeight * scaleFactorHeight;
 
     xPosition = (gWindowWidth - scaledWidth) / 2;
     yPosition = (gWindowHeight - scaledHeight) / 2;
@@ -1673,12 +1674,13 @@ void InitAnimationGS::init(){
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    scaleFactor = gWindowHeight / spriteHeight;
+    scaleFactorWidth = gWindowWidth / spriteWidth;
+    scaleFactorHeight = gWindowHeight / spriteHeight;
 
-    backDracula.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+    backDracula.setScale(sf::Vector2f(scaleFactorWidth, scaleFactorHeight));
 
-    scaledWidth = spriteWidth * scaleFactor;
-    scaledHeight = spriteHeight * scaleFactor;
+    scaledWidth = spriteWidth * scaleFactorWidth;
+    scaledHeight = spriteHeight * scaleFactorHeight;
 
     xPosition = (gWindowWidth - scaledWidth) / 2;
     yPosition = (gWindowHeight - scaledHeight) / 2;
@@ -1721,13 +1723,13 @@ void InitAnimationGS::init(){
     }
     sf::Sprite text1(initAnimationTextures["text1"]);
 
-    text1.setScale(sf::Vector2f(0.4, 0.4));
+    text1.setScale(sf::Vector2f(0.5, 0.5));
 
     spriteBounds = text1.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    text1.setPosition(sf::Vector2f(15, 35));
+    text1.setPosition(sf::Vector2f(5, 25));
 
     initAnimationSprites.push_back(text1);
 
@@ -1737,14 +1739,14 @@ void InitAnimationGS::init(){
     }
     sf::Sprite text2(initAnimationTextures["text2"]);
 
-    text2.setScale(sf::Vector2f(0.4, 0.4));
+    text2.setScale(sf::Vector2f(0.5, 0.5));
 
     spriteBounds = text2.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    yPosition = 300;
 
     text2.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1756,14 +1758,14 @@ void InitAnimationGS::init(){
     }
     sf::Sprite text3(initAnimationTextures["text3"]);
 
-    text3.setScale(sf::Vector2f(0.4, 0.4));
+    text3.setScale(sf::Vector2f(0.5, 0.5));
 
     spriteBounds = text3.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    yPosition = ((gWindowHeight - spriteHeight) / 2) - 100;
 
     text3.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1775,7 +1777,7 @@ void InitAnimationGS::init(){
     }
     sf::Sprite text4(initAnimationTextures["text4"]);
 
-    text4.setScale(sf::Vector2f(0.4, 0.4));
+    text4.setScale(sf::Vector2f(0.5, 0.5));
 
     spriteBounds = text4.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
@@ -1794,7 +1796,7 @@ void InitAnimationGS::init(){
     }
     sf::Sprite text5(initAnimationTextures["text5"]);
 
-    text5.setScale(sf::Vector2f(0.4, 0.4));
+    text5.setScale(sf::Vector2f(0.5, 0.5));
 
     spriteBounds = text5.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
@@ -1821,14 +1823,14 @@ void InitAnimationGS::init(){
     initAnimationTextures["coffin"] = sf::Texture(coffinImg, false);
     sf::Sprite coffin(initAnimationTextures["coffin"]);
 
-    coffin.setScale(sf::Vector2f(1, 1));
+    coffin.setScale(sf::Vector2f(2, 2));
 
     spriteBounds = coffin.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    yPosition = (gWindowHeight - spriteHeight) / 2 + 105;
 
     coffin.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1939,14 +1941,14 @@ void InitAnimationGS::init(){
     initAnimationTextures["hand"] = sf::Texture(handImg, false);
     sf::Sprite hand(initAnimationTextures["hand"]);
 
-    hand.setScale(sf::Vector2f(1, 1));
+    hand.setScale(sf::Vector2f(2.25, 2.25));
 
     spriteBounds = hand.getGlobalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
     xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    yPosition = ((gWindowHeight - spriteHeight) / 2) + 150;
 
     hand.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1962,14 +1964,20 @@ void InitAnimationGS::init(){
     initAnimationTextures["belmont"] = sf::Texture(belmontImg, false);
     sf::Sprite belmont(initAnimationTextures["belmont"]);
 
-    belmont.setScale(sf::Vector2f(1, 1));
-
-    spriteBounds = belmont.getGlobalBounds();
+    spriteBounds = belmont.getLocalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    scaleFactorWidth = gWindowWidth / spriteWidth;
+    scaleFactorHeight = gWindowHeight / spriteHeight;
+
+    belmont.setScale(sf::Vector2f(scaleFactorWidth, scaleFactorHeight));
+
+    scaledWidth = spriteWidth * scaleFactorWidth;
+    scaledHeight = spriteHeight * scaleFactorHeight;
+
+    xPosition = (gWindowWidth - scaledWidth) / 2 + 250;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
 
     belmont.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -1985,14 +1993,20 @@ void InitAnimationGS::init(){
     initAnimationTextures["fire"] = sf::Texture(fireImg, false);
     sf::Sprite fire(initAnimationTextures["fire"]);
 
-    fire.setScale(sf::Vector2f(1, 1));
-
-    spriteBounds = fire.getGlobalBounds();
+    spriteBounds = fire.getLocalBounds();
     spriteWidth = spriteBounds.size.x;
     spriteHeight = spriteBounds.size.y;
 
-    xPosition = (gWindowWidth - spriteWidth) / 2;
-    yPosition = (gWindowHeight - spriteHeight) / 2;
+    scaleFactorWidth = gWindowWidth / spriteWidth;
+    scaleFactorHeight = gWindowHeight / spriteHeight;
+
+    fire.setScale(sf::Vector2f(scaleFactorWidth, scaleFactorHeight));
+
+    scaledWidth = spriteWidth * scaleFactorWidth;
+    scaledHeight = spriteHeight * scaleFactorHeight;
+
+    xPosition = (gWindowWidth - scaledWidth) / 2;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
 
     fire.setPosition(sf::Vector2f(xPosition, yPosition));
 
@@ -2084,14 +2098,29 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             break;
         }
 
-        case 2:
+        case 2:{
+            // Move Belmont
+            sf::Sprite& belmont = initAnimationSprites[15];
+            sf::Vector2f pos = belmont.getPosition();
 
+            pos.x -= 1.f;
+            belmont.setPosition(pos);
             break;
-        
-        case 3:
+        }
 
+        case 3:{
+            // Move hand
+            sf::Sprite& hand = initAnimationSprites[14];
+            sf::Vector2f pos = hand.getPosition();
+
+            if (pos.y > 242.f) {
+                pos.y -= 0.5f;
+                if (pos.y < 242.f) pos.y = 242.f;
+                hand.setPosition(pos);
+            }
             break;
-        
+        }
+
         case 4:
 
             break;
@@ -2146,6 +2175,17 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
     alpha = std::clamp(alpha, 0.0f, 255.0f); // asegurar rango válido
 
     for (int idx : spriteIndices) {
+        if (idx == 14){
+            sf::Vector2f pos = initAnimationSprites[14].getPosition();
+            if (pos.y < 275){
+                sf::Sprite sprite = initAnimationSprites[14];
+                sf::Color color = sprite.getColor();
+                color.a = static_cast<uint8_t>(alpha);
+                sprite.setColor(color);
+                window.draw(sprite);
+            }
+            continue;
+        }
         sf::Sprite sprite = initAnimationSprites[idx];
         sf::Color color = sprite.getColor();
         color.a = static_cast<uint8_t>(alpha);
