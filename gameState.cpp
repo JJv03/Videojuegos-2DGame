@@ -1596,7 +1596,7 @@ void InitAnimationGS::init(){
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
-    slide = 1;
+    slide = 4;
 
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
@@ -2075,6 +2075,7 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     if(timer >= timerInterval){
         slide ++;
         timer = 0.0f;
+        resetMovingSprites();
     }
 
     switch (slide){
@@ -2090,11 +2091,11 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             }
 
             // Move fume
-            sf::Sprite& smoke = initAnimationSprites[13];
-            pos = smoke.getPosition();
+            sf::Sprite& fume = initAnimationSprites[13];
+            pos = fume.getPosition();
 
             pos.x -= 1.f;
-            smoke.setPosition(pos);
+            fume.setPosition(pos);
             break;
         }
 
@@ -2192,6 +2193,27 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
         sprite.setColor(color);
         window.draw(sprite);
     }
+}
+
+void InitAnimationGS::resetMovingSprites(){
+    sf::Sprite& dracula = initAnimationSprites[10];
+    float spriteHeight = dracula.getGlobalBounds().size.y;
+    dracula.setPosition(sf::Vector2f(-100, spriteHeight));
+
+    sf::Sprite& fume = initAnimationSprites[13];
+
+    spriteHeight = fume.getGlobalBounds().size.y;
+
+    float yPosition = ((gWindowHeight - spriteHeight) / 2) + 70;
+
+    fume.setPosition(sf::Vector2f(0, yPosition));
+
+    if(slide > 2){
+        sf::Sprite& belmont = initAnimationSprites[15];
+        belmont.setScale(sf::Vector2f(1.1, 1.1));
+        belmont.setPosition(sf::Vector2f(0, 0));
+    }
+
 }
 
 void InitAnimationGS::pause(){

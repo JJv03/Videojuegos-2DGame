@@ -221,6 +221,7 @@ public:
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void drawSlide(sf::RenderWindow& window);
+    void resetMovingSprites();
     void pause() override;
     void resume() override;
     void close() override;
