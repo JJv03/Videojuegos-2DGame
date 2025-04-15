@@ -101,10 +101,17 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                player.hearts -= 1;
+                if (player.subWeaponType == ItemType::STOPWATCH)
+                {
+                    player.hearts -= 5;
+                }
+                else{
+                    player.hearts -= 1;
+                }
                 player.setState(state<AttackSecondary>());
             }
         }
@@ -260,10 +267,17 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0){// && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                player.hearts -= 1;
+                if (player.subWeaponType == ItemType::STOPWATCH)
+                {
+                    player.hearts -= 5;
+                }
+                else{
+                    player.hearts -= 1;
+                }
                 player.setState(state<AttackSecondary>());
             }
         }
@@ -475,10 +489,19 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                player.hearts -= 1;
+                if (player.subWeaponType == ItemType::STOPWATCH)
+                {
+                    player.hearts -= 5;
+                }
+                else{
+                    player.hearts -= 1;
+                }
+                
+                
                 player.setState(state<AttackJumpSecondary>());
             }
         }
@@ -1730,58 +1753,58 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
    
     if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
         
-        
-        SubWeapon secundaria;
-        secundaria.type = ItemType::FIRE_BOMB;
-        //secundaria.type = player.subWeaponType;
-        secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
-        secundaria.direction = player.dir;
+
+        player.subWeapon.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
         sf::Vector2f spawnPos = player.sprite->getPosition();
-        spawnPos.y -= 30.f; 
-        secundaria.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
+        spawnPos.y -= 30.f; // Adjust the Y position to be above Simon's head
+        player.subWeapon.direction = player.dir;
+        //player.subWeapon.type = ItemType::DAGGER; // Depuracion
+        player.subWeapon.type = player.subWeaponType;
+        
+       if (player.subWeapon.type == ItemType::AXE) {
+        player.subWeapon.verticalSpeed = -450.f; 
+        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.lifeTime = 1.0f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames, true); 
+        player.subWeapon.animationManager->playAnimation(axeThrowing); 
+
+    } else if (player.subWeapon.type == ItemType::DAGGER) {
+        player.subWeapon.verticalSpeed = 0.f;
+        player.subWeapon.horizontalSpeed = 350.f;
+        player.subWeapon.lifeTime = 0.5f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false); 
+        player.subWeapon.animationManager->playAnimation(daggerThrowing); 
+    } else if (player.subWeapon.type == ItemType::BOOMERANG) {
+        //player.hearts++; // Depuracion
+        player.subWeapon.horizontalSpeed = 100.f; 
+        player.subWeapon.verticalSpeed = 0.f; 
+        player.subWeapon.lifeTime = 4.0f;
+        player.subWeapon.placeLaunched = player.sprite->getPosition().x;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames, true); 
+        player.subWeapon.animationManager->playAnimation(boomerangThrowing);
+
+    } else if (player.subWeapon.type == ItemType::FIRE_BOMB) {
+        player.subWeapon.verticalSpeed = -250.f;
+        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.lifeTime = 1.0f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false); 
+        player.subWeapon.animationManager->playAnimation(fireBombThrowing);
+        
+    } else if (player.subWeapon.type == ItemType::STOPWATCH) {
+        player.hearts -= 4; 
+        // Flag stop time
+    } 
 
         
-        if (secundaria.type == ItemType::AXE) {
-            secundaria.verticalSpeed = -450.f; 
-            secundaria.horizontalSpeed = 150.f;
-            secundaria.lifeTime = 1.0f;
-            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->addAnimation(axeThrowing, secundaria.axeFrames, true); 
-            secundaria.animationManager->playAnimation(axeThrowing); 
-
-        } else if (secundaria.type == ItemType::DAGGER) {
-            secundaria.verticalSpeed = 0.f;
-            secundaria.horizontalSpeed = 350.f;
-            secundaria.lifeTime = 1.0f;
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->playAnimation(daggerThrowing);
-
-        } else if (secundaria.type == ItemType::BOOMERANG) {
-            secundaria.horizontalSpeed = 100.f; 
-            secundaria.verticalSpeed = 0.f; 
-            secundaria.lifeTime = 4.0f;
-            secundaria.placeLaunched = player.sprite->getPosition().x;
-            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->addAnimation(boomerangThrowing, secundaria.boomerangFrames, true); 
-            secundaria.animationManager->playAnimation(boomerangThrowing);
-
-        } else if (secundaria.type == ItemType::FIRE_BOMB) {
-            secundaria.verticalSpeed = -250.f;
-            secundaria.horizontalSpeed = 150.f;
-            secundaria.lifeTime = 1.0f;
-            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->addAnimation(fireBombThrowing, secundaria.firebombFrames, false); 
-            secundaria.animationManager->playAnimation(fireBombThrowing);
-            
-        } else if (secundaria.type == ItemType::STOPWATCH) {
-            player.hearts -= 4; 
-        } 
-
-        
-        player.activeSubWeapons.push_back(std::move(secundaria));
+        player.activeSubWeapons.push_back(std::move(player.subWeapon));
         player.weaponIsActive = true;
     }
     
@@ -1877,46 +1900,61 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
             player.sprite->move({player.horizontalSpeed* deltaTime , 0.f});
         }
     }
-   
-    if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
-        SubWeapon secundaria;
-
-        //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::AXE;
-
-        secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
+    if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
         
-        secundaria.direction = player.dir;
+
+        player.subWeapon.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
         sf::Vector2f spawnPos = player.sprite->getPosition();
-        spawnPos.y -= 30.f; 
-        secundaria.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
+        spawnPos.y -= 30.f; // Adjust the Y position to be above Simon's head
+        player.subWeapon.direction = player.dir;
+        //player.subWeapon.type = ItemType::DAGGER; // Depuracion
+        player.subWeapon.type = player.subWeaponType;
+        
+       if (player.subWeapon.type == ItemType::AXE) {
+        player.subWeapon.verticalSpeed = -450.f; 
+        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.lifeTime = 1.0f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames, true); 
+        player.subWeapon.animationManager->playAnimation(axeThrowing); 
+
+    } else if (player.subWeapon.type == ItemType::DAGGER) {
+        player.subWeapon.verticalSpeed = 0.f;
+        player.subWeapon.horizontalSpeed = 350.f;
+        player.subWeapon.lifeTime = 0.5f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false); 
+        player.subWeapon.animationManager->playAnimation(daggerThrowing); 
+
+    } else if (player.subWeapon.type == ItemType::BOOMERANG) {
+        //player.hearts++; // Depuracion
+        player.subWeapon.horizontalSpeed = 100.f; 
+        player.subWeapon.verticalSpeed = 0.f; 
+        player.subWeapon.lifeTime = 4.0f;
+        player.subWeapon.placeLaunched = player.sprite->getPosition().x;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames, true); 
+        player.subWeapon.animationManager->playAnimation(boomerangThrowing);
+
+    } else if (player.subWeapon.type == ItemType::FIRE_BOMB) {
+        player.subWeapon.verticalSpeed = -250.f;
+        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.lifeTime = 1.0f;
+        player.subWeapon.animationManager = new AnimationManager(*player.subWeapon.sprite);
+        player.subWeapon.sprite->setPosition(spawnPos);
+        player.subWeapon.animationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false); 
+        player.subWeapon.animationManager->playAnimation(fireBombThrowing);
+        
+    } else if (player.subWeapon.type == ItemType::STOPWATCH) {
+        player.hearts -= 4; 
+        // Flag stop time
+    } 
 
         
-        if (secundaria.type == ItemType::AXE) {
-            secundaria.verticalSpeed = -450.f; 
-            secundaria.lifeTime = 1.0f;
-            
-            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->addAnimation(axeThrowing, secundaria.axeFrames, true); 
-            secundaria.animationManager->playAnimation(axeThrowing); 
-        } else if (secundaria.type == ItemType::DAGGER) {
-            secundaria.verticalSpeed = 0.f;
-            
-            secundaria.sprite->setPosition(spawnPos);
-            secundaria.animationManager->playAnimation(daggerThrowing);
-        } else if (secundaria.type == ItemType::BOOMERANG) {
-            secundaria.horizontalSpeed = 250.f; 
-            secundaria.animationManager->playAnimation(boomerangThrowing);
-        } else if (secundaria.type == ItemType::FIRE_BOMB) {
-            secundaria.verticalSpeed = -250.f;
-            secundaria.animationManager->playAnimation(fireBombThrowing);
-        } else if (secundaria.type == ItemType::STOPWATCH) {
-            player.hearts -= 4; 
-        } 
-
-        
-        player.activeSubWeapons.push_back(std::move(secundaria));
+        player.activeSubWeapons.push_back(std::move(player.subWeapon));
         player.weaponIsActive = true;
     }
 

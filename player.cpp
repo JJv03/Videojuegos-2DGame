@@ -474,6 +474,10 @@ void Player::updateActiveSubWeapons(float deltaTime) {
         else
         { // Dagger
             subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+            if (subW.animationManager && !subW.animationManager->isPlaying(daggerThrowing)){
+                subW.animationManager->playAnimation(daggerThrowing);
+            }
+            subW.animationManager->update(deltaTime);
         }
     }
     
@@ -528,6 +532,7 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
+    std::cout << "SubWeapon colision" << std::endl;
 }
 
 void SubWeapon::hello() const {
