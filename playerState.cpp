@@ -1729,11 +1729,11 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
 
    
     if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
+        
+        
         SubWeapon secundaria;
-
+        secundaria.type = ItemType::FIRE_BOMB;
         //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::BOOMERANG;
-
         secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
         secundaria.direction = player.dir;
         sf::Vector2f spawnPos = player.sprite->getPosition();
@@ -1769,6 +1769,11 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
 
         } else if (secundaria.type == ItemType::FIRE_BOMB) {
             secundaria.verticalSpeed = -250.f;
+            secundaria.horizontalSpeed = 150.f;
+            secundaria.lifeTime = 1.0f;
+            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
+            secundaria.sprite->setPosition(spawnPos);
+            secundaria.animationManager->addAnimation(fireBombThrowing, secundaria.firebombFrames, false); 
             secundaria.animationManager->playAnimation(fireBombThrowing);
             
         } else if (secundaria.type == ItemType::STOPWATCH) {

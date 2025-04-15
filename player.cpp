@@ -428,15 +428,25 @@ void Player::updateActiveSubWeapons(float deltaTime) {
             subW.animationManager->update(deltaTime);
 
         }else if (subW.type == ItemType::FIRE_BOMB){
-            float speed = 150.f * deltaTime;
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
-            subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
-            subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
-            if (subW.animationManager->isPlaying(fireBombThrowing))
-            {
-                subW.animationManager->playAnimation(fireBombThrowing);
+            if (!subW.isExploding){
+                subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+                subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+                subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
+                // Check if it collides, if so, explode
+                
+
             }
-            subW.animationManager->update(deltaTime);
+            
+            else
+            {
+                std::cout << "Fire bomb exploding" << std::endl;
+                if (subW.animationManager && !subW.animationManager->isPlaying(fireBombThrowing)) {
+                    subW.animationManager->playAnimation(fireBombThrowing);
+                }
+                subW.animationManager->update(deltaTime);
+            }
+            
+            
 
         }else if(subW.type == ItemType::BOOMERANG)
         {

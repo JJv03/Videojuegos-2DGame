@@ -106,6 +106,9 @@ public:
     float placeLaunched = 0.f;
     bool changedDirection = false;
 
+    // Fire Bomb
+    bool isExploding = false;
+
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
