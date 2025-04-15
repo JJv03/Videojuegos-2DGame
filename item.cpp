@@ -98,6 +98,11 @@ void Item::onCollision_SolidTile(Entity& other){
 }
 
 
+std::vector<sf::FloatRect> Item::getBounds() const{
+    return std::vector<sf::FloatRect>({sprite->getGlobalBounds()});
+}
+
+
 bool loadItemTextures() {
     sf::Image image1;
     if (!image1.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;

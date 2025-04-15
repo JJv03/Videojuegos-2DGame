@@ -100,6 +100,8 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    std::vector<sf::FloatRect> getBounds() const override;
+
     void onCollision(Entity& other, Game& game) override;
 
     void onCollision_SolidTile(Entity& other);
