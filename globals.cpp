@@ -28,7 +28,7 @@ const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
-int gStartingStage = 1;
+int gStartingStage = 3;
 
 const float gTileSize = 32.f;
 
@@ -89,6 +89,7 @@ const float gPlayerMovementSpeed = 60.0f;
 const float gPlayerStairSpeed = 30.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 205.0f;
+
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;

@@ -93,5 +93,6 @@ extern const float gPlayerStairSpeed;
 extern const float gPlayerGravity;
 extern const float gPlayerJumpForce;
 
+
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;
