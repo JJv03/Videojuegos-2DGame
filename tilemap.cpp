@@ -19,6 +19,8 @@ enum CollisionType
     LEFT_HALF_COLLISION,
     RIGHT_HALF_COLLISION,
     THIN_TOP_LEFT_COLLISION,
+    TOP_LEFT_COLLISION,
+    TOP_RIGHT_COLLISION,
     BOTTOM_LEFT_COLLISION,
     BOTTOM_RIGHT_COLLISION,
     TWO_VERTICAL_COLLISION,
@@ -33,6 +35,8 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     {LEFT_HALF_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize))},
     {RIGHT_HALF_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, sf::Vector2f(gTileSize / 2.0f, gTileSize))},
     {THIN_TOP_LEFT_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize / 4.0f, gTileSize / 2.0f})},
+    {TOP_LEFT_COLLISION, sf::FloatRect({0.0f, 0.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
+    {TOP_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f))},
@@ -77,6 +81,7 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
         case 66:
         case 70:
         case 72:
+        case 83:
             return collisionTypes.at(BOTTOM_HALF_COLLISION);
         case 2:
         //case 4:  // Escalera (quitar)
@@ -84,9 +89,13 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
             return collisionTypes.at(BOTTOM_RIGHT_COLLISION);
         case 6:
         case 23:
+        case 80:
+        case 82:
         //case 46: // Escalera (quitar)
         //case 71: // Escalera (quitar)
             return collisionTypes.at(BOTTOM_LEFT_COLLISION);
+        case 81:
+            return collisionTypes.at(TOP_LEFT_COLLISION);
         default:
             return collisionTypes.at(NO_COLLISION);
         }

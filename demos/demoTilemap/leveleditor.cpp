@@ -7,15 +7,15 @@
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 24;
 const int MAP_HEIGHT = 6;
-const int TILESET_WIDTH = 10;
-const int TILESET_HEIGHT = 8;
+const int TILESET_WIDTH = 8;
+const int TILESET_HEIGHT = 11;
 const int MARGIN = 4;
 const int OUTER_MARGIN = 2;
 
 
 class Game {
 public:
-    Game() : window(sf::VideoMode({TILE_SIZE * MAP_WIDTH + TILE_SIZE * TILESET_WIDTH + 100, TILE_SIZE * MAP_HEIGHT + TILE_SIZE * TILESET_HEIGHT + 100}), "Tilemap Game", sf::Style::Default) {
+    Game() : window(sf::VideoMode({TILE_SIZE * MAP_WIDTH + TILE_SIZE * TILESET_WIDTH + 300, TILE_SIZE * MAP_HEIGHT + TILE_SIZE * TILESET_HEIGHT + 100}), "Tilemap Game", sf::Style::Default) {
         if (!tilesetTexture.loadFromFile("../../assets/tilesets/tileset_1.png")) {
             std::cerr << "Error loading tileset!" << std::endl;
             exit(-1);
