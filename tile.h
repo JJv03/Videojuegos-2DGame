@@ -1,7 +1,6 @@
 #pragma once
 #include "entity.h"
 #include "item.h"
-#include "player.h"
 
 class Game;
 void createDropItemAfterBrokenTile(sf::Vector2f itemPosition, DropType dropType);
@@ -79,8 +78,33 @@ public:
 
     // Entity functions
     void onCollision(Entity& other, Game& game) override;
-    void onCollision_Whip(Whip& whip, Game& game);
+    void onCollision_Whip(Game& game);
     void hello() const override;
 };
+
+// -------------------------------------------------
+
+class StairTile : public Tile
+{
+public:
+    enum class Type {   // Types of stair tiles. Only in this scope
+        NONE,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+        TOP_LEFT,
+        TOP_RIGHT,
+    };
+
+    Type type;                      // Stair type
+    
+    StairTile();
+    ~StairTile() = default;
+
+    // Entity functions
+    void onCollision(Entity& other, Game& game) override;
+    void hello() const override;
+};
+
+bool getStairType(int level, int tileNumber, StairTile::Type& stairType);
 
 

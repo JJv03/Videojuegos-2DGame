@@ -16,5 +16,7 @@ breakable
 0,479,130,1,1
 0,607,130,1,1
 end_breakable
+stair
+end_stair
 enemies
 end_enemies

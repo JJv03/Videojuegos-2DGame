@@ -62,9 +62,26 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
     
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+
+        
+        if (keyPressed->scancode == controls.up) {
+            if (player.isNearStair && (player.stair->type == StairTile::Type::BOTTOM_LEFT ||
+                                       player.stair->type == StairTile::Type::BOTTOM_RIGHT))
+            {
+                player.moveToStair = player.stair->hitboxes[0].position.x - player.getBounds()[0].position.x;
+            }
+        }
+
         if (keyPressed->scancode == controls.down) {
-            player.isDucking = true;
-            player.setState(state<Duck>());
+            if (player.isNearStair && (player.stair->type == StairTile::Type::TOP_LEFT ||
+                                       player.stair->type == StairTile::Type::TOP_RIGHT))
+            {
+                player.moveToStair = player.stair->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                
+            } else {
+                player.isDucking = true;
+                player.setState(state<Duck>());
+            } 
         }
     
         if (keyPressed->scancode == controls.jump) {
@@ -104,6 +121,24 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
+    // Player moves to the right
+    if(player.moveToStair > 0.f){
+        float move = deltaTime * gPlayerMovementSpeed;
+
+        player.sprite->move({move, 0.f});
+        player.moveToStair -= move;
+        player.moveToStair = max(0.f, player.moveToStair);
+    }
+    
+    // Player moves to the left
+    if(player.moveToStair < 0.f){
+        float move = deltaTime * gPlayerMovementSpeed;
+
+        player.sprite->move({-move, 0.f});
+        player.moveToStair += move;
+        player.moveToStair = min(0.f, player.moveToStair);
+    }
+
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;

@@ -507,6 +507,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
         staticEntities.push_back(&doorTile);
     for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
         staticEntities.push_back(&breakableTile);
+    for (auto &stairTile : tilemaps[currentStage].m_stairTiles)
+        staticEntities.push_back(&stairTile);
 
     // 2. Add everything else (dynamic entities)
     dynamicEntities.clear();

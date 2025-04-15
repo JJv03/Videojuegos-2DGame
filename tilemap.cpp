@@ -333,39 +333,56 @@ bool TileMap::load(int level, int stage)
             }
 
             m_solidTiles[j][i].hitboxes.push_back(newHitbox);
+
+            // Manage stairs
+            StairTile::Type stairType;
+            if(getStairType(level, tileNumber, stairType)){
+                StairTile stairTile;
+                stairTile.type = stairType;
+
+                sf::FloatRect stairHitbox;
+                stairHitbox.size.x = 16.f;
+                stairHitbox.size.y = 32.f;
+
+                stairHitbox.position.x += i * gTileSize + 8.f;
+                stairHitbox.position.y += j * gTileSize - 16.f;
+
+                stairTile.hitboxes.push_back(stairHitbox);
+                m_stairTiles.push_back(stairTile);
             }
         }
+    }
 
-        // Vertical hitbox merge (Post-process)
-        for (int j = m_tilesPerColumn - 2; j >= 0; --j) // From second-to-last row, up-wards
+    // Vertical hitbox merge (Post-process)
+    for (int j = m_tilesPerColumn - 2; j >= 0; --j) // From second-to-last row, up-wards
+    {
+        for (int i = 0; i < m_tilesPerRow; ++i)
         {
-            for (int i = 0; i < m_tilesPerRow; ++i)
+            for (auto &currentHitbox : m_solidTiles[j][i].hitboxes)
             {
-                for (auto &currentHitbox : m_solidTiles[j][i].hitboxes)
+                if (currentHitbox.size.x == 0 || currentHitbox.size.y == 0)
+                    continue;
+
+                for (auto &belowHitbox : m_solidTiles[j + 1][i].hitboxes)
                 {
-                    if (currentHitbox.size.x == 0 || currentHitbox.size.y == 0)
+                    if (belowHitbox.size.x == 0 || belowHitbox.size.y == 0)
                         continue;
 
-                    for (auto &belowHitbox : m_solidTiles[j + 1][i].hitboxes)
+                    if (belowHitbox.position.x == currentHitbox.position.x &&
+                        belowHitbox.size.x == currentHitbox.size.x &&
+                        belowHitbox.position.y == currentHitbox.position.y + currentHitbox.size.y)
                     {
-                        if (belowHitbox.size.x == 0 || belowHitbox.size.y == 0)
-                            continue;
+                        // Merge hitbox with the one below
+                        currentHitbox.size.y += belowHitbox.size.y;
 
-                        if (belowHitbox.position.x == currentHitbox.position.x &&
-                            belowHitbox.size.x == currentHitbox.size.x &&
-                            belowHitbox.position.y == currentHitbox.position.y + currentHitbox.size.y)
-                        {
-                            // Merge hitbox with the one below
-                            currentHitbox.size.y += belowHitbox.size.y;
-
-                            // Below-tile is now "empty" (the upper tile will store the hitbox now)
-                            belowHitbox = sf::FloatRect();
-                            break;
-                        }
+                        // Below-tile is now "empty" (the upper tile will store the hitbox now)
+                        belowHitbox = sf::FloatRect();
+                        break;
                     }
                 }
             }
         }
+    }
 
     return true;
 }
@@ -402,6 +419,13 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
     for (auto &doorEntry : this->m_doorTiles)
     {
         sf::RectangleShape rect = FloatRectToRectShape(doorEntry.hitboxes[0], 1);
+        window.draw(rect);
+    }
+
+    // Stairs
+    for (auto &stairTiles : this->m_stairTiles)
+    {
+        sf::RectangleShape rect = FloatRectToRectShape(stairTiles.hitboxes[0], 2);
         window.draw(rect);
     }
 
@@ -525,6 +549,8 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
     processFileDoorTiles(file);
 
     processFileBreakableTiles(file);
+
+    processFileStairTiles(file);
 
     processFileEnemies(file);
 
@@ -779,6 +805,68 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
         catch (const std::exception &e)
         {
             std::cerr << "Error al procesar breakable tile en la línea: " << line
+                      << ". Excepción: " << e.what() << std::endl;
+        }
+    }
+}
+
+void TileMap::processFileStairTiles(std::ifstream &file)
+{
+    std::string line;
+
+    // For security, omit the lines until the "breakable" mark
+    // while (std::getline(file, line))
+    // {
+    //     if (line == "breakable")
+    //         break;
+    // }
+    std::getline(file, line);
+    if (line != "stair")
+    {
+        std::cerr << "[Error] Expected 'stair' but found: " << line << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line))
+    { // Until we find "end_stair"
+        if (line == "end_stair")
+            break;
+        if (line.empty())
+            continue;
+
+        std::stringstream ss(line);
+        std::string token;
+
+        try
+        {
+            // Extraction of breakable tile type (mandatory !!!)
+            std::getline(ss, token, ',');
+            int stairType = std::stoi(token);
+
+            // Extraction of X position (mandatory !!!)
+            std::getline(ss, token, ',');
+            int posX = std::stoi(token);
+
+            // Extraction of Y position (mandatory !!!)
+            std::getline(ss, token, ',');
+            int posY = std::stoi(token);
+
+            sf::FloatRect hitbox;
+            hitbox.size.x = 16.f;
+            hitbox.size.y = 32.f;
+
+            hitbox.position.x = posX;
+            hitbox.position.y = posY;
+
+            StairTile tile;
+            tile.hitboxes.push_back(hitbox);
+            tile.type = static_cast<StairType>(stairType);
+
+            m_stairTiles.push_back(tile);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error al procesar stair tile en la línea: " << line
                       << ". Excepción: " << e.what() << std::endl;
         }
     }

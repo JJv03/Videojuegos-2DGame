@@ -44,6 +44,12 @@ Player::Player()
     blinkTimer = 0.0f;
     blinkInterval = 0.05f; // 0.1 segs
     visible = true;
+
+    // Stairs
+    moveToStair = 0.f;
+    isNearStair = false;
+    isPositionedInStair = false;
+    stair = new StairTile();
 }
 
 void Player::handleInput(sf::Event event)
@@ -53,6 +59,10 @@ void Player::handleInput(sf::Event event)
 
 void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
+    // If player is near stair, collisions will make it true
+    this->isNearStair = false;
+    this->stair = new StairTile();
+
     getActiveState()->update(*this, deltaTime);
     updateActivationZones(viewPosition);
     updateActiveSubWeapons(deltaTime);
@@ -164,7 +174,12 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (DoorTile* doorTile = dynamic_cast<DoorTile*>(&other))
     {
-        this->onCollision_DoorTile(doorTile->doorId, game);
+        game.activateDoorTile(doorTile->doorId);
+    }
+    else if (StairTile* stairTile = dynamic_cast<StairTile*>(&other))
+    {
+        this->isNearStair = true;
+        this->stair = stairTile;
     }    
     else if (dynamic_cast<Item*>(&other)){
         this->onCollision_Item(other);
@@ -326,11 +341,6 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
     */
 
     return hasCollided;
-}
-
-void Player::onCollision_DoorTile(int doorId, Game &game)
-{
-    game.activateDoorTile(doorId);
 }
 
 void Player::onCollision_Item(Entity &entityItem)

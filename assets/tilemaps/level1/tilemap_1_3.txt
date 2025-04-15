@@ -13,6 +13,8 @@ doors
 end_doors
 breakable
 end_breakable
+stair
+end_stair
 enemies
 2,136.f,112.f,50.0,50.0
 2,395.f,112.f,50.0,50.0

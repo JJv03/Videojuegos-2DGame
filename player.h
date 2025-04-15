@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "entity.h"
 #include "item.h"
+#include "tile.h"
 
 class PlayerState;
 class Game;
@@ -153,6 +154,12 @@ public:
     sf::Clock revivingClock;
     bool deathRestart;
 
+    // Stairs
+    float moveToStair;
+    bool isNearStair;
+    bool isPositionedInStair;
+    StairTile* stair;
+
     // Weapons
     Whip whip;
     SubWeapon subWeapon;
@@ -232,7 +239,6 @@ public:
     void updateActivationZones(const sf::Vector2f &viewPosition);
     PlayerPosition getPlayerOffsetPosition();
     bool onCollision_SolidTile(Entity &solidTile);
-    void onCollision_DoorTile(int doorId, Game &game);
     void onCollision_Item(Entity &entityItem);
 
     // Entity functions

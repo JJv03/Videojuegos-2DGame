@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "../entity.h"
 #include "../tilemap.h"
+#include "../player.h"
 
 class Enemy : public EntitySprite
 {

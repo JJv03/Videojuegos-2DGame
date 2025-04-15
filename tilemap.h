@@ -8,6 +8,7 @@
 #include "item.h"
 
 using BreakableType = BreakableTile::Type;
+using StairType = StairTile::Type;
 
 
 
@@ -75,6 +76,9 @@ private:
     // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
     void processFileBreakableTiles(std::ifstream &file);
 
+    // Function that processes the tilemap file's extra stair tiles section
+    void processFileStairTiles(std::ifstream &file);
+
     // Function to process the enemy section in tilemap file
     void processFileEnemies(std::ifstream &file);
 
@@ -114,6 +118,9 @@ public:
 
     // Vector with the properties of each door tile
     std::vector<DoorTile> m_doorTiles;
+
+    // Vector with the properties of each stair tile
+    std::vector<StairTile> m_stairTiles;
 
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);
