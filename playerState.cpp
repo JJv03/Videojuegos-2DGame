@@ -1035,7 +1035,7 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
+                             player.sprite->getPosition().y+2)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
