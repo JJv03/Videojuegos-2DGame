@@ -825,25 +825,6 @@ void PlayerStairWalkState::init(Player& player)
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 {
-    auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.right) {
-            player.dir = RIGHT;
-        }
-        
-        if (keyPressed->scancode == controls.left) {
-            player.dir = LEFT;
-
-        }
-
-
-        if (keyPressed->scancode == controls.attack) {
-            player.isWalking = false;
-            player.isAttacking = true;
-            player.setState(state<AttackStairs>());
-        }
-          
-    }
 }
 
 void PlayerStairWalkState::update(Player& player, float deltaTime)
@@ -1635,6 +1616,7 @@ void PlayerDeadState::init(Player& player)
     player.isDead = true;
     player.isInvulnerable = true;
     player.deathRestart = true;
+    player.isOnStairs = false;
 }
 
 void PlayerDeadState::handleInput(Player& player, sf::Event event)
