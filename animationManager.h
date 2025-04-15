@@ -13,14 +13,16 @@ enum animationID{
     walkSimon,
     walkSlowSimon,
     jumpSimon,
-    stairUpSimon,
-    stairDownSimon,
     hurtSimon,
     deathSimon,
     attackSimon,
     duckSimon,
     attackFloorSimon,
     invulnerableSimon,
+    stairAscendIdleSimon,
+    stairDescendIdleSimon,
+    stairAscendWalkSimon,
+    stairDescendWalkSimon,
     
     //Whip
     whipLvl1StandingJumping,

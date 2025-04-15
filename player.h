@@ -42,9 +42,9 @@ public:
     };
 
     std::vector<AnimationManager::Frame> lvl1Frames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(10, 477), sf::Vector2(16, 24)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.3f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
     };
 
@@ -147,6 +147,7 @@ public:
     float blinkTimer;
     bool visible;
     float blinkInterval;
+    float autoWalkDistance;
 
     float verticalSpeed;
     float horizontalSpeed;
@@ -155,10 +156,10 @@ public:
     bool deathRestart;
 
     // Stairs
-    float moveToStair;
     bool isNearStair;
     bool isPositionedInStair;
-    StairTile* stair;
+    bool isStairUpRight;
+    StairTile* stairStart;
 
     // Weapons
     Whip whip;
@@ -203,25 +204,38 @@ public:
     };
 
     std::vector<AnimationManager::Frame> attackFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 78), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 78), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 32)), 0.3f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 32)), 0.1f}};
 
     std::vector<AnimationManager::Frame> attackFloorFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.01f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 24)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 24)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.3f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
+
+    std::vector<AnimationManager::Frame> stairAscendIdleFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.2f},
+    };
+
+    std::vector<AnimationManager::Frame> stairAscendWalkFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> stairDescendIdleFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.2f},
+    };
+
+    std::vector<AnimationManager::Frame> stairDescendWalkFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.1f},
+    };
 
     std::vector<AnimationManager::Frame> deadFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(308, 21), sf::Vector2(16, 24)), 0.5f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 21), sf::Vector2(32, 16)), 0.5f},
-
     };
     // --------------------------------
 

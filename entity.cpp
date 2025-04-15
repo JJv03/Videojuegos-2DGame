@@ -17,5 +17,6 @@ std::vector<sf::FloatRect> Entity::getBounds() const{
 }
 
 std::vector<sf::FloatRect> EntitySprite::getBounds() const{
-    return std::vector<sf::FloatRect>({sprite.get()->getGlobalBounds()});
+    return hitboxes;
+    //return std::vector<sf::FloatRect>({sprite.get()->getGlobalBounds()});
 }

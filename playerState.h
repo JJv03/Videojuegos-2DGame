@@ -62,6 +62,20 @@ public:
     void hello() override;
 };
 
+// ---------------------------- AUTO-WALK ----------------------------
+class PlayerAutoWalkState : public PlayerState
+{
+public:
+    PlayerAutoWalkState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
+    void hello() override;
+};
+
 // ---------------------------- JUMP ----------------------------
 class PlayerJumpState : public PlayerState
 {
@@ -93,10 +107,10 @@ public:
 
 
 // ---------------------------- STAIR ----------------------------
-class PlayerStairState : public PlayerState
+class PlayerStairIdleState : public PlayerState
 {
 public:
-PlayerStairState();
+PlayerStairIdleState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;

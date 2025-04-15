@@ -25,6 +25,7 @@ Player::Player()
     isPressingUp = false;
     hasDied = false;
     deathRestart = false;
+    autoWalkDistance = 0.f;
 
     // Secondary weapon
     weaponIsActive = false;
@@ -46,10 +47,10 @@ Player::Player()
     visible = true;
 
     // Stairs
-    moveToStair = 0.f;
     isNearStair = false;
     isPositionedInStair = false;
-    stair = new StairTile();
+    isStairUpRight = false;
+    stairStart = new StairTile();
 }
 
 void Player::handleInput(sf::Event event)
@@ -59,13 +60,13 @@ void Player::handleInput(sf::Event event)
 
 void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
-    // If player is near stair, collisions will make it true
-    this->isNearStair = false;
-    this->stair = new StairTile();
-
     getActiveState()->update(*this, deltaTime);
     updateActivationZones(viewPosition);
     updateActiveSubWeapons(deltaTime);
+
+    // If player is near stair, collisions will make it true
+    this->isNearStair = false;
+    this->stairStart = new StairTile();
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -149,10 +150,12 @@ void Player::onCollision(Entity &other, Game &game)
 {
     if (dynamic_cast<SolidTile *>(&other))
     {
-        // std::cout << "Es un SolidTile\n";
-        if (!this->onCollision_SolidTile(other))
-        {
-            this->isOnGround = false; // If Simon is not colliding with any solid tile
+        if(!this->isOnStairs){ // If Simon is on stairs, ignore collisions with solid tiles
+            // std::cout << "Es un SolidTile\n";
+            if (!this->onCollision_SolidTile(other))
+            {
+                this->isOnGround = false; // If Simon is not colliding with any solid tile
+            }
         }
     }
     else if (Enemy *enemy = dynamic_cast<Enemy *>(&other))
@@ -179,7 +182,7 @@ void Player::onCollision(Entity &other, Game &game)
     else if (StairTile* stairTile = dynamic_cast<StairTile*>(&other))
     {
         this->isNearStair = true;
-        this->stair = stairTile;
+        this->stairStart = stairTile;
     }    
     else if (dynamic_cast<Item*>(&other)){
         this->onCollision_Item(other);

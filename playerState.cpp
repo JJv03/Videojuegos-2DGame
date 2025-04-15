@@ -12,10 +12,11 @@ std::unique_ptr<T> state() {
 using Idle = PlayerIdleState;
 using Walk = PlayerWalkState;
 using Walk = PlayerWalkState;
+using AutoWalk = PlayerAutoWalkState;
 using Jump = PlayerJumpState;
 using Duck = PlayerDuckState;
-using Stairs = PlayerStairState;
-using StairsWalk = PlayerStairWalkState;
+using StairIdle = PlayerStairIdleState;
+using StairWalk = PlayerStairWalkState;
 using AttackIdle = PlayerAttackIdleState;
 using AttackJump = PlayerAttackJumpState;
 using AttackDuck = PlayerAttackDuckState;
@@ -65,19 +66,21 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
         
         if (keyPressed->scancode == controls.up) {
-            if (player.isNearStair && (player.stair->type == StairTile::Type::BOTTOM_LEFT ||
-                                       player.stair->type == StairTile::Type::BOTTOM_RIGHT))
+            if (player.isNearStair && (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+                                       player.stairStart->type == StairTile::Type::BOTTOM_RIGHT))
             {
-                player.moveToStair = player.stair->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                player.autoWalkDistance = player.stairStart->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                player.setState(state<AutoWalk>());
             }
         }
 
         if (keyPressed->scancode == controls.down) {
-            if (player.isNearStair && (player.stair->type == StairTile::Type::TOP_LEFT ||
-                                       player.stair->type == StairTile::Type::TOP_RIGHT))
+            if (player.isNearStair && (player.stairStart->type == StairTile::Type::TOP_LEFT ||
+                                       player.stairStart->type == StairTile::Type::TOP_RIGHT))
             {
-                player.moveToStair = player.stair->hitboxes[0].position.x - player.getBounds()[0].position.x;
-                
+                player.autoWalkDistance = player.stairStart->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                player.setState(state<AutoWalk>());
+
             } else {
                 player.isDucking = true;
                 player.setState(state<Duck>());
@@ -121,24 +124,6 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
-    // Player moves to the right
-    if(player.moveToStair > 0.f){
-        float move = deltaTime * gPlayerMovementSpeed;
-
-        player.sprite->move({move, 0.f});
-        player.moveToStair -= move;
-        player.moveToStair = max(0.f, player.moveToStair);
-    }
-    
-    // Player moves to the left
-    if(player.moveToStair < 0.f){
-        float move = deltaTime * gPlayerMovementSpeed;
-
-        player.sprite->move({-move, 0.f});
-        player.moveToStair += move;
-        player.moveToStair = min(0.f, player.moveToStair);
-    }
-
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -289,6 +274,7 @@ void PlayerWalkState::update(Player& player, float deltaTime)
         player.sprite->move({-1.f * deltaTime * gPlayerMovementSpeed, 0.f});
         player.sprite->setScale({1.f, 1.f});
     }
+    
     player.currentAnimation = walkSimon;
     
     if (!player.animationManager->isPlaying(player.currentAnimation)){
@@ -339,6 +325,108 @@ void PlayerWalkState::hello(){
 }
 
 // --------------------------------------------------------------
+
+
+// ---------------------------- AUTO-WALK ----------------------------
+
+PlayerAutoWalkState::PlayerAutoWalkState() : PlayerState()
+{
+}
+
+void PlayerAutoWalkState::init(Player& player)
+{
+}
+
+void PlayerAutoWalkState::handleInput(Player& player, sf::Event event)
+{
+    
+}
+
+void PlayerAutoWalkState::update(Player& player, float deltaTime)
+{   
+    float move = deltaTime * gPlayerMovementSpeed;
+
+    if(abs(player.autoWalkDistance) < 1.f) {
+        move = abs(player.autoWalkDistance);
+    }
+
+    // Player going right
+    if(player.autoWalkDistance > 0.f)
+    {
+        player.sprite->move({move, 0.f});
+        player.dir = RIGHT;
+        player.sprite->setScale({-1.f, 1.f});
+        player.autoWalkDistance -= move;
+
+        if(player.autoWalkDistance <= 0.f){
+            if(player.isNearStair){
+                player.isPositionedInStair = true;
+
+                if(player.stairStart->type == StairTile::Type::BOTTOM_RIGHT ||
+                   player.stairStart->type == StairTile::Type::TOP_RIGHT){
+
+                    player.dir = LEFT;
+                    player.sprite->setScale({1.f, 1.f});
+                }
+
+                player.setState(state<StairWalk>());
+
+            } else {
+                player.setState(state<Idle>());
+            }
+        }
+    }    
+    // Player going left
+    else {
+        player.sprite->move({-move, 0.f});
+        player.dir = LEFT;
+        player.sprite->setScale({1.f, 1.f});
+        player.autoWalkDistance += move;
+
+        if(player.autoWalkDistance >= 0.f){
+            if(player.isNearStair){
+                player.isPositionedInStair = true;
+
+                if(player.stairStart->type == StairTile::Type::BOTTOM_LEFT||
+                   player.stairStart->type == StairTile::Type::TOP_LEFT){
+
+                    player.dir = RIGHT;
+                    player.sprite->setScale({-1.f, 1.f});
+                }
+
+                player.setState(state<StairWalk>());
+            } else {
+                player.setState(state<Idle>());
+            }
+        }
+    }
+    
+    player.currentAnimation = walkSimon;
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        
+        player.animationManager->playAnimation(player.currentAnimation);
+
+    }
+    player.animationManager->update(deltaTime);
+}
+
+void PlayerAutoWalkState::draw(Player& player, sf::RenderWindow &window)
+{
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
+}
+
+void PlayerAutoWalkState::end(Player& player)
+{
+    player.autoWalkDistance = 0.f;
+}
+
+void PlayerAutoWalkState::hello(){
+    std::cout << "PLAYER STATE: Auto Walk" << std::endl;
+}
 
 
 // ---------------------------- JUMP ----------------------------
@@ -570,16 +658,34 @@ void PlayerDuckState::hello(){
 
 // ---------------------------- STAIRS ----------------------------
 
-PlayerStairState::PlayerStairState() : PlayerState()
+PlayerStairIdleState::PlayerStairIdleState() : PlayerState()
 {
 }
 
-void PlayerStairState::init(Player& player)
+void PlayerStairIdleState::init(Player& player)
 {
-    player.isOnStairs = true;   
+    player.isOnStairs = true;
+    
+    if(player.isPositionedInStair){ // If player just arrived to the stair
+        player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+                                 player.stairStart->type == StairTile::Type::TOP_RIGHT);
+        player.isPositionedInStair = false;
+        
+        /*
+        if(player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+           player.stairStart->type == StairTile::Type::BOTTOM_RIGHT){
+            
+            player.sprite->move({0.f,-8.0f});
+        }
+        else
+        {
+            player.sprite->move({0.f,8.0f});
+        }
+        */
+    }
 }
 
-void PlayerStairState::handleInput(Player& player, sf::Event event)
+void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
 {
     
     auto controls = configManager.getControls();
@@ -587,15 +693,40 @@ void PlayerStairState::handleInput(Player& player, sf::Event event)
         if (keyPressed->scancode == controls.right) {
             player.dir = RIGHT;
             player.isWalking = true;
-            player.setState(state<StairsWalk>());
+            player.setState(state<StairWalk>());
         }
         
         if (keyPressed->scancode == controls.left) {
             player.dir = LEFT;
             player.isWalking = true;
-            player.setState(state<StairsWalk>());
+            player.setState(state<StairWalk>());
         }
 
+        if (keyPressed->scancode == controls.up) {
+            player.isWalking = true;
+
+            if(player.isStairUpRight){
+                player.dir = RIGHT;
+                player.setState(state<StairWalk>());
+
+            } else {
+                player.dir = LEFT;
+                player.setState(state<StairWalk>());
+            }
+        }
+
+        if (keyPressed->scancode == controls.down) {
+            player.isWalking = true;
+
+            if(player.isStairUpRight){
+                player.dir = LEFT;
+                player.setState(state<StairWalk>());
+
+            } else {
+                player.dir = RIGHT;
+                player.setState(state<StairWalk>());
+            }
+        }
 
         if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
@@ -605,21 +736,42 @@ void PlayerStairState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerStairState::update(Player& player, float deltaTime)
+void PlayerStairIdleState::update(Player& player, float deltaTime)
 {
+    if(player.isStairUpRight){
+        if(player.dir == LEFT){
+            player.currentAnimation = stairDescendIdleSimon;
+        } else {
+            player.currentAnimation = stairAscendIdleSimon;
+        }
+
+    } else {
+        if(player.dir == RIGHT){
+            player.currentAnimation = stairDescendIdleSimon;
+        } else {
+            player.currentAnimation = stairAscendIdleSimon;
+        }
+    }
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        
+        player.animationManager->playAnimation(player.currentAnimation);
+
+    }
+    player.animationManager->update(deltaTime);
+
 }
 
-void PlayerStairState::draw(Player& player, sf::RenderWindow &window)
+void PlayerStairIdleState::draw(Player& player, sf::RenderWindow &window)
 {
     window.draw(*player.sprite);
 }
 
-void PlayerStairState::end(Player& player)
+void PlayerStairIdleState::end(Player& player)
 {
-    
 }
 
-void PlayerStairState::hello(){
+void PlayerStairIdleState::hello(){
     std::cout << "PLAYER STATE: Stairs" << std::endl;
 }
 
@@ -663,13 +815,45 @@ void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerStairWalkState::update(Player& player, float deltaTime)
 {
+    /*
     if(!player.isOnStairs){
         player.setState(state<Idle>());
 
     } else if(!player.isWalking){
-        player.setState(state<Stairs>());
+        player.setState(state<StairIdle>());
+    }
+    */
+
+    if(player.isStairUpRight){
+        if(player.dir == LEFT){
+            player.currentAnimation = stairDescendWalkSimon;
+        } else {
+            player.currentAnimation = stairAscendWalkSimon;
+        }
+
+    } else {
+        if(player.dir == RIGHT){
+            player.currentAnimation = stairDescendWalkSimon;
+        } else {
+            player.currentAnimation = stairAscendWalkSimon;
+        }
+    }
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        
+        player.animationManager->playAnimation(player.currentAnimation);
+
     }
 
+    player.animationManager->update(deltaTime);
+
+    if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
+    {
+        player.isWalking = false;
+        //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
+
+        player.setState(state<StairIdle>());
+    }
     /*
     if (!player.animationManager->isPlaying(player.currentAnimation)){
         
@@ -681,7 +865,8 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-    }*/
+    }
+    */
     
 }
 
@@ -1169,7 +1354,7 @@ void PlayerAttackStairState::update(Player& player, float deltaTime)
 {
     if(!player.isAttacking){
         player.whip.animationManager->playAnimation(whipNoAttack);
-        player.setState(state<Stairs>());
+        player.setState(state<StairIdle>());
     }
 
 }

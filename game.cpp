@@ -67,6 +67,10 @@ void Game::init()
     animationManager->addAnimation(duckSimon, player.duckFrames);
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
+    animationManager->addAnimation(stairDescendIdleSimon, player.stairDescendIdleFrames, false);
+    animationManager->addAnimation(stairAscendIdleSimon, player.stairAscendIdleFrames, false);
+    animationManager->addAnimation(stairDescendWalkSimon, player.stairDescendWalkFrames, false);
+    animationManager->addAnimation(stairAscendWalkSimon, player.stairAscendWalkFrames, false);
     animationManager->addAnimation(hurtSimon, player.hurtFrames);
     animationManager->addAnimation(deathSimon, player.deadFrames, false);
     // animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
