@@ -142,6 +142,7 @@ public:
     // Interactions
     bool isInvulnerable;
     float invulnerableTime;
+    bool startInvulnerable;
     bool isPassingObject;
     float invulnerableTimeCounter;
     float blinkTimer;

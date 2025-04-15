@@ -159,6 +159,7 @@ void PlayerIdleState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -295,6 +296,7 @@ void PlayerWalkState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -494,6 +496,7 @@ void PlayerJumpState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -626,6 +629,7 @@ void PlayerDuckState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -756,6 +760,28 @@ void PlayerStairIdleState::update(Player& player, float deltaTime)
             player.currentAnimation = stairAscendIdleSimon;
         }
     }
+
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.startInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
     
     if (!player.animationManager->isPlaying(player.currentAnimation)){
         
@@ -871,6 +897,28 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
     }
 
     player.stairStepDistance = max(0.f, player.stairStepDistance - move);
+
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.startInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
 
     if (!player.animationManager->isPlaying(player.currentAnimation)){
         
@@ -1033,6 +1081,7 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -1180,6 +1229,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -1338,6 +1388,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         
         if (player.invulnerableTimeCounter >= player.invulnerableTime) {
             player.isInvulnerable = false;
+            player.startInvulnerable = false;
             player.visible = true; // Ensure the player is visible after invulnerability ends
             player.invulnerableTimeCounter = 0.0f; // Reset the counter
             player.sprite->setColor(sf::Color::White);
@@ -1402,6 +1453,28 @@ void PlayerAttackStairState::update(Player& player, float deltaTime)
         player.setState(state<StairIdle>());
     }
 
+    if (player.isInvulnerable)
+    {
+        player.blinkTimer += deltaTime;
+        if (player.blinkTimer >= player.blinkInterval) {
+            player.visible = !player.visible; // Toggle visibility
+            player.blinkTimer = 0.0f; // Reset the timer
+            player.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            player.whip.sprite->setColor(player.visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        }
+        
+        if (player.invulnerableTimeCounter >= player.invulnerableTime) {
+            player.isInvulnerable = false;
+            player.startInvulnerable = false;
+            player.visible = true; // Ensure the player is visible after invulnerability ends
+            player.invulnerableTimeCounter = 0.0f; // Reset the counter
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+        } else {
+            player.invulnerableTimeCounter += deltaTime;
+        }
+    }
+
 }
 
 void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
@@ -1464,8 +1537,11 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     player.animationManager->update(deltaTime);
 
     
-    if (player.isOnGround)
-    {
+    if (!player.startInvulnerable && player.isOnGround){
+        player.startInvulnerable = true;
+    }
+
+    if(player.startInvulnerable){
         player.blinkTimer = 0.0f; 
         player.visible = true; 
         player.isJumping = false;
@@ -1473,7 +1549,6 @@ void PlayerHurtState::update(Player& player, float deltaTime)
         player.invulnerableTimeCounter = 0.0f; 
         player.setState(state<Idle>());
     }   
-
 }
 
 void PlayerHurtState::draw(Player& player, sf::RenderWindow &window)
@@ -1491,6 +1566,61 @@ void PlayerHurtState::end(Player& player)
 
 void PlayerHurtState::hello(){
     std::cout << "PLAYER STATE: Hurt" << std::endl;
+}
+
+// --------------------------------------------------------------
+
+// ---------------------------- HURT STAIR ----------------------------
+
+PlayerHurtStairState::PlayerHurtStairState() : PlayerState()
+{
+}
+
+void PlayerHurtStairState::init(Player& player)
+{
+    player.startInvulnerable = true;
+    player.isBeingHurt = true; 
+    player.isInvulnerable = true;
+    player.isOnStairs = true;
+}
+
+void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
+{
+}
+
+void PlayerHurtStairState::update(Player& player, float deltaTime)
+{
+    if(player.startInvulnerable){
+        player.blinkTimer = 0.0f; 
+        player.visible = true; 
+        player.isJumping = false;
+        player.isBeingHurt = false;
+        player.invulnerableTimeCounter = 0.0f; 
+        player.setState(state<Idle>()); 
+    }
+
+    if(player.stairStepDistance != 0.f) {
+        player.setState(state<StairWalk>());
+    } else {
+        player.setState(state<StairIdle>());
+    }
+}
+
+void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)
+{
+    if(player.visible) {
+        window.draw(*player.sprite);
+    }
+    
+}
+
+void PlayerHurtStairState::end(Player& player)
+{
+    
+}
+
+void PlayerHurtStairState::hello(){
+    std::cout << "PLAYER STATE: Hurt Stair" << std::endl;
 }
 
 // --------------------------------------------------------------
@@ -1549,6 +1679,7 @@ void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 void PlayerDeadState::end(Player& player)
 {
     player.isInvulnerable = false;
+    player.startInvulnerable = false;
     player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
     player.hasDied = false;

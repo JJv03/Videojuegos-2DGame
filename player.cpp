@@ -39,6 +39,7 @@ Player::Player()
 
     // Interactions
     isInvulnerable = false;
+    startInvulnerable = false;
     invulnerableTime = 3.0f; // 3 segs
     invulnerableTimeCounter = 0.0f;
     isPassingObject = false;
@@ -166,10 +167,14 @@ void Player::onCollision(Entity &other, Game &game)
 
             if (this->health > 0)
             {
-                this->isJumping = true;
-                this->verticalSpeed = -gPlayerJumpForce;
-                this->isOnGround = false;
-                this->setState(std::make_unique<PlayerHurtState>());
+                if(this->isOnStairs){
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
             }
             else{
                 this->setState(std::make_unique<PlayerDeadState>());

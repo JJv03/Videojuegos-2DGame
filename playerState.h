@@ -208,6 +208,20 @@ PlayerHurtState();
     void hello() override;
 };
 
+// ---------------------------- HURT STAIR ----------------------------
+class PlayerHurtStairState : public PlayerState
+{
+public:
+    PlayerHurtStairState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
+    void hello() override;
+};
+
 // ---------------------------- DEAD ----------------------------
 class PlayerDeadState : public PlayerState
 {
