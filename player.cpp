@@ -80,7 +80,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    //newState->hello();
+    newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);
