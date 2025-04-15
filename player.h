@@ -8,6 +8,7 @@
 #include "entity.h"
 #include "item.h"
 #include "tile.h"
+#include "collisionGrid.h"
 
 class PlayerState;
 class Game;

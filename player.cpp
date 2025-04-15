@@ -451,6 +451,12 @@ void Player::updateActiveSubWeapons(float deltaTime) {
             subW.animationManager->update(deltaTime);
 
             // Hanlde boomerang colision with player
+            if (isIntersecting(subW.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && subW.changedDirection) {
+                std::cout << "Boomerang colision with player" << std::endl;
+                subW.lifeTime = 0.f; // Borrar boomerang
+            }
+            
+            
         }
         else if (subW.type == ItemType::STOPWATCH){
 
