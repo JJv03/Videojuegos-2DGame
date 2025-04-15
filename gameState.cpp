@@ -2031,13 +2031,15 @@ void InitAnimationGS::init(){
     // ======================================================
     //                      SOUND AND MUSIC 
     // ======================================================
-
-    initAnimSounds.loadSound("menuEnter", "./assets/sounds/05.wav");
     
     auto audio = configManager.getAudio();
 
-    initAnimSounds.loadMusic("menuMusic", "./assets/music/03AVisionofDarkSecrets.mp3");
-    initAnimSounds.playMusic("menuMusic", initAnimSounds.realVolume(audio.master_volume, audio.music_volume));
+    initAnimSounds.loadMusic("initAnimMusic", "./assets/music/03AVisionofDarkSecrets.mp3");
+    initAnimSounds.playMusic("initAnimMusic", initAnimSounds.realVolume(audio.master_volume, audio.music_volume));
+
+    fadingOutMusic = false;
+    currentMusicVolume = initAnimSounds.realVolume(audio.master_volume, audio.music_volume);
+    fadeOutSpeed = 20.f;
 }
 
 void InitAnimationGS::handleInput(sf::Event event){
@@ -2147,9 +2149,9 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             sf::Sprite& belmont = initAnimationSprites[15];
             pos = belmont.getPosition();
 
-            if(pos.x > 235.f){
-                pos.x -= 1.f;
-                if (pos.x < 235.f) pos.x = 235.f;
+            if(pos.x < 165.f){
+                pos.x += 1.f;
+                if (pos.x > 165.f) pos.x = 165.f;
                 belmont.setPosition(pos);
             }
 
@@ -2157,11 +2159,18 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             sf::Sprite& dracula = initAnimationSprites[10];
             pos = dracula.getPosition();
 
-            if (pos.x < 0.f) {
-                pos.x += 1.f;
-                if (pos.x > 0.f) pos.x = 0.f;
+            if (pos.x > 400.f) {
+                pos.x -= 1.f;
+                if (pos.x < 400.f) pos.x = 400.f;
                 dracula.setPosition(pos);
             }
+        
+            if (fadingOutMusic && currentMusicVolume > 0.f) {
+                currentMusicVolume -= fadeOutSpeed * deltaTime;
+                if (currentMusicVolume < 0.f) currentMusicVolume = 0.f;
+                initAnimSounds.adjustAllMusicVolumes(currentMusicVolume);
+            }
+        
             break;
         }
 
@@ -2205,6 +2214,7 @@ void InitAnimationGS::drawSlide(sf::RenderWindow& window){
     if (timer < fadeDuration) {
         alpha = (timer / fadeDuration) * 255.0f; // Fade in
     } else if (timer > (timerInterval - fadeDuration)) {
+        if (slide == 5) fadingOutMusic = true;
         alpha = ((timerInterval - timer) / fadeDuration) * 255.0f; // Fade out
     }
 
@@ -2243,13 +2253,15 @@ void InitAnimationGS::resetMovingSprites(){
         fume.setPosition(sf::Vector2f(0, yPosition - 25));
 
         sf::Sprite& dracula = initAnimationSprites[10];
+        sf::Vector2f scale = dracula.getScale();
+        dracula.setScale(sf::Vector2f(-scale.x, scale.y));
         float spriteHeight = dracula.getGlobalBounds().size.y - 55;
-        dracula.setPosition(sf::Vector2f(-115, spriteHeight));
+        dracula.setPosition(sf::Vector2f(gWindowHeight + 135, spriteHeight));
         
         sf::Sprite& belmont = initAnimationSprites[15];
-        belmont.setScale(sf::Vector2f(1.4, 1.4));
+        belmont.setScale(sf::Vector2f(-1.4, 1.4));
         spriteHeight = dracula.getGlobalBounds().size.y - 60;
-        belmont.setPosition(sf::Vector2f(350, spriteHeight));
+        belmont.setPosition(sf::Vector2f(30, spriteHeight));
     }
 
 }

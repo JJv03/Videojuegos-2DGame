@@ -215,6 +215,9 @@ private:
     int slide;
     float timer = 0.0f;
     float timerInterval = 9.0f;
+    bool fadingOutMusic;
+    float currentMusicVolume;
+    float fadeOutSpeed;
 public:
     explicit InitAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitAnimationGS() override;
