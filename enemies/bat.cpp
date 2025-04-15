@@ -198,14 +198,14 @@ void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone,
 }
 
 // Render bat and debug info (spawn zone)
-void Bat::draw(sf::RenderWindow &window, bool debugDraw)
+void Bat::draw(sf::RenderWindow &window)
 {
     if (sprite && isActive)
     {
-        Enemy::draw(window, debugDraw);
+        Enemy::draw(window);
     }
 
-    if (debugDraw)
+    if (gDrawHitboxes)
     {
         // Draw spawn zone for debugging
         sf::RectangleShape zoneShape({spawnZone.size.x, spawnZone.size.y});

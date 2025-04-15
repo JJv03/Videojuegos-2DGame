@@ -33,7 +33,7 @@ public:
     // Resets enemy to its original position
     virtual void resetPosition();
 
-    virtual void draw(sf::RenderWindow &window, bool debugDraw);
+    virtual void draw(sf::RenderWindow &window);
 
     void onCollision_SolidTile(Entity &solidTile);
     void onCollision_OnlyGround(Entity &solidTile);

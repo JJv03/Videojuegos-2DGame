@@ -362,12 +362,14 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         tilemaps[currentStage].drawScene(window, camera);
 
         // DEBUG: Draw player and whip hitbox
-        window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
-        if (player.isAttacking)
-        {
-            window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
+        if(gDrawHitboxes){
+            window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
+            if (player.isAttacking)
+            {
+                window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
+            }
         }
-
+        
         // =========================================
         // ================== GUI ==================
         // =========================================

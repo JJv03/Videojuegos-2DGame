@@ -86,28 +86,28 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            zombieSpawner.draw(window, true);
+            zombieSpawner.draw(window);
         }
     }
     for (auto &leopard : leopard)
     {
         if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard->draw(window, true);
+            leopard->draw(window);
         }
     }
     for (auto &bat : bat)
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat->draw(window, true);
+            bat->draw(window);
         }
     }
     for (auto &fishman : fishman)
     {
         if (fishman->level == currentLevel && fishman->stage == currentStage)
         {
-            fishman->draw(window, true);
+            fishman->draw(window);
         }
     }
 }

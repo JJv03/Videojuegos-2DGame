@@ -45,5 +45,5 @@ public:
     void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
 
     // Render zombies and debug info
-    void draw(sf::RenderWindow &window, bool debugDraw = false);
+    void draw(sf::RenderWindow &window);
 };

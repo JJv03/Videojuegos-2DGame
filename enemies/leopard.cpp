@@ -262,13 +262,13 @@ void Leopard::resetPosition()
 }
 
 // Render with optional debug visuals
-void Leopard::draw(sf::RenderWindow &window, bool debugDraw)
+void Leopard::draw(sf::RenderWindow &window)
 {
     if (sprite && isActive)
     {
-        Enemy::draw(window, debugDraw);
+        Enemy::draw(window);
 
-        if (debugDraw)
+        if (gDrawHitboxes)
         {
             // Draw vision field
             sf::RectangleShape visionRect;

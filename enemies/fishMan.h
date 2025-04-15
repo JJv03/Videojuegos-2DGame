@@ -65,7 +65,7 @@ public:
     void moveToSpawnPosition(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds);
 
     // Render fishman and debug info
-    void draw(sf::RenderWindow &window, bool debugDraw) override;
+    void draw(sf::RenderWindow &window) override;
 
     // Update fishman logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone,

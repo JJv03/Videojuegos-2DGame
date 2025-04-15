@@ -491,7 +491,7 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
         window.draw(*m_items[i]->sprite);
     }
 
-    drawHitboxes(window);
+    if(gDrawHitboxes) drawHitboxes(window);
 }
 
 sf::FloatRect TileMap::getMapBounds() const

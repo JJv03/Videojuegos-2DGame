@@ -138,17 +138,17 @@ void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const Til
 }
 
 // Render active zombies and debug visuals
-void ZombieSpawner::draw(sf::RenderWindow &window, bool debugDraw)
+void ZombieSpawner::draw(sf::RenderWindow &window)
 {
     for (auto &zombie : zombies)
     {
         if (zombie->sprite && zombie->isActive)
         {
-            zombie->draw(window, debugDraw);
+            zombie->draw(window);
         }
     }
 
-    if (debugDraw)
+    if (gDrawHitboxes)
     {
         sf::RectangleShape zoneShape({spawnZone.size.x, spawnZone.size.y});
         zoneShape.setPosition({spawnZone.position.x, spawnZone.position.y});

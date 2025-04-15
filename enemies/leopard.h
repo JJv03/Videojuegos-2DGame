@@ -44,7 +44,7 @@ public:
     void resetPosition() override;
 
     // Render leopard and debug info
-    void draw(sf::RenderWindow &window, bool debugDraw) override;
+    void draw(sf::RenderWindow &window) override;
 
     // Update leopard logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,

@@ -203,11 +203,11 @@ bool Enemy::checkForLedge(Entity &solidTile)
     return true;
 }
 
-void Enemy::draw(sf::RenderWindow &window, bool debugDraw)
+void Enemy::draw(sf::RenderWindow &window)
 {
     window.draw(*sprite); // Draw the enemy sprite
 
-    if (debugDraw) // Only draw hitboxes in debug mode
+    if (gDrawHitboxes) // Only draw hitboxes in debug mode
     {
         for (const auto &hitbox : hitboxes)
         {
