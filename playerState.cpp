@@ -674,18 +674,6 @@ void PlayerStairIdleState::init(Player& player)
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
                                  player.stairStart->type == StairTile::Type::TOP_RIGHT);
         player.isPositionedInStair = false;
-        
-        /*
-        if(player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
-           player.stairStart->type == StairTile::Type::BOTTOM_RIGHT){
-            
-            player.sprite->move({0.f,-8.0f});
-        }
-        else
-        {
-            player.sprite->move({0.f,8.0f});
-        }
-        */
     }
 }
 
@@ -827,6 +815,12 @@ void PlayerStairWalkState::init(Player& player)
     player.isDucking = true;
     player.isOnStairs = true;
     player.stairStepDistance = 8.f;
+
+    if(player.isPositionedInStair){ // If player just arrived to the stair
+        player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+                                 player.stairStart->type == StairTile::Type::TOP_RIGHT);
+        player.isPositionedInStair = false;
+    }
 }
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
