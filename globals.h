@@ -89,6 +89,7 @@ extern const float gItemGravity;
 extern const float gSimonFeetCollisionNewHeight;    // Height above the corresponding tile at which Simon is placed after his feet are collide
 
 extern const float gPlayerMovementSpeed;
+extern const float gPlayerStairSpeed;
 extern const float gPlayerGravity;
 extern const float gPlayerJumpForce;
 

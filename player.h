@@ -222,8 +222,8 @@ public:
     };
 
     std::vector<AnimationManager::Frame> stairAscendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 21), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.15f},
     };
 
     std::vector<AnimationManager::Frame> stairDescendIdleFrames{
@@ -231,8 +231,8 @@ public:
     };
 
     std::vector<AnimationManager::Frame> stairDescendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 21), sf::Vector2(16, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.15f},
     };
 
     std::vector<AnimationManager::Frame> deadFrames{

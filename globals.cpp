@@ -86,5 +86,6 @@ const float gItemGravity = 100.f;
 const float gSimonFeetCollisionNewHeight = 0.15f;
 
 const float gPlayerMovementSpeed = 60.0f;
+const float gPlayerStairSpeed = 30.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 205.0f;

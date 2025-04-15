@@ -223,10 +223,27 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
             player.dir = LEFT;
         }
 
+        if (keyPressed->scancode == controls.up) {
+            if (player.isNearStair && (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+                                       player.stairStart->type == StairTile::Type::BOTTOM_RIGHT))
+            {
+                player.autoWalkDistance = player.stairStart->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                player.setState(state<AutoWalk>());
+            }
+        }
+
         if (keyPressed->scancode == controls.down) {
-            player.isWalking = false;
-            player.isDucking = true;
-            player.setState(state<Duck>());
+            if (player.isNearStair && (player.stairStart->type == StairTile::Type::TOP_LEFT ||
+                                       player.stairStart->type == StairTile::Type::TOP_RIGHT))
+            {
+                player.autoWalkDistance = player.stairStart->hitboxes[0].position.x - player.getBounds()[0].position.x;
+                player.setState(state<AutoWalk>());
+
+            } else {
+                player.isWalking = false;
+                player.isDucking = true;
+                player.setState(state<Duck>());
+            } 
         }
     
         if (keyPressed->scancode == controls.jump) {
@@ -846,7 +863,7 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
         player.sprite->setScale(sf::Vector2f(1.f, 1.f));
     }
 
-    float move = deltaTime * gPlayerMovementSpeed;
+    float move = deltaTime * gPlayerStairSpeed;
 
     if(player.stairStepDistance < 1.f) {
         move = player.stairStepDistance;
