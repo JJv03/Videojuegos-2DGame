@@ -46,6 +46,7 @@ void Item::update(const float& deltaTime) {
 
     if (!m_isOnGround) {
         sprite->move({0.f, gItemGravity * deltaTime});
+        hitboxes[0].position.y += gItemGravity * deltaTime;
     }
 
     if (m_animationManager != nullptr) {
@@ -79,7 +80,7 @@ void Item::onCollision_SolidTile(Entity& other){
 
     if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) return;
 
-    sf::FloatRect itemBounds = this->sprite->getGlobalBounds();
+    sf::FloatRect& itemBounds = this->hitboxes[0];
     if (const std::optional<sf::FloatRect> intersection = itemBounds.findIntersection(tileBounds))
     {
         const float overlapX = intersection->size.x;

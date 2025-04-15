@@ -432,7 +432,8 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
     // Items
     for (auto &item : this->m_items)
     {
-        sf::RectangleShape rect = FloatRectToRectShape(item->sprite->getGlobalBounds());
+        //sf::RectangleShape rect = FloatRectToRectShape(item->sprite->getGlobalBounds());
+        sf::RectangleShape rect = FloatRectToRectShape(item->hitboxes[0]);
         window.draw(rect);
     }
 
