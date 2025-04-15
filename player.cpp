@@ -416,16 +416,17 @@ void Player::updateActiveSubWeapons(float deltaTime) {
     for (auto& subW : activeSubWeapons) {
         
         subW.lifeTime -= deltaTime;
+
         if (subW.type == ItemType::AXE)
         {
-            float speed = 150.f * deltaTime;
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
             subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
             subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
             if (subW.animationManager && !subW.animationManager->isPlaying(axeThrowing)) {
                 subW.animationManager->playAnimation(axeThrowing);
             }
             subW.animationManager->update(deltaTime);
+
         }else if (subW.type == ItemType::FIRE_BOMB){
             float speed = 150.f * deltaTime;
             subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
@@ -436,21 +437,27 @@ void Player::updateActiveSubWeapons(float deltaTime) {
                 subW.animationManager->playAnimation(fireBombThrowing);
             }
             subW.animationManager->update(deltaTime);
-        }else if(subW.type == ItemType::BOOMERANG){
-            subW.horizontalSpeed -= deltaTime * 0.5f;
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(horizontalSpeed, 0.f) : sf::Vector2f(-horizontalSpeed, 0.f)); 
-            if (subW.animationManager->isPlaying(boomerangThrowing))
-            {
+
+        }else if(subW.type == ItemType::BOOMERANG)
+        {
+            if (std::abs(subW.sprite->getPosition().x - subW.placeLaunched) >= 110.f && !subW.changedDirection) { 
+                subW.changedDirection = true;
+                subW.horizontalSpeed = -subW.horizontalSpeed;
+            }
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+            if (subW.animationManager && !subW.animationManager->isPlaying(boomerangThrowing)){
                 subW.animationManager->playAnimation(boomerangThrowing);
             }
             subW.animationManager->update(deltaTime);
+
+            // Hanlde boomerang colision with player
         }
         else if (subW.type == ItemType::STOPWATCH){
 
         }
-        else{
-            float speed = 350.f * deltaTime;
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(speed, 0.f) : sf::Vector2f(-speed, 0.f)); 
+        else
+        { // Dagger
+            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
         }
     }
     

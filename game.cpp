@@ -130,7 +130,7 @@ void Game::init()
     // Create subweapon sprite
     auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
     //subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
-    subweaponSprite->setTextureRect(sf::IntRect({515, 477}, {16, 16}));
+    subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
     subweaponSprite->setPosition({-20.f, 171.f});
 
     //subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});

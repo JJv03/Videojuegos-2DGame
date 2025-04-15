@@ -100,6 +100,11 @@ public:
     float verticalSpeed = 0.f;
     float horizontalSpeed = 0.f;
     float lifeTime = 0.5f;
+
+    // Boomerang
+    float placeLaunched = 0.f;
+    bool changedDirection = false;
+
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;

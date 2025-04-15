@@ -1728,14 +1728,13 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
     player.animationManager->update(deltaTime);
 
    
-    if (player.animationManager->getCurrentFrameIndex() == 4 && !player.weaponIsActive) {
+    if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
         SubWeapon secundaria;
 
         //secundaria.type = player.subWeaponType;
-        secundaria.type = ItemType::AXE;
+        secundaria.type = ItemType::BOOMERANG;
 
         secundaria.sprite = std::make_shared<sf::Sprite>(*player.subWeapon.sprite);
-        
         secundaria.direction = player.dir;
         sf::Vector2f spawnPos = player.sprite->getPosition();
         spawnPos.y -= 30.f; 
@@ -1744,23 +1743,34 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
         
         if (secundaria.type == ItemType::AXE) {
             secundaria.verticalSpeed = -450.f; 
+            secundaria.horizontalSpeed = 150.f;
             secundaria.lifeTime = 1.0f;
-            
             secundaria.animationManager = new AnimationManager(*secundaria.sprite);
             secundaria.sprite->setPosition(spawnPos);
             secundaria.animationManager->addAnimation(axeThrowing, secundaria.axeFrames, true); 
             secundaria.animationManager->playAnimation(axeThrowing); 
+
         } else if (secundaria.type == ItemType::DAGGER) {
             secundaria.verticalSpeed = 0.f;
-            
+            secundaria.horizontalSpeed = 350.f;
+            secundaria.lifeTime = 1.0f;
             secundaria.sprite->setPosition(spawnPos);
             secundaria.animationManager->playAnimation(daggerThrowing);
+
         } else if (secundaria.type == ItemType::BOOMERANG) {
-            secundaria.horizontalSpeed = 250.f; 
+            secundaria.horizontalSpeed = 100.f; 
+            secundaria.verticalSpeed = 0.f; 
+            secundaria.lifeTime = 4.0f;
+            secundaria.placeLaunched = player.sprite->getPosition().x;
+            secundaria.animationManager = new AnimationManager(*secundaria.sprite);
+            secundaria.sprite->setPosition(spawnPos);
+            secundaria.animationManager->addAnimation(boomerangThrowing, secundaria.boomerangFrames, true); 
             secundaria.animationManager->playAnimation(boomerangThrowing);
+
         } else if (secundaria.type == ItemType::FIRE_BOMB) {
             secundaria.verticalSpeed = -250.f;
             secundaria.animationManager->playAnimation(fireBombThrowing);
+            
         } else if (secundaria.type == ItemType::STOPWATCH) {
             player.hearts -= 4; 
         } 
@@ -1836,6 +1846,7 @@ void PlayerAttackJumpSecondaryState::handleInput(Player& player, sf::Event event
 
 void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
 {   
+    
     player.currentAnimation = attackSimon;
 
     
