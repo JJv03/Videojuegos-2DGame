@@ -79,13 +79,13 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
         case 72:
             return collisionTypes.at(BOTTOM_HALF_COLLISION);
         case 2:
-        case 4:  // Escalera (quitar)
-        case 61: // Escalera (quitar)
+        //case 4:  // Escalera (quitar)
+        //case 61: // Escalera (quitar)
             return collisionTypes.at(BOTTOM_RIGHT_COLLISION);
         case 6:
         case 23:
-        case 46: // Escalera (quitar)
-        case 71: // Escalera (quitar)
+        //case 46: // Escalera (quitar)
+        //case 71: // Escalera (quitar)
             return collisionTypes.at(BOTTOM_LEFT_COLLISION);
         default:
             return collisionTypes.at(NO_COLLISION);

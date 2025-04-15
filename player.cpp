@@ -50,6 +50,7 @@ Player::Player()
     isNearStair = false;
     isPositionedInStair = false;
     isStairUpRight = false;
+    stairStepDistance = 0.f;
     stairStart = new StairTile();
 }
 
@@ -79,7 +80,7 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::setState(PlayerStateRef newState)
 {
-    //newState->hello();
+    newState->hello();
 
     this->activeState->end(*this);
     this->activeState = std::move(newState);

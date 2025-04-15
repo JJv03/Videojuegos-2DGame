@@ -159,6 +159,7 @@ public:
     bool isNearStair;
     bool isPositionedInStair;
     bool isStairUpRight;
+    float stairStepDistance;
     StairTile* stairStart;
 
     // Weapons
