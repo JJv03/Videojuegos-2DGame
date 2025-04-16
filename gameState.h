@@ -206,6 +206,22 @@ public:
 };
 
 
+class InitMenu : public GameState{
+private:
+    SoundManager menuSoundManager;
+    configManager &configManager;
+public:
+    explicit InitMenu(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~InitMenu() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
 class InitAnimationGS : public GameState{
 private:
     SoundManager initAnimSounds;

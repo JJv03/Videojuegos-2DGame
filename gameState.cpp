@@ -1591,6 +1591,123 @@ GameplayConfGS::~GameplayConfGS() {}
 
 
 // ======================================================
+//                      INIT MENU STATE 
+// ======================================================
+std::unordered_map<std::string, sf::Texture> initMenuTextures;
+std::vector<sf::Sprite> initMenuSprites;
+
+void InitMenu::init(){
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    if(debug) std::cout << "ESTADO: Init Menu" << std::endl;
+    
+    if (!initMenuTextures["bg"].loadFromFile("./assets/sprites/intro_ending/titleScreen.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(initMenuTextures["bg"]);
+
+    bg.setTextureRect(sf::IntRect(sf::Vector2i(1, 1), sf::Vector2i(256, 240)));
+
+    // Adjusts menu position
+    sf::FloatRect spriteBounds = bg.getGlobalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactorWidth = gWindowWidth / spriteWidth;
+    float scaleFactorHeight = gWindowHeight / spriteHeight;
+
+    bg.setScale(sf::Vector2f(scaleFactorWidth, scaleFactorHeight));
+
+    float scaledWidth = spriteWidth * scaleFactorWidth;
+    float scaledHeight = spriteHeight * scaleFactorHeight;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    bg.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    initMenuSprites.push_back(bg);
+
+    sf::Sprite castle(initMenuTextures["bg"]);
+
+    castle.setTextureRect(sf::IntRect(sf::Vector2i(1, 256), sf::Vector2i(72, 56)));
+
+    castle.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
+
+    float castleX = 287;
+    float castleY = 173;
+
+    castle.setPosition(sf::Vector2f(castleX, castleY));
+
+    // Animation of the bat
+
+    initMenuSprites.push_back(castle);
+
+    sf::Sprite start(initMenuTextures["bg"]);
+    sf::Sprite black(initMenuTextures["bg"]);
+
+    start.setTextureRect(sf::IntRect(sf::Vector2i(558, 1), sf::Vector2i(112, 8)));
+    black.setTextureRect(sf::IntRect(sf::Vector2i(558, 1), sf::Vector2i(112, 8)));
+
+    start.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
+    black.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
+
+    float startX = 112;
+    float startY = 226;
+
+    start.setPosition(sf::Vector2f(startX, startY));
+    black.setPosition(sf::Vector2f(startX, startY));
+    black.setColor(sf::Color::Transparent);
+
+    initMenuSprites.push_back(start);
+    initMenuSprites.push_back(black);
+}
+
+void InitMenu::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == controls.enter) {
+            std::cout << "Going to Init animation" << std::endl;
+            stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
+        }
+    }
+}
+
+void InitMenu::update(float deltaTime, const sf::Vector2f& viewPosition){
+    
+}
+
+void InitMenu::draw(sf::RenderWindow& window, Camera& camera){
+    // std::cout<<"Print"<<std::endl;
+    // std::cout<<menuSprites.size()<<std::endl;
+    // std::cout<<menuTextures.size()<<std::endl;
+    // std::cout<<options.size()<<std::endl;
+    for (const auto& sprite : initMenuSprites) {
+        window.draw(sprite);
+    }
+}
+ 
+void InitMenu::pause(){
+    if(debug) std::cout << "ESTADO: Init Menu PAUSADO" << std::endl;
+}
+
+void InitMenu::resume(){
+    if(debug) std::cout << "ESTADO: Init Menu REANUDADO" << std::endl;
+}
+
+void InitMenu::close(){
+    if(debug) std::cout << "ESTADO: Init Menu CERRADO" << std::endl;
+    initMenuSprites.clear();
+    initMenuTextures.clear();
+}
+
+
+InitMenu::~InitMenu() {}
+
+
+// ======================================================
 //                      INITIAL ANIMATION STATE 
 // ======================================================
 std::unordered_map<std::string, sf::Texture> initAnimationTextures;
