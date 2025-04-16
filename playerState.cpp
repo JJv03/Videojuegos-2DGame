@@ -1133,6 +1133,7 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackIdleState::end(Player& player)
 {
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerAttackIdleState::hello(){
@@ -1299,6 +1300,7 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackJumpState::end(Player& player)
 {
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerAttackJumpState::hello(){
@@ -1502,6 +1504,7 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackStairState::end(Player& player)
 {
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerAttackStairState::hello(){

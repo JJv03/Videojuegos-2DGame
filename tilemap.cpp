@@ -373,7 +373,7 @@ bool TileMap::load(int level, int stage)
 
                 sf::FloatRect stairHitbox;
                 stairHitbox.size.x = 16.f;
-                stairHitbox.size.y = 32.f;
+                stairHitbox.size.y = 30.f;
 
                 stairHitbox.position.x += i * gTileSize + 8.f;
                 stairHitbox.position.y += j * gTileSize - 16.f;
@@ -885,7 +885,7 @@ void TileMap::processFileStairTiles(std::ifstream &file)
 
             sf::FloatRect hitbox;
             hitbox.size.x = 16.f;
-            hitbox.size.y = 32.f;
+            hitbox.size.y = 30.f;
 
             hitbox.position.x = posX;
             hitbox.position.y = posY;
