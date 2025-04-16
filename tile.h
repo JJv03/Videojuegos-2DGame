@@ -3,6 +3,8 @@
 #include "item.h"
 
 class Game;
+//class Player;
+
 void createDropItemAfterBrokenTile(sf::Vector2f itemPosition, DropType dropType);
 
 class Tile : public Entity
@@ -63,7 +65,9 @@ public:
     enum class Type {   // Types of breakable tiles. Only in this scope
         FIREPIT = 0,
         CANDELABRUM = 1,
-        BREAKABLE_WALL = 2,
+        BREAKABLE_WALL_1SQUARE = 2,
+        BREAKABLE_WALL_4SQUARES = 3,
+        BREAKABLE_WALL_3SQUARES_NOBREAK = 4,
     };
 
     Type type;                      // Breakable type
@@ -76,10 +80,23 @@ public:
     BreakableTile();
     ~BreakableTile() = default;
 
+    //////////////////////////////
     // Entity functions
+    //////////////////////////////
+
     void onCollision(Entity& other, Game& game) override;
-    void onCollision_Whip(Game& game);
     void hello() const override;
+
+    //////////////////////////////
+    // Breakable functions
+    //////////////////////////////
+
+    // Returns whether this tile is collidable or not
+    bool isCollidable() const;
+
+    // Collision functions
+    void onCollision_Whip(Game& game);
+    void onCollision_Player(Entity& other, Game& game);
 };
 
 // -------------------------------------------------

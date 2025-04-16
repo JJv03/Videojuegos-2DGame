@@ -52,10 +52,9 @@ enum class DropType {       // Types of items that can drop from breakable tiles
     NONE = 0,               // No item drops
     DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc).
     WEAPON = 2,             
-    CROWN = 3,
+    PURPLE_MONEY_BAG = 3,
     FLASHING_MONEY_BAG = 4,
-    CHEST = 5,
-    MOAI = 6,
+    AXE_OR_DEFAULT = 5,
     PORK_CHOP = 7,
     DOUBLE_SHOT = 8,
     TRIPLE_SHOT = 9,

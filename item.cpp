@@ -313,20 +313,12 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             break;
         }
 
-        case DropType::CROWN:
-            type = ItemType::CROWN;
+        case DropType::PURPLE_MONEY_BAG:
+            type = ItemType::PURPLE_MONEY_BAG;
             break;
 
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
-            break;
-        
-        case DropType::CHEST:
-            type = ItemType::CHEST;
-            break;
-
-        case DropType::MOAI:
-            type = ItemType::MOAI;
             break;
 
         case DropType::PORK_CHOP:

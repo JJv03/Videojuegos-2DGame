@@ -168,8 +168,14 @@ sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
         return collisionTypes.at(LEFT_HALF_COLLISION);
     case 1: // Candelabrum
         return collisionTypes.at(THIN_TOP_LEFT_COLLISION);
-    case 2: // Breakable wall
-        return collisionTypes.at(FULL_COLLISION);
+    case 2: // Breakable wall 1 square
+        return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
+    case 3: // Breakable wall 4 square
+        return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
+    case 4: // Breakable wall 4 square unbreakable
+        return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
+    case 5: // Breakable wall 4 square unbreakable
+        return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
     default:
         return collisionTypes.at(NO_COLLISION);
     }
@@ -220,8 +226,8 @@ bool TileMap::loadBreakableTextures()
         std::cout << "Error cargando textura Firepit." << std::endl;
         return false;
     }
-
     breakableTextures[BreakableType::FIREPIT] = firepitTexture;
+
 
     auto candelabrumTexture = std::make_shared<sf::Texture>();
     if (!candelabrumTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({157, 1}, {8, 16})))
@@ -231,19 +237,35 @@ bool TileMap::loadBreakableTextures()
     }
     breakableTextures[BreakableType::CANDELABRUM] = candelabrumTexture;
 
-    // ---------------------------------------
+
     sf::Image tilesetLvl1Image;
     if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png"))
         return false;
     tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
 
     auto breakableWallTexture = std::make_shared<sf::Texture>();
-    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({198, 231}, {32, 32})))
+    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({18, 342}, {16, 16})))
     {
-        std::cout << "Error cargando textura Breakable Wall." << std::endl;
+        std::cout << "Error cargando textura Breakable Wall 1 Squares." << std::endl;
         return false;
     }
-    breakableTextures[BreakableType::BREAKABLE_WALL] = breakableWallTexture;
+    breakableTextures[BreakableType::BREAKABLE_WALL_1SQUARE] = breakableWallTexture;
+
+    auto breakableWall4SquareTexture = std::make_shared<sf::Texture>();
+    if (!breakableWall4SquareTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({162, 342}, {16, 16})))
+    {
+        std::cout << "Error cargando textura Breakable Wall 4 Squares." << std::endl;
+        return false;
+    }
+    breakableTextures[BreakableType::BREAKABLE_WALL_4SQUARES] = breakableWall4SquareTexture;
+
+    auto breakableWall3SquareTexture = std::make_shared<sf::Texture>();
+    if (!breakableWall3SquareTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({146, 326}, {16, 16})))
+    {
+        std::cout << "Error cargando textura Breakable Wall 3 Squares." << std::endl;
+        return false;
+    }
+    breakableTextures[BreakableType::BREAKABLE_WALL_3SQUARES_NOBREAK] = breakableWall3SquareTexture;
 
     return true;
 }
@@ -779,11 +801,11 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             bool isBreakable = true;
             DropType dropType = DropType::NONE;
 
-            if (std::getline(ss, token, ','))
-            {                                          // Optional value
+            if (std::getline(ss, token, ','))       // Breakable: Optional value
+            {                                          
                 isBreakable = (std::stoi(token) != 0); // If it is not 0, it is true.
             }
-            if (std::getline(ss, token, ','))
+            if (std::getline(ss, token, ','))       // Drop item: Optional value
             { // Optional value
                 // Expecting an integer representing the type of item that can be dropped
                 dropType = static_cast<DropType>(std::stoi(token));

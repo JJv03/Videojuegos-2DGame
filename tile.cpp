@@ -51,26 +51,45 @@ BreakableTile::BreakableTile() : TileSprite() {
 
 }
 
+bool BreakableTile::isCollidable() const {
+    if (this->type != BreakableType::CANDELABRUM && this->type != BreakableType::FIREPIT) {
+        return true;
+    }
+    return false;
+}
+
 void BreakableTile::onCollision(Entity& other, Game& game){
+    if (this->isDestroyed) return;  // The tile is destroyed --> "doesn't exist" anymore
+
+    sf::FloatRect tileBounds = this->hitboxes[0];   // Breakable tiles only have 1 hitbox
+    if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) return;  // No hitbox
+
     if (dynamic_cast<Whip*>(&other)) {
         //std::cout << "Es un SolidTile\n";
         this->onCollision_Whip(game);
     }
+    else if (dynamic_cast<Player*>(&other)) {
+        //std::cout << "Es un Player\n";
+        if (isCollidable()) {
+            this->onCollision_Player(other, game);
+        }
+    }
 }
 
 void BreakableTile::onCollision_Whip(Game& game){
-    if (this->isDestroyed) return;
-
-    sf::FloatRect tileBounds = this->hitboxes[0];   // Breakable tiles only have 1 hitbox
-
-    // Ignore if empty hitbox
-    if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) return;
-   
     if (this->isBreakable) {
         this->isDestroyed = true;
         this->generatesItem = true;
         game.createDropItem(this->sprite->getPosition(), this->dropType);
     }
+}
+
+void BreakableTile::onCollision_Player(Entity& other, Game& game) {
+    sf::FloatRect tileBounds = this->hitboxes[0];   // Breakable tiles only have 1 hitbox
+
+    bool hasCollided = false;
+    game.computePlayerTileIntersection(hasCollided, tileBounds);
+    // Falta ponerlo en el suelo
 }
 
 void BreakableTile::hello() const {
