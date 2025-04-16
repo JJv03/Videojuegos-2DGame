@@ -26,6 +26,7 @@ using AttackJumpSecondary = PlayerAttackJumpSecondaryState;
 using Hurt = PlayerHurtState;
 using Invulnerable = PlayerInvulnerableState;
 using Dead = PlayerDeadState;
+using WhipUpgrade = PlayerWhipUpgradeState;
 // constexpr auto KEY_RIGHT = sf::Keyboard::Scancode::Right;
 // constexpr auto KEY_LEFT = sf::Keyboard::Scancode::Left;
 // constexpr auto KEY_DOWN = sf::Keyboard::Scancode::Down;
@@ -38,6 +39,22 @@ using Dead = PlayerDeadState;
 //constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
 //constexpr auto KEY_REVIVE = sf::Keyboard::Scancode::R;
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
+
+animationID whipLevelAnimation(int level){
+    if (level== 1) {
+        return whipLvl1StandingJumping;
+    } else if (level == 2) {
+        return whipLvl2StandingJumping;
+    } else if (level == 3) {
+        return whipLvl3C1StandingJumping;
+    } else if (level == 4) {
+        return whipLvl3C2StandingJumping;
+    } else if (level == 5) {
+        return whipLvl3C3StandingJumping;
+    } else  {
+        return whipLvl3C4StandingJumping;
+    } 
+}
 
 // ---------------------------- IDLE ----------------------------
 
@@ -101,19 +118,17 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
-            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
+            //if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && player.subWeaponType != ItemType::STOPWATCH ){
+            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                if (player.subWeaponType == ItemType::STOPWATCH)
-                {
-                    player.hearts -= 5;
-                }
-                else{
-                    player.hearts -= 1;
-                }
+                player.hearts -= 1;
                 player.setState(state<AttackSecondary>());
+                if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
+                    player.hearts -= 3;
+                }
             }
+            
         }
 
         
@@ -131,6 +146,10 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
 void PlayerIdleState::update(Player& player, float deltaTime)
 {
+    if (player.upgradeWhip){
+        player.setState(state<WhipUpgrade>());
+    }
+    
     auto controls = configManager.getControls();
     if(sf::Keyboard::isKeyPressed(controls.right)){
         player.dir = RIGHT;
@@ -267,19 +286,17 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
-            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
+            //if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && player.subWeaponType != ItemType::STOPWATCH ){
+            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                if (player.subWeaponType == ItemType::STOPWATCH)
-                {
-                    player.hearts -= 5;
-                }
-                else{
-                    player.hearts -= 1;
-                }
+                player.hearts -= 1;
                 player.setState(state<AttackSecondary>());
+                if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
+                    player.hearts -= 3;
+                }
             }
+            
         }
     }
     
@@ -297,6 +314,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerWalkState::update(Player& player, float deltaTime)
 {
+    if (player.upgradeWhip){
+        player.setState(state<WhipUpgrade>());
+    }
     player.sprite->move({0.f,gPlayerGravity*deltaTime});
     
     if(player.dir == RIGHT){
@@ -489,21 +509,17 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
-            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
+            //if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && player.subWeaponType != ItemType::STOPWATCH ){
+            if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
-                if (player.subWeaponType == ItemType::STOPWATCH)
-                {
-                    player.hearts -= 5;
-                }
-                else{
-                    player.hearts -= 1;
-                }
-                
-                
+                player.hearts -= 1;
                 player.setState(state<AttackJumpSecondary>());
+                if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
+                    player.hearts -= 3;
+                }
             }
+            
         }
 
     }
@@ -520,6 +536,7 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
 
 void PlayerJumpState::update(Player& player, float deltaTime)
 {
+    
     player.currentAnimation = jumpSimon;
 
     player.verticalSpeed += gPlayerGravity * deltaTime* 1.2f;
@@ -570,6 +587,7 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     // Check if landed
     if (player.isOnGround)
     {
+        
         player.isJumping = false;
         player.setState(state<Idle>());
     }
@@ -646,6 +664,9 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
 
 void PlayerDuckState::update(Player& player, float deltaTime)
 {
+    if (player.upgradeWhip){
+        player.setState(state<WhipUpgrade>());
+    }
     if (!player.isOnGround)
     {
         player.sprite->move({0.f,gPlayerGravity*deltaTime*deltaTime});
@@ -1010,7 +1031,8 @@ void PlayerAttackIdleState::init(Player& player)
     
     if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
         player.animationManager->playAnimation(attackSimon);
-        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+
+        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     }
 
     player.isAttacking = true;
@@ -1047,25 +1069,31 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         player.animationManager->playAnimation(player.currentAnimation);
     }
 
-    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
     
-        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     }
     
     player.animationManager->update(deltaTime*1.5f);
     player.whip.animationManager->update(deltaTime*1.5f);
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
-        
+        int xoffset= 0;
+        if(player.whip.whipLvl <3){
+            xoffset = 24;
+        }
+        else{
+            xoffset = 41;
+        }
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
+                sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
                              player.sprite->getPosition().y+2)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
+                sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
@@ -1154,7 +1182,7 @@ PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 void PlayerAttackJumpState::init(Player& player)
 {
     // Start the whip and attack animations
-    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     player.animationManager->playAnimation(attackSimon);
     player.isAttacking = true;
     player.attackedFinished = false;
@@ -1189,9 +1217,9 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
     
-        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     }
     //player.animationManager->setAnimationSpeed(2.0f); // 2x speed
@@ -1205,16 +1233,22 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
 
     
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
-        
+        int xoffset= 0;
+        if(player.whip.whipLvl <3){
+            xoffset = 24;
+        }
+        else{
+            xoffset = 41;
+        }
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 24, // Adjust X offset
+                sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 24, // Adjust X offset
+                sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
                              player.sprite->getPosition().y+4)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
@@ -1327,7 +1361,7 @@ void PlayerAttackDuckState::init(Player& player)
     player.isDucking = true;
     
     player.hasToPressAgain = false;
-    player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+    player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     player.animationManager->playAnimation(attackSimon);
 }
 
@@ -1356,9 +1390,9 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         player.animationManager->playAnimation(player.currentAnimation);
 
     }
-    if (!player.whip.animationManager->isPlaying(whipLvl1StandingJumping)){
+    if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
     
-        player.whip.animationManager->playAnimation(whipLvl1StandingJumping);
+        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     }
     player.animationManager->update(deltaTime*1.5f);
@@ -1366,15 +1400,22 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
 
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
+        int xoffset= 0;
+        if(player.whip.whipLvl <3){
+            xoffset = 24;
+        }
+        else{
+            xoffset = 41;
+        }
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 24, 
+                sf::Vector2f(player.sprite->getPosition().x + xoffset, 
                              player.sprite->getPosition().y + 4)  
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 24, 
+                sf::Vector2f(player.sprite->getPosition().x - xoffset, 
                              player.sprite->getPosition().y + 4)  
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
@@ -1560,8 +1601,11 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     if (!player.startInvulnerable && player.isOnGround){
         player.startInvulnerable = true;
     }
-
+    
     if(player.startInvulnerable){
+        if (player.upgradeWhip){
+            player.setState(state<WhipUpgrade>());
+        }
         player.blinkTimer = 0.0f; 
         player.visible = true; 
         player.isJumping = false;
@@ -1659,6 +1703,8 @@ void PlayerDeadState::init(Player& player)
     // Initial position adjustment for first frame
     player.sprite->move(sf::Vector2f(0.f, 8.f));
     player.isDead = true;
+    player.whip.whipDmg = 1;
+    player.whip.whipLvl = 1;
     player.isInvulnerable = true;
     player.deathRestart = true;
     player.isOnStairs = false;
@@ -1763,8 +1809,8 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
         sf::Vector2f spawnPos = player.sprite->getPosition();
         spawnPos.y -= 30.f; // Adjust the Y position to be above Simon's head
         player.subWeapon.direction = player.dir;
-        //player.subWeapon.type = ItemType::DAGGER; // Depuracion
-        player.subWeapon.type = player.subWeaponType;
+        player.subWeapon.type = ItemType::DAGGER; // Depuracion
+        //player.subWeapon.type = player.subWeaponType;
         
        if (player.subWeapon.type == ItemType::AXE) {
         player.subWeapon.verticalSpeed = -450.f; 
@@ -1912,8 +1958,8 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
         sf::Vector2f spawnPos = player.sprite->getPosition();
         spawnPos.y -= 30.f; // Adjust the Y position to be above Simon's head
         player.subWeapon.direction = player.dir;
-        //player.subWeapon.type = ItemType::DAGGER; // Depuracion
-        player.subWeapon.type = player.subWeaponType;
+        player.subWeapon.type = ItemType::DAGGER; // Depuracion
+        //player.subWeapon.type = player.subWeaponType;
         
        if (player.subWeapon.type == ItemType::AXE) {
         player.subWeapon.verticalSpeed = -450.f; 
@@ -1990,3 +2036,71 @@ void PlayerAttackJumpSecondaryState::hello(){
 }
 
 // --------------------------------------------------------------
+
+// ---------------------------- WHIP UPGRADE ANIMATION ----------------------------
+PlayerWhipUpgradeState::PlayerWhipUpgradeState() : PlayerState()
+{
+}
+
+void PlayerWhipUpgradeState::init(Player& player)
+{
+     
+}
+
+void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
+{
+    
+    
+}
+
+void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
+{
+    
+    std::cout << "UPGRADE WHIP" << std::endl;
+    player.currentAnimation = whipUpgrade;
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+        player.animationManager->playAnimation(player.currentAnimation);
+    }
+    if (!player.animationManager->isAnimationFinished())
+    {
+        player.animationManager->update(deltaTime);
+    }
+    else{
+        player.upgradeWhip = false;
+        player.isInvulnerable = false;
+        player.setState(state<Idle>());
+        std::cout << "UPGRADE WHIP END" << std::endl;
+    }
+    
+    
+    
+
+}
+
+void PlayerWhipUpgradeState::draw(Player& player, sf::RenderWindow &window)
+{
+    if (player.dir == RIGHT)
+    {
+        player.sprite->setScale({-1.f, 1.f});
+    }
+    else
+    {
+        player.sprite->setScale({1.f, 1.f});
+    }
+    if (player.visible)
+    {
+        window.draw(*player.sprite);
+    }
+    
+    
+}
+
+void PlayerWhipUpgradeState::end(Player& player)
+{
+
+}
+
+void PlayerWhipUpgradeState::hello(){
+    std::cout << "PLAYER STATE: Whip upgrade" << std::endl;
+}

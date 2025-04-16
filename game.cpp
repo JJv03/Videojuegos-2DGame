@@ -104,6 +104,7 @@ void Game::init()
     animationManager->addAnimation(stairAscendWalkSimon, player.stairAscendWalkFrames, false);
     animationManager->addAnimation(hurtSimon, player.hurtFrames);
     animationManager->addAnimation(deathSimon, player.deadFrames, false);
+    animationManager->addAnimation(whipUpgrade, player.colorFrames, false);
     // animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
@@ -140,6 +141,12 @@ void Game::init()
     }
     whipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whip.lvl1Frames, false);
     whipAnimationManager->addAnimation(whipNoAttack, player.whip.noAttackFrames, false);
+    whipAnimationManager->addAnimation(whipLvl2StandingJumping, player.whip.lvl2Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C1StandingJumping, player.whip.lvl3c1Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C2StandingJumping, player.whip.lvl3c2Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C3StandingJumping, player.whip.lvl3c3Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C4StandingJumping, player.whip.lvl3c4Frames, false);
+
 
     // Player and whip manage its animations so they don't have to be managed outside
     player.animationManager = animationManager;
@@ -398,6 +405,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             if (player.isAttacking)
             {
                 window.draw(FloatRectToRectShape(player.whip.sprite->getGlobalBounds()));
+            }
+            if (player.weaponIsActive)
+            {
+                window.draw(FloatRectToRectShape(player.subWeapon.sprite->getGlobalBounds()));
             }
         }
         

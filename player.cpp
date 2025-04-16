@@ -26,6 +26,7 @@ Player::Player()
     hasDied = false;
     deathRestart = false;
     autoWalkDistance = 0.f;
+    upgradeWhip = false;
 
     // Secondary weapon
     weaponIsActive = false;
@@ -74,9 +75,9 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 void Player::draw(sf::RenderWindow &window)
 {
     getActiveState()->draw(*this, window);
-    for (auto& subW : activeSubWeapons) {
+    /*for (auto& subW : activeSubWeapons) {
         window.draw(*subW.sprite);
-    }
+    }*/
 }
 
 void Player::setState(PlayerStateRef newState)
@@ -363,10 +364,21 @@ void Player::onCollision_Item(Entity &entityItem)
     {
         this->subWeaponType = itemType;
     }
-    // else if (itemType == ItemType::MORNING_STAR)
-    // {
-
-    // }
+    else if (itemType == ItemType::MORNING_STAR)
+    {
+        //std::cout << "MORNING STAR" << std::endl;
+        this->upgradeWhip = true;
+        this->isInvulnerable = true;
+        if (this->whip.whipLvl < 6 )
+        {
+            this->whip.whipLvl++;
+        }
+        if (this->whip.whipDmg < 3)
+        {
+            this->whip.whipDmg++;
+        }
+        
+    }
     else if (itemType == ItemType::SMALL_HEART)
     {
         this->hearts += 1;
@@ -419,9 +431,9 @@ void Player::updateActiveSubWeapons(float deltaTime) {
 
         if (subW.type == ItemType::AXE)
         {
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+            this->subWeapon.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
             subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
-            subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
+            this->subWeapon.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
             if (subW.animationManager && !subW.animationManager->isPlaying(axeThrowing)) {
                 subW.animationManager->playAnimation(axeThrowing);
             }
@@ -429,10 +441,11 @@ void Player::updateActiveSubWeapons(float deltaTime) {
 
         }else if (subW.type == ItemType::FIRE_BOMB){
             if (!subW.isExploding){
-                subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+                this->subWeapon.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
                 subW.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
-                subW.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
+                this->subWeapon.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
                 // Check if it collides, if so, explode
+                
                 
 
             }
@@ -454,7 +467,7 @@ void Player::updateActiveSubWeapons(float deltaTime) {
                 subW.changedDirection = true;
                 subW.horizontalSpeed = -subW.horizontalSpeed;
             }
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+            this->subWeapon.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
             if (subW.animationManager && !subW.animationManager->isPlaying(boomerangThrowing)){
                 subW.animationManager->playAnimation(boomerangThrowing);
             }
@@ -462,8 +475,9 @@ void Player::updateActiveSubWeapons(float deltaTime) {
 
             // Hanlde boomerang colision with player
             if (isIntersecting(subW.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && subW.changedDirection) {
-                std::cout << "Boomerang colision with player" << std::endl;
+                //std::cout << "Boomerang colision with player" << std::endl;
                 subW.lifeTime = 0.f; // Borrar boomerang
+                
             }
             
             
@@ -473,7 +487,7 @@ void Player::updateActiveSubWeapons(float deltaTime) {
         }
         else
         { // Dagger
-            subW.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
+            this->subWeapon.sprite->move((subW.direction == RIGHT) ? sf::Vector2f(subW.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-subW.horizontalSpeed*deltaTime, 0.f)); 
             if (subW.animationManager && !subW.animationManager->isPlaying(daggerThrowing)){
                 subW.animationManager->playAnimation(daggerThrowing);
             }
@@ -492,6 +506,7 @@ void Player::updateActiveSubWeapons(float deltaTime) {
 
     if (wasErased && activeSubWeapons.empty()) {
         
+        this->subWeapon.sprite->setPosition({ -100.f,0.f}); 
         this->weaponIsActive = false;
     }
 }

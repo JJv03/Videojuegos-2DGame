@@ -23,10 +23,17 @@ enum animationID{
     stairDescendIdleSimon,
     stairAscendWalkSimon,
     stairDescendWalkSimon,
-    
+    whipUpgrade,
     //Whip
     whipLvl1StandingJumping,
+    whipLvl2StandingJumping,
+    whipLvl3C1StandingJumping,
+    whipLvl3C2StandingJumping,
+    whipLvl3C3StandingJumping,
+    whipLvl3C4StandingJumping,
     whipNoAttack,
+    
+
     
     // Enemies
     walkZombie,

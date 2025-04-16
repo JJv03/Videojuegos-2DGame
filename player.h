@@ -49,6 +49,41 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(27, 484), sf::Vector2(26, 10)), 0.1f},
     };
 
+    std::vector<AnimationManager::Frame> lvl2Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(60, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(105, 477), sf::Vector2(16, 25)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(156, 486), sf::Vector2(24, 10)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(156, 486), sf::Vector2(24, 10)), 0.3f},
+    };
+
+    std::vector<AnimationManager::Frame> lvl3c1Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(88, 477), sf::Vector2(16, 25)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(180, 485), sf::Vector2(41, 10)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(180, 485), sf::Vector2(41, 10)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> lvl3c2Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(60, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(105, 477), sf::Vector2(16, 25)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(222, 484), sf::Vector2(41, 10)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(222, 484), sf::Vector2(41, 10)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> lvl3c3Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(69, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(122, 477), sf::Vector2(16, 25)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(264, 484), sf::Vector2(41, 10)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(264, 484), sf::Vector2(41, 10)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> lvl3c4Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(78, 477), sf::Vector2(8, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(139, 477), sf::Vector2(16, 25)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(306, 484), sf::Vector2(41, 10)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(306, 484), sf::Vector2(41, 10)), 0.1f},
+    };
+
     Whip();
     ~Whip() = default;
 
@@ -135,7 +170,7 @@ public:
     bool hasToPressAgain;
     bool isPressingUp;
     bool hasDied;
-
+    bool upgradeWhip;
     // Secondary weapon
     bool weaponIsActive;
     
@@ -248,6 +283,17 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(308, 21), sf::Vector2(16, 24)), 0.5f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 21), sf::Vector2(32, 16)), 0.5f},
     };
+
+    std::vector<AnimationManager::Frame> colorFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(423, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(440, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(457, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(474, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 32)), 0.15f},
+    };
+
+    
     // --------------------------------
 
     Player();
