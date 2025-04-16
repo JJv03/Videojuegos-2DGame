@@ -1,4 +1,5 @@
 #include "fishman.h"
+#include "createProjectile.h"
 #include <iostream>
 #include <cmath>
 #include <random>
@@ -17,6 +18,7 @@ FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
     score = FISHMAN_SCORE;
     damage = FISHMAN_DAMAGE;
 }
+
 // Update fishman logic: handle spawning, movement, and deactivation
 void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
                      const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
@@ -137,9 +139,15 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         case State::PAUSED_FOR_ATTACK:
             pauseTimer -= deltaTime;
+
+            if (!hasFiredDuringPause && pauseTimer <= ATTACK_PAUSE_TIME / 2.0f)
+            {
+                fireProjectile();
+                hasFiredDuringPause = true;
+            }
+
             if (pauseTimer <= 0.0f)
             {
-                // AQUI SE LANZA EL PROYECTIL
                 currentState = State::WALKING;
                 attackTimer = 0.0f;
             }
@@ -149,8 +157,46 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
         updateAnimation(deltaTime);
     }
 
+    // Update projectile if it exists and is active
+    if (projectile && projectile->getActive())
+    {
+        projectile->update(deltaTime, playerDeactivationZone);
+    }
+
     // Right before checkCollisions
     isOnGround = false;
+}
+
+// Fire a projectile in the direction the fishman is facing
+void FishMan::fireProjectile()
+{
+    if (!sprite || !isActive)
+    {
+        return;
+    }
+
+    // Determine projectile direction based on fishman's facing direction
+    float directionX = (speed.x < 0) ? -1.0f : 1.0f;
+    sf::Vector2f projectileVelocity = {PROJECTILE_SPEED * directionX, 0.0f};
+
+    // Get fishman's position for the projectile start position
+    sf::Vector2f fishmanPos = sprite->getPosition();
+
+    // Adjust position to be in front of the fishman based on direction
+    sf::Vector2f projectilePos = {
+        fishmanPos.x + (directionX * 5.0f),
+        fishmanPos.y - 20.0f};
+
+    // Create and store the projectile using the generic creator
+    projectile = createProjectile(
+        projectilePos,
+        projectileVelocity,
+        ProjectileType::FISHMAN,
+        PROJECTILE_DAMAGE);
+
+    projectile->setActive(true);
+
+    hasProjectile = true;
 }
 
 // Face the player direction
@@ -183,6 +229,7 @@ void FishMan::startAttackPause()
 {
     currentState = State::PAUSED_FOR_ATTACK;
     pauseTimer = ATTACK_PAUSE_TIME;
+    hasFiredDuringPause = false;
 }
 
 // Initiate the jump when spawning
@@ -288,6 +335,12 @@ void FishMan::draw(sf::RenderWindow &window)
     if (sprite && isActive)
     {
         Enemy::draw(window);
+    }
+
+    // Draw the projectile if it exists and is active
+    if (projectile && projectile->getActive())
+    {
+        projectile->draw(window);
     }
 
     if (gDrawHitboxes)

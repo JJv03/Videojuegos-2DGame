@@ -2,12 +2,15 @@
 
 #include "enemy.h"
 #include <random>
+#include <memory>
+
+class Projectile;
 
 class FishMan : public Enemy
 {
 private:
     // Movement and combat constants
-    const sf::Vector2f FISHMAN_SPEED = {-50.0f, 0.0f};
+    const sf::Vector2f FISHMAN_SPEED = {-45.0f, 0.0f};
     const float FISHMAN_LIFE = 1.0f;
     const float FISHMAN_SCORE = 300.0f;
     const float FISHMAN_DAMAGE = 2.0f;
@@ -20,6 +23,10 @@ private:
     // Attack settings
     const float ATTACK_INTERVAL = 2.5f;
     const float ATTACK_PAUSE_TIME = 1.0f;
+
+    // Projectile settings
+    const float PROJECTILE_SPEED = 60.0f;
+    const float PROJECTILE_DAMAGE = 1.0f;
 
     // State management
     enum class State
@@ -49,6 +56,11 @@ private:
 
     // Generador de números aleatorios
     std::mt19937 &rng;
+
+    // Projectile
+    std::shared_ptr<Projectile> projectile;
+    bool hasFiredDuringPause = {false};
+    bool hasProjectile{false};
 
 public:
     int level; // Current game level
@@ -86,6 +98,12 @@ public:
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    // Fire a projectile in the direction the fishman is facing
+    void fireProjectile();
+
+    // Get the active projectile
+    std::shared_ptr<Projectile> getProjectile() const { return projectile; }
 
     void hello() const override;
 };
