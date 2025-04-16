@@ -66,7 +66,7 @@ public:
      * @param secondId The unique identifier for the second music track.
      * @param secondSongLoop Whether the second song should loop (default is true).
      */
-    void playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop = true, float volume);
+    void playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume);
 
     /**
      * @brief Adjusts the volume of all active sounds.
