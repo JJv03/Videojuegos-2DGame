@@ -24,8 +24,39 @@ void Game::init()
     currentLevel = gStartingLevel;
     currentStage = gStartingStage;
 
+    // Level 1
     gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
+
+    // Level 2
+    gameSoundManager.loadMusic("stalker1", "./assets/music/04Stalker(1).mp3");
+    gameSoundManager.loadMusic("stalker2", "./assets/music/04Stalker(2).mp3");
+
+    // Level 3
+    gameSoundManager.loadMusic("wicked1", "./assets/music/05Wicked_Child(1).mp3");
+    gameSoundManager.loadMusic("wicked2", "./assets/music/05Wicked_Child(2).mp3");
+
+    // Level 4
+    gameSoundManager.loadMusic("edge1", "./assets/music/06Walking_On_the_Edge(1).mp3");
+    gameSoundManager.loadMusic("edge2", "./assets/music/06Walking_On_the_Edge(2).mp3");
+
+    // Level 5
+    gameSoundManager.loadMusic("heart1", "./assets/music/07Heart_of_Fire(1).mp3");
+    gameSoundManager.loadMusic("heart2", "./assets/music/07Heart_of_Fire(2).mp3");
+
+    // Level 6
+    gameSoundManager.loadMusic("outTime", "./assets/music/08Out_of_Time.mp3");
+
+    // Boss Music
+    gameSoundManager.loadMusic("boss", "./assets/music/10Posion_Mind.mp3");
+    gameSoundManager.loadMusic("victoryBoss", "./assets/music/15Stage_Clear.mp3");
+    gameSoundManager.loadMusic("dracula1", "./assets/music/09Nothing_to_Lose.mp3");
+    gameSoundManager.loadMusic("dracula2.1", "./assets/music/11Black_Night(1).mp3");
+    gameSoundManager.loadMusic("dracula2.2", "./assets/music/11Black_Night(2).mp3");
+    gameSoundManager.loadMusic("victoryDracula", "./assets/music/16All_Clear.mp3");
+
+    // Dead/Game over
     gameSoundManager.loadMusic("deadMusic", "./assets/music/13Player_Miss.mp3");
+    gameSoundManager.loadMusic("gameOver", "./assets/music/14Game_Over.mp3");
 
     tilemaps.loadLevel(currentLevel);
 
@@ -1032,9 +1063,31 @@ void Game::restartLevel()
 void Game::setLevelMusic(int level){
     // Music for the game
     auto audio = configManager.getAudio();
+    float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
     switch (level){
     case 1:
-        gameSoundManager.playMusic("vampireKiller", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+        gameSoundManager.playMusic("vampireKiller", volume);
+        break;
+
+    case 2:
+        gameSoundManager.playMusicSequence("stalker1", "stalker2", true, volume);
+        break;
+    
+    case 3:
+        gameSoundManager.playMusicSequence("wicked1", "wicked2", true, volume);
+        break;
+
+    case 4:
+        gameSoundManager.playMusicSequence("edge1", "edge2", true, volume);
+        break;
+
+    case 5:
+        gameSoundManager.playMusicSequence("heart1", "heart2", true, volume);
+        break;
+
+    case 6:
+
         break;
     }
+
 }

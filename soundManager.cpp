@@ -95,7 +95,7 @@ void SoundManager::stopAllMusic() {
     }
 }
 
-void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop) {
+void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume) {
     if (musicTracks.find(firstId) == musicTracks.end()) {
         std::cerr << "Music " << firstId << " not found.\n";
         return;
@@ -105,18 +105,18 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         return;
     }
 
-    // Creates a separated thread to manage music transitions
-    std::thread([this, firstId, secondId, secondSongLoop]() {
+    std::thread([this, firstId, secondId, secondSongLoop, volume]() {
+        musicTracks[firstId].setVolume(volume);
         musicTracks[firstId].play();
-        
-        // Waits (but doesn't block execution) until the first song ends
+
         while (musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
 
+        musicTracks[secondId].setVolume(volume);
         musicTracks[secondId].setLooping(secondSongLoop);
         musicTracks[secondId].play();
-    }).detach(); // Detaches the thread so it runs on the background
+    }).detach();
 }
 
 void SoundManager::adjustAllSoundVolumes(float volume) {
