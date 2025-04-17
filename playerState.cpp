@@ -24,6 +24,7 @@ using AttackStairs = PlayerAttackStairState;
 using AttackSecondary = PlayerAttackSecondaryState;
 using AttackJumpSecondary = PlayerAttackJumpSecondaryState;
 using Hurt = PlayerHurtState;
+using HurtStair = PlayerHurtStairState;
 using Invulnerable = PlayerInvulnerableState;
 using Dead = PlayerDeadState;
 using WhipUpgrade = PlayerWhipUpgradeState;
@@ -363,7 +364,6 @@ void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
 {
     if (player.visible)
     {
-        
         window.draw(*player.sprite);
     }
     
@@ -837,6 +837,10 @@ void PlayerStairIdleState::update(Player& player, float deltaTime)
     }
     player.animationManager->update(deltaTime);
 
+    if(player.isBeingHurt){
+        player.setState(state<HurtStair>());
+    }
+
     if(player.isNearStair && 
         (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.01f)){
         player.stairStepDistance = 0.f;
@@ -880,7 +884,7 @@ void PlayerStairWalkState::init(Player& player)
                                  player.stairStart->type == StairTile::Type::TOP_RIGHT);
         player.isPositionedInStair = false;
 
-        player.sprite->move({0.f, -3.f}); // Stairs are a bit taller than the ground
+        player.sprite->move({0.f, -1.f}); // Stairs are a bit taller than the ground
     }
 }
 
@@ -1383,7 +1387,6 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 
 void PlayerAttackDuckState::update(Player& player, float deltaTime)
 {   
-    std::cout << "Dcuk attack" << std::endl;
     player.currentAnimation = attackFloorSimon;
    
     if (!player.animationManager->isPlaying(player.currentAnimation)){
@@ -1398,8 +1401,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
     }
     player.animationManager->update(deltaTime*1.5f);
     player.whip.animationManager->update(deltaTime*1.5f);
-    //std::cout << "Frame index: " << player.whip.animationManager->getCurrentFrameIndex() << std::endl;
-    
+
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         int xoffset= 0;
@@ -1437,7 +1439,6 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
     }
-        
 
     if (player.isInvulnerable)
     {
@@ -1607,12 +1608,12 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     }
     
     if(player.startInvulnerable){
-        
         player.blinkTimer = 0.0f; 
         player.visible = true; 
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
+        
         if (player.upgradeWhip){
             player.setState(state<WhipUpgrade>());
         }
@@ -1668,15 +1669,10 @@ void PlayerHurtStairState::update(Player& player, float deltaTime)
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
-        
         player.setState(state<Idle>()); 
     }
 
-    if(player.stairStepDistance > 0.f) {
-        player.setState(state<StairWalk>());
-    } else {
-        player.setState(state<StairIdle>());
-    }
+    player.setState(state<StairIdle>());
 }
 
 void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)
@@ -1689,7 +1685,7 @@ void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerHurtStairState::end(Player& player)
 {
-    
+    player.isBeingHurt = false;
 }
 
 void PlayerHurtStairState::hello(){
@@ -2052,7 +2048,8 @@ PlayerWhipUpgradeState::PlayerWhipUpgradeState() : PlayerState()
 
 void PlayerWhipUpgradeState::init(Player& player)
 {
-     
+     player.visible = true;
+     player.isInvulnerable = true;
 }
 
 void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
@@ -2063,7 +2060,6 @@ void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
 
 void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
 {
-    
     //std::cout << "UPGRADE WHIP" << std::endl;
     player.currentAnimation = whipUpgrade;
     

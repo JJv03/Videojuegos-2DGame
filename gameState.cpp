@@ -17,7 +17,7 @@ constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
 // constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
 
-const bool debug = true;
+const bool debug = false;
 
 
 

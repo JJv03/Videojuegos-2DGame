@@ -132,8 +132,8 @@ void configManager::loadConfiguration(const std::string& file) {
     cheats.enabled = originalConfig["cheats"]["enabled"];
     difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
 
-    std::cout << "Configuration successfully loaded. Contents:\n";
-    std::cout << originalConfig << std::endl;
+    //std::cout << "Configuration successfully loaded. Contents:\n";
+    //std::cout << originalConfig << std::endl;
 }
 
 void configManager::saveConfiguration(const std::string& file) {

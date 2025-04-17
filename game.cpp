@@ -354,7 +354,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
         player.lives -= 1;
-        std::cout << "Player lives: " << player.lives << std::endl;
+        //std::cout << "Player lives: " << player.lives << std::endl;
         player.health = player.maxHealth;
         player.setState(std::make_unique<PlayerIdleState>());
         isLoading = true;
@@ -830,7 +830,7 @@ void Game::checkPlayerCollisions()
 
             if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
             {
-                std::cout << "NEXT STAGE" << std::endl;
+                //std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -844,7 +844,7 @@ void Game::checkPlayerCollisions()
             }
             else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
             {
-                std::cout << "PREVIOUS STAGE" << std::endl;
+                //std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -858,7 +858,7 @@ void Game::checkPlayerCollisions()
             }
             else if (100 == tilemaps.doors[doorId].next_stage)
             {
-                std::cout << "NEXT LEVEL" << std::endl;
+                //std::cout << "NEXT LEVEL" << std::endl;
                 isLoading = true;
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
@@ -876,7 +876,7 @@ void Game::activateDoorTile(int doorId)
 {
     if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
     {
-        std::cout << "NEXT STAGE" << std::endl;
+        //std::cout << "NEXT STAGE" << std::endl;
         isLoading = true;
 
         if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)

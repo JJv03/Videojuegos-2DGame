@@ -169,7 +169,7 @@ void Player::onCollision(Entity &other, Game &game)
             if (this->health > 0)
             {
                 if(this->isOnStairs){
-                    this->setState(std::make_unique<PlayerHurtStairState>());
+                    this->isBeingHurt = true;
                 } else {
                     this->isJumping = true;
                     this->verticalSpeed = -gPlayerJumpForce;
