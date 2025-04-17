@@ -363,6 +363,7 @@ void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)
 {
     if (player.visible)
     {
+        
         window.draw(*player.sprite);
     }
     
@@ -1138,7 +1139,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         player.isAttacking = false;
         player.attackedFinished = true;
         //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
-
+        player.sprite->setColor(sf::Color::White);
+        player.whip.sprite->setColor(sf::Color::White);
         player.currentAnimation = idleSimon;
         player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Idle>());
@@ -1314,6 +1316,8 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     {
         player.isAttacking = false;
         player.attackedFinished = true;
+        player.sprite->setColor(sf::Color::White);
+        player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Jump>());
     }
@@ -1351,13 +1355,14 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
+
     player.isAttacking = true;
     
     player.isDucking = true;
     
     player.hasToPressAgain = false;
     player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
-    player.animationManager->playAnimation(attackSimon);
+    player.animationManager->playAnimation(attackFloorSimon);
 }
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
@@ -1378,6 +1383,7 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
 
 void PlayerAttackDuckState::update(Player& player, float deltaTime)
 {   
+    std::cout << "Dcuk attack" << std::endl;
     player.currentAnimation = attackFloorSimon;
    
     if (!player.animationManager->isPlaying(player.currentAnimation)){
@@ -1392,7 +1398,8 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
     }
     player.animationManager->update(deltaTime*1.5f);
     player.whip.animationManager->update(deltaTime*1.5f);
-
+    //std::cout << "Frame index: " << player.whip.animationManager->getCurrentFrameIndex() << std::endl;
+    
     if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
         
         int xoffset= 0;
@@ -1430,6 +1437,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
     }
+        
 
     if (player.isInvulnerable)
     {
@@ -1458,6 +1466,8 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         player.isAttacking = false;
         player.attackedFinished = true;
         player.currentAnimation = duckSimon;
+        player.sprite->setColor(sf::Color::White);
+        player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<Duck>());
     }
@@ -1597,15 +1607,18 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     }
     
     if(player.startInvulnerable){
-        if (player.upgradeWhip){
-            player.setState(state<WhipUpgrade>());
-        }
+        
         player.blinkTimer = 0.0f; 
         player.visible = true; 
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
-        player.setState(state<Idle>());
+        if (player.upgradeWhip){
+            player.setState(state<WhipUpgrade>());
+        }
+        else{
+            player.setState(state<Idle>());
+        }
     }   
 }
 
@@ -1655,6 +1668,7 @@ void PlayerHurtStairState::update(Player& player, float deltaTime)
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
+        
         player.setState(state<Idle>()); 
     }
 
@@ -2063,6 +2077,8 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
     else{
         player.upgradeWhip = false;
         player.isInvulnerable = false;
+        player.sprite->setColor(sf::Color::White);
+        player.whip.sprite->setColor(sf::Color::White);
         player.setState(state<Idle>());
         //std::cout << "UPGRADE WHIP END" << std::endl;
     }

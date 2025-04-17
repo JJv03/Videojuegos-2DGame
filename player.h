@@ -258,8 +258,8 @@ public:
     std::vector<AnimationManager::Frame> attackFloorFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 79), sf::Vector2(16, 23)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 80), sf::Vector2(16, 22)), 0.3f}};
-        //AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 80), sf::Vector2(16, 23)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.1f}};
 
     std::vector<AnimationManager::Frame> stairAscendIdleFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 31)), 0.2f},
