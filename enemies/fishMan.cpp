@@ -256,7 +256,7 @@ void FishMan::onCollision(Entity &other, Game &game)
     // Collision with breakable tiles
     else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
     {
-        if (!breakableTile->isDestroyed && breakableTile->isCollidable()) {
+        if (speed.y <= 0 && !breakableTile->isDestroyed && breakableTile->isCollidable()) {
             onCollision_BreakableTile(breakableTile->getBounds()[0]);
         }
     }
