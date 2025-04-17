@@ -14,7 +14,7 @@ Player::Player()
     isOnStairs = false;
     hasToPressAgain = true;
     isAttacking = false;
-    isWalking = false;
+    isWalking = false; 
     isJumping = false;
     isDucking = false;
     isDead = false;

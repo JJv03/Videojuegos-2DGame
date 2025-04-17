@@ -13,23 +13,40 @@ void AnimationManager::setAnimationSpeed(float multiplier) {
 
 void AnimationManager::playAnimation(animationID id) {
     //std::cout << "Playing animation " << id << std::endl;
+    float lastHeight = sprite.getLocalBounds().size.y;
+
     if (animations.find(id) != animations.end()) {
         currentAnimation = &animations[id];
         currentFrame = 0;
         elapsedTime = 0.f;
         sprite.setTextureRect(currentAnimation->frames[0].rect);
+
+        float currentHeight = sprite.getLocalBounds().size.y;
+        if(lastHeight != currentHeight){
+            sprite.move({0.f, lastHeight - currentHeight});
+        }
     }
 }
 
 void AnimationManager::playAnimation(Animation& animation) {
+    float lastHeight = sprite.getLocalBounds().size.y;
+
     currentAnimation = &animation;
     currentFrame = 0;
     elapsedTime = 0.f;
     sprite.setTextureRect(currentAnimation->frames[0].rect);
+
+    float currentHeight = sprite.getLocalBounds().size.y;
+    if(lastHeight != currentHeight){
+        sprite.move({0.f, lastHeight - currentHeight});
+    }
+       
 }
 
 void AnimationManager::update(float deltaTime) {
     if (!currentAnimation || currentAnimation->frames.empty()) return;
+
+    float lastHeight = sprite.getLocalBounds().size.y;
 
     elapsedTime += deltaTime*speedMultiplier;
     if (elapsedTime >= currentAnimation->frames[currentFrame].duration) {
@@ -48,6 +65,12 @@ void AnimationManager::update(float deltaTime) {
         }
 
         sprite.setTextureRect(currentAnimation->frames[currentFrame].rect);
+
+        float currentHeight = sprite.getLocalBounds().size.y;
+        if(lastHeight != currentHeight){
+            sprite.move({0.f, lastHeight - currentHeight});
+        }
+           
 
     }
     if (blinking) {

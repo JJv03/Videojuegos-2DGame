@@ -46,7 +46,7 @@ void Game::init()
     gameSoundManager.loadMusic("outTime", "./assets/music/08Out_of_Time.mp3");
 
     // Boss Music
-    gameSoundManager.loadMusic("boss", "./assets/music/10Posion_Mind.mp3");
+    gameSoundManager.loadMusic("boss", "./assets/music/10Poison_Mind.mp3");
     gameSoundManager.loadMusic("victoryBoss", "./assets/music/15Stage_Clear.mp3");
     gameSoundManager.loadMusic("dracula1", "./assets/music/09Nothing_to_Lose.mp3");
     gameSoundManager.loadMusic("dracula2.1", "./assets/music/11Black_Night(1).mp3");

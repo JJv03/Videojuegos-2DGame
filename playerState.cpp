@@ -604,7 +604,6 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerJumpState::end(Player& player)
 {
-    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerJumpState::hello(){
@@ -623,7 +622,6 @@ PlayerDuckState::PlayerDuckState() : PlayerState()
 
 void PlayerDuckState::init(Player& player)
 {
-    player.sprite->move({0.f,8.0f});
     player.isDucking = true;
 }
 
@@ -710,7 +708,6 @@ void PlayerDuckState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerDuckState::end(Player& player)
 {
-    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerDuckState::hello(){
@@ -1354,8 +1351,6 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
-    player.sprite->move({0.f,8.0f});
-
     player.isAttacking = true;
     
     player.isDucking = true;
@@ -1478,7 +1473,6 @@ void PlayerAttackDuckState::draw(Player& player, sf::RenderWindow &window)
 }
 void PlayerAttackDuckState::end(Player& player)
 {
-    player.sprite->move({0.f,-8.0f});
 }
 
 void PlayerAttackDuckState::hello(){
@@ -1654,6 +1648,7 @@ void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
 
 void PlayerHurtStairState::update(Player& player, float deltaTime)
 {
+
     if(player.startInvulnerable){
         player.blinkTimer = 0.0f; 
         player.visible = true; 
@@ -1663,7 +1658,7 @@ void PlayerHurtStairState::update(Player& player, float deltaTime)
         player.setState(state<Idle>()); 
     }
 
-    if(player.stairStepDistance != 0.f) {
+    if(player.stairStepDistance > 0.f) {
         player.setState(state<StairWalk>());
     } else {
         player.setState(state<StairIdle>());
@@ -1701,7 +1696,6 @@ void PlayerDeadState::init(Player& player)
     player.currentAnimation = deathSimon;
     player.animationManager->playAnimation(player.currentAnimation);
     // Initial position adjustment for first frame
-    player.sprite->move(sf::Vector2f(0.f, 8.f));
     player.isDead = true;
     player.whip.whipDmg = 1;
     player.whip.whipLvl = 1;
@@ -2056,7 +2050,7 @@ void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
 void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
 {
     
-    std::cout << "UPGRADE WHIP" << std::endl;
+    //std::cout << "UPGRADE WHIP" << std::endl;
     player.currentAnimation = whipUpgrade;
     
     if (!player.animationManager->isPlaying(player.currentAnimation)){
@@ -2070,7 +2064,7 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
         player.upgradeWhip = false;
         player.isInvulnerable = false;
         player.setState(state<Idle>());
-        std::cout << "UPGRADE WHIP END" << std::endl;
+        //std::cout << "UPGRADE WHIP END" << std::endl;
     }
     
     

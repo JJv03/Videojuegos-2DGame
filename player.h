@@ -224,59 +224,59 @@ public:
     AnimationManager *animationManager{nullptr};
 
     std::vector<AnimationManager::Frame> idleFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 30)), 0.2f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 22), sf::Vector2(16, 30)), 0.2f}};
 
     std::vector<AnimationManager::Frame> hurtFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(275, 21), sf::Vector2(16, 32)), 0.2f}};
 
     std::vector<AnimationManager::Frame> jumpFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.1f}};
 
     std::vector<AnimationManager::Frame> duckFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 21), sf::Vector2(16, 24)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.1f}};
 
     std::vector<AnimationManager::Frame> walkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 30)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 30)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 30)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 30)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 22), sf::Vector2(16, 30)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
     };
 
     std::vector<AnimationManager::Frame> walkSlowFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 30)), 1.0f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 30)), 1.0f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 30)), 1.0f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 30)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 22), sf::Vector2(16, 30)), 1.0f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 1.0f},
     };
 
     std::vector<AnimationManager::Frame> attackFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 78), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 78), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 30)), 0.3f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 30)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 79), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 79), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 80), sf::Vector2(16, 29)), 0.3f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 22), sf::Vector2(16, 30)), 0.1f}};
 
     std::vector<AnimationManager::Frame> attackFloorFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 78), sf::Vector2(16, 24)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 78), sf::Vector2(16, 24)), 0.3f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 78), sf::Vector2(16, 24)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 79), sf::Vector2(16, 23)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 80), sf::Vector2(16, 22)), 0.3f}};
+        //AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.1f}};
 
     std::vector<AnimationManager::Frame> stairAscendIdleFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 31)), 0.2f},
     };
 
     std::vector<AnimationManager::Frame> stairAscendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 22), sf::Vector2(16, 31)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 31)), 0.15f},
     };
 
     std::vector<AnimationManager::Frame> stairDescendIdleFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 31)), 0.2f},
     };
 
     std::vector<AnimationManager::Frame> stairDescendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 22), sf::Vector2(16, 31)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 31)), 0.15f},
     };
 
     std::vector<AnimationManager::Frame> deadFrames{
@@ -285,12 +285,12 @@ public:
     };
 
     std::vector<AnimationManager::Frame> colorFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(423, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(440, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(457, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(474, 21), sf::Vector2(16, 32)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(423, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(440, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(457, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(474, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 30)), 0.15f},
     };
 
     
