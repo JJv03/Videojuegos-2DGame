@@ -1009,6 +1009,9 @@ int Game::startStage(int stage, int fromStairs)
         return -1;
     }
 
+    player.verticalSpeed = 0.f;
+    player.horizontalSpeed = 0.f;
+    
     currentStage = stage;
 
     setLevelMusic(currentLevel);
