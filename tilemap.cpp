@@ -5,9 +5,7 @@
 #include <unordered_map>
 #include <memory>
 
-using BreakableType = BreakableTile::Type;
 
-std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, TileMap::BreakableTypeHash> TileMap::breakableTextures;
 
 // Collision Types (only used here)
 enum CollisionType
@@ -207,68 +205,6 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
     }
 }
 
-bool TileMap::loadBreakableTextures()
-{
-    // If they're already loaded, return true
-    if (!breakableTextures.empty())
-    {
-        return true;
-    }
-
-    sf::Image itemsObjectsImage;
-    if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png"))
-        return false;
-    itemsObjectsImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    auto firepitTexture = std::make_shared<sf::Texture>();
-    if (!firepitTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({175, 2}, {16, 31})))
-    {
-        std::cout << "Error cargando textura Firepit." << std::endl;
-        return false;
-    }
-    breakableTextures[BreakableType::FIREPIT] = firepitTexture;
-
-
-    auto candelabrumTexture = std::make_shared<sf::Texture>();
-    if (!candelabrumTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({157, 1}, {8, 16})))
-    {
-        std::cout << "Error cargando textura Candelabrum." << std::endl;
-        return false;
-    }
-    breakableTextures[BreakableType::CANDELABRUM] = candelabrumTexture;
-
-
-    sf::Image tilesetLvl1Image;
-    if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png"))
-        return false;
-    tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
-
-    auto breakableWallTexture = std::make_shared<sf::Texture>();
-    if (!breakableWallTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({18, 342}, {16, 16})))
-    {
-        std::cout << "Error cargando textura Breakable Wall 1 Squares." << std::endl;
-        return false;
-    }
-    breakableTextures[BreakableType::BREAKABLE_WALL_1SQUARE] = breakableWallTexture;
-
-    auto breakableWall4SquareTexture = std::make_shared<sf::Texture>();
-    if (!breakableWall4SquareTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({162, 342}, {16, 16})))
-    {
-        std::cout << "Error cargando textura Breakable Wall 4 Squares." << std::endl;
-        return false;
-    }
-    breakableTextures[BreakableType::BREAKABLE_WALL_4SQUARES] = breakableWall4SquareTexture;
-
-    auto breakableWall3SquareTexture = std::make_shared<sf::Texture>();
-    if (!breakableWall3SquareTexture->loadFromImage(tilesetLvl1Image, false, sf::IntRect({146, 326}, {16, 16})))
-    {
-        std::cout << "Error cargando textura Breakable Wall 3 Squares." << std::endl;
-        return false;
-    }
-    breakableTextures[BreakableType::BREAKABLE_WALL_3SQUARES_NOBREAK] = breakableWall3SquareTexture;
-
-    return true;
-}
 
 bool TileMap::load(int level, int stage)
 {
@@ -430,6 +366,14 @@ void TileMap::updateItems(const float& deltaTime) {
     }
 }
 
+void TileMap::updateBreakableTiles(const float& delfaTime) {
+    for (auto tile : m_breakableTiles) {
+        if (!tile->isDestroyed) {
+            tile->update(delfaTime);
+        }
+    }
+}
+
 void TileMap::drawHitboxes(sf::RenderWindow &window) const
 {
     // Solid tiles
@@ -471,12 +415,12 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
     // Breakable tiles
     for (size_t i = 0; i < this->m_breakableTiles.size(); ++i)
     {
-        if (this->m_breakableTiles[i].isDestroyed)
+        if (this->m_breakableTiles[i]->isDestroyed)
         {
             continue;
         }
 
-        for (auto hitbox : this->m_breakableTiles[i].hitboxes)
+        for (auto hitbox : this->m_breakableTiles[i]->hitboxes)
         {
             sf::RectangleShape rect = FloatRectToRectShape(hitbox);
             window.draw(rect);
@@ -513,8 +457,8 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
 
     for (size_t i = 0; i < m_breakableTiles.size(); ++i)
     {
-        if (m_breakableTiles[i].isDestroyed) continue;
-        window.draw(*m_breakableTiles[i].sprite);
+        if (m_breakableTiles[i]->isDestroyed) continue;
+        window.draw(*m_breakableTiles[i]->sprite);
     }
 
     for (size_t i = 0; i < m_items.size(); ++i)
@@ -811,27 +755,12 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
                 dropType = static_cast<DropType>(std::stoi(token));
             }
 
-            sf::Vector2f position(posX, posY);
-
-            // sf::Vector2u textureSize = breakableTextures[static_cast<BreakableType>(breakableType)]->getSize();
-            // sf::FloatRect hitbox({posX, posY}, {textureSize.x, textureSize.y});
             sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
             hitbox.position.x += posX;
             hitbox.position.y += posY;
 
-            BreakableTile tile;
-            tile.hitboxes.push_back(hitbox);
-            tile.type = static_cast<BreakableType>(breakableType);
-            tile.isBreakable = isBreakable;
-            tile.dropType = dropType;
-
-            // Sprite
-            auto texture = breakableTextures[tile.type];
-            auto sprite = std::make_shared<sf::Sprite>(*texture);
-
-            sprite->setPosition(hitbox.position);
-            tile.sprite = sprite;
-
+            std::shared_ptr<BreakableTile> tile = getBreakableTile(static_cast<BreakableType>(breakableType),
+                                                                    hitbox, isBreakable, dropType);
             m_breakableTiles.push_back(tile);
         }
         catch (const std::exception &e)

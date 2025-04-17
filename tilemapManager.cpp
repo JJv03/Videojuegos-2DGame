@@ -89,8 +89,8 @@ void TilemapManager::restartBreakableTiles(){
 
         for(auto& breakableTile: tilemap.m_breakableTiles)
         {
-            breakableTile.isBreakable = true;
-            breakableTile.isDestroyed = false;
+            breakableTile->isBreakable = true;
+            breakableTile->isDestroyed = false;
         }
     }
 }

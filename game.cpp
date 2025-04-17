@@ -295,6 +295,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     enemyManager->update(deltaTime, currentLevel, currentStage);
 
     tilemaps[currentStage].updateItems(deltaTime);
+    tilemaps[currentStage].updateBreakableTiles(deltaTime);
+
 
     static float timeAccumulator = 0.0f;
 
@@ -559,8 +561,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     for (auto &doorTile : tilemaps[currentStage].m_doorTiles)
         staticEntities.push_back(&doorTile);
-    for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
-        staticEntities.push_back(&breakableTile);
+    for (auto breakableTile : tilemaps[currentStage].m_breakableTiles)
+        staticEntities.push_back(&*breakableTile);
     for (auto &stairTile : tilemaps[currentStage].m_stairTiles)
         staticEntities.push_back(&stairTile);
 
@@ -805,10 +807,10 @@ void Game::checkPlayerCollisions()
     {
         for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
         {
-            if (breakableTile.isDestroyed)
+            if (breakableTile->isDestroyed)
                 continue;
 
-            sf::FloatRect tileBounds = breakableTile.hitboxes[0]; // Breakable tiles only have 1 hitbox
+            sf::FloatRect tileBounds = breakableTile->hitboxes[0]; // Breakable tiles only have 1 hitbox
 
             // ignore hitboxless tiles
             if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f)
@@ -817,10 +819,10 @@ void Game::checkPlayerCollisions()
             sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
             if (const std::optional<sf::FloatRect> intersection = whipBounds.findIntersection(tileBounds))
             {
-                if (breakableTile.isBreakable)
+                if (breakableTile->isBreakable)
                 {
-                    breakableTile.isDestroyed = true;
-                    createDropItem(breakableTile.sprite->getPosition(), breakableTile.dropType);
+                    breakableTile->isDestroyed = true;
+                    createDropItem(breakableTile->sprite->getPosition(), breakableTile->dropType);
                 }
             }
         }
@@ -1071,8 +1073,8 @@ void Game::restartLevel()
 
         for (auto &breakableTile : tilemap.m_breakableTiles)
         {
-            breakableTile.isBreakable = true;
-            breakableTile.isDestroyed = false;
+            breakableTile->isBreakable = true;
+            breakableTile->isDestroyed = false;
         }
     }
 

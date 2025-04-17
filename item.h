@@ -116,6 +116,8 @@ private:
     AnimationManager::Animation m_animation;        // This item's animation
 };
 
+// Returns the animation frames of an item based on the item type
+const std::vector<AnimationManager::Frame>& getItemAnimationFrames(ItemType type);
 
 // Loads the texture and the texture rectangle of all the items
 bool loadItemTextures();

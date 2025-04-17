@@ -1,11 +1,16 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <memory>
+#include "animationManager.h"
 #include "entity.h"
 #include "item.h"
+
+
 
 class Game;
 //class Player;
 
-void createDropItemAfterBrokenTile(sf::Vector2f itemPosition, DropType dropType);
 
 class Tile : public Entity
 {
@@ -59,18 +64,37 @@ public:
 
 // -------------------------------------------------
 
+// Types of breakable tiles. Only in this scope
+enum class BreakableType {
+    FIREPIT = 0,
+    CANDELABRUM = 1,
+    BREAKABLE_WALL_1SQUARE = 2,
+    BREAKABLE_WALL_4SQUARES = 3,
+    BREAKABLE_WALL_3SQUARES = 4,
+};
+
+// Hash function for the breakable tile type
+struct BreakableTypeHash
+{
+    std::size_t operator()(const BreakableType &t) const {
+        return std::hash<int>()(static_cast<int>(t));
+    }
+};
+
+
+// Dicctionary with the texture rectangles of the breakable tiles
+extern std::unordered_map<BreakableType, sf::IntRect, BreakableTypeHash> breakableTextureRects;
+
+// Atlas with the textures of all the breakable tiles
+extern std::vector<sf::Texture> breakableAtlas;
+
+// Map with the breakable tile type and its corresponding index in the atlas
+extern std::unordered_map<BreakableType, int> breakableTypeToAtlasIndex;
+
 class BreakableTile : public TileSprite
 {
 public:
-    enum class Type {   // Types of breakable tiles. Only in this scope
-        FIREPIT = 0,
-        CANDELABRUM = 1,
-        BREAKABLE_WALL_1SQUARE = 2,
-        BREAKABLE_WALL_4SQUARES = 3,
-        BREAKABLE_WALL_3SQUARES_NOBREAK = 4,
-    };
-
-    Type type;                      // Breakable type
+    BreakableType type;                      // Breakable type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
     bool generatesItem = false;     // If the tile generates an item when destroyed
@@ -97,7 +121,30 @@ public:
     // Collision functions
     void onCollision_Whip(Game& game);
     void onCollision_Player(Entity& other, Game& game);
+
+public:
+    std::unique_ptr<AnimationManager> m_animationManager{nullptr};
+    AnimationManager::Animation m_animation;        // This tiles's animation
+    
+    // Returns whether this tile has an animation or not
+    bool hasAnimation(BreakableType type) const;
+
+    // Updates the animation of the tile
+    void update(const float& deltaTime);
 };
+
+// Function that loads the textures of the breakable tiles
+bool loadBreakableTextures();
+
+// Returns the animation frames of a breakable tile based on its type
+const std::vector<AnimationManager::Frame>& getBreakableAnimationFrames(BreakableType type);
+
+// Returns the sprite of a breakable tile based on its type
+std::shared_ptr<sf::Sprite> getBreakableTileSprite(BreakableType type);
+
+// Returns the instance of a breakable tile based on its type, hitbox, isBreakable and dropType
+std::shared_ptr<BreakableTile> getBreakableTile(const BreakableType type, const sf::FloatRect& hitbox,
+                                                const bool isBreakable, const DropType dropType);
 
 // -------------------------------------------------
 

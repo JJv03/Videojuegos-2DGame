@@ -7,7 +7,6 @@
 #include "tile.h"
 #include "item.h"
 
-using BreakableType = BreakableTile::Type;
 using StairType = StairTile::Type;
 
 
@@ -21,18 +20,6 @@ public:
 
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
-
-    // Hash function for the breakable tile type
-    struct BreakableTypeHash
-    {
-        std::size_t operator()(const BreakableType &t) const
-        {
-            return std::hash<int>()(static_cast<int>(t));
-        }
-    };
-
-    // Dicctionary with the textures of the breakable tiles
-    static std::unordered_map<BreakableType, std::shared_ptr<sf::Texture>, BreakableTypeHash> breakableTextures;
 
 private:
     // Saves the map's tiles' vertex positions
@@ -82,8 +69,6 @@ private:
     // Function to process the enemy section in tilemap file
     void processFileEnemies(std::ifstream &file);
 
-    // Function that loads the textures of the breakable tiles
-    static bool loadBreakableTextures();
 
 public:
     TileMap();
@@ -114,7 +99,7 @@ public:
     std::vector<std::vector<SolidTile>> m_solidTiles;
 
     // Vector with the properties of each breakable tile
-    std::vector<BreakableTile> m_breakableTiles;
+    std::vector<std::shared_ptr<BreakableTile>> m_breakableTiles;
 
     // Vector with the properties of each door tile
     std::vector<DoorTile> m_doorTiles;
@@ -127,6 +112,9 @@ public:
 
     // Function that updates the items in the tilemap and erases the ones that have no lifeTime left
     void updateItems(const float& deltaTime);
+
+    // Function that updates the animation of the breakable tiles in the tilemap
+    void updateBreakableTiles(const float& delfaTime);
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow &window, Camera &camera);
