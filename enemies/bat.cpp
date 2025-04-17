@@ -15,7 +15,7 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
 
 // Update bat logic: handle spawning, movement, and deactivation
 void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                 const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
+                 const sf::FloatRect &playerDeactivationZone, const float playerDir, const sf::FloatRect &playerBounds)
 {
     // SPAWN LOGIC: activate bat when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -31,7 +31,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
     if (playerInZone && !isActive && !spawnerActive)
     {
-        batSpawnTimers = 1.5f; // Delay before spawning
+        batSpawnTimers = 3.0f; // Delay before spawning
 
         batToSpawn = true;
     }
@@ -43,7 +43,15 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         if (batSpawnTimers <= 0.0f)
         {
-            movePositionToBorder(playerActivationZone, playerBounds);
+            bool spawnFromRight = true;
+            if (playerDir > 0.f)
+            {
+                spawnFromRight = false;
+            }
+
+            movePositionToBorder(playerActivationZone, playerBounds, spawnFromRight);
+            float dir = spawnFromRight ? 1.0f : -1.0f;
+            speed.x = speed.x * dir;
 
             isActive = true;
             batToSpawn = false;
@@ -128,14 +136,15 @@ void Bat::resetPosition()
 }
 
 // Move bat to spawn position at the edge of player's activation zone
-void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone,
-                               const sf::FloatRect &playerBounds)
+void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds, bool spawnFromRight)
 {
 
     if (!sprite)
         return;
 
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x;
+    float edgeX = spawnFromRight
+                      ? playerActivationZone.position.x + playerActivationZone.size.x
+                      : playerActivationZone.position.x - 20.0f;
     float playerCenterY = playerBounds.position.y + playerBounds.size.y / 2.0f;
     float alignedY = playerCenterY - 5.0f;
 
@@ -143,7 +152,7 @@ void Bat::movePositionToBorder(const sf::FloatRect &playerActivationZone,
     sf::Vector2f oldPosition = sprite->getPosition();
 
     // New position
-    sf::Vector2f newPosition(rightEdgeX, alignedY);
+    sf::Vector2f newPosition(edgeX, alignedY);
     sprite->setPosition(newPosition);
 
     // Update hitboxes to match new position

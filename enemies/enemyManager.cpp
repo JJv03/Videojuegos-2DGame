@@ -29,7 +29,7 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getGlobalBounds());
+            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds());
         }
     }
     for (auto &fishman : fishman)
