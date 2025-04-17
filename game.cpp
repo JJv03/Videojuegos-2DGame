@@ -297,21 +297,39 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     tilemaps[currentStage].updateItems(deltaTime);
 
     static float timeAccumulator = 0.0f;
-    timeAccumulator += deltaTime;
+    static float fallingAccumulator = 0.0f;
 
+    timeAccumulator += deltaTime;
+    
     // Reduce time every second
     if (timeAccumulator >= 1.0f)
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
         if (time == 0 && !player.isDead)
-        {
+        { 
             player.setState(std::make_unique<PlayerDeadState>());
+        }
+        if(fallingAccumulator >= 0.04f )
+        {
+            std::cout << "Falling for 2.5 seconds" << std::endl;
+            fallingAccumulator = 0.0f;
+            player.setState(std::make_unique<PlayerDeadState>());
+        }
+        if (!player.isOnGround && !player.isDead)
+        {
+            std::cout << fallingAccumulator << std::endl;
+            fallingAccumulator += deltaTime;
+        }
+        else{
+            fallingAccumulator = 0.0f;
         }
 
         timeAccumulator = 0.0f;
         updateGUITime();
     }
+
+    
 
     // Update score
     std::stringstream scoreStream;
@@ -354,7 +372,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
         player.lives -= 1;
-        //std::cout << "Player lives: " << player.lives << std::endl;
+        std::cout << "Player lives: " << player.lives << std::endl;
         player.health = player.maxHealth;
         player.setState(std::make_unique<PlayerIdleState>());
         isLoading = true;
@@ -830,7 +848,7 @@ void Game::checkPlayerCollisions()
 
             if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
             {
-                //std::cout << "NEXT STAGE" << std::endl;
+                std::cout << "NEXT STAGE" << std::endl;
                 isLoading = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -844,7 +862,7 @@ void Game::checkPlayerCollisions()
             }
             else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
             {
-                //std::cout << "PREVIOUS STAGE" << std::endl;
+                std::cout << "PREVIOUS STAGE" << std::endl;
                 isLoading = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -858,7 +876,7 @@ void Game::checkPlayerCollisions()
             }
             else if (100 == tilemaps.doors[doorId].next_stage)
             {
-                //std::cout << "NEXT LEVEL" << std::endl;
+                std::cout << "NEXT LEVEL" << std::endl;
                 isLoading = true;
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
@@ -876,7 +894,7 @@ void Game::activateDoorTile(int doorId)
 {
     if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
     {
-        //std::cout << "NEXT STAGE" << std::endl;
+        std::cout << "NEXT STAGE" << std::endl;
         isLoading = true;
 
         if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
