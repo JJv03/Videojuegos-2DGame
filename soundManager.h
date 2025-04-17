@@ -88,6 +88,8 @@ public:
      */
     float realVolume(float master, float other);
 
+    bool musicHasFinished(const std::string& id);
+
 private:
     std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;

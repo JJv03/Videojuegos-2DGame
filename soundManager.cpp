@@ -142,3 +142,12 @@ void SoundManager::adjustAllMusicVolumes(float volume) {
 float SoundManager::realVolume(float master, float other){
     return (master*other)/100;
 }
+
+bool SoundManager::musicHasFinished(const std::string& id){
+    auto it = musicTracks.find(id);
+    if (it == musicTracks.end()) {
+        return true; // Considera que ha terminado si no se encuentra
+    }
+
+    return it->second.getStatus() == sf::Music::Status::Stopped;
+}

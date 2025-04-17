@@ -74,10 +74,38 @@ public:
 };
 
 
+class walkingAnimGS : public GameState{
+private:
+    SoundManager walkingAnimSoundManager;
+    configManager &configManager;
+    sf::Font font;
+    std::vector<sf::Text> texts;
+    std::vector<sf::Vector2f> textPositions;
+    // AnimationManager *bat1{nullptr};
+    // std::shared_ptr<sf::Sprite> bat1;
+    // AnimationManager *bat2{nullptr};
+    // std::shared_ptr<sf::Sprite> bat2;
+    // AnimationManager *cloud{nullptr};
+    // std::shared_ptr<sf::Sprite> cloud;
+    // AnimationManager *simon{nullptr};
+    // std::shared_ptr<sf::Sprite> simon;
+public:
+    explicit walkingAnimGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~walkingAnimGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth,
+        sf::Vector2f virtualWorldset);
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
+
 class MenuGS : public GameState{
 private:
-    // std::unordered_map<std::string, sf::Texture> menuTextures;
-    // std::vector<sf::Sprite> menuSprites;
     sf::Font font;
     std::vector<sf::Text> options;
     int position;
@@ -206,7 +234,7 @@ public:
 };
 
 
-class InitMenu : public GameState{
+class InitMenuGS : public GameState{
 private:
     SoundManager menuSoundManager;
     configManager &configManager;
@@ -217,8 +245,8 @@ private:
     float blinkTimer = 0.0;
     float blinkInterval = 0.2f;
 public:
-    explicit InitMenu(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
-    ~InitMenu() override;
+    explicit InitMenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~InitMenuGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
@@ -227,6 +255,7 @@ public:
     void resume() override;
     void close() override;
 };
+
 
 class InitAnimationGS : public GameState{
 private:
