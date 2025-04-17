@@ -5,15 +5,6 @@ Projectile::Projectile(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
                        const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage)
     : EntitySprite(_sprite, _hitboxes), velocity(_velocity), damage(_damage)
 {
-    if (sprite)
-    {
-        sprite->setPosition(position);
-    }
-
-    for (auto &hitbox : hitboxes)
-    {
-        hitbox.position = position;
-    }
 }
 
 void Projectile::update(float deltaTime, const sf::FloatRect &deactivationZone)
