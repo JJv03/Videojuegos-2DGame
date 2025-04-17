@@ -210,6 +210,8 @@ class InitMenu : public GameState{
 private:
     SoundManager menuSoundManager;
     configManager &configManager;
+    AnimationManager *animationManager{nullptr};
+    std::shared_ptr<sf::Sprite> castle;
 public:
     explicit InitMenu(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitMenu() override;

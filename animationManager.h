@@ -53,6 +53,13 @@ enum animationID{
     fireBombThrowing,
     stopwatchThrowing,
     boomerangThrowing,
+
+    // FIRST SCREEN
+    // Comming bat to zoom
+    commingBat,
+
+    // Zoomed bat loop
+    zoomedBat,
 };
 
 

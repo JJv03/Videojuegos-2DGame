@@ -1630,20 +1630,73 @@ void InitMenu::init(){
 
     initMenuSprites.push_back(bg);
 
-    sf::Sprite castle(initMenuTextures["bg"]);
+    auto castleSprite = std::make_shared<sf::Sprite>(initMenuTextures["bg"]);
 
-    castle.setTextureRect(sf::IntRect(sf::Vector2i(1, 256), sf::Vector2i(72, 56)));
+    castleSprite->setTextureRect(sf::IntRect(sf::Vector2i(1, 256), sf::Vector2i(72, 56)));
 
-    castle.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
+    castleSprite->setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
 
     float castleX = 287;
     float castleY = 173;
 
-    castle.setPosition(sf::Vector2f(castleX, castleY));
+    castleSprite->setPosition(sf::Vector2f(castleX, castleY));
+
+    castle = castleSprite;
 
     // Animation of the bat
+    std::vector<AnimationManager::Frame> commingFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(74, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(220, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(293, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(366, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(439, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(512, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(585, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(658, 256), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(74, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(220, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(293, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(366, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(439, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(512, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(585, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(658, 313), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(74, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(220, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(293, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(366, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(439, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(512, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(585, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(658, 370), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(74, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(220, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(293, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(366, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(439, 427), sf::Vector2(72, 56)), 0.05f}
+    };
 
-    initMenuSprites.push_back(castle);
+    std::vector<AnimationManager::Frame> zoomedFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(512, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(585, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(658, 427), sf::Vector2(72, 56)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(585, 427), sf::Vector2(72, 56)), 0.05f}
+    };
+    
+    animationManager = new AnimationManager(*castle);
+    
+    animationManager->addAnimation(commingBat, commingFrames, false);
+    animationManager->addAnimation(zoomedBat, zoomedFrames);
+
+    animationManager->playAnimation(commingBat);
 
     sf::Sprite start(initMenuTextures["bg"]);
     sf::Sprite black(initMenuTextures["bg"]);
@@ -1676,7 +1729,15 @@ void InitMenu::handleInput(sf::Event event){
 }
 
 void InitMenu::update(float deltaTime, const sf::Vector2f& viewPosition){
-    
+    if (animationManager != nullptr) {
+        animationManager->update(deltaTime);
+        if (animationManager->isAnimationFinished()){
+            animationManager->playAnimation(zoomedBat);
+        }
+    }
+    else{
+        std::cout << "AAAAAAAAAAA" << std::endl;
+    }
 }
 
 void InitMenu::draw(sf::RenderWindow& window, Camera& camera){
@@ -1684,9 +1745,9 @@ void InitMenu::draw(sf::RenderWindow& window, Camera& camera){
     // std::cout<<menuSprites.size()<<std::endl;
     // std::cout<<menuTextures.size()<<std::endl;
     // std::cout<<options.size()<<std::endl;
-    for (const auto& sprite : initMenuSprites) {
-        window.draw(sprite);
-    }
+    window.draw(initMenuSprites[0]);
+    window.draw(*castle);
+    window.draw(initMenuSprites[1]);
 }
  
 void InitMenu::pause(){

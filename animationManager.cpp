@@ -93,6 +93,7 @@ bool AnimationManager::isPlaying(animationID id){
 
 bool AnimationManager::isAnimationFinished() const{
     if(!currentAnimation) return true;
+    if (currentAnimation->loop) return false;   // Don't finish if it's a loop
     return currentFrame == currentAnimation->frames.size() - 1;
 }
 
