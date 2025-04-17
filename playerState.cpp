@@ -1712,6 +1712,7 @@ void PlayerDeadState::init(Player& player)
     player.isInvulnerable = true;
     player.deathRestart = true;
     player.isOnStairs = false;
+    player.health = 0;
 }
 
 void PlayerDeadState::handleInput(Player& player, sf::Event event)
@@ -1754,6 +1755,9 @@ void PlayerDeadState::end(Player& player)
     player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
     player.hasDied = false;
+    player.sprite->setColor(sf::Color::White);
+    player.whip.sprite->setColor(sf::Color::White);
+
 }
 
 void PlayerDeadState::hello(){

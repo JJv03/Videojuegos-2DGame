@@ -297,7 +297,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     tilemaps[currentStage].updateItems(deltaTime);
 
     static float timeAccumulator = 0.0f;
-    static float fallingAccumulator = 0.0f;
 
     timeAccumulator += deltaTime;
     
@@ -310,24 +309,16 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         { 
             player.setState(std::make_unique<PlayerDeadState>());
         }
-        if(fallingAccumulator >= 0.04f )
-        {
-            std::cout << "Falling for 2.5 seconds" << std::endl;
-            fallingAccumulator = 0.0f;
-            player.setState(std::make_unique<PlayerDeadState>());
-        }
-        if (!player.isOnGround && !player.isDead)
-        {
-            std::cout << fallingAccumulator << std::endl;
-            fallingAccumulator += deltaTime;
-        }
-        else{
-            fallingAccumulator = 0.0f;
-        }
-
         timeAccumulator = 0.0f;
         updateGUITime();
     }
+    if(viewPosition.y+gGameVisibleWorld_size_y+50 < player.sprite->getPosition().y && !player.isDead)
+    {
+        std::cout << "Falling " << std::endl;
+
+        player.setState(std::make_unique<PlayerDeadState>());
+    }
+    
 
     
 

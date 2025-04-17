@@ -369,6 +369,7 @@ void Player::onCollision_Item(Entity &entityItem)
         //std::cout << "MORNING STAR" << std::endl;
         this->upgradeWhip = true;
         this->isInvulnerable = true;
+        this->setState(std::make_unique<PlayerWhipUpgradeState>());
         if (this->whip.whipLvl < 6 )
         {
             this->whip.whipLvl++;
