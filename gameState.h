@@ -212,6 +212,10 @@ private:
     configManager &configManager;
     AnimationManager *animationManager{nullptr};
     std::shared_ptr<sf::Sprite> castle;
+    bool blinking;
+    int blinks, maxBlinks;
+    float blinkTimer = 0.0;
+    float blinkInterval = 0.2f;
 public:
     explicit InitMenu(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitMenu() override;

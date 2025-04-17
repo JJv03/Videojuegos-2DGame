@@ -1702,7 +1702,7 @@ void InitMenu::init(){
     sf::Sprite black(initMenuTextures["bg"]);
 
     start.setTextureRect(sf::IntRect(sf::Vector2i(558, 1), sf::Vector2i(112, 8)));
-    black.setTextureRect(sf::IntRect(sf::Vector2i(558, 1), sf::Vector2i(112, 8)));
+    black.setTextureRect(sf::IntRect(sf::Vector2i(558, 10), sf::Vector2i(112, 8)));
 
     start.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
     black.setScale(sf::Vector2f(scaleFactorWidth+0.1, scaleFactorHeight+0.1));
@@ -1716,27 +1716,45 @@ void InitMenu::init(){
 
     initMenuSprites.push_back(start);
     initMenuSprites.push_back(black);
+
+    blinking = false;
+    blinks = 0;
+    maxBlinks = 9;
 }
 
 void InitMenu::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.enter) {
-            std::cout << "Going to Init animation" << std::endl;
-            stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
+            std::cout << "Let's blink" << std::endl;
+            blinking = true;
         }
     }
 }
 
 void InitMenu::update(float deltaTime, const sf::Vector2f& viewPosition){
-    if (animationManager != nullptr) {
-        animationManager->update(deltaTime);
-        if (animationManager->isAnimationFinished()){
-            animationManager->playAnimation(zoomedBat);
-        }
+    animationManager->update(deltaTime);
+    if (animationManager->isAnimationFinished()){
+        animationManager->playAnimation(zoomedBat);
     }
-    else{
-        std::cout << "AAAAAAAAAAA" << std::endl;
+
+    if(blinking){
+        sf::Sprite black = initMenuSprites.back();
+        initMenuSprites.pop_back();
+
+        blinkTimer += deltaTime;
+
+        if (blinkTimer >= blinkInterval) {
+            blinks ++;
+            black.setColor(black.getColor() == sf::Color::Transparent ? sf::Color::White : sf::Color::Transparent);
+            blinkTimer = 0.0f;
+        }
+        initMenuSprites.push_back(black);
+    }
+
+    if(blinks > maxBlinks){
+        std::cout << "Going to Init animation" << std::endl;
+        stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
     }
 }
 
@@ -1748,6 +1766,7 @@ void InitMenu::draw(sf::RenderWindow& window, Camera& camera){
     window.draw(initMenuSprites[0]);
     window.draw(*castle);
     window.draw(initMenuSprites[1]);
+    window.draw(initMenuSprites[2]);
 }
  
 void InitMenu::pause(){
