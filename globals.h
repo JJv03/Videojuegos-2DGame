@@ -86,6 +86,8 @@ extern const float gItemGravity;
 
 
 // ============ PLAYER VARIABLES =============
+extern const int gWhipMaxLevel;
+
 extern const float gSimonFeetCollisionNewHeight;    // Height above the corresponding tile at which Simon is placed after his feet are collide
 
 extern const float gPlayerMovementSpeed;

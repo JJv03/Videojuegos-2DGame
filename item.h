@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <random>
 #include <vector>
 #include "entity.h"
 #include "animationManager.h"
@@ -48,16 +49,21 @@ enum class ItemType {
     ONEUP,
 };
 
-enum class DropType {       // Types of items that can drop from breakable tiles.
+
+// Types of items that can drop from breakable tiles.
+enum class DropType {       
     NONE = 0,               // No item drops
     DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc).
-    WEAPON = 2,             
+    ALL_WEAPONS = 2,             
     PURPLE_MONEY_BAG = 3,
     FLASHING_MONEY_BAG = 4,
-    AXE_OR_DEFAULT = 5,
+    AXE_OR_OTHERS = 5,
+    MAGIC_CRYSTAL = 6,
     PORK_CHOP = 7,
     DOUBLE_SHOT = 8,
     TRIPLE_SHOT = 9,
+    DEFAULT_OR_WEAPON = 10,
+    FIREPIT_WEAPON = 11,
 };
 
 
@@ -123,8 +129,14 @@ bool isScoringItem(ItemType type);
 // Returns the score of an item. If the item is not a scoring item, returns 0
 int getItemScore(ItemType item);
 
-// Returns a new item based on the drop type
-std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position);
+// Returns an item from weighted items. The item is chosen randomly based on the weights
+// of each item.
+ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weightedItems,
+                            std::uniform_real_distribution<float>& uniformZeroToOne);
+
+// Returns a new item based on the drop type. If the drop type is None, returns nullptr. The item
+// is created with the given position. If 'canDropWhip' is true, the item can be a whip upgrade
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip);
 
 // Returns the sprite of an item based on the item type
 std::shared_ptr<sf::Sprite> getItemSprite(ItemType type);

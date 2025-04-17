@@ -919,7 +919,7 @@ void Game::activateDoorTile(int doorId)
 
 void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType)
 {
-    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition);
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.whip.whipLvl < gWhipMaxLevel);
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));

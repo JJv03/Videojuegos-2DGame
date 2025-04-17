@@ -9,6 +9,11 @@
 #include "player.h"
 #include "game.h"
 
+
+static std::random_device rd;       // we only want 1 instance of random_device
+static std::mt19937 rng(rd());
+
+
 std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 sf::Texture itemAtlas;
 
@@ -273,10 +278,58 @@ const std::vector<AnimationManager::Frame>& getItemAnimationFrames(ItemType type
 }
 
 
-std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
-    static std::random_device rd;       // we only want 1 instance of random_device
-    static std::mt19937 rng(rd());
+ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weightedItems,
+                            std::uniform_real_distribution<float>& uniformZeroToOne) {
+    float myProbability = uniformZeroToOne(rng);
     
+    float cumulativeProb = 0.f;
+    for (const auto& [item, weight] : weightedItems) {
+        cumulativeProb += weight;
+        if (myProbability <= cumulativeProb) {
+            return item;
+        }
+    }
+
+    std::cerr << "[ERROR] Weighted item selection failed. Cumulative: " << cumulativeProb << std::endl;
+    return weightedItems.back().first;  // In case the total probability is less than 1.0
+}
+
+
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip = true) {
+    std::uniform_real_distribution<float> uniformZeroToOne(0.f, 1.f);    // [0, 1] range
+
+    static const std::vector<std::pair<ItemType, float>> defaultDrops = {
+        {ItemType::RED_MONEY_BAG, 0.1f},
+        {ItemType::SMALL_HEART, 0.6f},
+        {ItemType::LARGE_HEART, 0.3},
+    };
+
+    static const std::vector<ItemType> weaponDrop = {
+        ItemType::DAGGER,
+        ItemType::AXE,
+        ItemType::FIRE_BOMB,
+        ItemType::BOOMERANG,
+        ItemType::STOPWATCH,
+        ItemType::ROSARY,
+    };
+
+    static const std::vector<std::pair<ItemType, float>> firepitWeapons = {
+        {ItemType::DAGGER, 0.34f },
+        {ItemType::FIRE_BOMB, 0.33f },
+        {ItemType::BOOMERANG, 0.33f },
+    };
+
+    static const std::vector<std::pair<ItemType, float>> axeOrDefaultDropItems = {
+        { ItemType::AXE, 0.7f },
+        { ItemType::BOOMERANG, 0.15f },
+        { ItemType::DAGGER, 0.15f },
+    };
+    
+    const float defaultWhipProb = 0.9f;     // Probability of dropping whip upgrade
+    const float defaultVsWeaponProb = 0.95f;    // Probability of dropping a default item
+    const float weaponWhipProb = 0.5f;     // Probability of dropping whip upgrade when dropping a weapon
+
+
     ItemType type;
     float lifeTime = 5.f;
 
@@ -285,31 +338,53 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
             return nullptr;                 // No item to drop
         
         case DropType::DEFAULT: {
-            static const std::vector<ItemType> defaultDropItems = {
-                ItemType::RED_MONEY_BAG,
-                ItemType::SMALL_HEART,
-                ItemType::LARGE_HEART,
-                ItemType::MORNING_STAR,
-            };
-            std::uniform_int_distribution<size_t> dist(0, defaultDropItems.size() - 1);
-            type = defaultDropItems[dist(rng)];
-            if (type == ItemType::MORNING_STAR) lifeTime = -1.f; // Permanent item
+            if (canDropWhip && uniformZeroToOne(rng) < defaultWhipProb) {
+                type = ItemType::MORNING_STAR;
+                break;
+            }
+            std::uniform_int_distribution<size_t> dist(0, defaultDrops.size() - 1);
+            type = chooseWeightedItem(defaultDrops, uniformZeroToOne);
             break;
         }
         
-        case DropType::WEAPON: {
-            static const std::vector<ItemType> weaponDropItems = {
-                ItemType::MORNING_STAR,
-                ItemType::DAGGER,
-                ItemType::AXE,
-                ItemType::FIRE_BOMB,
-                ItemType::BOOMERANG,
-                ItemType::STOPWATCH,
-                ItemType::ROSARY,
-            };
-            std::uniform_int_distribution<size_t> dist(0, weaponDropItems.size() - 1);
-            type = weaponDropItems[dist(rng)];
-            if (type == ItemType::MORNING_STAR) lifeTime = -1.f; // Permanent item
+        case DropType::ALL_WEAPONS: {
+            if (canDropWhip && uniformZeroToOne(rng) < defaultWhipProb) {
+                type = ItemType::MORNING_STAR;
+                break;
+            }
+            std::uniform_int_distribution<size_t> dist(0, weaponDrop.size() - 1);
+            type = weaponDrop[dist(rng)];
+            break;
+        }
+
+        case DropType::FIREPIT_WEAPON: {
+            std::uniform_int_distribution<size_t> dist(0, firepitWeapons.size() - 1);
+            type = chooseWeightedItem(firepitWeapons, uniformZeroToOne);
+            break;
+        }
+
+        case DropType::AXE_OR_OTHERS: {
+            if (canDropWhip && uniformZeroToOne(rng) < defaultWhipProb) {
+                type = ItemType::MORNING_STAR;
+                break;
+            }
+            type = chooseWeightedItem(axeOrDefaultDropItems, uniformZeroToOne);
+            break;
+        }
+
+        case DropType::DEFAULT_OR_WEAPON: {
+            if (uniformZeroToOne(rng) < defaultVsWeaponProb) {      // Drop a default item
+                type = chooseWeightedItem(defaultDrops, uniformZeroToOne);
+            }
+            else {      // Drop a weapon
+                if (canDropWhip && uniformZeroToOne(rng) < weaponWhipProb) {
+                    type = ItemType::MORNING_STAR;
+                }
+                else {
+                    std::uniform_int_distribution<size_t> dist(0, weaponDrop.size() - 1);
+                    type = weaponDrop[dist(rng)];
+                }
+            }
             break;
         }
 
@@ -332,21 +407,27 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position) {
         case DropType::TRIPLE_SHOT:
             type = ItemType::TRIPLE_SHOT;
             break;
+        
+        case DropType::MAGIC_CRYSTAL:
+            type = ItemType::MAGIC_CRYSTAL;
+            break;
 
         default:
             std::cerr << "[ERROR] Unknown drop type: " << static_cast<int>(dropType) << std::endl;
             return nullptr;
     }
 
+    if (type == ItemType::MORNING_STAR || type == ItemType::MAGIC_CRYSTAL) {
+        lifeTime = -1.f;    // Item doesn't dispawn
+    }
+
     std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);
     sprite->setPosition(position);
-
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
-
     std::vector<AnimationManager::Frame> animationFrames = getItemAnimationFrames(type);
-    if (animationFrames.size() > 0)
-        return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
-    return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
+    
+    return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
+    //return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
 }
 
 
