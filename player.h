@@ -135,11 +135,10 @@ public:
     PlayerDirection direction;
     float verticalSpeed = 0.f;
     float horizontalSpeed = 0.f;
-    float lifeTime = 0.5f;
 
     // Boomerang
-    float placeLaunched = 0.f;
     bool changedDirection = false;
+    bool intersected = false;
 
     // Fire Bomb
     bool isExploding = false;
@@ -318,5 +317,5 @@ public:
     void hello() const override;
 
     // SubWeapon functions
-    void updateActiveSubWeapons(float deltaTime);
+    void updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition);
 };

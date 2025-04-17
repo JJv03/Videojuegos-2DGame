@@ -65,7 +65,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
     getActiveState()->update(*this, deltaTime);
     updateActivationZones(viewPosition);
-    updateActiveSubWeapons(deltaTime);
+    updateActiveSubWeapons(deltaTime, viewPosition);
 
     // If player is near stair, collisions will make it true
     this->isNearStair = false;
@@ -75,9 +75,9 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
 void Player::draw(sf::RenderWindow &window)
 {
     getActiveState()->draw(*this, window);
-    /*for (auto& subW : activeSubWeapons) {
+    for (auto& subW : activeSubWeapons) {
         window.draw(*subW.sprite);
-    }*/
+    }
 }
 
 void Player::setState(PlayerStateRef newState)
@@ -421,14 +421,13 @@ void Player::hello() const {
     std::cout << "Soy Player" << std::endl;
 }
 
-void Player::updateActiveSubWeapons(float deltaTime) {
+void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition) {
     if (activeSubWeapons.empty()) {
         return;
     }
     
     for (auto& subW : activeSubWeapons) {
         
-        subW.lifeTime -= deltaTime;
 
         if (subW.type == ItemType::AXE)
         {
@@ -447,7 +446,7 @@ void Player::updateActiveSubWeapons(float deltaTime) {
                 this->subWeapon.sprite->move(sf::Vector2f(0.f, subW.verticalSpeed * deltaTime));
                 // Check if it collides, if so, explode
                 
-                
+                //subW.isExploding = true;
 
             }
             
@@ -464,7 +463,8 @@ void Player::updateActiveSubWeapons(float deltaTime) {
 
         }else if(subW.type == ItemType::BOOMERANG)
         {
-            if (std::abs(subW.sprite->getPosition().x - subW.placeLaunched) >= 110.f && !subW.changedDirection) { 
+            if ((subW.sprite->getPosition().x + 20 >= viewPosition.x + gGameVisibleWorld_size_x || 
+                 subW.sprite->getPosition().x -10  <= viewPosition.x  ) && !subW.changedDirection) { 
                 subW.changedDirection = true;
                 subW.horizontalSpeed = -subW.horizontalSpeed;
             }
@@ -477,7 +477,7 @@ void Player::updateActiveSubWeapons(float deltaTime) {
             // Hanlde boomerang colision with player
             if (isIntersecting(subW.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && subW.changedDirection) {
                 //std::cout << "Boomerang colision with player" << std::endl;
-                subW.lifeTime = 0.f; // Borrar boomerang
+                subW.intersected = true;
                 
             }
             
@@ -499,9 +499,13 @@ void Player::updateActiveSubWeapons(float deltaTime) {
     // Borrado por tiempo de vida
     bool wasErased = !activeSubWeapons.empty();
     activeSubWeapons.erase(
+        // Remove if sprite is out of bounds 
         std::remove_if(activeSubWeapons.begin(), activeSubWeapons.end(),
-            [](const SubWeapon& subW) {
-                return subW.lifeTime <= 0.f;
+            [&viewPosition](const SubWeapon& subW) {
+                return (subW.sprite->getPosition().x + 16 >= viewPosition.x + gGameVisibleWorld_size_x || 
+                        subW.sprite->getPosition().x <= viewPosition.x || subW.intersected ||
+                        subW.sprite->getPosition().y >= viewPosition.y + gGameVisibleWorld_size_y ||
+                        subW.sprite->getPosition().y <= viewPosition.y - 16); // 16 is the height of the sprite
             }),
         activeSubWeapons.end());
 
@@ -509,6 +513,9 @@ void Player::updateActiveSubWeapons(float deltaTime) {
         
         this->subWeapon.sprite->setPosition({ -100.f,0.f}); 
         this->weaponIsActive = false;
+        this->subWeapon.isExploding = false;
+        this->subWeapon.intersected = false;
+        this->subWeapon.changedDirection = false;
     }
 }
 

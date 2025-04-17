@@ -357,6 +357,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         revivingClock.restart();
         gameSoundManager.stopAllMusic();
         auto audio = configManager.getAudio();
+        
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
 
@@ -1055,7 +1056,8 @@ void Game::restartStage()
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
     player.hearts = 5;
-
+    
+    
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
 }
 
@@ -1083,7 +1085,7 @@ void Game::restartLevel()
     player.hearts = 5;
     player.score = 0;
     player.lives = 3;
-
+    
     startStage(1);
 }
 
