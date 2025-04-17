@@ -98,7 +98,7 @@ void Player::updateActivationZones(const sf::Vector2f &viewPosition)
 {
     // Size of the visible game view
     float activationWidth = gGameVisibleWorld_size_x;
-    float activationHeight = gGameVisibleWorld_size_y;
+    float activationHeight = gGameVisibleWorld_size_y;  
     float deactivationWidth = activationWidth * 1.6f;
     float deactivationHeight = activationHeight * 1.6f;
 

@@ -266,7 +266,7 @@ public:
     };
 
     std::vector<AnimationManager::Frame> stairAscendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 22), sf::Vector2(16, 31)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(171, 21), sf::Vector2(16, 32)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 31)), 0.15f},
     };
 
@@ -275,7 +275,7 @@ public:
     };
 
     std::vector<AnimationManager::Frame> stairDescendWalkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 22), sf::Vector2(16, 31)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(228, 21), sf::Vector2(16, 32)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(211, 21), sf::Vector2(16, 31)), 0.15f},
     };
 
@@ -285,12 +285,12 @@ public:
     };
 
     std::vector<AnimationManager::Frame> colorFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(423, 21), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(440, 21), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(457, 21), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(474, 21), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 21), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(423, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(440, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(457, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(474, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(406, 22), sf::Vector2(16, 30)), 0.15f},
     };
 
     
