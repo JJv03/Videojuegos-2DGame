@@ -54,6 +54,12 @@ void Zombie::onCollision(Entity &other, Game &game)
         // std::cout << "ZOMBIE COLISIONA" << std::endl;
         onCollision_SolidTile(other);
     }
+    else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
+    {
+        if (!breakableTile->isDestroyed && breakableTile->isCollidable()) {
+            onCollision_BreakableTile(breakableTile->getBounds()[0]);
+        }
+    }
     else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
         if (applyDamage(whip->whipDmg))

@@ -33,6 +33,7 @@ public:
     virtual void draw(sf::RenderWindow &window);
 
     void onCollision_SolidTile(Entity &solidTile);
+    void onCollision_BreakableTile(const sf::FloatRect &tileBounds);
     void onCollision_OnlyGround(Entity &solidTile);
 
     // Applies damage to the enemy and returns true if the enemy is defeated

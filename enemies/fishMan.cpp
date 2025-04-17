@@ -253,6 +253,13 @@ void FishMan::onCollision(Entity &other, Game &game)
             onCollision_OnlyGround(other);
         }
     }
+    // Collision with breakable tiles
+    else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
+    {
+        if (!breakableTile->isDestroyed && breakableTile->isCollidable()) {
+            onCollision_BreakableTile(breakableTile->getBounds()[0]);
+        }
+    }
     // Collision with Whip (player attack)
     else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {

@@ -89,7 +89,7 @@ void BreakableTile::onCollision_Player(Entity& other, Game& game) {
 
     bool hasCollided = false;
     game.computePlayerTileIntersection(hasCollided, tileBounds);
-    // Falta ponerlo en el suelo
+    // Falta ponerlo en el suelo ?
 }
 
 void BreakableTile::hello() const {
