@@ -26,7 +26,6 @@ public:
 
     // Core game loop functions
     void update(float deltaTime, const int currentLevel, const int currentStage);
-    void checkCollisions(const int currentLevel, const int currentStage, const TilemapManager tilemaps);
     void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
 
     std::vector<Enemy *> getEnemies(int currentLevel, int currentStage) const; // Get all enemies

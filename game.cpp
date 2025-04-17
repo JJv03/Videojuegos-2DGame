@@ -9,7 +9,6 @@
 
 std::unordered_map<std::string, sf::Texture> gTextures;
 
-
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
 {
@@ -147,7 +146,6 @@ void Game::init()
     whipAnimationManager->addAnimation(whipLvl3C3StandingJumping, player.whip.lvl3c3Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C4StandingJumping, player.whip.lvl3c4Frames, false);
 
-
     // Player and whip manage its animations so they don't have to be managed outside
     player.animationManager = animationManager;
     player.whip.animationManager = whipAnimationManager;
@@ -167,12 +165,12 @@ void Game::init()
 
     // Create subweapon sprite
     auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
-    //subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
+    // subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
     subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
     subweaponSprite->setPosition({-20.f, 171.f});
 
-    //subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    // Set up the subweapon (subweapon)
+    // subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    //  Set up the subweapon (subweapon)
     player.subWeapon.sprite = subweaponSprite;
     player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
 
@@ -186,7 +184,7 @@ void Game::init()
     // Add animations (similar to whip)
     subweaponAnimationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames);
     subweaponAnimationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false);
-    
+
     subweaponAnimationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false);
     //subweaponAnimationManager->addAnimation(stunThrowing, player.subWeapon.stopwatchFrames, false);
     subweaponAnimationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames, false);
@@ -209,7 +207,7 @@ void Game::init()
         std::cout << "No se ha encontrado la fuente" << std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
-        
+
     float margin = gGUI_size_x * gGUI_MarginFactor;
 
     // Score
@@ -255,7 +253,6 @@ void Game::init()
     heartSprite.setPosition(sf::Vector2f(180, -4));
     guiHeartSprite = std::make_shared<sf::Sprite>(heartSprite);
 
-
     // Hearts
     sf::Text hearts(font, "-00", gGUI_text_size);
     hearts.setFillColor(gGUI_text_color);
@@ -291,7 +288,7 @@ void Game::handleInput(sf::Event event)
 
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
-{   
+{
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime, viewPosition);
 
@@ -307,15 +304,14 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
-        if (time == 0 && !player.isDead){
+        if (time == 0 && !player.isDead)
+        {
             player.setState(std::make_unique<PlayerDeadState>());
         }
 
-      
         timeAccumulator = 0.0f;
         updateGUITime();
     }
-
 
     // Update score
     std::stringstream scoreStream;
@@ -334,7 +330,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 
     // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
     checkCollisions(viewPosition);
-    //checkCollisions();
+    // checkCollisions();
 
     // Update the subweapon sprite item
     guiSubWeaponSprite = getItemSprite(player.subWeaponType);
@@ -354,7 +350,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         auto audio = configManager.getAudio();
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
-    
+
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
         player.lives -= 1;
@@ -362,9 +358,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         player.health = player.maxHealth;
         player.setState(std::make_unique<PlayerIdleState>());
         isLoading = true;
-        if(player.lives >= 0){
+        if (player.lives >= 0)
+        {
             restartStage();
-        } else {
+        }
+        else
+        {
             restartLevel();
         }
     }
@@ -376,7 +375,6 @@ void Game::updateGUITime()
     timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
     texts[1].setString(timeStream.str());
 }
-
 
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow &window, Camera &camera)
@@ -400,7 +398,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         tilemaps[currentStage].drawScene(window, camera);
 
         // DEBUG: Draw player and whip hitbox
-        if(gDrawHitboxes){
+        if (gDrawHitboxes)
+        {
             window.draw(FloatRectToRectShape(player.sprite->getGlobalBounds()));
             if (player.isAttacking)
             {
@@ -411,7 +410,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
                 window.draw(FloatRectToRectShape(player.subWeapon.sprite->getGlobalBounds()));
             }
         }
-        
+
         // =========================================
         // ================== GUI ==================
         // =========================================
@@ -451,9 +450,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         window.draw(redBorder);
 
         // Draw the subweapon in the box
-        if (player.subWeaponType != ItemType::NONE) {
+        if (player.subWeaponType != ItemType::NONE)
+        {
             redBorderPosition.x += 5.f;
-            //redBorderPosition.y -= 2.f;
+            // redBorderPosition.y -= 2.f;
             guiSubWeaponSprite->setPosition(redBorderPosition);
             window.draw(*guiSubWeaponSprite);
         }
@@ -461,7 +461,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         // Draw the heart counter icon
         guiHeartSprite->setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
         window.draw(*guiHeartSprite);
-
 
         // PLAYER and ENTITIES =====================================
 
@@ -530,7 +529,6 @@ void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHe
     }
 }
 
-
 // -------------------------------------------------------------------------------------
 //                                    COLLISIONS
 // -------------------------------------------------------------------------------------
@@ -542,12 +540,10 @@ void Game::checkCollisions()
     checkPlayerMapBoundCollisions();
 
     checkPlayerCollisions();
-
-    enemyManager->checkCollisions(currentLevel, currentStage, tilemaps);
 }
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
-{   
+{
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
@@ -567,26 +563,32 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     dynamicEntities.push_back(&player.subWeapon);
 
     //      Add enemies
-    for(auto& enemy : enemyManager->getEnemies(currentLevel, currentStage)) dynamicEntities.push_back(enemy);
-    
-    for(auto& item : tilemaps[currentStage].m_items) dynamicEntities.push_back(item.get());
+    for (auto &enemy : enemyManager->getEnemies(currentLevel, currentStage))
+        dynamicEntities.push_back(enemy);
+
+    for (auto &item : tilemaps[currentStage].m_items)
+        dynamicEntities.push_back(item.get());
 
     // ... ADD THE REST OF ENTITIES
-
 
     // Cálculo aparte porque no entra en CollisionGrid
     checkPlayerMapBoundCollisions();
     checkSolidTileCollisions(dynamicEntities);
-    
+
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }
 
-void Game::checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities){
+void Game::checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities)
+{
 
-    for(auto& e : dynamicEntities){
-        for (auto& solidTileRow : tilemaps[currentStage].m_solidTiles){
-            for (auto &t : solidTileRow){
-                if (checkIntersections(*e, t)) {
+    for (auto &e : dynamicEntities)
+    {
+        for (auto &solidTileRow : tilemaps[currentStage].m_solidTiles)
+        {
+            for (auto &t : solidTileRow)
+            {
+                if (checkIntersections(*e, t))
+                {
                     e->onCollision(t, *this);
                     t.onCollision(*e, *this);
                 }
@@ -594,7 +596,6 @@ void Game::checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities){
         }
     }
 }
-
 
 void Game::checkItemsCollisions()
 {
@@ -676,11 +677,11 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
 
         // Mejora para no mover a Simon horizontalmente si tiene el 99% de su cuerpo sobre un tile
         bool simonIsTouchingGround = false;
-        if (overlapY < 7.66f) {
+        if (overlapY < 7.66f)
+        {
             simonIsTouchingGround = ((playerBounds.position.y + playerBounds.size.y) < (tileBounds.position.y + tileBounds.size.y));
-                
         }
-        if (overlapX < overlapY && (! simonIsTouchingGround)) // Horizontal collision
+        if (overlapX < overlapY && (!simonIsTouchingGround)) // Horizontal collision
         {
             if ((playerBounds.position.x + playerBounds.size.x * 0.5f) < (tileBounds.position.x + tileBounds.size.x * 0.5f))
             {
@@ -717,7 +718,8 @@ void Game::computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect 
             }
             else // Simon's head is collisioning with the tile
             {
-                if (overlapY >= 1.f){
+                if (overlapY >= 1.f)
+                {
                     player.sprite->move({0.f, overlapY});
                     playerBounds.position.y += overlapY;
                     player.verticalSpeed = 0.0f; // (For security) Simon starts falling
@@ -764,7 +766,7 @@ void Game::checkPlayerCollisions()
         sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
         if (const std::optional<sf::FloatRect> intersection = playerBounds.findIntersection(itemBounds))
-        {   
+        {
             handleSimonInteractionWithItem((*it)->m_type);
             it = tilemaps[currentStage].m_items.erase(it); // erase item from vector and move iterator
         }
@@ -952,7 +954,8 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
     // else if (itemType == ItemType::INVISIBILITY_POTION) {
     //
     // }
-    else if (itemType == ItemType::PORK_CHOP) {
+    else if (itemType == ItemType::PORK_CHOP)
+    {
         player.health += 6;
         if (player.health > player.maxHealth)
             player.health = player.maxHealth;
@@ -965,7 +968,8 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
     // {
     //     player.subWeaponType = ItemType::TRIPLE_SHOT;
     // }
-    else if (itemType == ItemType::MAGIC_CRYSTAL) {
+    else if (itemType == ItemType::MAGIC_CRYSTAL)
+    {
         return;
     }
     else if (itemType == ItemType::ONEUP)
@@ -1031,10 +1035,10 @@ void Game::restartStage()
     tilemaps.restartBreakableTiles();
 
     enemyManager->restartEnemies(currentLevel, currentStage);
-    
+
     time = 300;
     updateGUITime();
-    
+
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
@@ -1047,17 +1051,17 @@ void Game::restartLevel()
 {
     std::cout << "Current stage: " << currentStage << std::endl;
 
-    for(auto& tilemap : tilemaps.tilemaps)
+    for (auto &tilemap : tilemaps.tilemaps)
     {
         tilemap.m_items.clear();
 
-        for(auto& breakableTile: tilemap.m_breakableTiles)
+        for (auto &breakableTile : tilemap.m_breakableTiles)
         {
             breakableTile.isBreakable = true;
             breakableTile.isDestroyed = false;
         }
     }
-    
+
     time = 300;
     updateGUITime();
 
@@ -1067,15 +1071,17 @@ void Game::restartLevel()
     player.hearts = 5;
     player.score = 0;
     player.lives = 3;
-    
+
     startStage(1);
 }
 
-void Game::setLevelMusic(int level){
+void Game::setLevelMusic(int level)
+{
     // Music for the game
     auto audio = configManager.getAudio();
     float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
-    switch (level){
+    switch (level)
+    {
     case 1:
         gameSoundManager.playMusic("vampireKiller", volume);
         break;
@@ -1083,7 +1089,7 @@ void Game::setLevelMusic(int level){
     case 2:
         gameSoundManager.playMusicSequence("stalker1", "stalker2", true, volume);
         break;
-    
+
     case 3:
         gameSoundManager.playMusicSequence("wicked1", "wicked2", true, volume);
         break;
@@ -1100,5 +1106,4 @@ void Game::setLevelMusic(int level){
 
         break;
     }
-
 }

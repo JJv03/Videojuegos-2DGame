@@ -94,49 +94,6 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     }
 }
 
-// BORRAR
-// Handle collisions
-void Bat::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                          const bool playerIsAtacking, const float playerDamage)
-{
-    if (!isActive || !sprite)
-        return;
-
-    for (auto &hitbox : hitboxes)
-    {
-
-        // Check weapon collisions
-        if (playerIsAtacking)
-        {
-
-            if (weaponBounds.findIntersection(hitbox).has_value())
-            {
-                std::cout << "Vida = " << life << std::endl;
-                life -= playerDamage;
-                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
-                if (life <= 0.0f)
-                {
-                    isActive = false;
-                    resetPosition();
-                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
-                    break;
-                }
-            }
-        }
-    }
-
-    // Check player collisions
-    for (const auto &hitbox : hitboxes)
-    {
-        if (hitbox.findIntersection(simonBounds))
-        {
-            isActive = false;
-            resetPosition();
-            break;
-        }
-    }
-}
-
 void Bat::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)

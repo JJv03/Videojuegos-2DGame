@@ -178,47 +178,6 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     }
 }
 
-// BORRAR
-// Handle collisions
-void Leopard::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                              const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
-{
-    if (!isActive || !sprite)
-        return;
-
-    playerDetected = visionField.findIntersection(simonBounds).has_value();
-
-    for (auto &hitbox : hitboxes)
-    {
-        // Environment collisions
-        checkBasicCollisions(tileMap, hitbox);
-
-        // Jump over ledges
-        if (isOnGround && checkForLedge(tileMap))
-        {
-            jump();
-        }
-
-        // Weapon collisions
-        if (playerIsAtacking)
-        {
-            if (weaponBounds.findIntersection(hitbox).has_value())
-            {
-                std::cout << "Vida = " << life << std::endl;
-                life -= playerDamage;
-                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
-                if (life <= 0.0f)
-                {
-                    isActive = false;
-                    resetPosition();
-                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
-                    break;
-                }
-            }
-        }
-    }
-}
-
 void Leopard::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)

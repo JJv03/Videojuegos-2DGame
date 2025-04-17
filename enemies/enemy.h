@@ -25,9 +25,6 @@ public:
     Enemy() = default;
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
-    // Checks collisions with solid tiles in the tilemap
-    void checkBasicCollisions(const TileMap &tileMap, const sf::FloatRect &hitbox);
-
     virtual void applyGravity(float deltaTime);
 
     // Resets enemy to its original position
@@ -39,7 +36,6 @@ public:
     void onCollision_OnlyGround(Entity &solidTile);
 
     // Applies damage to the enemy and returns true if the enemy is defeated
-    // Returns false if the enemy is still alive
     bool applyDamage(float damageAmount);
 
     bool checkForLedge(Entity &solidTile);

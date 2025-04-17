@@ -39,46 +39,6 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
     }
 }
 
-// BORRAR
-// Handle collisions for all enemies in current level/stage
-void EnemyManager::checkCollisions(const int currentLevel, const int currentStage, const TilemapManager tilemaps)
-{
-
-    // Todo esto ya se hace en collisionGrid, en el onCollision de cada enemigo
-
-    sf::FloatRect playerBounds = playerPtr->sprite->getGlobalBounds();
-    sf::FloatRect whipBounds = playerPtr->whip.sprite->getGlobalBounds();
-
-    for (auto &zombieSpawner : zombiesSpawner)
-    {
-        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
-        {
-            zombieSpawner.checkCollisions(whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
-        }
-    }
-    for (auto &leopard : leopard)
-    {
-        if (leopard->level == currentLevel && leopard->stage == currentStage)
-        {
-            leopard->checkCollisions(playerBounds, whipBounds, tilemaps[currentStage], playerPtr->isAttacking, playerPtr->damage);
-        }
-    }
-    for (auto &bat : bat)
-    {
-        if (bat->level == currentLevel && bat->stage == currentStage)
-        {
-            bat->checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
-        }
-    }
-    for (auto &fishman : fishman)
-    {
-        if (fishman->level == currentLevel && fishman->stage == currentStage)
-        {
-            fishman->checkCollisions(playerBounds, whipBounds, playerPtr->isAttacking, playerPtr->damage);
-        }
-    }
-}
-
 // Render all enemies in current level/stage with debug visuals
 void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const int currentStage)
 {

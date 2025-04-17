@@ -239,15 +239,6 @@ void FishMan::startJump()
     isOnGround = false;
 }
 
-// BORRAR
-// Handle collisions
-void FishMan::checkCollisions(const sf::FloatRect simonBounds, const sf::FloatRect &weaponBounds,
-                              const bool playerIsAtacking, const float playerDamage)
-{
-    if (!isActive || !sprite)
-        return;
-}
-
 // Handle collisions - only with ground
 void FishMan::onCollision(Entity &other, Game &game)
 {

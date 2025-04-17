@@ -44,40 +44,6 @@ void Zombie::update(float deltaTime)
     isOnGround = false;
 }
 
-// BORRAR
-// Handle collision
-void Zombie::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
-{
-    if (!isActive || !sprite)
-        return;
-
-    isOnGround = false;
-
-    for (auto &hitbox : hitboxes)
-    {
-        // Environment collisions
-        checkBasicCollisions(tileMap, hitbox);
-
-        // Weapon collisions
-        if (playerIsAtacking)
-        {
-            if (weaponBounds.findIntersection(hitbox).has_value())
-            {
-                std::cout << "Vida = " << life << std::endl;
-                life -= playerDamage;
-                std::cout << "Daño recibido = " << playerDamage << " | " << "Vida = " << life << std::endl;
-                if (life <= 0.0f)
-                {
-                    isActive = false;
-                    resetPosition();
-                    std::cout << "Enemigo eliminado. Puntos = " << score << std::endl;
-                    break;
-                }
-            }
-        }
-    }
-}
-
 void Zombie::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)

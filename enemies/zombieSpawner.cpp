@@ -125,18 +125,6 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 }
 
-// Handle collisions for all active zombies
-void ZombieSpawner::checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage)
-{
-    for (auto &zombie : zombies)
-    {
-        if (zombie->isActive)
-        {
-            zombie->checkCollisions(weaponBounds, tileMap, playerIsAtacking, playerDamage);
-        }
-    }
-}
-
 // Render active zombies and debug visuals
 void ZombieSpawner::draw(sf::RenderWindow &window)
 {

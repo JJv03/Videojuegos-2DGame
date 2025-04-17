@@ -41,9 +41,6 @@ public:
     // Main update with spawn logic
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
 
-    // Handle collisions for all active zombies
-    void checkCollisions(const sf::FloatRect &weaponBounds, const TileMap &tileMap, const bool playerIsAtacking, const float playerDamage);
-
     // Render zombies and debug info
     void draw(sf::RenderWindow &window);
 };
