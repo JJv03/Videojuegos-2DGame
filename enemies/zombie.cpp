@@ -80,20 +80,28 @@ void Zombie::resetPosition()
 }
 
 // Move zombie at activation zone edge (for spawning)
-void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist)
+void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, float dist, bool fromRight)
 {
     if (!sprite)
         return;
 
-    // Calculate spawn position right outside activation zone
-    float rightEdgeX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 20.0f;
+    // Calculate spawn position outside activation zone
+    float spawnX;
+    if (fromRight)
+    {
+        spawnX = playerActivationZone.position.x + playerActivationZone.size.x + dist + 5.0f;
+    }
+    else
+    {
+        spawnX = playerActivationZone.position.x - dist - 5.0f - sprite->getGlobalBounds().size.x;
+    }
     float originalY = sprite->getPosition().y;
 
     // Save original position
     sf::Vector2f oldPosition = sprite->getPosition();
 
     // New position
-    sf::Vector2f newPosition(rightEdgeX, originalY);
+    sf::Vector2f newPosition(spawnX, originalY);
     sprite->setPosition(newPosition);
 
     // Update hitboxes to match new position
@@ -102,6 +110,11 @@ void Zombie::movePositionToBorder(const sf::FloatRect &playerActivationZone, con
     {
         hitbox.position += offset;
     }
+}
+
+void Zombie::setDirection(float dir)
+{
+    speed.x = speed.x * dir;
 }
 
 // Update animation frame and flip sprite based on direction

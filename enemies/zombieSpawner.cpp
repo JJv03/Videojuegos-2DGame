@@ -5,7 +5,7 @@
 // Initialize spawner with position, zone, and RNG
 ZombieSpawner::ZombieSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const int &level, const int &stage, std::mt19937 &rngReference)
     : spawnPosition(position), spawnZone({position.x - zoneSize.x / 2.0f, position.y - zoneSize.y / 2.0f}, zoneSize),
-      rng(rngReference), zombieCountDist(1, 3), level(level), stage(stage)
+      rng(rngReference), zombieCountDist(1, 3), zombieRandomPos(1, 7), level(level), stage(stage)
 {
     zombiesToSpawn.resize(3, false);
 
@@ -32,7 +32,7 @@ void ZombieSpawner::init()
 }
 
 // Main update - handles spawning and zombie management
-void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone)
+void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const PlayerPosition playerPos)
 {
     // Check if player is in spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -68,7 +68,7 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
         std::fill(zombiesToSpawn.begin(), zombiesToSpawn.end(), false);
 
-        zombieSpawnTimers = 1.5f; // Spawn delay
+        zombieSpawnTimers = 2.5f; // Spawn delay
         dist = 0.0;               // Reset position offset
 
         // Queue zombies for spawning
@@ -79,6 +79,23 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     }
 
     // Process spawn queue
+    bool spawnFromRight = true;
+
+    switch (playerPos)
+    {
+    case PlayerPosition::LEFT:
+        spawnFromRight = true;
+        break;
+
+    case PlayerPosition::RIGHT:
+        spawnFromRight = false;
+        break;
+
+    case PlayerPosition::CENTER:
+        spawnFromRight = (zombieRandomPos(rng) % 7 != 0);
+        break;
+    }
+
     for (size_t i = 0; i < zombies.size(); i++)
     {
         if (zombiesToSpawn[i])
@@ -87,11 +104,11 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
 
             if (zombieSpawnTimers <= 0.0f)
             {
-                // Position and activate zombie
-                zombies[i]->movePositionToBorder(playerActivationZone, dist);
+                zombies[i]->movePositionToBorder(playerActivationZone, dist, spawnFromRight);
+                zombies[i]->setDirection(spawnFromRight ? 1.0f : -1.0f);
                 zombies[i]->isActive = true;
                 zombiesToSpawn[i] = false;
-                dist += 20; // Offset next zombie
+                dist += 35; // Offset next zombie
             }
         }
     }

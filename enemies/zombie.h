@@ -29,7 +29,8 @@ public:
     void resetPosition() override;
 
     // Position for spawning
-    void movePositionToBorder(const sf::FloatRect &playerActivationZone, const float dist);
+    void movePositionToBorder(const sf::FloatRect &playerActivationZone, float dist, bool fromRight);
+    void setDirection(float dir);
 
     // Main update loop
     void update(float deltaTime);

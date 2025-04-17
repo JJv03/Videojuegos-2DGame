@@ -23,6 +23,7 @@ private:
     // Random number generation
     std::mt19937 &rng;
     std::uniform_int_distribution<int> zombieCountDist;
+    std::uniform_int_distribution<int> zombieRandomPos;
 
     // Spawn queue
     std::vector<bool> zombiesToSpawn;
@@ -39,7 +40,7 @@ public:
     void init();
 
     // Main update with spawn logic
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const PlayerPosition playerPos);
 
     // Render zombies and debug info
     void draw(sf::RenderWindow &window);

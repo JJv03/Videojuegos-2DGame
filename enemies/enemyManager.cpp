@@ -9,11 +9,13 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 // Update all active enemies in current level/stage
 void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage)
 {
+    PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
+
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            zombieSpawner.update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone);
+            zombieSpawner.update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPos);
         }
     }
     for (auto &leopard : leopard)
