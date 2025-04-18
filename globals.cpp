@@ -99,3 +99,4 @@ bool bossExist = false;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
+const bool skipAnims = true;
