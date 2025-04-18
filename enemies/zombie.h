@@ -6,7 +6,7 @@ class Zombie : public Enemy
 {
 private:
     // Movement constant
-    const sf::Vector2f ZOMBIE_SPEED = {-60.0f, 0.0f};
+    const sf::Vector2f ZOMBIE_SPEED = {-50.0f, 0.0f};
 
     // Combat stats
     const float ZOMBIE_LIFE = 1.0f;
