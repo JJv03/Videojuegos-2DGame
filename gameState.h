@@ -80,11 +80,12 @@ private:
     configManager &configManager;
     sf::Font font;
     std::vector<sf::Text> texts;
+    float elapsedTime = 0;
     std::vector<sf::Vector2f> textPositions;
-    // AnimationManager *bat1{nullptr};
-    // std::shared_ptr<sf::Sprite> bat1;
-    // AnimationManager *bat2{nullptr};
-    // std::shared_ptr<sf::Sprite> bat2;
+    AnimationManager *batManager1{nullptr};
+    std::shared_ptr<sf::Sprite> bat1;
+    AnimationManager *batManager2{nullptr};
+    std::shared_ptr<sf::Sprite> bat2;
     AnimationManager *simonManager{nullptr};
     std::shared_ptr<sf::Sprite> simon;
 public:

@@ -509,6 +509,45 @@ void walkingAnimGS::init(){
 
     simonManager->playAnimation(walkSimon);
 
+    // Bats
+    sf::Image batImg;
+    if (!batImg.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    batImg.createMaskFromColor(gColorKeyGrey);
+    batImg.createMaskFromColor(gColorKeyGreen);
+    walkingAnimTextures["bat"] = sf::Texture(batImg, false);
+
+    auto batSprite1 = std::make_shared<sf::Sprite>(walkingAnimTextures["bat"]);
+    auto batSprite2 = std::make_shared<sf::Sprite>(walkingAnimTextures["bat"]);
+
+    batSprite1->setTextureRect(sf::IntRect(sf::Vector2i(1, 194), sf::Vector2i(8, 8)));
+    batSprite2->setTextureRect(sf::IntRect(sf::Vector2i(1, 194), sf::Vector2i(8, 8)));
+
+    batSprite1->setScale(sf::Vector2f(1.75, 1.75));
+    batSprite2->setScale(sf::Vector2f(1.75, 1.75));
+
+    batSprite1->setPosition(sf::Vector2f(225, 100));
+    batSprite2->setPosition(sf::Vector2f(35, 220));
+
+    bat1 = batSprite1;
+    bat2 = batSprite2;
+
+    // Animation of Simon
+    std::vector<AnimationManager::Frame> flyingFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(1, 194), sf::Vector2i(8, 8)), 0.05f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(10, 194), sf::Vector2i(8, 8)), 0.05f},
+    };
+
+    batManager1 = new AnimationManager(*bat1);
+    batManager2 = new AnimationManager(*bat2);
+    
+    batManager1->addAnimation(flyBat, flyingFrames, true);
+    batManager2->addAnimation(flyBat, flyingFrames, true);
+
+    batManager1->playAnimation(flyBat);
+    batManager2->playAnimation(flyBat);
+
     auto audio = configManager.getAudio();
 
     walkingAnimSoundManager.loadMusic("animMusic", "./assets/music/02Prologue.mp3");
@@ -594,6 +633,22 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     }
     simonManager->update(deltaTime);
 
+    // Bats things
+
+    elapsedTime += deltaTime;
+    float t = elapsedTime / 6;
+    float newX = 225 - 6.666 * elapsedTime;
+
+    float curveOffset = 4 * (-25) * t * (1 - t);
+    float newY = 100 - curveOffset;
+
+    bat1->setPosition(sf::Vector2f(newX, newY));
+    batManager1->update(deltaTime);
+
+    sf::Vector2f posBat2 = bat2->getPosition();
+    bat2->setPosition(sf::Vector2f(posBat2.x + 0.3, posBat2.y - 0.3));
+    batManager2->update(deltaTime);
+
     // Cloud things
     sf::Sprite cloud = walkingAnimSprites.back();
     walkingAnimSprites.pop_back();
@@ -651,6 +706,8 @@ void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
     window.draw(walkingAnimSprites[1]);
 
     window.draw(*simon);
+    window.draw(*bat1);
+    window.draw(*bat2);
 }
  
 void walkingAnimGS::pause(){
