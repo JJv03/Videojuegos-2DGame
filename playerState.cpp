@@ -73,7 +73,8 @@ void PlayerIdleState::init(Player& player)
     player.attackedFinished = false;
     player.isBeingHurt = false;
     player.isDead = false;  
-    player.isOnGround = false;  
+    player.isOnGround = false;
+    player.restartJumpAnimation = true;
 }
 
 void PlayerIdleState::handleInput(Player& player, sf::Event event)
@@ -496,6 +497,11 @@ void PlayerJumpState::init(Player& player)
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
+
+    if(!player.isJumpStanding){
+        std::cout << "ARRIBA" << std::endl;
+        player.sprite->move({0.f, -7.f});
+    }
 }
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
@@ -537,8 +543,11 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
 
 void PlayerJumpState::update(Player& player, float deltaTime)
 {
-    
-    player.currentAnimation = jumpSimon;
+    if(player.isJumpStanding){
+        player.currentAnimation = idleSimon;
+    } else {
+        player.currentAnimation = jumpSimon;
+    }
 
     player.verticalSpeed += gPlayerGravity * deltaTime* 1.2f;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
@@ -583,12 +592,22 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     {
         player.animationManager->playAnimation(player.currentAnimation);
     }
+
     player.animationManager->update(deltaTime);
+
+    if(player.animationManager->isPlaying(jumpSimon) && player.animationManager->getCurrentFrameIndex() == 1){
+        if(!player.isJumpStanding){
+            std::cout << "ABAJO" << std::endl;
+            player.sprite->move({0.f, 7.f});
+        }
+
+        player.isJumpStanding = true;
+    }
+
 
     // Check if landed
     if (player.isOnGround)
     {
-        
         player.isJumping = false;
         player.setState(state<Idle>());
     }
@@ -605,6 +624,7 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerJumpState::end(Player& player)
 {
+    player.isJumpStanding = false;
 }
 
 void PlayerJumpState::hello(){
@@ -1066,56 +1086,60 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
 {
     player.currentAnimation = attackSimon;
 
-    if (!player.animationManager->isPlaying(player.currentAnimation)){
-
-        player.animationManager->playAnimation(player.currentAnimation);
-    }
-
-    if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
+    if(player.restartJumpAnimation){
+        if (!player.animationManager->isPlaying(player.currentAnimation)){
+            player.animationManager->playAnimation(player.currentAnimation);
+        }
     
-        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
-
+        if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
+            player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
+        }
     }
     
     player.animationManager->update(deltaTime*1.5f);
     player.whip.animationManager->update(deltaTime*1.5f);
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
-        int xoffset= 0;
-        if(player.whip.whipLvl <3){
-            xoffset = 24;
-        }
-        else{
-            xoffset = 41;
-        }
-        if (player.dir == RIGHT) {
-            player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                             player.sprite->getPosition().y+2)  // Adjust Y offset
-            );
-            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+
+    
+    if(player.restartJumpAnimation){
+        if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
+            int xoffset= 0;
+            if(player.whip.whipLvl <3){
+                xoffset = 24;
+            }
+            else{
+                xoffset = 41;
+            }
+            if (player.dir == RIGHT) {
+                player.whip.sprite->setPosition(
+                    sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
+                                player.sprite->getPosition().y+2)  // Adjust Y offset
+                );
+                player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            } else {
+                player.whip.sprite->setPosition(
+                    sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
+                                player.sprite->getPosition().y+4)  // Adjust Y offset
+                );
+                player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            }
         } else {
-            player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
-            );
-            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
-        }
-    } else {
-        if (player.dir == RIGHT) {
-            player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
-            );
-            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
-        } else {
-            player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
-            );
-            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            if (player.dir == RIGHT) {
+                player.whip.sprite->setPosition(
+                    sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
+                                player.sprite->getPosition().y)  // Adjust Y offset
+                );
+                player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+            } else {
+                player.whip.sprite->setPosition(
+                    sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
+                                player.sprite->getPosition().y)  // Adjust Y offset
+                );
+                player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+            }
         }
     }
    
+
     if (player.isInvulnerable)
     {
         player.blinkTimer += deltaTime;
@@ -1164,7 +1188,7 @@ void PlayerAttackIdleState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackIdleState::end(Player& player)
 {
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.restartJumpAnimation = true;
 }
 
 void PlayerAttackIdleState::hello(){
@@ -1313,6 +1337,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
             
     if(player.isOnGround){
         player.isJumping = false;
+        player.restartJumpAnimation = false;
         player.setState(state<AttackIdle>());
     }
 
@@ -1323,6 +1348,8 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
+        player.isJumpStanding = true;
+        player.sprite->move({0.f, 7.f});
         player.setState(state<Jump>());
     }
 
@@ -1339,7 +1366,6 @@ void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackJumpState::end(Player& player)
 {
-    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerAttackJumpState::hello(){
@@ -1571,6 +1597,7 @@ void PlayerHurtState::init(Player& player)
 
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -1701,6 +1728,7 @@ PlayerDeadState::PlayerDeadState() : PlayerState()
 void PlayerDeadState::init(Player& player)
 {
     player.currentAnimation = deathSimon;
+    player.whip.animationManager->playAnimation(whipNoAttack);
     player.animationManager->playAnimation(player.currentAnimation);
     // Initial position adjustment for first frame
     player.isDead = true;

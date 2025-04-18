@@ -27,6 +27,8 @@ Player::Player()
     deathRestart = false;
     autoWalkDistance = 0.f;
     upgradeWhip = false;
+    isJumpStanding = false;
+    restartJumpAnimation = true;
 
     // Secondary weapon
     weaponIsActive = false;

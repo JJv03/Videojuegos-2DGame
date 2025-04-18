@@ -170,6 +170,9 @@ public:
     bool isPressingUp;
     bool hasDied;
     bool upgradeWhip;
+    bool isJumpStanding;
+    bool restartJumpAnimation;
+
     // Secondary weapon
     bool weaponIsActive;
     
@@ -229,7 +232,8 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(275, 21), sf::Vector2(16, 32)), 0.2f}};
 
     std::vector<AnimationManager::Frame> jumpFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.45f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 22), sf::Vector2(16, 30)), 10.0f}};
 
     std::vector<AnimationManager::Frame> duckFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.1f}};
