@@ -4,6 +4,8 @@
 #include "globals.h"
 #include "tile.h"
 #include <set>
+#include <algorithm>
+#include <utility>
 
 CollisionGrid::CollisionGrid() 
     : gameRef(nullptr), cellsPerRow(9), cellsPerColumn(9) {}
