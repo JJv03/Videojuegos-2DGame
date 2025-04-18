@@ -110,7 +110,7 @@ private:
     int position;
     SoundManager menuSoundManager;
     configManager &configManager;
-    bool exit;
+    bool exit, enterPressed;
     float timeOut = 0.0f;
     float timeInterval = 30.f;
 public:
@@ -146,6 +146,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> configs;
     int position;
+    bool enterPressed;
     SoundManager configSoundManager;
     configManager &configManager;
 public:
@@ -170,7 +171,7 @@ private:
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
     std::string defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
-    bool waitingInput, showPopUp;
+    bool waitingInput, showPopUp, enterPressed;
     float popUpTimer = 0.0;
     float popUpInterval = 3.5;
     float blinkTimer = 0.0;
@@ -195,6 +196,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> configs;
     int position, col;
+    bool enterPressed;
     SoundManager configVolumeManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;
@@ -217,6 +219,7 @@ private:
     sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
     int position, col;
+    bool enterPressed;
     SoundManager configGameplayManager;
     configManager &configManager;
     bool video, difficulty, cheats;

@@ -165,6 +165,7 @@ void MenuGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
     position = 0;
     exit = false;
+    enterPressed = false;
     if (!menuTextures["menu"].loadFromFile("./assets/sprites/menu/menu2.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -237,59 +238,63 @@ void MenuGS::init(){
 
 void MenuGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.down && position < 3) {
-            timeOut = 0;
-            if (!menuSprites.empty()) {
-                sf::Sprite torch = menuSprites.back();
-                menuSprites.pop_back();
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.down && position < 3) {
+                timeOut = 0;
+                if (!menuSprites.empty()) {
+                    sf::Sprite torch = menuSprites.back();
+                    menuSprites.pop_back();
 
-                position ++;
-                std::cout<<position<<std::endl;
+                    position ++;
+                    std::cout<<position<<std::endl;
 
-                float torchX = options[position].getPosition().x - 25.f;
-                float torchY = options[position].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
+                    float torchX = options[position].getPosition().x - 25.f;
+                    float torchY = options[position].getPosition().y + 2.f;
+                    torch.setPosition(sf::Vector2f(torchX, torchY));
 
-                menuSprites.push_back(torch);
+                    menuSprites.push_back(torch);
+                }
             }
-        }
 
-        if (keyPressed->scancode == controls.up && position > 0) {    
-            timeOut = 0;
-            if (!menuSprites.empty()) {
-                sf::Sprite torch = menuSprites.back();
-                menuSprites.pop_back();
+            if (keyPressed->scancode == controls.up && position > 0) {    
+                timeOut = 0;
+                if (!menuSprites.empty()) {
+                    sf::Sprite torch = menuSprites.back();
+                    menuSprites.pop_back();
 
-                position --;
-                std::cout<<position<<std::endl;
+                    position --;
+                    std::cout<<position<<std::endl;
 
-                float torchX = options[position].getPosition().x - 25.f;
-                float torchY = options[position].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
+                    float torchX = options[position].getPosition().x - 25.f;
+                    float torchY = options[position].getPosition().y + 2.f;
+                    torch.setPosition(sf::Vector2f(torchX, torchY));
 
-                menuSprites.push_back(torch);
+                    menuSprites.push_back(torch);
+                }
             }
-        }
 
-        if (keyPressed->scancode == controls.enter) {
-            auto audio = configManager.getAudio();
-            menuSoundManager.playSound("menuEnter", menuSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-            switch (position) {
-                case 0:
-                    stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
-                    break;
-                case 1:
-                    std::cout<<"Not implemented yet :P"<<std::endl;
-                    break;
-                case 2:
-                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
-                    break;
-                case 3:
-                    std::cout<<"Bye bye :)"<<std::endl;
-                    exit = true;
-                    break;
+            if (keyPressed->scancode == controls.enter) {
+                enterPressed = true;
+                auto audio = configManager.getAudio();
+                menuSoundManager.playSound("menuEnter", menuSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                switch (position) {
+                    case 0:
+                        stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
+                        break;
+                    case 1:
+                        std::cout<<"Not implemented yet :P"<<std::endl;
+                        enterPressed = false;
+                        break;
+                    case 2:
+                        stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                        break;
+                    case 3:
+                        std::cout<<"Bye bye :)"<<std::endl;
+                        exit = true;
+                        break;
+                }
             }
         }
     }
@@ -624,8 +629,8 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
 
     // Simon things
     sf::Vector2f posSimon = simon->getPosition();
-    if (posSimon.x <= 185){
-        simon->setPosition(sf::Vector2f(185, posSimon.y));
+    if (posSimon.x <= 186){
+        simon->setPosition(sf::Vector2f(186, posSimon.y));
         simonManager->playAnimation(idleSimon);
     }
     else{
@@ -780,6 +785,7 @@ void ConfigGS::init(){
 
     // Loads menu texture
     position = 0;
+    enterPressed = false;
     if (!configTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -861,67 +867,70 @@ void ConfigGS::init(){
 
 void ConfigGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.down && position < 3) {    
-            if (!configSprites.empty()) {
-                sf::Sprite torch = configSprites.back();
-                configSprites.pop_back();
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.down && position < 3) {    
+                if (!configSprites.empty()) {
+                    sf::Sprite torch = configSprites.back();
+                    configSprites.pop_back();
 
-                position ++;
-                std::cout<<position<<std::endl;
+                    position ++;
+                    std::cout<<position<<std::endl;
 
-                float torchX = configs[position+1].getPosition().x - 25.f;
-                float torchY = configs[position+1].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
+                    float torchX = configs[position+1].getPosition().x - 25.f;
+                    float torchY = configs[position+1].getPosition().y + 2.f;
+                    torch.setPosition(sf::Vector2f(torchX, torchY));
 
-                configSprites.push_back(torch);
+                    configSprites.push_back(torch);
+                }
             }
-        }
 
-        if (keyPressed->scancode == controls.up && position > 0) {    
-            if (!configSprites.empty()) {
-                sf::Sprite torch = configSprites.back();
-                configSprites.pop_back();
+            if (keyPressed->scancode == controls.up && position > 0) {    
+                if (!configSprites.empty()) {
+                    sf::Sprite torch = configSprites.back();
+                    configSprites.pop_back();
 
-                position --;
-                std::cout<<position<<std::endl;
+                    position --;
+                    std::cout<<position<<std::endl;
 
-                float torchX = configs[position+1].getPosition().x - 25.f;
-                float torchY = configs[position+1].getPosition().y + 2.f;
-                torch.setPosition(sf::Vector2f(torchX, torchY));
+                    float torchX = configs[position+1].getPosition().x - 25.f;
+                    float torchY = configs[position+1].getPosition().y + 2.f;
+                    torch.setPosition(sf::Vector2f(torchX, torchY));
 
-                configSprites.push_back(torch);
+                    configSprites.push_back(torch);
+                }
             }
-        }
 
-        if (keyPressed->scancode == controls.enter) {
-            auto audio = configManager.getAudio();
-            configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-            switch (position) {
-                case 0: // Controls
-                    std::cout << "Road to controls config" << std::endl;
-                    stateMachine->replaceState(std::make_unique<ControlsConfGS>(stateMachine));
-                    break;
-                case 1: // Sound
-                    std::cout << "Road to sound config" << std::endl;
-                    stateMachine->replaceState(std::make_unique<VolumeConfGS>(stateMachine));
-                    break;
-                case 2: // Gameplay and video
-                    std::cout << "Road to gameplay and video config" << std::endl;
-                    stateMachine->replaceState(std::make_unique<GameplayConfGS>(stateMachine));
-                    break;
-                case 3: // Back
-                    std::cout << "Road back to menu" << std::endl;
-                    stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
-                    break;
+            if (keyPressed->scancode == controls.enter) {
+                enterPressed = true;
+                auto audio = configManager.getAudio();
+                configSoundManager.playSound("menuEnter", configSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                switch (position) {
+                    case 0: // Controls
+                        std::cout << "Road to controls config" << std::endl;
+                        stateMachine->replaceState(std::make_unique<ControlsConfGS>(stateMachine));
+                        break;
+                    case 1: // Sound
+                        std::cout << "Road to sound config" << std::endl;
+                        stateMachine->replaceState(std::make_unique<VolumeConfGS>(stateMachine));
+                        break;
+                    case 2: // Gameplay and video
+                        std::cout << "Road to gameplay and video config" << std::endl;
+                        stateMachine->replaceState(std::make_unique<GameplayConfGS>(stateMachine));
+                        break;
+                    case 3: // Back
+                        std::cout << "Road back to menu" << std::endl;
+                        stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+                        break;
+                }
             }
+            /* Add or remove???
+            if (keyPressed->scancode == controls.escape){
+                stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+            }
+            */
         }
-        /* Add or remove???
-        if (keyPressed->scancode == controls.escape){
-            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
-        }
-        */
     }
 }
 
@@ -990,6 +999,7 @@ void ControlsConfGS::init(){
 
     waitingInput = false;
     showPopUp = false;
+    enterPressed = false;
 
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
@@ -1172,163 +1182,167 @@ bool ControlsConfGS::checkInputErrors(){
 
 void ControlsConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (!waitingInput){ // If we are not waiting an input normal movement of the torch
-            if(!showPopUp){  // If the popPp is displayed, do not respond
-                if (keyPressed->scancode == controls.enter){
-                    auto audio = configManager.getAudio();
-                    configControlsManager.playSound("menuEnter", configControlsManager.realVolume(audio.master_volume, audio.sound_volume));
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (!waitingInput){ // If we are not waiting an input normal movement of the torch
+                if(!showPopUp){  // If the popUp is displayed, do not respond
+                    if (keyPressed->scancode == controls.enter){
+                        auto audio = configManager.getAudio();
+                        configControlsManager.playSound("menuEnter", configControlsManager.realVolume(audio.master_volume, audio.sound_volume));
 
-                    if ((position <= 4 && col == 0) || (position <= 3 && col == 1)){
-                        waitingInput = true;
-                    }
-
-                    if ((position == 5 && col == 0) || (position == 4 && col == 1)){
-                        std::cout << "Default" << std::endl;
-                        setDefault();
-                        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                    }
-
-                    if (position == 6 && col == 0){
-                        std::cout << "Back" << std::endl;
-                        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                        stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
-                    }
-
-                    if (position == 5 && col == 1){
-                        std::cout << "Back and save :)" << std::endl;
-                        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                        if (checkInputErrors()){
-                            std::cout << "At least one with a bad input or a duplicated input, setting default" << std::endl;
-                            showPopUp = true; // ADD POP UP AND DONT GO TO OTHER WINDOW
+                        if ((position <= 4 && col == 0) || (position <= 3 && col == 1)){
+                            waitingInput = true;
                         }
-                        else{
-                            configManager::Controls newControls;
-                            newControls.right = configManager.stringToScancode(right);
-                            newControls.left = configManager.stringToScancode(left);
-                            newControls.down = configManager.stringToScancode(down);
-                            newControls.up = configManager.stringToScancode(up);
-                            newControls.jump = configManager.stringToScancode(jump); 
-                            newControls.attack = configManager.stringToScancode(attack);
-                            newControls.enter = configManager.stringToScancode(enter);
-                            newControls.escape = configManager.stringToScancode(escape);
-                            newControls.useSubWeapon = configManager.stringToScancode(useSubWeapon);
 
-                            configManager.setControls(newControls);
-                            configManager.saveConfiguration("config.json");
+                        if ((position == 5 && col == 0) || (position == 4 && col == 1)){
+                            std::cout << "Default" << std::endl;
+                            setDefault();
+                            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                        }
+
+                        if (position == 6 && col == 0){
+                            enterPressed = true;
+                            std::cout << "Back" << std::endl;
+                            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                             stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
                         }
-                    }
-                }
-                
-                // Move down
-                if (keyPressed->scancode == controls.down){
-                    int maxRows = (col == 0) ? 6 : 5;
-                    if (position < maxRows){
-                        position++;
-                    }
-                }
 
-                // Move up
-                if (keyPressed->scancode == controls.up){
-                    if (position > 0) {
-                        position--;
-                    }
-                }
+                        if (position == 5 && col == 1){
+                            std::cout << "Back and save :)" << std::endl;
+                            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                            if (checkInputErrors()){
+                                std::cout << "At least one with a bad input or a duplicated input, setting default" << std::endl;
+                                showPopUp = true; // ADD POP UP AND DONT GO TO OTHER WINDOW
+                            }
+                            else{
+                                enterPressed = true;
+                                configManager::Controls newControls;
+                                newControls.right = configManager.stringToScancode(right);
+                                newControls.left = configManager.stringToScancode(left);
+                                newControls.down = configManager.stringToScancode(down);
+                                newControls.up = configManager.stringToScancode(up);
+                                newControls.jump = configManager.stringToScancode(jump); 
+                                newControls.attack = configManager.stringToScancode(attack);
+                                newControls.enter = configManager.stringToScancode(enter);
+                                newControls.escape = configManager.stringToScancode(escape);
+                                newControls.useSubWeapon = configManager.stringToScancode(useSubWeapon);
 
-                // Move right
-                if (keyPressed->scancode == controls.right){
-                    if (col == 0 && position <= 3){
-                        col = 1;
+                                configManager.setControls(newControls);
+                                configManager.saveConfiguration("config.json");
+                                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                            }
+                        }
                     }
-                    else if (col == 0 && position == 4){
-                        position = 3;
-                        col = 1;
-                    }
-                    else if (col == 0 && position == 6){
-                        position = 5;
-                        col = 1;
-                    }
-                }
-
-                // Move left
-                if (keyPressed->scancode == controls.left){
-                    if (col == 1 && position <= 3){
-                        col = 0;
-                    }
-                    else if(col == 1 && position == 5){
-                        position = 6;
-                        col = 0;
-                    }
-                }
-
-                // Update torch position
-                if (!controlsConfigSprites.empty()){
-                    sf::Sprite torch = controlsConfigSprites.back();
-                    controlsConfigSprites.pop_back();
-
-                    int index = 0;
-                    if (position == 5 && col == 1){
-                        index = 12;
-                    }
-                    else if (position == 6 && col == 0){
-                        index = 11;
-                    }
-                    else if (position == 5){
-                        index = 10;
-                    }
-                    else{
-                        index = (col == 0) ? position : 5 + position;
-                        index++;
+                    
+                    // Move down
+                    if (keyPressed->scancode == controls.down){
+                        int maxRows = (col == 0) ? 6 : 5;
+                        if (position < maxRows){
+                            position++;
+                        }
                     }
 
-                    float torchX = configs[index].getPosition().x - 25.f;
-                    float torchY = configs[index].getPosition().y + 2.f;
-                    torch.setPosition(sf::Vector2f(torchX, torchY));
+                    // Move up
+                    if (keyPressed->scancode == controls.up){
+                        if (position > 0) {
+                            position--;
+                        }
+                    }
 
-                    controlsConfigSprites.push_back(torch);
+                    // Move right
+                    if (keyPressed->scancode == controls.right){
+                        if (col == 0 && position <= 3){
+                            col = 1;
+                        }
+                        else if (col == 0 && position == 4){
+                            position = 3;
+                            col = 1;
+                        }
+                        else if (col == 0 && position == 6){
+                            position = 5;
+                            col = 1;
+                        }
+                    }
 
-                    std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
-                }
-            }
-        }
-        else{
-            if (col == 0){
-                switch (position){
-                    case 0: // Right
-                        right = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 1: // Left
-                        left = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 2: // Down
-                        down = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 3: // Up
-                        up = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 4: // Jump
-                        jump = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                }
-            }
-            else{ // col == 1
-                switch (position){
-                    case 0: // Attack
-                        attack = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 1: // Subweapon
-                        useSubWeapon = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 2: // Enter
-                        enter = configManager.scancodeToString(keyPressed->scancode);
-                        break;
-                    case 3: // Escape
-                        escape = configManager.scancodeToString(keyPressed->scancode);
-                        break;
+                    // Move left
+                    if (keyPressed->scancode == controls.left){
+                        if (col == 1 && position <= 3){
+                            col = 0;
+                        }
+                        else if(col == 1 && position == 5){
+                            position = 6;
+                            col = 0;
+                        }
+                    }
+
+                    // Update torch position
+                    if (!controlsConfigSprites.empty()){
+                        sf::Sprite torch = controlsConfigSprites.back();
+                        controlsConfigSprites.pop_back();
+
+                        int index = 0;
+                        if (position == 5 && col == 1){
+                            index = 12;
+                        }
+                        else if (position == 6 && col == 0){
+                            index = 11;
+                        }
+                        else if (position == 5){
+                            index = 10;
+                        }
+                        else{
+                            index = (col == 0) ? position : 5 + position;
+                            index++;
+                        }
+
+                        float torchX = configs[index].getPosition().x - 25.f;
+                        float torchY = configs[index].getPosition().y + 2.f;
+                        torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                        controlsConfigSprites.push_back(torch);
+
+                        std::cout << "Fila: " << position << ", Columna: " << col << ", Index: " << index << std::endl;
+                    }
                 }
             }
-            waitingInput = false;
+            else{
+                if (col == 0){
+                    switch (position){
+                        case 0: // Right
+                            right = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 1: // Left
+                            left = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 2: // Down
+                            down = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 3: // Up
+                            up = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 4: // Jump
+                            jump = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                    }
+                }
+                else{ // col == 1
+                    switch (position){
+                        case 0: // Attack
+                            attack = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 1: // Subweapon
+                            useSubWeapon = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 2: // Enter
+                            enter = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                        case 3: // Escape
+                            escape = configManager.scancodeToString(keyPressed->scancode);
+                            break;
+                    }
+                }
+                waitingInput = false;
+            }
         }
     }
 }
@@ -1434,6 +1448,7 @@ void VolumeConfGS::init(){
     // Loads menu texture
     position = 0;
     col = 0;
+    enterPressed = false;
     if (!volumeConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
@@ -1539,115 +1554,119 @@ void VolumeConfGS::init(){
 
 void VolumeConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.down && position < 3) {    
-            position ++;
-        }
-
-        if (keyPressed->scancode == controls.up && position > 0) {    
-            position --;
-        }
-
-        if (keyPressed->scancode == controls.right) {    
-            switch (position){
-                case 0:
-                    if(masterVol < 100){
-                        masterVol += 10;
-                    }
-                    break;
-                case 1:
-                    if(musicVol < 100){
-                        musicVol += 10;
-                    }
-                    break;
-                case 2:
-                    if(soundVol < 100){
-                        soundVol += 10;
-                    }
-                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
-                    break;
-                case 3:
-                    if (col == 0){
-                        col = 1;
-                    }
-                    break;
-            }
-            configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
-        }
-
-        if (keyPressed->scancode == controls.left) {    
-            switch (position){
-                case 0:
-                    if(masterVol > 0){
-                        masterVol -= 10;
-                    }
-                    break;
-                case 1:
-                    if(musicVol > 0){
-                        musicVol -= 10;
-                    }
-                    break;
-                case 2:
-                    if(soundVol > 0){
-                        soundVol -= 10;
-                    }
-                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
-                    break;
-                case 3:
-                    if (col == 1){
-                        col = 0;
-                    }
-                    break;
-            }
-            configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
-        }
-
-        if (keyPressed->scancode == controls.enter) {
-            if (position == 3 && col == 0){
-                auto audio = configManager.getAudio();
-                configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                std::cout << "Road back to config menu" << std::endl;
-                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.down && position < 3) {    
+                position ++;
             }
 
-            if (position == 3 && col == 1){ // Back to configs and save files
-                configManager::Audio newAudio;
-                newAudio.master_volume = masterVol;
-                newAudio.music_volume = musicVol;
-                newAudio.sound_volume = soundVol;
-
-                configManager.setAudio(newAudio);
-                configManager.saveConfiguration("config.json");
-
-                auto audio = configManager.getAudio();
-                configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                std::cout << "Road back to config menu after saving" << std::endl;
-                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+            if (keyPressed->scancode == controls.up && position > 0) {    
+                position --;
             }
+
+            if (keyPressed->scancode == controls.right) {    
+                switch (position){
+                    case 0:
+                        if(masterVol < 100){
+                            masterVol += 10;
+                        }
+                        break;
+                    case 1:
+                        if(musicVol < 100){
+                            musicVol += 10;
+                        }
+                        break;
+                    case 2:
+                        if(soundVol < 100){
+                            soundVol += 10;
+                        }
+                        configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
+                        break;
+                    case 3:
+                        if (col == 0){
+                            col = 1;
+                        }
+                        break;
+                }
+                configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
+            }
+
+            if (keyPressed->scancode == controls.left) {    
+                switch (position){
+                    case 0:
+                        if(masterVol > 0){
+                            masterVol -= 10;
+                        }
+                        break;
+                    case 1:
+                        if(musicVol > 0){
+                            musicVol -= 10;
+                        }
+                        break;
+                    case 2:
+                        if(soundVol > 0){
+                            soundVol -= 10;
+                        }
+                        configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(masterVol, soundVol));
+                        break;
+                    case 3:
+                        if (col == 1){
+                            col = 0;
+                        }
+                        break;
+                }
+                configVolumeManager.adjustAllMusicVolumes(configVolumeManager.realVolume(masterVol, musicVol));
+            }
+
+            if (keyPressed->scancode == controls.enter) {
+                if (position == 3 && col == 0){
+                    enterPressed = true;
+                    auto audio = configManager.getAudio();
+                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    std::cout << "Road back to config menu" << std::endl;
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                }
+
+                if (position == 3 && col == 1){ // Back to configs and save files
+                    enterPressed = true;
+                    configManager::Audio newAudio;
+                    newAudio.master_volume = masterVol;
+                    newAudio.music_volume = musicVol;
+                    newAudio.sound_volume = soundVol;
+
+                    configManager.setAudio(newAudio);
+                    configManager.saveConfiguration("config.json");
+
+                    auto audio = configManager.getAudio();
+                    configVolumeManager.playSound("menuEnter", configVolumeManager.realVolume(audio.master_volume, audio.sound_volume));
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    std::cout << "Road back to config menu after saving" << std::endl;
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                }
+            }
+
+            if (!volumeConfigSprites.empty()) {
+                sf::Sprite torch = volumeConfigSprites.back();
+                volumeConfigSprites.pop_back();
+                float torchX = 0;
+                float torchY = 0;
+                if (position <= 2){
+                    torchX = configs[position+1].getPosition().x - 25.f;
+                    torchY = configs[position+1].getPosition().y + 2.f;
+                }
+                else{
+                    torchX = configs[position+1+col].getPosition().x - 25.f;
+                    torchY = configs[position+1+col].getPosition().y + 2.f;
+                }
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                volumeConfigSprites.push_back(torch);
+            }
+            std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
         }
-
-        if (!volumeConfigSprites.empty()) {
-            sf::Sprite torch = volumeConfigSprites.back();
-            volumeConfigSprites.pop_back();
-            float torchX = 0;
-            float torchY = 0;
-            if (position <= 2){
-                torchX = configs[position+1].getPosition().x - 25.f;
-                torchY = configs[position+1].getPosition().y + 2.f;
-            }
-            else{
-                torchX = configs[position+1+col].getPosition().x - 25.f;
-                torchY = configs[position+1+col].getPosition().y + 2.f;
-            }
-            torch.setPosition(sf::Vector2f(torchX, torchY));
-
-            volumeConfigSprites.push_back(torch);
-        }
-        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
     }
 }
 
@@ -1731,6 +1750,7 @@ void GameplayConfGS::init(){
     // Loads menu texture
     position = 0;
     col = 0;
+    enterPressed = false;
     video = configManager.getVideo().window_mode;
     difficulty = configManager.getDifficulty().hard_mode;
     cheats = configManager.getCheats().enabled;
@@ -1846,83 +1866,87 @@ void GameplayConfGS::init(){
 
 void GameplayConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.down && position < 3) {    
-            position ++;
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.down && position < 3) {    
+                position ++;
+            }
+
+            if (keyPressed->scancode == controls.up && position > 0) {    
+                position --;
+            }
+
+            if (keyPressed->scancode == controls.right && position == 3 && col == 0) {    
+                col = 1;
+            }
+
+            if (keyPressed->scancode == controls.left && position == 3 && col == 1) {    
+                col = 0;
+            }
+
+            if (keyPressed->scancode == controls.enter) {
+                auto audio = configManager.getAudio();
+                configGameplayManager.playSound("menuEnter", configGameplayManager.realVolume(audio.master_volume, audio.sound_volume));
+                if(position == 0){ // Window mode
+                    video = !video;
+                }
+
+                if(position == 1){ // Diff
+                    difficulty = !difficulty;
+                }
+
+                if(position == 2){ // Cheats
+                    cheats = !cheats;
+                }
+
+                if (position == 3 && col == 0){
+                    enterPressed = true;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    std::cout << "Road back to config menu" << std::endl;
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                }
+
+                if (position == 3 && col == 1){ // Back to configs and save files
+                    enterPressed = true;
+                    configManager::Video newVideo;
+                    newVideo.window_mode = video;
+
+                    configManager::Difficulty newDiff;
+                    newDiff.hard_mode = difficulty;
+
+                    configManager::Cheats newCheats;
+                    newCheats.enabled = cheats;
+
+                    configManager.setVideo(newVideo);
+                    configManager.setDifficulty(newDiff);
+                    configManager.setCheats(newCheats);
+                    configManager.saveConfiguration("config.json");
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    std::cout << "Road back to config menu after saving" << std::endl;
+                    stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                }
+            }
+
+            if (!gameplayConfigSprites.empty()) {
+                sf::Sprite torch = gameplayConfigSprites.back();
+                gameplayConfigSprites.pop_back();
+                float torchX = 0;
+                float torchY = 0;
+                if (position <= 2){
+                    torchX = configs[position+1].getPosition().x - 25.f;
+                    torchY = configs[position+1].getPosition().y + 2.f;
+                }
+                else{
+                    torchX = configs[position+1+col].getPosition().x - 25.f;
+                    torchY = configs[position+1+col].getPosition().y + 2.f;
+                }
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                gameplayConfigSprites.push_back(torch);
+            }
+            std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
         }
-
-        if (keyPressed->scancode == controls.up && position > 0) {    
-            position --;
-        }
-
-        if (keyPressed->scancode == controls.right && position == 3 && col == 0) {    
-            col = 1;
-        }
-
-        if (keyPressed->scancode == controls.left && position == 3 && col == 1) {    
-            col = 0;
-        }
-
-        if (keyPressed->scancode == controls.enter) {
-            auto audio = configManager.getAudio();
-            configGameplayManager.playSound("menuEnter", configGameplayManager.realVolume(audio.master_volume, audio.sound_volume));
-            if(position == 0){ // Window mode
-                video = !video;
-            }
-
-            if(position == 1){ // Diff
-                difficulty = !difficulty;
-            }
-
-            if(position == 2){ // Cheats
-                cheats = !cheats;
-            }
-
-            if (position == 3 && col == 0){
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                std::cout << "Road back to config menu" << std::endl;
-                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
-            }
-
-            if (position == 3 && col == 1){ // Back to configs and save files
-                configManager::Video newVideo;
-                newVideo.window_mode = video;
-
-                configManager::Difficulty newDiff;
-                newDiff.hard_mode = difficulty;
-
-                configManager::Cheats newCheats;
-                newCheats.enabled = cheats;
-
-                configManager.setVideo(newVideo);
-                configManager.setDifficulty(newDiff);
-                configManager.setCheats(newCheats);
-                configManager.saveConfiguration("config.json");
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                std::cout << "Road back to config menu after saving" << std::endl;
-                stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
-            }
-        }
-
-        if (!gameplayConfigSprites.empty()) {
-            sf::Sprite torch = gameplayConfigSprites.back();
-            gameplayConfigSprites.pop_back();
-            float torchX = 0;
-            float torchY = 0;
-            if (position <= 2){
-                torchX = configs[position+1].getPosition().x - 25.f;
-                torchY = configs[position+1].getPosition().y + 2.f;
-            }
-            else{
-                torchX = configs[position+1+col].getPosition().x - 25.f;
-                torchY = configs[position+1+col].getPosition().y + 2.f;
-            }
-            torch.setPosition(sf::Vector2f(torchX, torchY));
-
-            gameplayConfigSprites.push_back(torch);
-        }
-        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
     }
 }
 
