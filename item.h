@@ -84,7 +84,6 @@ extern sf::Texture itemAtlas;
 class Item : public EntitySprite {
 public:
     ItemType m_type;
-    bool isActive = true;
     
     float m_lifeTime;   // Time until the item disappears. 
                         // If it is 0, the item is removed from the game

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "globals.h"
 #include "tile.h"
+#include <set>
 
 CollisionGrid::CollisionGrid() 
     : gameRef(nullptr), cellsPerRow(9), cellsPerColumn(9) {}
@@ -85,6 +86,8 @@ int CollisionGrid::getCellKeyFromCoords(int x, int y) const {
 
 void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::vector<Entity*>& dynamicEntities, const sf::Vector2f& viewPosition) {
 
+    std::set<std::pair<const Entity*, const Entity*>> checkedPairs;
+
     // 1. Check collisions between static and dynamic entities
     //    Clear all cells
     clear();
@@ -129,6 +132,10 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
 
         for (size_t i = 0; i < dynamicEntities.size(); ++i) {
             for (size_t j = i + 1; j < dynamicEntities.size(); ++j) {
+                auto orderedPair = std::minmax(dynamicEntities[i], dynamicEntities[j]); // A,B = B,A
+                if (checkedPairs.contains(orderedPair)) continue;
+                checkedPairs.insert(orderedPair);
+
                 if (checkIntersections(*dynamicEntities[i], *dynamicEntities[j])) {
                     dynamicEntities[i]->onCollision(*dynamicEntities[j], *gameRef);
                     dynamicEntities[j]->onCollision(*dynamicEntities[i], *gameRef);

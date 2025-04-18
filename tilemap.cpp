@@ -360,7 +360,7 @@ void TileMap::updateItems(const float& deltaTime) {
     for (auto it = m_items.begin(); it != m_items.end(); ) {
         (*it)->update(deltaTime);
 
-        if ((*it)->m_lifeTime == 0.f || !(*it)->isActive) {
+        if ((*it)->m_lifeTime == 0.f){
             it = m_items.erase(it);     // erase and move iterator
         } else {
             ++it;   // just move iterator

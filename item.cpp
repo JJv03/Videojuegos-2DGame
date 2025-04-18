@@ -77,10 +77,6 @@ void Item::onCollision(Entity& other, Game& game) {
         onCollision_SolidTile(other);
     } else if (dynamic_cast<Player*>(&other)){
         this->m_lifeTime = 0.f;
-
-        if(this->isActive){
-            this->isActive = false;
-        }
     }
 }
 
