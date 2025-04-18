@@ -1608,6 +1608,7 @@ void PlayerHurtState::update(Player& player, float deltaTime)
     }
     
     if(player.startInvulnerable){
+        player.startInvulnerable = false;
         player.blinkTimer = 0.0f; 
         player.visible = true; 
         player.isJumping = false;
@@ -1662,15 +1663,12 @@ void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
 
 void PlayerHurtStairState::update(Player& player, float deltaTime)
 {
-
-    if(player.startInvulnerable){
-        player.blinkTimer = 0.0f; 
-        player.visible = true; 
-        player.isJumping = false;
-        player.isBeingHurt = false;
-        player.invulnerableTimeCounter = 0.0f; 
-        player.setState(state<StairIdle>()); 
-    }
+    player.blinkTimer = 0.0f; 
+    player.visible = true; 
+    player.isJumping = false;
+    player.isBeingHurt = false;
+    player.invulnerableTimeCounter = 0.0f;
+    player.setState(state<StairIdle>()); 
 }
 
 void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)
@@ -1683,6 +1681,7 @@ void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerHurtStairState::end(Player& player)
 {
+    player.startInvulnerable = false;
     player.isBeingHurt = false;
 }
 
