@@ -31,7 +31,7 @@ void Castlevania::run(){
         return;
     }
 
-    if (skipAnims) {
+    if (gSkipAnims) {
         states.addState(std::make_unique<GameGS>(&states));
     }
     else{

@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+class EntitySprite;
+
 enum animationID{
     notRelevant,
 
@@ -24,6 +26,7 @@ enum animationID{
     stairAscendWalkSimon,
     stairDescendWalkSimon,
     whipUpgrade,
+
     //Whip
     whipLvl1StandingJumping,
     whipLvl2StandingJumping,
@@ -95,6 +98,14 @@ public:
     AnimationManager(sf::Sprite& sprite);
 
     /**
+     * @brief Constructs an AnimationManager
+     * @param sprite The sprite to which animations will be applied
+     * @param entity The player to which the animatioManager belongs
+     */
+    AnimationManager(sf::Sprite& sprite, EntitySprite* entity);
+
+
+    /**
      * @brief Adds a new animation to the manager.
      * @param name The name of the animation.
      * @param frames The frames that make up the animation.
@@ -145,6 +156,7 @@ private:
     sf::Sprite& sprite;
     std::unordered_map<animationID, Animation> animations;
     Animation* currentAnimation;
+    EntitySprite* entity;
     float elapsedTime;
     
     std::size_t currentFrame;

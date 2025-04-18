@@ -21,12 +21,12 @@ sf::Texture itemAtlas;
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            const float _lifeTime = 5.0f): EntitySprite(_sprite, _hitboxes), m_type(_type),
-           m_isOnGround(false), m_lifeTime(_lifeTime) {}
+           m_lifeTime(_lifeTime) {}
 
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime = 5.0f):
-           EntitySprite(_sprite, _hitboxes), m_type(_type), m_isOnGround(false), m_lifeTime(_lifeTime)
+           EntitySprite(_sprite, _hitboxes), m_type(_type), m_lifeTime(_lifeTime)
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
 
@@ -49,7 +49,7 @@ void Item::update(const float& deltaTime) {
         }
     }
 
-    if (!m_isOnGround) {
+    if (!isOnGround) {
         sprite->move({0.f, gItemGravity * deltaTime});
         hitboxes[0].position.y += gItemGravity * deltaTime;
     }
@@ -97,7 +97,7 @@ void Item::onCollision_SolidTile(Entity& other){
             { // Bottom collision
                 this->sprite->move({0.f, -overlapY});
                 itemBounds.position.y -= overlapY;
-                this->m_isOnGround = true; // Set item to be on ground
+                this->isOnGround = true; // Set item to be on ground
             }
         }
     }

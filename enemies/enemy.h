@@ -19,7 +19,6 @@ public:
     float life = 1.0f;                   // Enemy health
 
     bool isActive = false;               // Whether the enemy is currently active/visible
-    bool isOnGround = false;             // Flag for ground collision detection
     bool needsPlayerToLeaveZone = false; // Reset condition flag
 
     Enemy() = default;

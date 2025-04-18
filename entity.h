@@ -24,6 +24,7 @@ class EntitySprite : public Entity
 {
 public:
     std::shared_ptr<sf::Sprite> sprite;
+    bool isOnGround = false;
 
     EntitySprite() = default;
     EntitySprite(std::shared_ptr<sf::Sprite> sprite, std::vector<sf::FloatRect> &_hitboxes);

@@ -157,7 +157,6 @@ public:
     std::vector<SubWeapon> activeSubWeapons;
     PlayerDirection dir;
 
-    bool isOnGround;
     bool isOnStairs;
     bool isAttacking;
     bool attackedFinished;
@@ -255,14 +254,14 @@ public:
     std::vector<AnimationManager::Frame> attackFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 79), sf::Vector2(16, 30)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 79), sf::Vector2(16, 30)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 80), sf::Vector2(16, 29)), 0.3f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 22), sf::Vector2(16, 30)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 80), sf::Vector2(16, 29)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 80), sf::Vector2(16, 29)), 0.2f}};
 
     std::vector<AnimationManager::Frame> attackFloorFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(172, 79), sf::Vector2(16, 23)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 80), sf::Vector2(16, 23)), 0.3f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.1f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 79), sf::Vector2(16, 23)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(197, 79), sf::Vector2(16, 23)), 0.2f}};
 
     std::vector<AnimationManager::Frame> stairAscendIdleFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(154, 21), sf::Vector2(16, 32)), 0.2f},

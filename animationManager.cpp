@@ -1,7 +1,12 @@
 #include "animationManager.h"
 #include <iostream>
+#include "entity.h"
+
 AnimationManager::AnimationManager(sf::Sprite& sprite)
-    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f) {}
+    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f), entity(nullptr) {}
+
+AnimationManager::AnimationManager(sf::Sprite& sprite, EntitySprite* entity)
+    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0), speedMultiplier(1.0f), entity(entity) {}
 
 void AnimationManager::addAnimation(animationID id, const std::vector<Frame>& frames, bool loop) {
     animations[id] = { id, frames, loop };
@@ -22,7 +27,8 @@ void AnimationManager::playAnimation(animationID id) {
         sprite.setTextureRect(currentAnimation->frames[0].rect);
 
         float currentHeight = sprite.getLocalBounds().size.y;
-        if(lastHeight != currentHeight){
+
+        if(lastHeight != currentHeight && entity && entity->isOnGround){
             sprite.move({0.f, lastHeight - currentHeight});
         }
     }
@@ -37,10 +43,10 @@ void AnimationManager::playAnimation(Animation& animation) {
     sprite.setTextureRect(currentAnimation->frames[0].rect);
 
     float currentHeight = sprite.getLocalBounds().size.y;
-    if(lastHeight != currentHeight){
+
+    if(lastHeight != currentHeight && entity && entity->isOnGround){
         sprite.move({0.f, lastHeight - currentHeight});
     }
-       
 }
 
 void AnimationManager::update(float deltaTime) {
@@ -67,7 +73,7 @@ void AnimationManager::update(float deltaTime) {
         sprite.setTextureRect(currentAnimation->frames[currentFrame].rect);
 
         float currentHeight = sprite.getLocalBounds().size.y;
-        if(lastHeight != currentHeight){
+        if(lastHeight != currentHeight && entity && entity->isOnGround){
             sprite.move({0.f, lastHeight - currentHeight});
         }
            

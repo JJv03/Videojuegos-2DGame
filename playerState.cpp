@@ -74,6 +74,7 @@ void PlayerIdleState::init(Player& player)
     player.isBeingHurt = false;
     player.isDead = false;  
     player.isOnGround = false;
+    player.isJumpStanding = false;
     player.restartJumpAnimation = true;
 }
 
@@ -497,11 +498,6 @@ void PlayerJumpState::init(Player& player)
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
-
-    if(!player.isJumpStanding){
-        std::cout << "ARRIBA" << std::endl;
-        player.sprite->move({0.f, -7.f});
-    }
 }
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
@@ -596,11 +592,6 @@ void PlayerJumpState::update(Player& player, float deltaTime)
     player.animationManager->update(deltaTime);
 
     if(player.animationManager->isPlaying(jumpSimon) && player.animationManager->getCurrentFrameIndex() == 1){
-        if(!player.isJumpStanding){
-            std::cout << "ABAJO" << std::endl;
-            player.sprite->move({0.f, 7.f});
-        }
-
         player.isJumpStanding = true;
     }
 
@@ -624,7 +615,6 @@ void PlayerJumpState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerJumpState::end(Player& player)
 {
-    player.isJumpStanding = false;
 }
 
 void PlayerJumpState::hello(){
@@ -1349,7 +1339,6 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
         player.isJumpStanding = true;
-        player.sprite->move({0.f, 7.f});
         player.setState(state<Jump>());
     }
 
@@ -1423,8 +1412,8 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
     if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
     
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
-
     }
+    
     player.animationManager->update(deltaTime*1.5f);
     player.whip.animationManager->update(deltaTime*1.5f);
 
@@ -1597,6 +1586,7 @@ void PlayerHurtState::init(Player& player)
 
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
+    player.isJumpStanding = false;
     player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
@@ -1738,6 +1728,7 @@ void PlayerDeadState::init(Player& player)
     player.deathRestart = true;
     player.isOnStairs = false;
     player.health = 0;
+    player.isJumpStanding = false;
     
 }
 

@@ -84,8 +84,6 @@ extern sf::Texture itemAtlas;
 class Item : public EntitySprite {
 public:
     ItemType m_type;
-
-    bool m_isOnGround;  // True if the item is on the ground
     
     float m_lifeTime;   // Time until the item disappears. 
                         // If it is 0, the item is removed from the game

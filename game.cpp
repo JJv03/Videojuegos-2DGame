@@ -88,7 +88,7 @@ void Game::init()
     player.sprite = simonSprite;
     player.hitboxes.push_back(player.sprite.get()->getLocalBounds());
 
-    AnimationManager *animationManager = new AnimationManager(*player.sprite);
+    AnimationManager *animationManager = new AnimationManager(*player.sprite, &player);
 
     animationManager->addAnimation(idleSimon, player.idleFrames);
     animationManager->addAnimation(jumpSimon, player.jumpFrames);
@@ -132,7 +132,7 @@ void Game::init()
     player.whip.hitboxes.push_back(player.whip.sprite.get()->getLocalBounds());
 
     // Inicialize whip AnimationManager ----------------------------------------------------------------
-    AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite);
+    AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite, &player.whip);
 
     if (!whipAnimationManager)
     {
@@ -175,7 +175,7 @@ void Game::init()
     player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
 
     // Initialize subweapon AnimationManager
-    /*AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite);
+    /*AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite, &player.subWeapon);
     if (!subweaponAnimationManager)
     {
         std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
@@ -642,7 +642,7 @@ void Game::checkItemsCollisions()
     {
         int maxCollisions = 2;
 
-        if (item->m_isOnGround)
+        if (item->isOnGround)
             continue; // Skip if item is already on ground
 
         for (int col = 0; col < tilemaps[currentStage].m_tilesPerRow && maxCollisions > 0; ++col)
@@ -668,7 +668,7 @@ void Game::checkItemsCollisions()
                         { // Bottom collision
                             item->sprite->move({0.f, -overlapY});
                             itemBounds.position.y -= overlapY;
-                            item->m_isOnGround = true; // Set item to be on ground
+                            item->isOnGround = true; // Set item to be on ground
                         }
                     }
                 }
