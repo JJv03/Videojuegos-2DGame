@@ -85,10 +85,10 @@ private:
     // std::shared_ptr<sf::Sprite> bat1;
     // AnimationManager *bat2{nullptr};
     // std::shared_ptr<sf::Sprite> bat2;
+    AnimationManager *simonManager{nullptr};
+    std::shared_ptr<sf::Sprite> simon;
     // AnimationManager *cloud{nullptr};
     // std::shared_ptr<sf::Sprite> cloud;
-    // AnimationManager *simon{nullptr};
-    // std::shared_ptr<sf::Sprite> simon;
 public:
     explicit walkingAnimGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~walkingAnimGS() override;

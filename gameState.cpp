@@ -449,6 +449,50 @@ void walkingAnimGS::init(){
     texts.push_back(hearts);
     texts.push_back(lives);
 
+    // --------------------------------------------------
+    // Animations
+    // --------------------------------------------------
+    
+    // Simon
+    sf::Image simonImg;
+    if (!simonImg.loadFromFile("./assets/sprites/player/simonBelmont.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    simonImg.createMaskFromColor(gColorKeyGrey);
+    walkingAnimTextures["simon"].loadFromImage(simonImg);
+
+    auto simonSprite = std::make_shared<sf::Sprite>(walkingAnimTextures["simon"]);
+
+    simonSprite->setTextureRect(sf::IntRect(sf::Vector2i(29, 21), sf::Vector2i(16, 32)));
+
+    simonSprite->setScale(sf::Vector2f(1, 1));
+
+    float simonX = 287;
+    float simonY = 173;
+
+    simonSprite->setPosition(sf::Vector2f(simonX, simonY));
+
+    simon = simonSprite;
+
+    // Animation of Simon
+    std::vector<AnimationManager::Frame> walkFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 22), sf::Vector2(16, 30)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+    };
+
+    std::vector<AnimationManager::Frame> idleFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(362, 21), sf::Vector2(16, 32)), 0.1f},
+    };
+    
+    simonManager = new AnimationManager(*simon);
+    
+    simonManager->addAnimation(walkSimon, walkFrames, true);
+    simonManager->addAnimation(idleSimon, idleFrames);
+
+    simonManager->playAnimation(walkSimon);
+
     auto audio = configManager.getAudio();
 
     walkingAnimSoundManager.loadMusic("animMusic", "./assets/music/02Prologue.mp3");
@@ -522,6 +566,7 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     if(walkingAnimSoundManager.musicHasFinished("animMusic")){
         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
     }
+    simonManager->update(deltaTime);
 }
 
 void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -568,6 +613,8 @@ void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
     // Draw the heart counter icon
     walkingAnimSprites[1].setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
     window.draw(walkingAnimSprites[1]);
+
+    window.draw(*simon);
 }
  
 void walkingAnimGS::pause(){
