@@ -98,3 +98,4 @@ extern const float gPlayerJumpForce;
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;
+extern const bool skipAnims;
