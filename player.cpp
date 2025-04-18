@@ -195,8 +195,10 @@ void Player::onCollision(Entity &other, Game &game)
         this->isNearStair = true;
         this->stairStart = stairTile;
     }    
-    else if (dynamic_cast<Item*>(&other)){
-        this->onCollision_Item(other);
+    else if (Item* item = dynamic_cast<Item*>(&other)){
+        if(item->isActive){
+            this->onCollision_Item(other);
+        }
     }
     else {
         //std::cout << "No se\n"; 
