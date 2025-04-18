@@ -536,7 +536,11 @@ Whip::Whip()
 
 std::vector<sf::FloatRect> Whip::getBounds() const
 {
-    return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
+    if(this->animationManager->getCurrentFrameIndex() == 2 || this->animationManager->getCurrentFrameIndex() == 3){
+        return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
+    }
+
+    return std::vector<sf::FloatRect>({sf::FloatRect()});
 }
 
 void Whip::onCollision(Entity &other, Game &game)
