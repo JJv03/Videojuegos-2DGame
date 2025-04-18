@@ -459,16 +459,16 @@ void walkingAnimGS::init(){
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     simonImg.createMaskFromColor(gColorKeyGrey);
-    walkingAnimTextures["simon"].loadFromImage(simonImg);
+    walkingAnimTextures["simon"] = sf::Texture(simonImg, false);
 
     auto simonSprite = std::make_shared<sf::Sprite>(walkingAnimTextures["simon"]);
 
     simonSprite->setTextureRect(sf::IntRect(sf::Vector2i(29, 21), sf::Vector2i(16, 32)));
 
-    simonSprite->setScale(sf::Vector2f(1, 1));
+    simonSprite->setScale(sf::Vector2f(1.65, 1.65));
 
-    float simonX = 287;
-    float simonY = 173;
+    float simonX = 375;
+    float simonY = 296;
 
     simonSprite->setPosition(sf::Vector2f(simonX, simonY));
 
@@ -476,10 +476,10 @@ void walkingAnimGS::init(){
 
     // Animation of Simon
     std::vector<AnimationManager::Frame> walkFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 22), sf::Vector2(16, 30)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 22), sf::Vector2(16, 30)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.15f},
     };
 
     std::vector<AnimationManager::Frame> idleFrames{
@@ -489,7 +489,7 @@ void walkingAnimGS::init(){
     simonManager = new AnimationManager(*simon);
     
     simonManager->addAnimation(walkSimon, walkFrames, true);
-    simonManager->addAnimation(idleSimon, idleFrames);
+    simonManager->addAnimation(idleSimon, idleFrames, true);
 
     simonManager->playAnimation(walkSimon);
 
@@ -565,6 +565,14 @@ void walkingAnimGS::handleInput(sf::Event event){
 void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     if(walkingAnimSoundManager.musicHasFinished("animMusic")){
         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+    }
+    sf::Vector2f posSimon = simon->getPosition();
+    if (posSimon.x <= 185){
+        simon->setPosition(sf::Vector2f(185, posSimon.y));
+        simonManager->playAnimation(idleSimon);
+    }
+    else{
+        simon->setPosition(sf::Vector2f(posSimon.x - 1, posSimon.y));
     }
     simonManager->update(deltaTime);
 }

@@ -243,7 +243,7 @@ private:
     bool blinking;
     int blinks, maxBlinks;
     float blinkTimer = 0.0;
-    float blinkInterval = 0.2f;
+    float blinkInterval = 0.15f;
 public:
     explicit InitMenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitMenuGS() override;
