@@ -449,6 +449,21 @@ void walkingAnimGS::init(){
     texts.push_back(hearts);
     texts.push_back(lives);
 
+    sf::Image cloudImage;
+    if (!cloudImage.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
+    {
+        std::cerr << "Error loading heart image" << std::endl;
+    }
+    cloudImage.createMaskFromColor(gColorKeyGrey);
+    cloudImage.createMaskFromColor(gColorKeyGreen);
+
+    walkingAnimTextures["cloud"] = sf::Texture(cloudImage, false);
+
+    sf::Sprite cloudSprite(walkingAnimTextures["cloud"], sf::IntRect({19, 194}, {32, 16}));
+    cloudSprite.setScale(sf::Vector2f(2, 2));
+    cloudSprite.setPosition(sf::Vector2f(360, 115));
+    walkingAnimSprites.push_back(cloudSprite);
+
     // --------------------------------------------------
     // Animations
     // --------------------------------------------------
@@ -459,6 +474,7 @@ void walkingAnimGS::init(){
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     simonImg.createMaskFromColor(gColorKeyGrey);
+    simonImg.createMaskFromColor(gColorKeyGreen);
     walkingAnimTextures["simon"] = sf::Texture(simonImg, false);
 
     auto simonSprite = std::make_shared<sf::Sprite>(walkingAnimTextures["simon"]);
@@ -566,6 +582,8 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     if(walkingAnimSoundManager.musicHasFinished("animMusic")){
         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
     }
+
+    // Simon things
     sf::Vector2f posSimon = simon->getPosition();
     if (posSimon.x <= 185){
         simon->setPosition(sf::Vector2f(185, posSimon.y));
@@ -575,6 +593,15 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
         simon->setPosition(sf::Vector2f(posSimon.x - 1, posSimon.y));
     }
     simonManager->update(deltaTime);
+
+    // Cloud things
+    sf::Sprite cloud = walkingAnimSprites.back();
+    walkingAnimSprites.pop_back();
+
+    sf::Vector2f posCloud = cloud.getPosition();
+    cloud.setPosition(sf::Vector2f(posCloud.x - 0.25, posCloud.y));
+
+    walkingAnimSprites.push_back(cloud);
 }
 
 void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -582,7 +609,8 @@ void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
     // std::cout<<menuSprites.size()<<std::endl;
     // std::cout<<menuTextures.size()<<std::endl;
     // std::cout<<options.size()<<std::endl;
-    window.draw(walkingAnimSprites[0]);
+    window.draw(walkingAnimSprites[0]); // Bg
+    window.draw(walkingAnimSprites[2]); // Cloud
     
     sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = getVirtualUpperLeftCornerCoordOfGameView(window);
     sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
