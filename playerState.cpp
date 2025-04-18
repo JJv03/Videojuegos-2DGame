@@ -728,7 +728,8 @@ PlayerStairIdleState::PlayerStairIdleState() : PlayerState()
 void PlayerStairIdleState::init(Player& player)
 {
     player.isOnStairs = true;
-    
+    player.stairStepDistance = 0.f;
+
     if(player.isPositionedInStair){ // If player just arrived to the stair
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
                                  player.stairStart->type == StairTile::Type::TOP_RIGHT);
@@ -878,6 +879,7 @@ void PlayerStairWalkState::init(Player& player)
     player.isDucking = true;
     player.isOnStairs = true;
     player.stairStepDistance = 8.f;
+    player.isWalking = true;
 
     if(player.isPositionedInStair){ // If player just arrived to the stair
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
@@ -974,7 +976,6 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
     {
         player.isWalking = false;
         //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
-
         player.setState(state<StairIdle>());
     }
 
@@ -983,6 +984,7 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
+        player.isWalking = false;
         player.setState(state<Idle>());
     }
     
@@ -999,7 +1001,6 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
         player.attackedFinished = true;
     }
     */
-    
 }
 
 void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
@@ -1009,7 +1010,6 @@ void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerStairWalkState::end(Player& player)
 {
-    
 }
 
 void PlayerStairWalkState::hello(){
@@ -1669,10 +1669,8 @@ void PlayerHurtStairState::update(Player& player, float deltaTime)
         player.isJumping = false;
         player.isBeingHurt = false;
         player.invulnerableTimeCounter = 0.0f; 
-        player.setState(state<Idle>()); 
+        player.setState(state<StairIdle>()); 
     }
-
-    player.setState(state<StairIdle>());
 }
 
 void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)

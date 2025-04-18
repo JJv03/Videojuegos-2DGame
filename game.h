@@ -37,6 +37,8 @@ public:
     sf::Clock revivingClock;
     sf::Clock loadingClock;
     bool isLoading = false;
+    bool restartLoadingClock = false;
+    bool beginStageEntrance = false;
 
     // Constructor, destructor
     Game();
@@ -66,6 +68,8 @@ public:
     void checkCollisions(const sf::Vector2f &viewPosition);
 
     void checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities);
+
+    void checkDoorTileCollisions();
 
     // Check items collisions. An item only collides with what is below it and with a maximum of 2 tiles
     void checkItemsCollisions();

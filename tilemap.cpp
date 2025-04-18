@@ -22,6 +22,7 @@ enum CollisionType
     BOTTOM_LEFT_COLLISION,
     BOTTOM_RIGHT_COLLISION,
     TWO_VERTICAL_COLLISION,
+    TWO_VERTICAL_RIGHT_COLLISION,
     THREE_VERTICAL_COLLISION,
 };
 
@@ -38,6 +39,7 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     {BOTTOM_LEFT_COLLISION, sf::FloatRect({0.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f))},
+    {TWO_VERTICAL_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, sf::Vector2f(gTileSize / 2.f, gTileSize * 2.f))},
     {THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 3.f))},
 };
 
@@ -189,7 +191,7 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
             return collisionTypes.at(THREE_VERTICAL_COLLISION);
 
         case 1: // Door
-            return collisionTypes.at(TWO_VERTICAL_COLLISION);
+            return collisionTypes.at(TWO_VERTICAL_RIGHT_COLLISION);
 
         case 2: // Stairs
             return collisionTypes.at(FULL_COLLISION);

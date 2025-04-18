@@ -168,6 +168,8 @@ void Player::onCollision(Entity &other, Game &game)
 
             if (this->health > 0)
             {
+                this->isInvulnerable = true;
+
                 if(this->isOnStairs){
                     this->isBeingHurt = true;
                 } else {
