@@ -33,10 +33,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 $(RES_FILE): $(RC_FILE) | $(OBJ_DIR)
 	windres $(RC_FILE) -O coff -o $(RES_FILE)
 
-# Crear carpeta build si no existe
-$(OBJ_DIR):
-	mkdir $(OBJ_DIR)
-
 # Limpiar archivos generados
 clean:
 	del "$(OBJ_DIR)\*.o"
