@@ -2935,24 +2935,24 @@ void levelSelectorGS::init(){
     levelSelectorSprites.push_back(selector);
 
     // Loads text font
-    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
 
     // Defines menu options
-    std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - TOWER",
+    std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - OUTER TOWER",
                              "LVL 4 - CAVES", "LVL 5 - PRISON", "LVL 6 - CLOCK TOWER",
-                             "LVL 7 - DRACULA'S PLACE"};
+                             "LVL 7 - DRACULA'S CHAMBERS"};
     for (int i = 0; i < 7; i++) {
-        sf::Text text(font, textos[i], 30);
-        text.setFillColor(sf::Color::White);
+        sf::Text text(font, textos[i], 15);
+        text.setFillColor(sf::Color::Transparent);
         // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
         float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = 50.f;
+        float yPos = 65.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
         levels.push_back(text);
@@ -2973,6 +2973,13 @@ void levelSelectorGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(!enterPressed){
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.right && position < 6){
+                position ++;
+            }
+            
+            if (keyPressed-> scancode == controls.left && position > 0){
+                position --;
+            }
             if (keyPressed->scancode == controls.enter) {
                 enterPressed = true;
                 auto audio = configManager.getAudio();
@@ -2995,6 +3002,15 @@ void levelSelectorGS::handleInput(sf::Event event){
 }
 
 void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    int size = levels.size();
+    for(int i = 0; i<size; i++){
+        if(i == position){
+            levels[i].setFillColor(sf::Color::White);
+        }
+        else{
+            levels[i].setFillColor(sf::Color::Transparent);
+        }
+    }
 }
 
 void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){
