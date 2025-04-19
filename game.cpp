@@ -59,12 +59,6 @@ void Game::init()
 
     tilemaps.loadLevel(currentLevel);
 
-    // Temporary
-    // if (!tileMap.load(1, 1)){
-    //    std::cerr << "Error al cargar el tilemap." << std::endl;
-    //    return;
-    //}
-
     // Simon ----------------------------------------------------------------
 
     // Loads simon texture
