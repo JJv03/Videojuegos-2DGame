@@ -3,10 +3,10 @@
 #include "entity.h"
 
 AnimationManager::AnimationManager(sf::Sprite& sprite)
-    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f), entity(nullptr) {}
+    : sprite(sprite), currentAnimation(nullptr), entity(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f) {}
 
 AnimationManager::AnimationManager(sf::Sprite& sprite, EntitySprite* entity)
-    : sprite(sprite), currentAnimation(nullptr), elapsedTime(0.f), currentFrame(0), speedMultiplier(1.0f), entity(entity) {}
+    : sprite(sprite), currentAnimation(nullptr), entity(entity), elapsedTime(0.f), currentFrame(0), speedMultiplier(1.0f) {}
 
 void AnimationManager::addAnimation(animationID id, const std::vector<Frame>& frames, bool loop) {
     animations[id] = { id, frames, loop };
@@ -21,6 +21,7 @@ void AnimationManager::playAnimation(animationID id) {
     float lastHeight = sprite.getLocalBounds().size.y;
 
     if (animations.find(id) != animations.end()) {
+        isFinished = false;
         currentAnimation = &animations[id];
         currentFrame = 0;
         elapsedTime = 0.f;
@@ -37,6 +38,7 @@ void AnimationManager::playAnimation(animationID id) {
 void AnimationManager::playAnimation(Animation& animation) {
     float lastHeight = sprite.getLocalBounds().size.y;
 
+    isFinished = false;
     currentAnimation = &animation;
     currentFrame = 0;
     elapsedTime = 0.f;
@@ -65,6 +67,7 @@ void AnimationManager::update(float deltaTime) {
             if (currentAnimation->loop) {
                 currentFrame = 0;
             } else {
+                isFinished = true;
                 currentFrame--;
                 return; // Mantener el último frame si la animación no es en bucle
             }
@@ -100,7 +103,8 @@ bool AnimationManager::isPlaying(animationID id){
 bool AnimationManager::isAnimationFinished() const{
     if(!currentAnimation) return true;
     if (currentAnimation->loop) return false;   // Don't finish if it's a loop
-    return currentFrame == currentAnimation->frames.size() - 1;
+    return isFinished;
+    //return currentFrame == currentAnimation->frames.size() - 1;
 }
 
 void AnimationManager::resetAnimation() {

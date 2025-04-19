@@ -114,7 +114,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
             player.setState(state<Jump>());
         }
     
-        if (keyPressed->scancode == controls.attack && player.hasToPressAgain) {
+        if (keyPressed->scancode == controls.attack && player.hasToPressAgain && player.isOnGround) {
             player.isAttacking = true;
             player.hasToPressAgain = false;
             player.setState(state<AttackIdle>());
@@ -1086,12 +1086,11 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         }
     }
     
-    player.animationManager->update(deltaTime*1.5f);
-    player.whip.animationManager->update(deltaTime*1.5f);
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
 
-    
     if(player.restartJumpAnimation){
-        if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
+        if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
             int xoffset= 0;
             if(player.whip.whipLvl <3){
                 xoffset = 24;
@@ -1241,15 +1240,15 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
     }
     //player.animationManager->setAnimationSpeed(2.0f); // 2x speed
     //player.whip.animationManager->setAnimationSpeed(2.0f); // 2x speed
-    player.animationManager->update(deltaTime*1.5f);
-    player.whip.animationManager->update(deltaTime*1.5f);
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
 
     // Apply gravity
     player.verticalSpeed += gPlayerGravity * deltaTime;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
     
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
         int xoffset= 0;
         if(player.whip.whipLvl <3){
             xoffset = 24;
@@ -1414,10 +1413,10 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     }
     
-    player.animationManager->update(deltaTime*1.5f);
-    player.whip.animationManager->update(deltaTime*1.5f);
+    player.animationManager->update(deltaTime);
+    player.whip.animationManager->update(deltaTime);
 
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2 || player.whip.animationManager->getCurrentFrameIndex() == 3) {
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
         
         int xoffset= 0;
         if(player.whip.whipLvl <3){

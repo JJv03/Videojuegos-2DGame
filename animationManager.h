@@ -166,5 +166,6 @@ private:
     float blinkInterval = 0.1f;
     float blinkTimer = 0.f;
     bool visible = true;
+    bool isFinished = false;
 };
 
