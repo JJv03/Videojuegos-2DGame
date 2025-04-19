@@ -895,8 +895,6 @@ void PlayerStairWalkState::init(Player& player)
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
                                  player.stairStart->type == StairTile::Type::TOP_RIGHT);
         player.isPositionedInStair = false;
-
-        player.sprite->move({0.f, -1.f}); // Stairs are a bit taller than the ground
     }
 }
 
