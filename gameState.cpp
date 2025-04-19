@@ -737,6 +737,11 @@ walkingAnimGS::~walkingAnimGS() {}
 
 void PauseGS::init(){
     if(debug) std::cout << "ESTADO: Pause" << std::endl;
+    // BG GAMEPLAY PAUSED
+    // PRETTY EDGES
+    // PAUSED GAME
+    // VOLUMES
+    // CLOSE / BACK TO MENU
 }
 
 void PauseGS::handleInput(sf::Event event){
@@ -2228,7 +2233,7 @@ void InitAnimationGS::init(){
     // ======================================================
 
     // CASTLE 0
-    if (!initAnimationTextures["castle"].loadFromFile("./assets/initAnimation/castle.png")) {
+    if (!initAnimationTextures["castle"].loadFromFile("./assets/sprites/initAnimation/castle.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite castle(initAnimationTextures["castle"]);
@@ -2252,7 +2257,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(castle);
 
     // BACK 1
-    if (!initAnimationTextures["back"].loadFromFile("./assets/initAnimation/back.png")) {
+    if (!initAnimationTextures["back"].loadFromFile("./assets/sprites/initAnimation/back.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite back(initAnimationTextures["back"]);
@@ -2277,7 +2282,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(back);
 
     // BACKDRACULA 2
-    if (!initAnimationTextures["backDracula"].loadFromFile("./assets/initAnimation/backDracula.png")) {
+    if (!initAnimationTextures["backDracula"].loadFromFile("./assets/sprites/initAnimation/backDracula.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite backDracula(initAnimationTextures["backDracula"]);
@@ -2302,7 +2307,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(backDracula);
 
     // NIGHT 3
-    if (!initAnimationTextures["night"].loadFromFile("./assets/initAnimation/night.png")) {
+    if (!initAnimationTextures["night"].loadFromFile("./assets/sprites/initAnimation/night.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite night(initAnimationTextures["night"]);
@@ -2330,7 +2335,7 @@ void InitAnimationGS::init(){
     // ======================================================
 
     // TEXT1 4
-    if (!initAnimationTextures["text1"].loadFromFile("./assets/initAnimation/text1.png")) {
+    if (!initAnimationTextures["text1"].loadFromFile("./assets/sprites/initAnimation/text1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite text1(initAnimationTextures["text1"]);
@@ -2342,7 +2347,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text1);
 
     // TEXT2 5
-    if (!initAnimationTextures["text2"].loadFromFile("./assets/initAnimation/text2.png")) {
+    if (!initAnimationTextures["text2"].loadFromFile("./assets/sprites/initAnimation/text2.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite text2(initAnimationTextures["text2"]);
@@ -2360,7 +2365,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text2);
 
     // TEXT3 6
-    if (!initAnimationTextures["text3"].loadFromFile("./assets/initAnimation/text3.png")) {
+    if (!initAnimationTextures["text3"].loadFromFile("./assets/sprites/initAnimation/text3.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite text3(initAnimationTextures["text3"]);
@@ -2379,7 +2384,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text3);
 
     // TEXT4 7
-    if (!initAnimationTextures["text4"].loadFromFile("./assets/initAnimation/text4.png")) {
+    if (!initAnimationTextures["text4"].loadFromFile("./assets/sprites/initAnimation/text4.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite text4(initAnimationTextures["text4"]);
@@ -2391,7 +2396,7 @@ void InitAnimationGS::init(){
     initAnimationSprites.push_back(text4);
 
     // TEXT5 8
-    if (!initAnimationTextures["text5"].loadFromFile("./assets/initAnimation/text5.png")) {
+    if (!initAnimationTextures["text5"].loadFromFile("./assets/sprites/initAnimation/text5.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
     }
     sf::Sprite text5(initAnimationTextures["text5"]);
@@ -2415,7 +2420,7 @@ void InitAnimationGS::init(){
 
     // COFFIN 9
     sf::Image coffinImg;
-    if (!coffinImg.loadFromFile("./assets/initAnimation/coffin.png"))
+    if (!coffinImg.loadFromFile("./assets/sprites/initAnimation/coffin.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2438,7 +2443,7 @@ void InitAnimationGS::init(){
 
     // DRACULA 10
     sf::Image draculaImg;
-    if (!draculaImg.loadFromFile("./assets/initAnimation/dracula.png"))
+    if (!draculaImg.loadFromFile("./assets/sprites/initAnimation/dracula.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2461,7 +2466,7 @@ void InitAnimationGS::init(){
 
     // MOON 11
     sf::Image moonImg;
-    if (!moonImg.loadFromFile("./assets/initAnimation/moon.png"))
+    if (!moonImg.loadFromFile("./assets/sprites/initAnimation/moon.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2484,7 +2489,7 @@ void InitAnimationGS::init(){
 
     // FOREST 12
     sf::Image forestImg;
-    if (!forestImg.loadFromFile("./assets/initAnimation/forest.png"))
+    if (!forestImg.loadFromFile("./assets/sprites/initAnimation/forest.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2510,7 +2515,7 @@ void InitAnimationGS::init(){
 
     // FUME 13
     sf::Image fumeImg;
-    if (!fumeImg.loadFromFile("./assets/initAnimation/fume.png"))
+    if (!fumeImg.loadFromFile("./assets/sprites/initAnimation/fume.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2533,7 +2538,7 @@ void InitAnimationGS::init(){
 
     // HAND 14
     sf::Image handImg;
-    if (!handImg.loadFromFile("./assets/initAnimation/hand.png"))
+    if (!handImg.loadFromFile("./assets/sprites/initAnimation/hand.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2556,7 +2561,7 @@ void InitAnimationGS::init(){
 
     // BELMONT 15
     sf::Image belmontImg;
-    if (!belmontImg.loadFromFile("./assets/initAnimation/belmont.png"))
+    if (!belmontImg.loadFromFile("./assets/sprites/initAnimation/belmont.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2585,7 +2590,7 @@ void InitAnimationGS::init(){
 
     // FIRE 16
     sf::Image fireImg;
-    if (!fireImg.loadFromFile("./assets/initAnimation/fire.png"))
+    if (!fireImg.loadFromFile("./assets/sprites/initAnimation/fire.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
@@ -2614,7 +2619,7 @@ void InitAnimationGS::init(){
 
     // WHIP 17
     sf::Image whipImg;
-    if (!whipImg.loadFromFile("./assets/initAnimation/whip.png"))
+    if (!whipImg.loadFromFile("./assets/sprites/initAnimation/whip.png"))
     {
         std::cerr << "Error cargando la imagen de Simon" << std::endl;
     }
