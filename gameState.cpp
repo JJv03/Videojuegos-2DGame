@@ -284,8 +284,7 @@ void MenuGS::handleInput(sf::Event event){
                         stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
                         break;
                     case 1:
-                        std::cout<<"Not implemented yet :P"<<std::endl;
-                        enterPressed = false;
+                        stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
                         break;
                     case 2:
                         stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
@@ -346,7 +345,7 @@ MenuGS::~MenuGS() {}
 
 
 // ======================================================
-//                      INIT MENU STATE 
+//                      WALKING ANIMATION STATE 
 // ======================================================
 std::unordered_map<std::string, sf::Texture> walkingAnimTextures;
 std::vector<sf::Sprite> walkingAnimSprites;
@@ -2889,3 +2888,142 @@ void InitAnimationGS::close(){
 }
 
 InitAnimationGS::~InitAnimationGS() {}
+
+
+// ======================================================
+//                      MENU STATE 
+// ======================================================
+std::unordered_map<std::string, sf::Texture> levelSelectorTextures;
+std::vector<sf::Sprite> levelSelectorSprites;
+
+void levelSelectorGS::init(){
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    if(debug) std::cout << "ESTADO: Menu" << std::endl;
+    position = 0;
+    enterPressed = false;
+
+    sf::Image bgImg;
+    if (!bgImg.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    bgImg.createMaskFromColor(gColorKeyGrey);
+    levelSelectorTextures["selector"] = sf::Texture(bgImg, false);
+
+    sf::Sprite selector(levelSelectorTextures["selector"]);
+    selector.setTextureRect(sf::IntRect(sf::Vector2i(262, 808), sf::Vector2i(384, 144)));
+
+    // Adjusts selector position
+    sf::FloatRect spriteBounds = selector.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowWidth / spriteWidth;
+
+    selector.setScale(sf::Vector2f(scaleFactor, scaleFactor + 0.5));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = ((gWindowHeight - scaledHeight) / 2);
+
+    selector.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    levelSelectorSprites.push_back(selector);
+
+    // Loads text font
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    // Defines menu options
+    std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - TOWER",
+                             "LVL 4 - CAVES", "LVL 5 - PRISON", "LVL 6 - CLOCK TOWER",
+                             "LVL 7 - DRACULA'S PLACE"};
+    for (int i = 0; i < 7; i++) {
+        sf::Text text(font, textos[i], 30);
+        text.setFillColor(sf::Color::White);
+        // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = 50.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        levels.push_back(text);
+    }
+
+    // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
+
+    // menuSoundManager.loadMusic("menuMusic", "./assets/music/menuMusic.mp3");
+    levelSelectorSounds.loadSound("menuEnter", "./assets/sounds/05.wav");
+    
+    auto audio = configManager.getAudio();
+
+    levelSelectorSounds.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
+    levelSelectorSounds.playMusic("menuMusic", levelSelectorSounds.realVolume(audio.master_volume, audio.music_volume));
+}
+
+void levelSelectorGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
+    if(!enterPressed){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == controls.enter) {
+                enterPressed = true;
+                auto audio = configManager.getAudio();
+                levelSelectorSounds.playSound("menuEnter", levelSelectorSounds.realVolume(audio.master_volume, audio.sound_volume));
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
+                        break;
+                    case 3:
+                        break;
+                }
+            }
+        }
+    }
+}
+
+void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+}
+
+void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){
+    // std::cout<<"Print"<<std::endl;
+    // std::cout<<menuSprites.size()<<std::endl;
+    // std::cout<<menuTextures.size()<<std::endl;
+    // std::cout<<options.size()<<std::endl;
+    for (const auto& sprite : levelSelectorSprites) {
+        window.draw(sprite);
+    }
+    for (const auto& text : levels) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
+}
+ 
+void levelSelectorGS::pause(){
+    if(debug) std::cout << "ESTADO: Menu PAUSADO" << std::endl;
+}
+
+void levelSelectorGS::resume(){
+    if(debug) std::cout << "ESTADO: Menu REANUDADO" << std::endl;
+}
+
+void levelSelectorGS::close(){
+    if(debug) std::cout << "ESTADO: Menu CERRADO" << std::endl;
+    levelSelectorSprites.clear();
+    levelSelectorTextures.clear();
+    levels.clear();
+}
+
+levelSelectorGS::~levelSelectorGS() {}

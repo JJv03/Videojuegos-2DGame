@@ -284,3 +284,24 @@ public:
     void resume() override;
     void close() override;
 };
+
+
+class levelSelectorGS : public GameState{
+private:
+    SoundManager levelSelectorSounds;
+    configManager &configManager;
+    sf::Font font;
+    std::vector<sf::Text> levels;
+    int position;
+    bool enterPressed;
+public:
+    explicit levelSelectorGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~levelSelectorGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
