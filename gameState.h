@@ -294,6 +294,11 @@ private:
     std::vector<sf::Text> levels;
     int position;
     bool enterPressed;
+    float blinkTimer = 0.0;
+    float blinkInterval = 0.25f;
+    std::vector<sf::Vector2f> pos;
+    AnimationManager *batManager{nullptr};
+    std::shared_ptr<sf::Sprite> bat;
 public:
     explicit levelSelectorGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~levelSelectorGS() override;

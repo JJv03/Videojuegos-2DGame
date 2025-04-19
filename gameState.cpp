@@ -2904,6 +2904,15 @@ void levelSelectorGS::init(){
     if(debug) std::cout << "ESTADO: Menu" << std::endl;
     position = 0;
     enterPressed = false;
+    pos = {
+        sf::Vector2f(68.f, 272.f),
+        sf::Vector2f(154.f, 265.f),
+        sf::Vector2f(78.f, 222.f),
+        sf::Vector2f(259.f, 247.f),     // 176, 224
+        sf::Vector2f(292.f, 228.f),
+        sf::Vector2f(262.f, 160.f),
+        sf::Vector2f(171.f, 124.f)
+    };    
 
     sf::Image bgImg;
     if (!bgImg.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png")) {
@@ -2928,11 +2937,43 @@ void levelSelectorGS::init(){
     float scaledHeight = spriteHeight * scaleFactor;
 
     float xPosition = (gWindowWidth - scaledWidth) / 2;
-    float yPosition = ((gWindowHeight - scaledHeight) / 2);
+    float yPosition = ((gWindowHeight - scaledHeight) / 2) - 15;
 
     selector.setPosition(sf::Vector2f(xPosition, yPosition));
 
     levelSelectorSprites.push_back(selector);
+
+    levelSelectorTextures["obj"] = sf::Texture(bgImg, false);
+
+    sf::Sprite obj(levelSelectorTextures["obj"]);
+    obj.setTextureRect(sf::IntRect(sf::Vector2i(263, 962), sf::Vector2i(6, 7)));
+    obj.setScale(sf::Vector2f(1.5, 1.5));
+    obj.setPosition(pos[0]);
+
+    levelSelectorSprites.push_back(obj);
+
+    walkingAnimTextures["bat"] = sf::Texture(bgImg, false);
+
+    auto batSprite = std::make_shared<sf::Sprite>(walkingAnimTextures["bat"]);
+
+    batSprite->setTextureRect(sf::IntRect(sf::Vector2i(305, 953), sf::Vector2i(16, 16)));
+    batSprite->setScale(sf::Vector2f(1.65, 1.65));
+    batSprite->setPosition(pos[6]);
+    batSprite->setColor(sf::Color::Transparent);
+
+    bat = batSprite;
+
+    // Animation of the bat
+    std::vector<AnimationManager::Frame> idleFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(305, 953), sf::Vector2i(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(322, 953), sf::Vector2i(16, 16)), 0.1f}
+    };
+    
+    batManager = new AnimationManager(*bat);
+    
+    batManager->addAnimation(commingBat, idleFrames, true);
+
+    batManager->playAnimation(commingBat);
 
     // Loads text font
     if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
@@ -2975,13 +3016,20 @@ void levelSelectorGS::handleInput(sf::Event event){
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
             if (keyPressed->scancode == controls.right && position < 6){
                 position ++;
+                std::cout << position << std::endl;
             }
             
-            if (keyPressed-> scancode == controls.left && position > 0){
+            if (keyPressed->scancode == controls.left && position > 0){
                 position --;
+                std::cout << position << std::endl;
             }
+
+            if (keyPressed->scancode == controls.escape){
+                stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+            }
+
             if (keyPressed->scancode == controls.enter) {
-                enterPressed = true;
+                // enterPressed = true;
                 auto audio = configManager.getAudio();
                 levelSelectorSounds.playSound("menuEnter", levelSelectorSounds.realVolume(audio.master_volume, audio.sound_volume));
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
@@ -2991,9 +3039,14 @@ void levelSelectorGS::handleInput(sf::Event event){
                     case 1:
                         break;
                     case 2:
-                        stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
                         break;
                     case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                    case 6:
                         break;
                 }
             }
@@ -3002,8 +3055,10 @@ void levelSelectorGS::handleInput(sf::Event event){
 }
 
 void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+    batManager->update(deltaTime);
+
     int size = levels.size();
-    for(int i = 0; i<size; i++){
+    for(int i = 0; i < size; i++){
         if(i == position){
             levels[i].setFillColor(sf::Color::White);
         }
@@ -3011,6 +3066,24 @@ void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
             levels[i].setFillColor(sf::Color::Transparent);
         }
     }
+
+    if(position < 6){
+        levelSelectorSprites[1].setPosition(pos[position]);
+
+        blinkTimer += deltaTime;
+
+        if (blinkTimer >= blinkInterval) {
+            levelSelectorSprites[1].setColor(levelSelectorSprites[1].getColor() == sf::Color::Transparent ? sf::Color::White : sf::Color::Transparent);
+            blinkTimer = 0.0f;
+        }
+
+        bat->setColor(sf::Color::Transparent);
+    }
+    else{
+        levelSelectorSprites[1].setColor(sf::Color::Transparent);
+        bat->setColor(sf::Color::White);
+    }
+    
 }
 
 void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -3025,6 +3098,8 @@ void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){
         // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
         window.draw(text);
     }
+
+    window.draw(*bat);
 }
  
 void levelSelectorGS::pause(){
