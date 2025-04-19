@@ -11,7 +11,6 @@ Player::Player()
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
     isOnGround = false;
-    wasOnGround = false;
     isOnStairs = false;
     hasToPressAgain = true;
     isAttacking = false;

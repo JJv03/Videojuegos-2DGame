@@ -1,7 +1,6 @@
 #include "animationManager.h"
 #include <iostream>
 #include "entity.h"
-#include "player.h"
 
 AnimationManager::AnimationManager(sf::Sprite& sprite)
     : sprite(sprite), currentAnimation(nullptr), entity(nullptr), elapsedTime(0.f), currentFrame(0),speedMultiplier(1.0f) {}
@@ -30,18 +29,9 @@ void AnimationManager::playAnimation(animationID id) {
 
         float currentHeight = sprite.getLocalBounds().size.y;
 
-        if(lastHeight != currentHeight && entity){
-            if(Player* player = dynamic_cast<Player*>(entity)){
-
-                if(player->wasOnGround){
-                    sprite.move({0.f, lastHeight - currentHeight + 1.f});
-                }
-            }
-            else if(entity->isOnGround){
-                sprite.move({0.f, lastHeight - currentHeight + 1.f});
-            }
+        if(lastHeight != currentHeight && entity && entity->isOnGround){
+            sprite.move({0.f, lastHeight - currentHeight});
         }
-        
     }
 }
 

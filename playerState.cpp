@@ -69,9 +69,11 @@ void PlayerIdleState::init(Player& player)
     player.isJumping = false;
     player.isWalking = false;
     player.isAttacking = false;
+    player.isOnStairs = false;
     player.attackedFinished = false;
     player.isBeingHurt = false;
     player.isDead = false;  
+    player.isOnGround = false;
     player.isJumpStanding = false;
     player.restartJumpAnimation = true;
 }
