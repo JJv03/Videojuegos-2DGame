@@ -2993,10 +2993,21 @@ void levelSelectorGS::init(){
 
         // Centers position
         float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = 65.f;
+        float yPos = 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
         levels.push_back(text);
+    }
+
+    std::string texts[4] = {"CONTROLS:", "ESCAPE", "<- / ->", "ENTER"};
+    std::vector<float> posX = {15, 45, 180, 325};
+    std::vector<float> posY = {340, 365, 365, 365};
+    for (int i = 0; i < 4; i++) {
+    sf::Text text(font, texts[i], 10);
+    text.setFillColor(sf::Color::White);
+
+    text.setPosition(sf::Vector2f(posX[i], posY[i]));
+    infos.push_back(text);
     }
 
     // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
@@ -3006,8 +3017,9 @@ void levelSelectorGS::init(){
     
     auto audio = configManager.getAudio();
 
-    levelSelectorSounds.loadMusic("menuMusic", "./assets/music/08Out_of_Time.mp3");
-    levelSelectorSounds.playMusic("menuMusic", levelSelectorSounds.realVolume(audio.master_volume, audio.music_volume));
+    levelSelectorSounds.loadMusic("menuMusic1", "./assets/music/05Wicked_Child(1).mp3");
+    levelSelectorSounds.loadMusic("menuMusic2", "./assets/music/05Wicked_Child(2).mp3");
+    levelSelectorSounds.playMusicSequence("menuMusic1", "menuMusic2", true, levelSelectorSounds.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void levelSelectorGS::handleInput(sf::Event event){
@@ -3034,19 +3046,25 @@ void levelSelectorGS::handleInput(sf::Event event){
                 levelSelectorSounds.playSound("menuEnter", levelSelectorSounds.realVolume(audio.master_volume, audio.sound_volume));
                 std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                 switch (position) {
-                    case 0:
+                    case 0: // Lvl 1
+                        gStartingLevel = 1;
+                        gStartingStage = 1;
+                        stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                         break;
-                    case 1:
+                    case 1: // Lvl 2
                         break;
-                    case 2:
+                    case 2: // Lvl 3
                         break;
-                    case 3:
+                    case 3: // Lvl 4
                         break;
-                    case 4:
+                    case 4: // Lvl 5
                         break;
-                    case 5:
+                    case 5: // Lvl 6
                         break;
-                    case 6:
+                    case 6: // Lvl Dracula Boss
+                        gStartingLevel = 7;
+                        gStartingStage = 1;
+                        stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                         break;
                 }
             }
@@ -3099,6 +3117,11 @@ void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){
         window.draw(text);
     }
 
+    for (const auto& text : infos) {
+        // std::cout << "Dibujando texto: " << text.getString().toAnsiString() << std::endl;
+        window.draw(text);
+    }
+
     window.draw(*bat);
 }
  
@@ -3115,6 +3138,7 @@ void levelSelectorGS::close(){
     levelSelectorSprites.clear();
     levelSelectorTextures.clear();
     levels.clear();
+    infos.clear();
 }
 
 levelSelectorGS::~levelSelectorGS() {}

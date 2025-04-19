@@ -292,6 +292,7 @@ private:
     configManager &configManager;
     sf::Font font;
     std::vector<sf::Text> levels;
+    std::vector<sf::Text> infos;
     int position;
     bool enterPressed;
     float blinkTimer = 0.0;
