@@ -3063,7 +3063,8 @@ void levelSelectorGS::handleInput(sf::Event event){
                         break;
                     case 6: // Lvl Dracula Boss
                         gStartingLevel = 7;
-                        gStartingStage = 1;
+                        gStartingStage = 1; 
+                        //gStartingStage = 2;
                         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                         break;
                 }

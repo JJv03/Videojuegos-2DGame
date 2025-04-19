@@ -1145,5 +1145,8 @@ void Game::setLevelMusic(int level)
     case 6:
 
         break;
+    case 7:
+        gameSoundManager.playMusic("dracula1", volume);
+        break;
     }
 }
