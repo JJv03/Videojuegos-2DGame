@@ -364,6 +364,10 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         }
         else
         {
+            // LOGIC TO SHOW DEAD SCREEN 
+            // Black rectangle with 2 options and a heart as selector
+            // -> RestartLevel (Continue)
+            // -> Go back to Menu (End)
             restartLevel();
         }
     }
