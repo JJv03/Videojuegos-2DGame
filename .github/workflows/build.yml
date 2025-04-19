@@ -35,7 +35,7 @@ jobs:
         shell: cmd
         run: |
           mkdir dist
-          copy build\game.exe dist\
+          copy build\Castlevania.exe dist\
           for %%f in (build\*.dll) do copy %%f dist\
           xcopy /E /I assets dist\assets\
           copy config.json dist\

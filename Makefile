@@ -9,7 +9,7 @@ SRC_DIR     := .
 
 SRCS        := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/enemies/*.cpp)
 OBJS        := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
-EXEC        := $(OBJ_DIR)/game.exe
+EXEC        := $(OBJ_DIR)/Castlevania.exe
 
 # Recurso (icono)
 RC_FILE     := icon.rc
