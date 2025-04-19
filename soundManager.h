@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <atomic>
 
 /**
  * @brief Manages the loading and playing of sound and music assets.
@@ -11,9 +12,14 @@
 class SoundManager {
 public:
     /**
-     * @brief Constructs an SoundManager
+     * @brief Constructs a SoundManager
      */
     SoundManager();
+
+    /**
+     * @brief Destructs a SoundManager
+     */
+    ~SoundManager();
 
     /**
      * @brief Loads a sound from a file and associates it with an ID.
@@ -94,4 +100,5 @@ private:
     std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;
     std::unordered_map<std::string, sf::Music> musicTracks;
+    std::atomic<bool> isShuttingDown;
 };

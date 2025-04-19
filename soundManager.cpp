@@ -3,7 +3,11 @@
 #include <iostream>
 #include <thread>
 
-SoundManager::SoundManager() {}
+SoundManager::SoundManager() : isShuttingDown(false) {}
+
+SoundManager::~SoundManager() {
+    isShuttingDown = true;
+}
 
 void SoundManager::loadSound(const std::string& id, const std::string& filepath) {
     if (soundBuffers.find(id) != soundBuffers.end()) {
@@ -106,12 +110,16 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
     }
 
     std::thread([this, firstId, secondId, secondSongLoop, volume]() {
+        if (isShuttingDown) return;
+
         musicTracks[firstId].setVolume(volume);
         musicTracks[firstId].play();
 
-        while (musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
+        while (!isShuttingDown && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
+
+        if (isShuttingDown) return;
 
         musicTracks[secondId].setVolume(volume);
         musicTracks[secondId].setLooping(secondSongLoop);
