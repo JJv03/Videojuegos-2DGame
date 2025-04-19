@@ -195,7 +195,7 @@ void Player::onCollision(Entity &other, Game &game)
         this->isNearStair = true;
         this->stairStart = stairTile;
     }    
-    else if (dynamic_cast<Item*>(&other)){
+    else if (Item* item = dynamic_cast<Item*>(&other)){
         this->onCollision_Item(other);
     }
     else {
@@ -534,7 +534,11 @@ Whip::Whip()
 
 std::vector<sf::FloatRect> Whip::getBounds() const
 {
-    return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
+    if(this->animationManager->getCurrentFrameIndex() == 2 || this->animationManager->getCurrentFrameIndex() == 3){
+        return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
+    }
+
+    return std::vector<sf::FloatRect>({sf::FloatRect()});
 }
 
 void Whip::onCollision(Entity &other, Game &game)

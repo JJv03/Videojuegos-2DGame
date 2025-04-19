@@ -599,9 +599,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     checkPlayerMapBoundCollisions();
     checkSolidTileCollisions(dynamicEntities);
 
-    //if(!player.isOnStairs || !player.isWalking){ // Only check if player is not in StairWalk (messes up transition if not)
-        checkDoorTileCollisions();
-    //}
+    checkDoorTileCollisions();
+    
 
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }

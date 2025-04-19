@@ -3,6 +3,9 @@
 #include <iostream>
 #include "globals.h"
 #include "tile.h"
+#include <set>
+#include <algorithm>
+#include <utility>
 
 CollisionGrid::CollisionGrid() 
     : gameRef(nullptr), cellsPerRow(9), cellsPerColumn(9) {}
@@ -85,6 +88,8 @@ int CollisionGrid::getCellKeyFromCoords(int x, int y) const {
 
 void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::vector<Entity*>& dynamicEntities, const sf::Vector2f& viewPosition) {
 
+    std::set<std::pair<const Entity*, const Entity*>> checkedPairs; // So the same entities don't collide twice in different cells
+
     // 1. Check collisions between static and dynamic entities
     //    Clear all cells
     clear();
@@ -107,6 +112,10 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
 
         for (Entity* d : dynamicEntities) {
             for (Entity* s : staticEntities) {
+                auto orderedPair = std::minmax(d, s); // A,B = B,A
+                if (checkedPairs.contains(orderedPair)) continue;
+                checkedPairs.insert(orderedPair);
+
                 if (checkIntersections(*d, *s)) {
                     d->onCollision(*s, *gameRef);
                     s->onCollision(*d, *gameRef);
@@ -118,6 +127,7 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
 
     // 2. Check collisions between dynamic entities
     //    Update dynamic entities positions
+    checkedPairs.clear();
     cellsWithDynamics.clear();
     for(auto& entity : dynamicEntities){
         addDynamicEntity(entity, viewPosition);
@@ -129,6 +139,10 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
 
         for (size_t i = 0; i < dynamicEntities.size(); ++i) {
             for (size_t j = i + 1; j < dynamicEntities.size(); ++j) {
+                auto orderedPair = std::minmax(dynamicEntities[i], dynamicEntities[j]); // A,B = B,A
+                if (checkedPairs.contains(orderedPair)) continue;
+                checkedPairs.insert(orderedPair);
+
                 if (checkIntersections(*dynamicEntities[i], *dynamicEntities[j])) {
                     dynamicEntities[i]->onCollision(*dynamicEntities[j], *gameRef);
                     dynamicEntities[j]->onCollision(*dynamicEntities[i], *gameRef);

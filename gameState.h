@@ -80,15 +80,14 @@ private:
     configManager &configManager;
     sf::Font font;
     std::vector<sf::Text> texts;
+    float elapsedTime = 0;
     std::vector<sf::Vector2f> textPositions;
-    // AnimationManager *bat1{nullptr};
-    // std::shared_ptr<sf::Sprite> bat1;
-    // AnimationManager *bat2{nullptr};
-    // std::shared_ptr<sf::Sprite> bat2;
-    // AnimationManager *cloud{nullptr};
-    // std::shared_ptr<sf::Sprite> cloud;
-    // AnimationManager *simon{nullptr};
-    // std::shared_ptr<sf::Sprite> simon;
+    AnimationManager *batManager1{nullptr};
+    std::shared_ptr<sf::Sprite> bat1;
+    AnimationManager *batManager2{nullptr};
+    std::shared_ptr<sf::Sprite> bat2;
+    AnimationManager *simonManager{nullptr};
+    std::shared_ptr<sf::Sprite> simon;
 public:
     explicit walkingAnimGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~walkingAnimGS() override;
@@ -111,7 +110,7 @@ private:
     int position;
     SoundManager menuSoundManager;
     configManager &configManager;
-    bool exit;
+    bool exit, enterPressed;
     float timeOut = 0.0f;
     float timeInterval = 30.f;
 public:
@@ -147,6 +146,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> configs;
     int position;
+    bool enterPressed;
     SoundManager configSoundManager;
     configManager &configManager;
 public:
@@ -171,7 +171,7 @@ private:
     configManager &configManager;
     std::string right, left, down, up, jump, attack, enter, escape, useSubWeapon;
     std::string defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
-    bool waitingInput, showPopUp;
+    bool waitingInput, showPopUp, enterPressed;
     float popUpTimer = 0.0;
     float popUpInterval = 3.5;
     float blinkTimer = 0.0;
@@ -196,6 +196,7 @@ private:
     sf::Font font;
     std::vector<sf::Text> configs;
     int position, col;
+    bool enterPressed;
     SoundManager configVolumeManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;
@@ -218,6 +219,7 @@ private:
     sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
     int position, col;
+    bool enterPressed;
     SoundManager configGameplayManager;
     configManager &configManager;
     bool video, difficulty, cheats;
@@ -243,7 +245,7 @@ private:
     bool blinking;
     int blinks, maxBlinks;
     float blinkTimer = 0.0;
-    float blinkInterval = 0.2f;
+    float blinkInterval = 0.15f;
 public:
     explicit InitMenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~InitMenuGS() override;
@@ -278,6 +280,27 @@ public:
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void drawSlide(sf::RenderWindow& window);
     void resetMovingSprites();
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
+
+
+class levelSelectorGS : public GameState{
+private:
+    SoundManager levelSelectorSounds;
+    configManager &configManager;
+    sf::Font font;
+    std::vector<sf::Text> levels;
+    int position;
+    bool enterPressed;
+public:
+    explicit levelSelectorGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~levelSelectorGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
     void close() override;
