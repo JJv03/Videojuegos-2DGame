@@ -285,6 +285,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime, viewPosition);
+    player.wasOnGround = player.isOnGround;
 
     enemyManager->update(deltaTime, currentLevel, currentStage);
 
