@@ -379,80 +379,6 @@ void walkingAnimGS::init(){
 
     walkingAnimSprites.push_back(bg);
 
-    // --------------------------------------------------
-    // GUI
-    // --------------------------------------------------
-    if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
-    {
-        std::cout << "No se ha encontrado la fuente" << std::endl;
-        throw std::runtime_error("No se pudo cargar la fuente.");
-    }
-
-    float margin = gGUI_size_x * gGUI_MarginFactor;
-
-    // Score
-    sf::Text scoreText(font, "SCORE-000000", gGUI_text_size);
-    scoreText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, margin + gGUI_position_y));
-    scoreText.setPosition(textPositions.back());
-
-    // Time
-    sf::Text timeText(font, "TIME   0300", gGUI_text_size);
-    timeText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin + gGUI_position_y));
-    timeText.setPosition(textPositions.back());
-
-    // Stage
-    sf::Text stageText(font, "STAGE 01", gGUI_text_size);
-    stageText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_StagePositionXFactor, margin + gGUI_position_y));
-    stageText.setPosition(textPositions.back());
-
-    // Player
-    sf::Text playerText(font, "PLAYER", gGUI_text_size);
-    playerText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_PlayerPositionYFactor) + gGUI_position_y));
-    playerText.setPosition(textPositions.back());
-
-    // Enemy
-    sf::Text enemyText(font, "ENEMY", gGUI_text_size);
-    enemyText.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(margin, (margin + gGUI_EnemyPositionYFactor) + gGUI_position_y));
-    enemyText.setPosition(textPositions.back());
-
-    sf::Image heartImage;
-    if (!heartImage.loadFromFile("./assets/sprites/items/itemsObjects.png"))
-    {
-        std::cerr << "Error loading heart image" << std::endl;
-    }
-    heartImage.createMaskFromColor(gColorKeyGrey);
-
-    walkingAnimTextures["heart"] = sf::Texture(heartImage, false);
-
-    sf::Sprite heartSprite(walkingAnimTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
-    heartSprite.setPosition(sf::Vector2f(180, -4));
-    walkingAnimSprites.push_back(heartSprite);
-
-    // Hearts
-    sf::Text hearts(font, "-00", gGUI_text_size);
-    hearts.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(189, -4));
-    hearts.setPosition(textPositions.back());
-
-    // Lives
-    sf::Text lives(font, "P-03", gGUI_text_size);
-    lives.setFillColor(gGUI_text_color);
-    textPositions.push_back(sf::Vector2f(181, 6));
-    lives.setPosition(textPositions.back());
-
-    texts.push_back(scoreText);
-    texts.push_back(timeText);
-    texts.push_back(stageText);
-    texts.push_back(playerText);
-    texts.push_back(enemyText);
-    texts.push_back(hearts);
-    texts.push_back(lives);
-
     sf::Image cloudImage;
     if (!cloudImage.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
     {
@@ -558,60 +484,6 @@ void walkingAnimGS::init(){
     walkingAnimSoundManager.playMusic("animMusic", walkingAnimSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
 }
 
-void walkingAnimGS::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth, sf::Vector2f virtualWorldset)
-{
-    const int MAX_HEALTH = 16;
-    const float SEGMENT_WIDTH = 3.5;
-    const float SEGMENT_HEIGHT = 6;
-    const float SPACING = 1.2;
-    const float BORDER_THICKNESS = 1.f;
-    const sf::Vector2f PLAYER_POS(gGUI_PlayerHpBar_position_x + virtualWorldset.x,
-                                  gGUI_PlayerHpBar_position_y + virtualWorldset.y);
-    const sf::Vector2f BOSS_POS(gGUI_BossHpBar_position_x + virtualWorldset.x,
-                                gGUI_BossHpBar_position_y + virtualWorldset.y);
-
-    // Player
-    for (int i = 0; i < MAX_HEALTH; ++i)
-    {
-        bool isFull = (i < playerHealth);
-
-        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
-        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
-        sf::RectangleShape segment(sf::Vector2f(width, height));
-
-        // Adjust the position to center the empty segments within the border
-        float xOffset = isFull ? 0 : BORDER_THICKNESS;
-        float yOffset = isFull ? 0 : BORDER_THICKNESS;
-        segment.setPosition(sf::Vector2f(PLAYER_POS.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, PLAYER_POS.y + yOffset));
-
-        segment.setOutlineThickness(BORDER_THICKNESS);
-        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
-        segment.setFillColor(isFull ? sf::Color::Red : sf::Color::Black);
-
-        window.draw(segment);
-    }
-
-    // Boss
-    for (int i = 0; i < MAX_HEALTH; ++i)
-    {
-        bool isFull = (i < bossHealth);
-
-        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
-        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
-        sf::RectangleShape segment(sf::Vector2f(width, height));
-
-        float xOffset = isFull ? 0 : BORDER_THICKNESS;
-        float yOffset = isFull ? 0 : BORDER_THICKNESS;
-        segment.setPosition(sf::Vector2f(BOSS_POS.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, BOSS_POS.y + yOffset));
-
-        segment.setOutlineThickness(BORDER_THICKNESS);
-        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
-        segment.setFillColor(isFull ? sf::Color(255, 150, 120) : sf::Color::Black);
-
-        window.draw(segment);
-    }
-}
-
 void walkingAnimGS::handleInput(sf::Event event){
     // if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
     //     if (keyPressed->scancode == KEY_ESC)
@@ -669,45 +541,7 @@ void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
     // std::cout<<menuTextures.size()<<std::endl;
     // std::cout<<options.size()<<std::endl;
     window.draw(walkingAnimSprites[0]); // Bg
-    window.draw(walkingAnimSprites[2]); // Cloud
-    
-    sf::Vector2f virtualCoordOfUpperLeftCornerOfGame = getVirtualUpperLeftCornerCoordOfGameView(window);
-    sf::Vector2f guiPosition(virtualCoordOfUpperLeftCornerOfGame);
-
-    // Draw the black rectangle
-    sf::RectangleShape guiBackground(sf::Vector2f(gGUI_size_x + 10, gGUI_size_y));
-    guiBackground.setFillColor(gGUI_color);
-    guiBackground.setPosition(guiPosition);
-    window.draw(guiBackground);
-
-    // Draw the GUI texts
-    sf::Vector2f virtualWorldOffset(virtualCoordOfUpperLeftCornerOfGame.x - gGUI_position_x,
-                                    virtualCoordOfUpperLeftCornerOfGame.y - gGUI_position_y);
-
-    for (int i = 0; i < static_cast<int>(texts.size()); ++i)
-    {
-        sf::Text &text = texts[i];
-        sf::Vector2f &pos = textPositions[i];
-        text.setPosition(pos + virtualWorldOffset);
-        window.draw(text);
-    }
-
-    // Draw the health bars
-    drawHealthBars(window, 16, 16, virtualWorldOffset); // CHANGE FOR BOSS HEALTH!!!!!
-
-    // Subweapon box (the red rectangle)
-    sf::RectangleShape redBorder(sf::Vector2f(gGUI_subweaponBox_size_x, gGUI_subweaponBox_size_y));
-    sf::Vector2f redBorderPosition(gGUI_subweaponBox_offset_position_x + virtualWorldOffset.x,
-                                    gGUI_subweaponBox_offset_position_y + virtualWorldOffset.y);
-    redBorder.setPosition(redBorderPosition);
-    redBorder.setFillColor(sf::Color::Transparent);
-    redBorder.setOutlineColor(sf::Color::Red);
-    redBorder.setOutlineThickness(1.f);
-    window.draw(redBorder);
-
-    // Draw the heart counter icon
-    walkingAnimSprites[1].setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
-    window.draw(walkingAnimSprites[1]);
+    window.draw(walkingAnimSprites[1]); // Cloud
 
     window.draw(*simon);
     window.draw(*bat1);
