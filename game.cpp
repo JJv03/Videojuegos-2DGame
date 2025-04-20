@@ -274,6 +274,18 @@ void Game::init()
 
     // GUI subweapon
     guiSubWeaponSprite = getItemSprite(ItemType::NONE);
+    
+    sf::Text gOver(font, "GAME OVER", 8);
+    gOver.setFillColor(sf::Color::White);
+    deadScreenTexts.push_back(gOver);
+
+    sf::Text cont(font, "CONTINUE", 8);
+    cont.setFillColor(sf::Color::White);
+    deadScreenTexts.push_back(cont);
+
+    sf::Text end(font, "END", 8);
+    end.setFillColor(sf::Color::White);
+    deadScreenTexts.push_back(end);
 }
 
 // Effects changes depending on the input of the player
@@ -316,8 +328,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 
         player.setState(std::make_unique<PlayerDeadState>());
     }
-    
-
     
 
     // Update score
@@ -503,6 +513,15 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             black.setFillColor(sf::Color::Black);
             black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
             window.draw(black);
+
+            deadScreenTexts[0].setPosition(sf::Vector2f(center.x - 35, center.y - 10));
+            window.draw(deadScreenTexts[0]);
+
+            deadScreenTexts[1].setPosition(sf::Vector2f(center.x - 25, center.y + 25));
+            window.draw(deadScreenTexts[1]);
+
+            deadScreenTexts[2].setPosition(sf::Vector2f(center.x - 25, center.y + 45));
+            window.draw(deadScreenTexts[2]);
         }
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));

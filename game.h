@@ -124,4 +124,5 @@ private:
     std::vector<sf::RectangleShape> enemyHealthBar;
 
     bool withOutLives;
+    std::vector<sf::Text> deadScreenTexts;
 };
