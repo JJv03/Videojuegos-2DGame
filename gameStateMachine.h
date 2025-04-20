@@ -20,6 +20,10 @@ class GameStateMachine
         // remove the current state on top of the machine and stack <newState>
         void replaceState(GameStateRef newState);
 
+        // Method that prepares the state machine so that it will remove all states
+        // and replace them with <newState>
+        void replaceAllStates(GameStateRef newState);
+
         // Method that prepares the state machine so that it will remove
         // the current state on top of the machine
         void removeState();
@@ -45,4 +49,6 @@ class GameStateMachine
 
         // Indicates processStateChanges to replace the current state with <newState>
         bool isReplacing;
+
+        bool isReplacingAll;
 };

@@ -37,5 +37,4 @@ $(RES_FILE): $(RC_FILE) | $(OBJ_DIR)
 clean:
 	del "$(OBJ_DIR)\*.o"
 	del "$(OBJ_DIR)\enemies\*.o"
-	del "$(OBJ_DIR)\*.res"
 	del "$(OBJ_DIR)\*.exe"

@@ -734,6 +734,8 @@ walkingAnimGS::~walkingAnimGS() {}
 // ======================================================
 //                      PAUSE STATE 
 // ======================================================
+std::unordered_map<std::string, sf::Texture> pauseTextures;
+std::vector<sf::Sprite> pauseSprites;
 
 void PauseGS::init(){
     if(debug) std::cout << "ESTADO: Pause" << std::endl;
@@ -742,14 +744,215 @@ void PauseGS::init(){
     // PAUSED GAME
     // VOLUMES
     // CLOSE / BACK TO MENU
+
+    auto audio = configManager.getAudio();
+    masterVol = audio.master_volume;
+    musicVol = audio.music_volume;
+    soundVol = audio.sound_volume;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // Loads menu texture
+    position = 0;
+    col = 0;
+
+    if (!pauseTextures["bg"].loadFromFile("./assets/sprites/menu/blankBox.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite bg(pauseTextures["bg"]);
+
+    bg.setScale(sf::Vector2f(0.5, 1.8));
+
+    sf::FloatRect spriteBounds = bg.getGlobalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    bg.setPosition(sf::Vector2f((gWindowWidth - spriteWidth) / 2, (gWindowHeight - spriteHeight) / 2));
+
+    pauseSprites.push_back(bg);
+
+    if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
+
+    sf::Text text(font, "PAUSED GAME", 20);
+    text.setFillColor(sf::Color(122, 71, 22));
+    text.setOutlineColor(sf::Color(255, 140, 0));
+    text.setOutlineThickness(1.5); 
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    // Centers position
+    float xPos = (gWindowWidth - textBounds.size.x) / 2;
+    float yPos = 90.f;
+
+    text.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text);
+
+    std::string textos[3] = {"MASTER", "MUSIC", "SOUNDS"};
+    for (int i = 0; i < 3; i++) {
+        sf::Text text(font, textos[i], 15);
+        text.setFillColor(sf::Color::White);
+        sf::FloatRect textBounds = text.getLocalBounds();
+
+        // Centers position
+        float xPos = (gWindowWidth - textBounds.size.x) / 2;
+        float yPos = 125.f + i * 50.f;
+
+        text.setPosition(sf::Vector2f(xPos, yPos));
+        configs.push_back(text);
+    }
+
+    if (!pauseTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(pauseTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.25f, torch.getScale().y * 1.25f));
+
+    float torchX = configs[1].getPosition().x - 25.f;
+    float torchY = configs[1].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    pauseSprites.push_back(torch);
+    
+    // BACK
+    sf::Text text2(font, "EXIT", 20);
+    text2.setFillColor(sf::Color::White);
+    text2.setOutlineColor(sf::Color(128, 128, 128));
+    text2.setOutlineThickness(1.5);
+    textBounds = text2.getLocalBounds();
+
+    xPos = (gWindowWidth - textBounds.size.x) / 2.f  - 75.f;
+    yPos = 285.f;
+
+    text2.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text2);
+
+    // CONFIRM
+    sf::Text text3(font, "RESUME", 20);
+    text3.setFillColor(sf::Color(0, 190, 0));
+    text3.setOutlineColor(sf::Color(0, 100, 0));
+    text3.setOutlineThickness(1.5);
+    textBounds = text3.getLocalBounds();
+
+    xPos = (gWindowWidth - textBounds.size.x) / 2.f  + 65.f;
+    yPos = 285.f;
+
+    text3.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text3);
+
+    pauseVolumeManager.loadSound("menuEnter", "./assets/sounds/05.wav");
 }
 
 void PauseGS::handleInput(sf::Event event){
+    auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_ESC)
         {    
-            stateMachine->removeState(); 
+            stateMachine->removeState();
         }
+
+        if (keyPressed->scancode == controls.down && position < 3) {    
+            position ++;
+        }
+
+        if (keyPressed->scancode == controls.up && position > 0) {    
+            position --;
+        }
+
+        if (keyPressed->scancode == controls.right) {    
+            switch (position){
+                case 0:
+                    if(masterVol < 100){
+                        masterVol += 10;
+                    }
+                    break;
+                case 1:
+                    if(musicVol < 100){
+                        musicVol += 10;
+                    }
+                    break;
+                case 2:
+                    if(soundVol < 100){
+                        soundVol += 10;
+                    }
+                    pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
+                    break;
+                case 3:
+                    if (col == 0){
+                        col = 1;
+                    }
+                    break;
+            }
+            pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+        }
+
+        if (keyPressed->scancode == controls.left) {    
+            switch (position){
+                case 0:
+                    if(masterVol > 0){
+                        masterVol -= 10;
+                    }
+                    break;
+                case 1:
+                    if(musicVol > 0){
+                        musicVol -= 10;
+                    }
+                    break;
+                case 2:
+                    if(soundVol > 0){
+                        soundVol -= 10;
+                    }
+                    pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
+                    break;
+                case 3:
+                    if (col == 1){
+                        col = 0;
+                    }
+                    break;
+            }
+            pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+        }
+
+        if (keyPressed->scancode == controls.enter) {
+            if (position == 3 && col == 0){
+                std::cout << "Road back to config menu" << std::endl;
+                stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
+            }
+
+            if (position == 3 && col == 1){
+                configManager::Audio newAudio;
+                newAudio.master_volume = masterVol;
+                newAudio.music_volume = musicVol;
+                newAudio.sound_volume = soundVol;
+
+                configManager.setAudio(newAudio);
+                configManager.saveConfiguration("config.json");
+
+                std::cout << "Road back to config menu after saving" << std::endl;
+                stateMachine->removeState();
+            }
+        }
+
+        if (!pauseSprites.empty()) {
+            sf::Sprite torch = pauseSprites.back();
+            pauseSprites.pop_back();
+            float torchX = 0;
+            float torchY = 0;
+            if (position <= 2){
+                torchX = configs[position+1].getPosition().x - 25.f;
+                torchY = configs[position+1].getPosition().y + 2.f;
+            }
+            else{
+                torchX = configs[position+1+col].getPosition().x - 25.f;
+                torchY = configs[position+1+col].getPosition().y + 2.f;
+            }
+            torch.setPosition(sf::Vector2f(torchX, torchY));
+
+            pauseSprites.push_back(torch);
+        }
+        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
     }
 }
 
@@ -758,7 +961,44 @@ void PauseGS::update(float deltaTime, const sf::Vector2f& viewPosition){
 }
 
 void PauseGS::draw(sf::RenderWindow& window, Camera& camera){
-    
+    for (const auto& sprite : pauseSprites) {
+        window.draw(sprite);
+    }
+    for (const auto& text : configs) {
+        window.draw(text);
+    }
+    drawVolumeBars(window, masterVol, sf::Vector2f(125, 150));
+    drawVolumeBars(window, musicVol, sf::Vector2f(125, 200));
+    drawVolumeBars(window, soundVol, sf::Vector2f(125, 250));
+}
+
+void PauseGS::drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
+    const int MAX_VOLUME = 10;
+    const int SEGMENT_WIDTH = 13;
+    const int SEGMENT_HEIGHT = 15;
+    const int SPACING = 2.5;
+    const float BORDER_THICKNESS = 1.0f;
+
+    // Player
+    for (int i = 0; i < MAX_VOLUME; ++i)
+    {
+        bool isFull = (i < actualVol/10);
+
+        float width = SEGMENT_WIDTH - (isFull ? 0 : BORDER_THICKNESS * 2);
+        float height = SEGMENT_HEIGHT - (isFull ? 0 : BORDER_THICKNESS * 2);
+        sf::RectangleShape segment(sf::Vector2f(width, height));
+
+        // Adjust the position to center the empty segments within the border
+        float xOffset = isFull ? 0 : BORDER_THICKNESS;
+        float yOffset = isFull ? 0 : BORDER_THICKNESS;
+        segment.setPosition(sf::Vector2f(pos.x + i * (SEGMENT_WIDTH + SPACING) + xOffset, pos.y + yOffset));
+
+        segment.setOutlineThickness(BORDER_THICKNESS);
+        segment.setOutlineColor(isFull ? sf::Color::Black : sf::Color::White);
+        segment.setFillColor(isFull ? sf::Color::Red : sf::Color::Black);
+
+        window.draw(segment);
+    }
 }
 
 void PauseGS::pause(){
@@ -771,6 +1011,9 @@ void PauseGS::resume(){
 
 void PauseGS::close(){
     if(debug) std::cout << "ESTADO: Pause CERRADO" << std::endl;
+    pauseSprites.clear();
+    pauseTextures.clear();
+    configs.clear();
 }
 
 PauseGS::~PauseGS() {}

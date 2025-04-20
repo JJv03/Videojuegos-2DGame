@@ -128,13 +128,21 @@ public:
 
 
 class PauseGS : public GameState{
+private:
+    sf::Font font;
+    std::vector<sf::Text> configs;
+    int position, col;
+    SoundManager pauseVolumeManager;
+    configManager &configManager;
+    int masterVol, musicVol, soundVol;
 public:
-    explicit PauseGS(GameStateMachine* machine) : GameState(machine) {}
+    explicit PauseGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~PauseGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
     void update(float deltaTime, const sf::Vector2f& viewPosition) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
+    void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos);
     void pause() override;
     void resume() override;
     void close() override;
