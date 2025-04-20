@@ -866,14 +866,6 @@ void PlayerStairIdleState::update(Player& player, float deltaTime)
     }
     player.animationManager->update(deltaTime);
 
-    if(player.isBeingHurt){
-        player.setState(state<HurtStair>());
-    }
-
-    if(player.isAttacking){
-        player.setState(state<AttackStairs>());
-    }
-
     if(player.isNearStair && 
         (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f)){
         player.stairStepDistance = 0.f;
@@ -913,7 +905,10 @@ void PlayerStairWalkState::init(Player& player)
 {
     player.isDucking = true;
     player.isOnStairs = true;
-    player.stairStepDistance = 8.f;
+
+    if(player.stairStepDistance == 0.f){
+        player.stairStepDistance = 8.f;
+    }
     player.isWalking = true;
 
     if(player.isPositionedInStair){ // If player just arrived to the stair
@@ -930,6 +925,7 @@ void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
+            player.setState(state<AttackStairs>());
         }
     }
 }
@@ -1553,13 +1549,12 @@ void PlayerAttackStairState::update(Player& player, float deltaTime)
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
-        player.setState(state<StairIdle>());
+        if(player.stairStepDistance == 0.f){
+            player.setState(state<StairIdle>());
+        } else {
+            player.setState(state<StairWalk>());
+        }
     }
-
-    if(player.isBeingHurt){
-        player.setState(state<HurtStair>());
-    }
-
 }
 
 void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
@@ -1694,7 +1689,11 @@ void PlayerHurtStairState::update(Player& player, float deltaTime)
     player.isJumping = false;
     player.isBeingHurt = false;
     player.invulnerableTimeCounter = 0.0f;
-    player.setState(state<StairIdle>()); 
+    if(player.stairStepDistance == 0.f){
+        player.setState(state<StairIdle>());
+    } else {
+        player.setState(state<StairWalk>());
+    }
 }
 
 void PlayerHurtStairState::draw(Player& player, sf::RenderWindow &window)

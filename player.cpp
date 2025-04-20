@@ -190,7 +190,7 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (Enemy *enemy = dynamic_cast<Enemy *>(&other))
     {   
-        if(!this->isInvulnerable){
+        if(!this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - enemy->damage, 0.f);
 
             if (this->health > 0)
@@ -199,6 +199,7 @@ void Player::onCollision(Entity &other, Game &game)
 
                 if(this->isOnStairs){
                     this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
                 } else {
                     this->isJumping = true;
                     this->verticalSpeed = -gPlayerJumpForce;
@@ -213,7 +214,9 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (DoorTile* doorTile = dynamic_cast<DoorTile*>(&other))
     {
-        game.activateDoorTile(doorTile->doorId);
+        if(!this->isDead){
+            game.activateDoorTile(doorTile->doorId);
+        }
     }
     else if (StairTile* stairTile = dynamic_cast<StairTile*>(&other))
     {
@@ -221,7 +224,9 @@ void Player::onCollision(Entity &other, Game &game)
         this->stairStart = stairTile;
     }    
     else if (dynamic_cast<Item*>(&other)){
-        this->onCollision_Item(other);
+        if(!this->isDead){
+            this->onCollision_Item(other);
+        }
     }
     else {
         //std::cout << "No se\n"; 
