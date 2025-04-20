@@ -152,6 +152,8 @@ void GameGS::resume(){
 
 void GameGS::close(){
     if(debug) std::cout << "ESTADO: Game CERRADO" << std::endl;
+    game.deadScreenTexts.clear();
+    game.gSprites.clear();
 }
 
 GameGS::~GameGS() {}

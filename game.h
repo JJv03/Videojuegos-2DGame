@@ -39,6 +39,9 @@ public:
     bool restartLoadingClock = false;
     bool beginStageEntrance = false;
 
+    std::vector<sf::Text> deadScreenTexts;
+    std::vector<sf::Sprite> gSprites;
+
     // Constructor, destructor
     Game();
     virtual ~Game() = default;
@@ -106,7 +109,6 @@ public:
     void restartLevel();
 
     void setLevelMusic(int level);
-
     
 private:
     // ----- All refered to the GUI -----
@@ -123,6 +125,5 @@ private:
     std::vector<sf::RectangleShape> enemyHealthBar;
 
     bool withOutLives;
-    std::vector<sf::Text> deadScreenTexts;
     int position;
 };

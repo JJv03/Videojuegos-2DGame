@@ -8,7 +8,6 @@
 #include "item.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
-std::vector<sf::Sprite> gSprites;
 
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
@@ -352,7 +351,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
 
     static float timeAccumulator = 0.0f;
 
-    timeAccumulator += deltaTime;
+    if (!withOutLives) timeAccumulator += deltaTime;
 
     // Reduce time every second
     if (timeAccumulator >= 1.0f)
