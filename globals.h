@@ -99,7 +99,9 @@ extern const float gPlayerJumpForce;
 // ============ ENEMIES VARIABLES =============
 extern bool bossExist;
 
+// ============ GAME VARIABLES ============
 extern SoundManager gameSoundManager;
+extern bool goBack;
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

@@ -305,11 +305,11 @@ void Game::handleInput(sf::Event event)
         else{
             auto controls = configManager.getControls();
             if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-                if (keyPressed->scancode == controls.down && position < 1) {    
+                if (keyPressed->scancode == controls.down && position < 1) {
                     position ++;
                 }
         
-                if (keyPressed->scancode == controls.up && position > 0) {    
+                if (keyPressed->scancode == controls.up && position > 0) {
                     position --;
                 }
 
@@ -319,13 +319,14 @@ void Game::handleInput(sf::Event event)
                             std::cout << "Let's play again" << std::endl;
                             withOutLives = false;
                             position = 0;
+                            gameSoundManager.stopAllMusic();
                             setLevelMusic(currentLevel);
-                            // stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
                             break;
                         case 1:
                             std::cout << "Going back to the menu" << std::endl;
                             withOutLives = false;
                             position = 0;
+                            goBack = true;
                             // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
                             break;
                     }
@@ -572,7 +573,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             sf::RectangleShape black(sf::Vector2f(400, 400));
             black.setFillColor(sf::Color::Black);
             black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
-            //window.draw(black);
+            // window.draw(black);
 
             deadScreenTexts[0].setPosition(sf::Vector2f(center.x - 35, center.y - 10));
             window.draw(deadScreenTexts[0]);

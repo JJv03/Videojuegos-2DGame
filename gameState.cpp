@@ -130,6 +130,12 @@ void GameGS::handleInput(sf::Event event){
 
 void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition){
     game.update(deltaTime, viewPosition);
+
+    if(goBack){
+        gameSoundManager.stopAllMusic();
+        stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        goBack = false;
+    }
 }
 
 void GameGS::draw(sf::RenderWindow& window, Camera& camera){
