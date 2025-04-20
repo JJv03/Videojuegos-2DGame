@@ -1850,13 +1850,13 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
         
 
        if (player.subWeapon.type == ItemType::AXE) {
-        player.subWeapon.verticalSpeed = -450.f; 
+        player.subWeapon.verticalSpeed = -350.f; 
         player.subWeapon.horizontalSpeed = 150.f;
         player.subWeapon.animationManager->playAnimation(axeThrowing); 
 
     } else if (player.subWeapon.type == ItemType::DAGGER) {
         player.subWeapon.verticalSpeed = 0.f;
-        player.subWeapon.horizontalSpeed = 250.f;
+        player.subWeapon.horizontalSpeed = 150.f;
         player.subWeapon.animationManager->playAnimation(daggerThrowing); 
     } else if (player.subWeapon.type == ItemType::BOOMERANG) {
         //player.hearts++; // Depuracion
@@ -1865,8 +1865,8 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
         player.subWeapon.animationManager->playAnimation(boomerangThrowing);
 
     } else if (player.subWeapon.type == ItemType::FIRE_BOMB) {
-        player.subWeapon.verticalSpeed = -150.f;
-        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.verticalSpeed = -100.f;
+        player.subWeapon.horizontalSpeed = 100.f;
         player.subWeapon.animationManager->playAnimation(fireBombThrowing);
         
     } else if (player.subWeapon.type == ItemType::STOPWATCH) {
@@ -1996,7 +1996,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
 
     } else if (player.subWeapon.type == ItemType::DAGGER) {
         player.subWeapon.verticalSpeed = 0.f;
-        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.horizontalSpeed = 100.f;
         player.subWeapon.animationManager->playAnimation(daggerThrowing); 
     } else if (player.subWeapon.type == ItemType::BOOMERANG) {
         //player.hearts++; // Depuracion

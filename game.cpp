@@ -322,7 +322,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         timeAccumulator = 0.0f;
         updateGUITime();
     }
-    if(viewPosition.y+gGameVisibleWorld_size_y+50 < player.sprite->getPosition().y && !player.isDead)
+    if(viewPosition.y+gGameVisibleWorld_size_y+50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
     {
         std::cout << "Falling " << std::endl;
 
