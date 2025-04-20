@@ -96,6 +96,8 @@ void Game::init()
     animationManager->addAnimation(stairAscendIdleSimon, player.stairAscendIdleFrames, false);
     animationManager->addAnimation(stairDescendWalkSimon, player.stairDescendWalkFrames, false);
     animationManager->addAnimation(stairAscendWalkSimon, player.stairAscendWalkFrames, false);
+    animationManager->addAnimation(stairDescendAttackSimon, player.stairDescendAttackFrames, false);
+    animationManager->addAnimation(stairAscendAttackSimon, player.stairAscendAttackFrames, false);
     animationManager->addAnimation(hurtSimon, player.hurtFrames, false);
     animationManager->addAnimation(deathSimon, player.deadFrames, false);
     animationManager->addAnimation(whipUpgrade, player.colorFrames, false);

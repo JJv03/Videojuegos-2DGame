@@ -24,8 +24,10 @@ enum animationID{
     invulnerableSimon,
     stairAscendIdleSimon,
     stairDescendIdleSimon,
+    stairAscendAttackSimon,
     stairAscendWalkSimon,
     stairDescendWalkSimon,
+    stairDescendAttackSimon,
     whipUpgrade,
 
     //Whip

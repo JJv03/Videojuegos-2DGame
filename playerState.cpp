@@ -793,13 +793,10 @@ void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
     
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        // TODO: FALTA ATTACK STAIRS
-        /*
         if (keyPressed->scancode == controls.attack) {
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
         }
-        */  
     }
 }
 
@@ -873,8 +870,12 @@ void PlayerStairIdleState::update(Player& player, float deltaTime)
         player.setState(state<HurtStair>());
     }
 
+    if(player.isAttacking){
+        player.setState(state<AttackStairs>());
+    }
+
     if(player.isNearStair && 
-        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.01f)){
+        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f)){
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
@@ -925,6 +926,12 @@ void PlayerStairWalkState::init(Player& player)
 
 void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
 {
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == controls.attack) {
+            player.isAttacking = true;
+        }
+    }
 }
 
 void PlayerStairWalkState::update(Player& player, float deltaTime)
@@ -1019,7 +1026,9 @@ void PlayerStairWalkState::update(Player& player, float deltaTime)
 
 void PlayerStairWalkState::draw(Player& player, sf::RenderWindow &window)
 {
-    window.draw(*player.sprite);
+    if(player.visible){
+        window.draw(*player.sprite);
+    }
 }
 
 void PlayerStairWalkState::end(Player& player)
@@ -1058,20 +1067,18 @@ void PlayerAttackIdleState::init(Player& player)
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
 {
-    
     auto controls = configManager.getControls();
-    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == controls.attack)
+        if (keyReleased->scancode == controls.attack)
         {
             player.hasToPressAgain = true;
         }
-        if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-            if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
-                (keyReleased->scancode == controls.left && player.dir == LEFT)) {
-                player.isWalking = false;
-            }
+        if ((keyReleased->scancode == controls.right && player.dir == RIGHT) || 
+            (keyReleased->scancode == controls.left && player.dir == LEFT)) {
+            player.isWalking = false;
         }
+        
     }
     
 }
@@ -1104,13 +1111,13 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
@@ -1195,9 +1202,9 @@ void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
 {
     
     auto controls = configManager.getControls();
-    if (const auto* KeyReleased = event.getIf<sf::Event::KeyReleased>())
+    if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        if (KeyReleased->scancode == controls.attack)
+        if (keyReleased->scancode == controls.attack)
         {
             player.hasToPressAgain = true;
         }
@@ -1242,13 +1249,13 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
@@ -1385,13 +1392,13 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, 
-                             player.sprite->getPosition().y + 4)  
+                             player.sprite->getPosition().y + 4.f)  
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, 
-                             player.sprite->getPosition().y + 4)  
+                             player.sprite->getPosition().y + 4.f)  
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
@@ -1453,9 +1460,12 @@ PlayerAttackStairState::PlayerAttackStairState() : PlayerState()
 
 void PlayerAttackStairState::init(Player& player)
 {
+   
+    player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
+
+    player.hasToPressAgain = false;
     player.isAttacking = true;
     player.isOnStairs = true;
-    
 }
 
 void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
@@ -1464,12 +1474,91 @@ void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
 
 void PlayerAttackStairState::update(Player& player, float deltaTime)
 {
-    if(!player.isAttacking){
+    if(player.isStairUpRight){
+        if(player.dir == LEFT){
+            player.currentAnimation = stairDescendAttackSimon;
+        } else {
+            player.currentAnimation = stairAscendAttackSimon;
+        }
+
+    } else {
+        if(player.dir == RIGHT){
+            player.currentAnimation = stairDescendAttackSimon;
+        } else {
+            player.currentAnimation = stairAscendAttackSimon;
+        }
+    }
+
+    
+    
+    if (!player.animationManager->isPlaying(player.currentAnimation)){
+    
+        player.animationManager->playAnimation(player.currentAnimation);
+
+    }
+    if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
+    
+        player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
+    }
+    
+    player.whip.animationManager->update(deltaTime);
+    player.animationManager->update(deltaTime);
+
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+        
+        int xoffset= 0;
+        if(player.whip.whipLvl <3){
+            xoffset = 24;
+        }
+        else{
+            xoffset = 41;
+        }
+
+        if (player.dir == RIGHT) {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + xoffset, 
+                             player.sprite->getPosition().y + 5.f)  
+            );
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
+        } else {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - xoffset, 
+                             player.sprite->getPosition().y + 5.f)  
+            );
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
+        }
+    } else {
+        if (player.dir == RIGHT) {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16.f, 
+                             player.sprite->getPosition().y)  
+            );
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
+        } else {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 16.f, 
+                             player.sprite->getPosition().y)  
+            );
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
+        }
+    }
+
+    
+    
+    if ((player.animationManager->isPlaying(stairAscendAttackSimon) || player.animationManager->isPlaying(stairDescendAttackSimon))
+        && player.animationManager->isAnimationFinished())
+    {
+        player.isAttacking = false;
+        player.attackedFinished = true;
+        player.sprite->setColor(sf::Color::White);
+        player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(whipNoAttack);
         player.setState(state<StairIdle>());
     }
 
-    
+    if(player.isBeingHurt){
+        player.setState(state<HurtStair>());
+    }
 
 }
 
@@ -1484,6 +1573,7 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerAttackStairState::end(Player& player)
 {
+    player.isAttacking = false;
     player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
@@ -2030,7 +2120,11 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
         player.visible = true;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
-        player.setState(state<Idle>());
+        if(player.isOnStairs){
+            player.setState(state<StairIdle>());
+        } else {
+            player.setState(state<Idle>());
+        }
         //std::cout << "UPGRADE WHIP END" << std::endl;
     }
 
