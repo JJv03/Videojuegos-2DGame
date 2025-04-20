@@ -83,6 +83,8 @@ void TilemapManager::loadLevel(int level) {
         
         // ------------------------
         doors.clear();
+        doors[1] = {1, 2, DoorTile::Type::STAIRS};  // Door 1
+
         break;
 
     default:
