@@ -388,14 +388,10 @@ void walkingAnimGS::init(){
     
     float desiredWidth = 256.0f;
     float desiredHeight = 192.0f;
-
-    std::cout << textureSize.x << " " << textureSize.y << std::endl;
     
     scaleFactorWidth = desiredWidth / textureSize.x;
     scaleFactorHeight = textureSize.y / desiredHeight;
     
-    std::cout << scaleFactorWidth << " " << scaleFactorHeight << std::endl;
-
     gui.setScale(sf::Vector2f(0.3785, 0.475));
     
     xPosition = 0.0f;
