@@ -22,6 +22,7 @@ void Game::init()
 {
     currentLevel = gStartingLevel;
     currentStage = gStartingStage;
+    withOutLives = false;
 
     // Level 1
     gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
@@ -365,6 +366,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         }
         else
         {
+            withOutLives = true;
             // LOGIC TO SHOW DEAD SCREEN 
             // Black rectangle with 2 options and a heart as selector
             // -> RestartLevel (Continue)
@@ -493,6 +495,15 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         enemyManager->draw(window, currentLevel, currentStage);
 
+        
+        if(withOutLives){
+            sf::View view = window.getView();
+            sf::Vector2f center = view.getCenter();
+            sf::RectangleShape black(sf::Vector2f(400, 400));
+            black.setFillColor(sf::Color::Black);
+            black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
+            window.draw(black);
+        }
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 

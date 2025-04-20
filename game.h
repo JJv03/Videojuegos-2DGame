@@ -122,4 +122,6 @@ private:
     // Vectors with the diferents rectangles of each HealthBar
     std::vector<sf::RectangleShape> playerHealthBar;
     std::vector<sf::RectangleShape> enemyHealthBar;
+
+    bool withOutLives;
 };
