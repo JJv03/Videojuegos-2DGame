@@ -109,11 +109,11 @@ public:
 
     std::vector<AnimationManager::Frame> firebombFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(587, 477), sf::Vector2(8, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(596, 477), sf::Vector2(8, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(605, 477), sf::Vector2(8, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(614, 477), sf::Vector2(8, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(623, 477), sf::Vector2(16, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(640, 477), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(596, 477), sf::Vector2(8, 16)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(605, 477), sf::Vector2(8, 16)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(614, 477), sf::Vector2(8, 16)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(623, 477), sf::Vector2(16, 16)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(640, 477), sf::Vector2(16, 16)), 0.2f},
     };
 
     std::vector<AnimationManager::Frame> boomerangFrames{
