@@ -188,7 +188,7 @@ void Game::init()
     // Assign animation managers
     player.subWeapon.animationManager = subweaponAnimationManager;
     player.subWeapon.animationManager->playAnimation(subweaponNoAttack);
-    
+
     // Load item textures
     if (!loadItemTextures())
     {
@@ -274,7 +274,7 @@ void Game::init()
 
     // GUI subweapon
     guiSubWeaponSprite = getItemSprite(ItemType::NONE);
-    
+
     sf::Text gOver(font, "GAME OVER", 8);
     gOver.setFillColor(sf::Color::White);
     deadScreenTexts.push_back(gOver);
@@ -291,7 +291,8 @@ void Game::init()
 // Effects changes depending on the input of the player
 void Game::handleInput(sf::Event event)
 {
-    if(!isLoading) player.handleInput(event);
+    if (!isLoading)
+        player.handleInput(event);
 }
 
 // Updates the game (logic, graphics, etc)
@@ -300,35 +301,33 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     player.update(deltaTime, viewPosition);
 
-    enemyManager->update(deltaTime, currentLevel, currentStage);
+    enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
 
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateBreakableTiles(deltaTime);
 
-
     static float timeAccumulator = 0.0f;
 
     timeAccumulator += deltaTime;
-    
+
     // Reduce time every second
     if (timeAccumulator >= 1.0f)
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
         if (time == 0 && !player.isDead)
-        { 
+        {
             player.setState(std::make_unique<PlayerDeadState>());
         }
         timeAccumulator = 0.0f;
         updateGUITime();
     }
-    if(viewPosition.y+gGameVisibleWorld_size_y+50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
+    if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
     {
         std::cout << "Falling " << std::endl;
 
         player.setState(std::make_unique<PlayerDeadState>());
     }
-    
 
     // Update score
     std::stringstream scoreStream;
@@ -358,7 +357,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         revivingClock.restart();
         gameSoundManager.stopAllMusic();
         auto audio = configManager.getAudio();
-        
+
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
 
@@ -377,7 +376,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         else
         {
             withOutLives = true;
-            // LOGIC TO SHOW DEAD SCREEN 
+            // LOGIC TO SHOW DEAD SCREEN
             // Black rectangle with 2 options and a heart as selector
             // -> RestartLevel (Continue)
             // -> Go back to Menu (End)
@@ -385,14 +384,19 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         }
     }
 
-    if(beginStageEntrance){
+    if (beginStageEntrance)
+    {
 
-        if(player.isOnStairs){
-            if(player.stairStepDistance == 0.f){ // Wait until full step is moved
+        if (player.isOnStairs)
+        {
+            if (player.stairStepDistance == 0.f)
+            { // Wait until full step is moved
                 beginStageEntrance = false;
                 player.setState(std::make_unique<PlayerStairWalkState>());
             }
-        } else {
+        }
+        else
+        {
             beginStageEntrance = false;
             player.setState(std::make_unique<PlayerIdleState>());
         }
@@ -427,7 +431,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
     else
     {
         // Just finished loading
-        if(isLoading) beginStageEntrance = true;
+        if (isLoading)
+            beginStageEntrance = true;
 
         isLoading = false;
 
@@ -505,8 +510,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         enemyManager->draw(window, currentLevel, currentStage);
 
-        
-        if(withOutLives){
+        if (withOutLives)
+        {
             sf::View view = window.getView();
             sf::Vector2f center = view.getCenter();
             sf::RectangleShape black(sf::Vector2f(400, 400));
@@ -629,7 +634,6 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     checkSolidTileCollisions(dynamicEntities);
 
     checkDoorTileCollisions();
-    
 
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }
@@ -653,16 +657,17 @@ void Game::checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities)
     }
 }
 
-
-void Game::checkDoorTileCollisions(){
-    for(auto& d : tilemaps[currentStage].m_doorTiles){
-        if(checkIntersections(player, d)){
+void Game::checkDoorTileCollisions()
+{
+    for (auto &d : tilemaps[currentStage].m_doorTiles)
+    {
+        if (checkIntersections(player, d))
+        {
             player.onCollision(d, *this);
             d.onCollision(player, *this);
         }
     }
 }
-
 
 void Game::checkItemsCollisions()
 {
@@ -897,7 +902,7 @@ void Game::checkPlayerCollisions()
 
             if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
             {
-                //std::cout << "NEXT STAGE" << std::endl;
+                // std::cout << "NEXT STAGE" << std::endl;
                 restartLoadingClock = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -911,7 +916,7 @@ void Game::checkPlayerCollisions()
             }
             else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
             {
-                //std::cout << "PREVIOUS STAGE" << std::endl;
+                // std::cout << "PREVIOUS STAGE" << std::endl;
                 restartLoadingClock = true;
 
                 if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -925,7 +930,7 @@ void Game::checkPlayerCollisions()
             }
             else if (100 == tilemaps.doors[doorId].next_stage)
             {
-                //std::cout << "NEXT LEVEL" << std::endl;
+                // std::cout << "NEXT LEVEL" << std::endl;
                 restartLoadingClock = true;
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
@@ -943,7 +948,7 @@ void Game::activateDoorTile(int doorId)
 {
     if (int(currentStage) == tilemaps.doors[doorId].prev_stage)
     {
-        //std::cout << "NEXT STAGE" << std::endl;
+        // std::cout << "NEXT STAGE" << std::endl;
         restartLoadingClock = true;
 
         if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -957,7 +962,7 @@ void Game::activateDoorTile(int doorId)
     }
     else if (int(currentStage) == tilemaps.doors[doorId].next_stage)
     {
-        //std::cout << "PREVIOUS STAGE" << std::endl;
+        // std::cout << "PREVIOUS STAGE" << std::endl;
         restartLoadingClock = true;
 
         if (tilemaps.doors[doorId].type == DoorTile::Type::STAIRS)
@@ -971,7 +976,7 @@ void Game::activateDoorTile(int doorId)
     }
     else if (100 == tilemaps.doors[doorId].next_stage)
     {
-        //std::cout << "NEXT LEVEL" << std::endl;
+        // std::cout << "NEXT LEVEL" << std::endl;
         restartLoadingClock = true;
         currentLevel += 1;
         tilemaps.loadLevel(currentLevel);
@@ -1060,7 +1065,7 @@ int Game::startStage(int stage, int fromStairs)
 
     player.verticalSpeed = 0.f;
     player.horizontalSpeed = 0.f;
-    
+
     currentStage = stage;
 
     setLevelMusic(currentLevel);
@@ -1099,7 +1104,7 @@ int Game::goToStage(int fromDoor)
 
 void Game::restartStage()
 {
-    //std::cout << "Current stage: " << currentStage << std::endl;
+    // std::cout << "Current stage: " << currentStage << std::endl;
 
     setLevelMusic(currentLevel);
 
@@ -1115,15 +1120,15 @@ void Game::restartStage()
     player.subWeaponType = ItemType::NONE;
     player.subWeapon.intersected = true;
     player.hearts = 5;
-    
+
     player.visible = true;
-    
+
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
 }
 
 void Game::restartLevel()
 {
-    //std::cout << "Current stage: " << currentStage << std::endl;
+    // std::cout << "Current stage: " << currentStage << std::endl;
 
     for (auto &tilemap : tilemaps.tilemaps)
     {
@@ -1148,7 +1153,7 @@ void Game::restartLevel()
     player.lives = 3;
 
     player.visible = true;
-    
+
     startStage(1);
 }
 

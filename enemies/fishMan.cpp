@@ -20,8 +20,8 @@ FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
 }
 
 // Update fishman logic: handle spawning, movement, and deactivation
-void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                     const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds)
+void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                     const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC: activate fishman when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -61,6 +61,11 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     // MOVEMENT & STATE LOGIC
     if (isActive)
     {
+        if (checkMapBoundaries(mapBounds))
+        {
+            return;
+        }
+
         applyGravity(deltaTime);
 
         // Check if enemy is out of deactivation zone

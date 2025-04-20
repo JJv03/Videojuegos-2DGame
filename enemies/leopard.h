@@ -48,7 +48,7 @@ public:
 
     // Update leopard logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds);
+                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game) override;

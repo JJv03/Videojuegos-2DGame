@@ -87,7 +87,7 @@ void Leopard::jump()
 
 // Main update loop
 void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                     const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds)
+                     const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds)
 {
     playerPosition = playerPos;
 
@@ -129,6 +129,11 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     // MOVEMENT AI LOGIC
     if (isActive)
     {
+        if (checkMapBoundaries(mapBounds))
+        {
+            return;
+        }
+
         updateVisionField();
 
         if (playerDetected && speed.x == 0) // Chase player if detected
@@ -193,9 +198,10 @@ void Leopard::onCollision(Entity &other, Game &game)
             jump();
         }
     }
-    else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
+    else if (BreakableTile *breakableTile = dynamic_cast<BreakableTile *>(&other))
     {
-        if (!breakableTile->isDestroyed && breakableTile->isCollidable()) {
+        if (!breakableTile->isDestroyed && breakableTile->isCollidable())
+        {
             onCollision_BreakableTile(breakableTile->getBounds()[0]);
         }
     }

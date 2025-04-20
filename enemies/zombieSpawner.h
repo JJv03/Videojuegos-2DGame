@@ -40,7 +40,8 @@ public:
     void init();
 
     // Main update with spawn logic
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const PlayerPosition playerPos);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                const PlayerPosition playerPos, const sf::FloatRect &mapBounds);
 
     // Render zombies and debug info
     void draw(sf::RenderWindow &window);

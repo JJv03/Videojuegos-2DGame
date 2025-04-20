@@ -35,6 +35,9 @@ public:
     void onCollision_BreakableTile(const sf::FloatRect &tileBounds);
     void onCollision_OnlyGround(Entity &solidTile);
 
+    // Check if the enemy is out of the map bounds and disable it
+    bool checkMapBoundaries(const sf::FloatRect &mapBounds);
+
     // Applies damage to the enemy and returns true if the enemy is defeated
     bool applyDamage(float damageAmount);
 

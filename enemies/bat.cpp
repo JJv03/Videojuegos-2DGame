@@ -14,8 +14,8 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
 }
 
 // Update bat logic: handle spawning, movement, and deactivation
-void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                 const sf::FloatRect &playerDeactivationZone, const float playerDir, const sf::FloatRect &playerBounds)
+void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                 const float playerDir, const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC: activate bat when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -61,6 +61,10 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     // MOVEMENT LOGIC: Movement and oscillation when active
     if (isActive)
     {
+        if (checkMapBoundaries(mapBounds))
+        {
+            return;
+        }
 
         bool batInsideDeactivationZone = false;
 
