@@ -140,7 +140,16 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
         case State::PAUSED_FOR_ATTACK:
             pauseTimer -= deltaTime;
 
-            if (!hasFiredDuringPause && pauseTimer <= ATTACK_PAUSE_TIME / 2.0f)
+            if (speed.y != 0)
+            {
+                sprite->move({0.f, -speed.y * deltaTime});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.y -= speed.y * deltaTime;
+                }
+            }
+
+            if (!hasFiredDuringPause && pauseTimer <= ATTACK_PAUSE_TIME / 2.0f && isOnGround)
             {
                 fireProjectile();
                 hasFiredDuringPause = true;
@@ -254,9 +263,10 @@ void FishMan::onCollision(Entity &other, Game &game)
         }
     }
     // Collision with breakable tiles
-    else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
+    else if (BreakableTile *breakableTile = dynamic_cast<BreakableTile *>(&other))
     {
-        if (speed.y <= 0 && !breakableTile->isDestroyed && breakableTile->isCollidable()) {
+        if (speed.y <= 0 && !breakableTile->isDestroyed && breakableTile->isCollidable())
+        {
             onCollision_BreakableTile(breakableTile->getBounds()[0]);
         }
     }
