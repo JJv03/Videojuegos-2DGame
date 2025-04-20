@@ -379,6 +379,31 @@ void walkingAnimGS::init(){
 
     walkingAnimSprites.push_back(bg);
 
+    if (!walkingAnimTextures["gui"].loadFromFile("./assets/sprites/menu/guiImg.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite gui(walkingAnimTextures["gui"]);
+    
+    sf::Vector2u textureSize = walkingAnimTextures["gui"].getSize();
+    
+    float desiredWidth = 256.0f;
+    float desiredHeight = 192.0f;
+
+    std::cout << textureSize.x << " " << textureSize.y << std::endl;
+    
+    scaleFactorWidth = desiredWidth / textureSize.x;
+    scaleFactorHeight = textureSize.y / desiredHeight;
+    
+    std::cout << scaleFactorWidth << " " << scaleFactorHeight << std::endl;
+
+    gui.setScale(sf::Vector2f(0.3785, 0.475));
+    
+    xPosition = 0.0f;
+    yPosition = 0.0f;
+    gui.setPosition(sf::Vector2f(xPosition, yPosition));
+        
+    walkingAnimSprites.push_back(gui);    
+
     sf::Image cloudImage;
     if (!cloudImage.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
     {
@@ -540,8 +565,9 @@ void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
     // std::cout<<menuSprites.size()<<std::endl;
     // std::cout<<menuTextures.size()<<std::endl;
     // std::cout<<options.size()<<std::endl;
-    window.draw(walkingAnimSprites[0]); // Bg
-    window.draw(walkingAnimSprites[1]); // Cloud
+    for (const auto& sprite : walkingAnimSprites) {
+        window.draw(sprite);
+    }
 
     window.draw(*simon);
     window.draw(*bat1);
