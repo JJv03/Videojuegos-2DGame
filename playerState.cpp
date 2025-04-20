@@ -1093,47 +1093,43 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime)
     player.animationManager->update(deltaTime);
     player.whip.animationManager->update(deltaTime);
 
-    if(player.restartJumpAnimation){
-        if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
-            int xoffset= 0;
-            if(player.whip.whipLvl <3){
-                xoffset = 24;
-            }
-            else{
-                xoffset = 41;
-            }
-            if (player.dir == RIGHT) {
-                player.whip.sprite->setPosition(
-                    sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                                player.sprite->getPosition().y+2)  // Adjust Y offset
-                );
-                player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
-            } else {
-                player.whip.sprite->setPosition(
-                    sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                                player.sprite->getPosition().y+4)  // Adjust Y offset
-                );
-                player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
-            }
+    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+        int xoffset= 0;
+        if(player.whip.whipLvl <3){
+            xoffset = 24;
+        }
+        else{
+            xoffset = 41;
+        }
+        if (player.dir == RIGHT) {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
+                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+            );
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
-            if (player.dir == RIGHT) {
-                player.whip.sprite->setPosition(
-                    sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
-                                player.sprite->getPosition().y)  // Adjust Y offset
-                );
-                player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
-            } else {
-                player.whip.sprite->setPosition(
-                    sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
-                                player.sprite->getPosition().y)  // Adjust Y offset
-                );
-                player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
-            }
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
+                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
+            );
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
+        }
+    } else {
+        if (player.dir == RIGHT) {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x - 16.f, // Adjust X offset
+                            player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
+        } else {
+            player.whip.sprite->setPosition(
+                sf::Vector2f(player.sprite->getPosition().x + 16.f, // Adjust X offset
+                            player.sprite->getPosition().y)  // Adjust Y offset
+            );
+            player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     }
    
-
-    
     
     if (player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished())
     {
@@ -1222,16 +1218,19 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     }
+
+
+    if(player.isOnGround){
+        player.isJumping = false;
+        player.restartJumpAnimation = false;
+        player.setState(state<AttackIdle>());
+    }
+
     //player.animationManager->setAnimationSpeed(2.0f); // 2x speed
     //player.whip.animationManager->setAnimationSpeed(2.0f); // 2x speed
     player.animationManager->update(deltaTime);
     player.whip.animationManager->update(deltaTime);
 
-    // Apply gravity
-    player.verticalSpeed += gPlayerGravity * deltaTime;
-    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
-
-    
     if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
         int xoffset= 0;
         if(player.whip.whipLvl <3){
@@ -1243,32 +1242,35 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
+                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                             player.sprite->getPosition().y+4)  // Adjust Y offset
+                            player.sprite->getPosition().y + 4.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     } else {
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x - 16.f, // Adjust X offset
+                            player.sprite->getPosition().y)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 16, // Adjust X offset
-                             player.sprite->getPosition().y)  // Adjust Y offset
+                sf::Vector2f(player.sprite->getPosition().x + 16.f, // Adjust X offset
+                            player.sprite->getPosition().y)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
     }
 
+    // Apply gravity
+    player.verticalSpeed += gPlayerGravity * deltaTime;
+    player.sprite->move({0.f, player.verticalSpeed * deltaTime});
     
     
     // If Simon was walking before jumping, move in the x direction
@@ -1286,14 +1288,6 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         }
     }
 
-    
-            
-    if(player.isOnGround){
-        player.isJumping = false;
-        player.restartJumpAnimation = false;
-        player.setState(state<AttackIdle>());
-    }
-
     if (player.animationManager->isPlaying(attackSimon) && player.animationManager->isAnimationFinished())
     {
         player.isAttacking = false;
@@ -1304,7 +1298,6 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime)
         player.isJumpStanding = true;
         player.setState(state<Jump>());
     }
-
 }
 
 void PlayerAttackJumpState::draw(Player& player, sf::RenderWindow &window)
@@ -1405,13 +1398,13 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime)
     } else {
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x - 16, 
+                sf::Vector2f(player.sprite->getPosition().x - 16.f, 
                              player.sprite->getPosition().y)  
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
-                sf::Vector2f(player.sprite->getPosition().x + 16, 
+                sf::Vector2f(player.sprite->getPosition().x + 16.f, 
                              player.sprite->getPosition().y)  
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
