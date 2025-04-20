@@ -1094,6 +1094,7 @@ void Game::restartStage()
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
+    player.subWeapon.intersected = true;
     player.hearts = 5;
     
     player.visible = true;
@@ -1122,6 +1123,7 @@ void Game::restartLevel()
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
+    player.subWeapon.intersected = true;
     player.hearts = 5;
     player.score = 0;
     player.lives = 3;
