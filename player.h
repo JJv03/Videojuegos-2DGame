@@ -166,9 +166,11 @@ public:
     bool isJumpStanding;
     bool restartJumpAnimation;
 
+    float lastHeight;
+    bool hasFallen;
+    
     // Secondary weapon
     bool weaponIsActive;
-    
 
     // Stats
     float damage = 1.0f;
@@ -231,6 +233,9 @@ public:
     std::vector<AnimationManager::Frame> duckFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.1f}};
 
+    std::vector<AnimationManager::Frame> fallenFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(84, 22), sf::Vector2(16, 23)), 0.3f}};
+    
     std::vector<AnimationManager::Frame> walkFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 22), sf::Vector2(16, 30)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},

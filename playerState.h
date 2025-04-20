@@ -90,6 +90,35 @@ public:
     void hello() override;
 };
 
+// ---------------------------- FALLING ----------------------------
+class PlayerFallingState : public PlayerState
+{
+public:
+    PlayerFallingState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
+    void hello() override;
+};
+
+
+// ---------------------------- FALLEN ----------------------------
+class PlayerFallenState : public PlayerState
+{
+public:
+    PlayerFallenState();
+
+    void init(Player& player) override;
+    void handleInput(Player& player, sf::Event event) override;
+    void update(Player& player, float deltaTime) override;
+    void draw(Player& player, sf::RenderWindow &window) override;
+    void end(Player& player) override;
+    void hello() override;
+};
+
 
 // ---------------------------- DUCK ----------------------------
 class PlayerDuckState : public PlayerState

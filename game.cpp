@@ -89,13 +89,14 @@ void Game::init()
     animationManager->addAnimation(walkSimon, player.walkFrames);
     animationManager->addAnimation(walkSlowSimon, player.walkSlowFrames, false);
     animationManager->addAnimation(duckSimon, player.duckFrames);
+    animationManager->addAnimation(fallenSimon, player.fallenFrames, false);
     animationManager->addAnimation(attackSimon, player.attackFrames, false);
     animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
     animationManager->addAnimation(stairDescendIdleSimon, player.stairDescendIdleFrames, false);
     animationManager->addAnimation(stairAscendIdleSimon, player.stairAscendIdleFrames, false);
     animationManager->addAnimation(stairDescendWalkSimon, player.stairDescendWalkFrames, false);
     animationManager->addAnimation(stairAscendWalkSimon, player.stairAscendWalkFrames, false);
-    animationManager->addAnimation(hurtSimon, player.hurtFrames);
+    animationManager->addAnimation(hurtSimon, player.hurtFrames, false);
     animationManager->addAnimation(deathSimon, player.deadFrames, false);
     animationManager->addAnimation(whipUpgrade, player.colorFrames, false);
     // animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
@@ -605,7 +606,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
 void Game::checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities)
 {
-
+    player.isOnGround = false;
     for (auto &e : dynamicEntities)
     {
         for (auto &solidTileRow : tilemaps[currentStage].m_solidTiles)

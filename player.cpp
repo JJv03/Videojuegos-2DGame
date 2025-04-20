@@ -30,6 +30,9 @@ Player::Player()
     isJumpStanding = false;
     restartJumpAnimation = true;
 
+    lastHeight = 0.f;
+    hasFallen = false;
+ 
     // Secondary weapon
     weaponIsActive = false;
 
@@ -72,6 +75,28 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
     // If player is near stair, collisions will make it true
     this->isNearStair = false;
     this->stairStart = new StairTile();
+
+    if(!this->isBeingHurt && !this->isDead){
+        if (this->isInvulnerable)
+        {
+            this->blinkTimer += deltaTime;
+            if (this->blinkTimer >= this->blinkInterval) {
+                this->visible = !this->visible; // Toggle visibility
+                this->blinkTimer = 0.0f; // Reset the timer
+                this->sprite->setColor(this->visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+            }
+            
+            if (this->invulnerableTimeCounter >= this->invulnerableTime) {
+                this->isInvulnerable = false;
+                this->startInvulnerable = false;
+                this->visible = true; // Ensure the player is visible after invulnerability ends
+                this->invulnerableTimeCounter = 0.0f; // Reset the counter
+                this->sprite->setColor(sf::Color::White);
+            } else {
+                this->invulnerableTimeCounter += deltaTime;
+            }
+        }
+    }
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -195,7 +220,7 @@ void Player::onCollision(Entity &other, Game &game)
         this->isNearStair = true;
         this->stairStart = stairTile;
     }    
-    else if (Item* item = dynamic_cast<Item*>(&other)){
+    else if (dynamic_cast<Item*>(&other)){
         this->onCollision_Item(other);
     }
     else {
@@ -246,11 +271,11 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                     if (this->verticalSpeed >= 0.0f)
                     //std::cout << "Floor collision" << std::endl;
 
-                    // if (player.verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
+                    // if (this->verticalSpeed >= 0.0f)        // CUANDO ESTÉN TODO CON HITBOXES BUENAS
                     { // If player is NOT going up
 
                         // Option 1: adjust overlapedY and make it be .15f
-                        // float theoreticallyCorrectPositionY = player.sprite->getPosition().y - overlapY;
+                        // float theoreticallyCorrectPositionY = this->sprite->getPosition().y - overlapY;
                         // float targetPositionY = static_cast<int>(theoreticallyCorrectPositionY) + gSimonFeetCollisionNewHeight;
                         // float moveY = theoreticallyCorrectPositionY - targetPositionY;
 
@@ -262,6 +287,12 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                         playerBounds.position.y += moveY;
                         this->verticalSpeed = 0.0f; // (For security) Simon stops falling
                         this->isOnGround = true;    // Set Simon to be on ground
+
+                        if(tileBound.position.y - this->lastHeight > 32.f){
+                            this->hasFallen = true;
+                        }
+
+                        this->lastHeight = tileBound.position.y;
                         hasCollided = true;
                     }
                 }

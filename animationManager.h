@@ -19,6 +19,7 @@ enum animationID{
     deathSimon,
     attackSimon,
     duckSimon,
+    fallenSimon,
     attackFloorSimon,
     invulnerableSimon,
     stairAscendIdleSimon,
