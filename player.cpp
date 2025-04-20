@@ -11,6 +11,9 @@ Player::Player()
 {
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
+
+    acceptsInput = true;
+
     isOnGround = false;
     isOnStairs = false;
     hasToPressAgain = true;
@@ -40,7 +43,7 @@ Player::Player()
     // Stats
     maxHealth = 16;
     health = maxHealth;
-    lives = 0;
+    lives = 3;
     score = 0;
     hearts = 5;
 

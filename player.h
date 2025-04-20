@@ -158,6 +158,8 @@ public:
     std::vector<SubWeapon> activeSubWeapons;
     PlayerDirection dir;
 
+    bool acceptsInput;
+
     bool isOnStairs;
     bool isAttacking;
     bool attackedFinished;
