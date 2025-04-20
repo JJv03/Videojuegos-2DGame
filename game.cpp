@@ -8,6 +8,7 @@
 #include "item.h"
 
 std::unordered_map<std::string, sf::Texture> gTextures;
+std::vector<sf::Sprite> gSprites;
 
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
@@ -286,12 +287,51 @@ void Game::init()
     sf::Text end(font, "END", 8);
     end.setFillColor(sf::Color::White);
     deadScreenTexts.push_back(end);
+
+    position = 0;
+    sf::Sprite hSprite(gTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
+    hSprite.setScale(sf::Vector2f(1.5, 1.5));
+    gSprites.push_back(hSprite);
 }
 
 // Effects changes depending on the input of the player
 void Game::handleInput(sf::Event event)
 {
-    if(!isLoading) player.handleInput(event);
+    if(!isLoading){
+        if(!withOutLives){
+            player.handleInput(event);
+        }
+        else{
+            auto controls = configManager.getControls();
+            if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+                if (keyPressed->scancode == controls.down && position < 1) {    
+                    position ++;
+                }
+        
+                if (keyPressed->scancode == controls.up && position > 0) {    
+                    position --;
+                }
+
+                if (keyPressed->scancode == controls.enter) {
+                    switch (position) {
+                        case 0:
+                            std::cout << "Let's play again" << std::endl;
+                            withOutLives = false;
+                            // stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
+                            break;
+                        case 1:
+                            std::cout << "Going back to the menu" << std::endl;
+                            withOutLives = false;
+                            // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
+                            break;
+                    }
+                }
+
+                std::cout << "Position:" << position << withOutLives << std::endl;
+            }
+        }
+        
+    }
 }
 
 // Updates the game (logic, graphics, etc)
@@ -329,6 +369,17 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
         player.setState(std::make_unique<PlayerDeadState>());
     }
     
+    sf::Sprite heart = gSprites.back();
+    gSprites.pop_back();
+    float heartX = 0;
+    float heartY = 0;
+    if (position <= 1){
+        heartX = deadScreenTexts[position+1].getPosition().x - 15.f;
+        heartY = deadScreenTexts[position+1].getPosition().y - 3.f;
+    }
+    heart.setPosition(sf::Vector2f(heartX, heartY));
+
+    gSprites.push_back(heart);
 
     // Update score
     std::stringstream scoreStream;
@@ -522,6 +573,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
             deadScreenTexts[2].setPosition(sf::Vector2f(center.x - 25, center.y + 45));
             window.draw(deadScreenTexts[2]);
+
+            window.draw(gSprites[0]);
         }
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));

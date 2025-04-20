@@ -125,4 +125,5 @@ private:
 
     bool withOutLives;
     std::vector<sf::Text> deadScreenTexts;
+    int position;
 };
