@@ -222,7 +222,7 @@ void Player::onCollision(Entity &other, Game &game)
     else if (Projectile *projectile = dynamic_cast<Projectile *>(&other))
     {   
         if(!this->isInvulnerable && !this->isDead){
-            this->health = std::max(this->health - 1.0f, 0.f);
+            this->health = std::max(this->health - projectile->damage, 0.f);
 
             if (this->health > 0)
             {

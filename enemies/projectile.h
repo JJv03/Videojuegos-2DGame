@@ -12,10 +12,12 @@ private:
     // State tracking
     bool isActive = false;
 
+
+public:
+
     // Damage value
     float damage = 1.0f;
 
-public:
     Projectile() = default;
     Projectile(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
                const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage = 1.0f);
