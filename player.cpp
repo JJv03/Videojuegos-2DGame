@@ -4,6 +4,7 @@
 #include "enemies/enemy.h"
 #include "game.h"
 #include "item.h"
+#include "enemies/projectile.h"
 #include <cmath>
 
 Player::Player()
@@ -105,7 +106,12 @@ void Player::draw(sf::RenderWindow &window)
     /*for (auto& subW : activeSubWeapons) {
         window.draw(*subW.sprite);
     }*/
-    window.draw(*this->subWeapon.sprite);
+   if (this->weaponIsActive)
+   {
+        window.draw(*this->subWeapon.sprite);
+   }
+   
+    
 }
 
 void Player::setState(PlayerStateRef newState)
@@ -193,6 +199,30 @@ void Player::onCollision(Entity &other, Game &game)
     {   
         if(!this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - enemy->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isInvulnerable = true;
+
+                if(this->isOnStairs){
+                    this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
+    }
+    else if (Projectile *projectile = dynamic_cast<Projectile *>(&other))
+    {   
+        if(!this->isInvulnerable && !this->isDead){
+            this->health = std::max(this->health - 1.0f, 0.f);
 
             if (this->health > 0)
             {
