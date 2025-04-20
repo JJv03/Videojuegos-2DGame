@@ -468,6 +468,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         return;
     }
     
+
     if (this->subWeapon.type == ItemType::AXE)
     {
         this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
@@ -491,13 +492,13 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         
         else
         {
-            std::cout << "Fire bomb exploding" << std::endl;
+            //std::cout << "Fire bomb exploding" << std::endl;
             if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(fireBombThrowing)) {
                 this->subWeapon.animationManager->playAnimation(fireBombThrowing);
             }
             this->subWeapon.animationManager->update(deltaTime);
             if (this->subWeapon.animationManager->isAnimationFinished()){
-                std::cout << "Fire bomb finished exploding" << std::endl;
+                //std::cout << "Fire bomb finished exploding" << std::endl;
                 this->subWeapon.isExploding = true;
             }
             
@@ -532,11 +533,19 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
     }
     else if(this->subWeapon.type == ItemType::DAGGER)
     { // Dagger
-        this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-        if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(daggerThrowing)){
-            this->subWeapon.animationManager->playAnimation(daggerThrowing);
+        if (this->subWeapon.intersected)
+        {
+            this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
         }
-        this->subWeapon.animationManager->update(deltaTime);
+        else{
+            this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
+            if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(daggerThrowing)){
+                this->subWeapon.animationManager->playAnimation(daggerThrowing);
+            }
+            this->subWeapon.animationManager->update(deltaTime);
+        }
+        
+        
     }
     else{
         std::cout << "Subweapon type not recognized" << std::endl;
@@ -558,7 +567,10 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         this->subWeapon.intersectedBomb = false;
         this->subWeapon.changedDirection = false;
         this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+        return;
     }
+
+    
 }
 
 
@@ -607,14 +619,15 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
     
-    if (dynamic_cast<Enemy *>(&other) && this->type != ItemType::FIRE_BOMB)
+    if (dynamic_cast<Enemy *>(&other) && this->type == ItemType::DAGGER)
     {
-        std::cout << "SubWeapon colision" << std::endl;
+        //std::cout << "SubWeapon colision" << std::endl;
         this->intersected = true;
+        
     }
     if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
     {
-        std::cout << "SubWeapon colision solid" << std::endl;
+        //std::cout << "SubWeapon colision solid" << std::endl;
         if (this->onCollision_SolidTile(other))
         {
             this->intersectedBomb = true;
