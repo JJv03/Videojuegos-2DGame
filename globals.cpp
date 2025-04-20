@@ -96,7 +96,6 @@ const float gPlayerJumpForce = 205.0f;
 // ============ ENEMIES VARIABLES =============
 bool bossExist = false;
 
-
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
 const bool gSkipAnims = false;

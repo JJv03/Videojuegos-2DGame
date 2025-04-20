@@ -95,6 +95,8 @@ extern const float gPlayerStairSpeed;
 extern const float gPlayerGravity;
 extern const float gPlayerJumpForce;
 
+// ============ ENEMIES VARIABLES =============
+extern bool bossExist;
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

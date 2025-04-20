@@ -40,7 +40,7 @@ Player::Player()
     // Stats
     maxHealth = 16;
     health = maxHealth;
-    lives = 3;
+    lives = 0;
     score = 0;
     hearts = 5;
 

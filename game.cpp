@@ -243,6 +243,7 @@ void Game::init()
         std::cerr << "Error loading heart image" << std::endl;
     }
     heartImage.createMaskFromColor(gColorKeyGrey);
+    heartImage.createMaskFromColor(gColorKeyGreen);
 
     gTextures["heart"] = sf::Texture(heartImage, false);
 
@@ -299,6 +300,7 @@ void Game::handleInput(sf::Event event)
 {
     if(!isLoading){
         if(!withOutLives){
+            std::cout << "aaaaaaa" << std::endl;
             player.handleInput(event);
         }
         else{
@@ -317,11 +319,14 @@ void Game::handleInput(sf::Event event)
                         case 0:
                             std::cout << "Let's play again" << std::endl;
                             withOutLives = false;
+                            position = 0;
+                            setLevelMusic(currentLevel);
                             // stateMachine->replaceState(std::make_unique<InitAnimationGS>(stateMachine));
                             break;
                         case 1:
                             std::cout << "Going back to the menu" << std::endl;
                             withOutLives = false;
+                            position = 0;
                             // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
                             break;
                     }
@@ -568,7 +573,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             sf::RectangleShape black(sf::Vector2f(400, 400));
             black.setFillColor(sf::Color::Black);
             black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
-            window.draw(black);
+            //window.draw(black);
 
             deadScreenTexts[0].setPosition(sf::Vector2f(center.x - 35, center.y - 10));
             window.draw(deadScreenTexts[0]);
@@ -1121,7 +1126,14 @@ int Game::startStage(int stage, int fromStairs)
 
     currentStage = stage;
 
-    setLevelMusic(currentLevel);
+    if(!withOutLives){
+        setLevelMusic(currentLevel);
+    }
+    else{
+        auto audio = configManager.getAudio();
+        float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
+        gameSoundManager.playMusic("gameOver", volume, false);
+    }
 
     std::cout << "Current stage: " << currentStage << std::endl;
     if (fromStairs == 0)
