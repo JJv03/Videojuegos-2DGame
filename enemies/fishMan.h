@@ -80,8 +80,8 @@ public:
     void draw(sf::RenderWindow &window) override;
 
     // Update fishman logic (spawn, movement, etc.)
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                const sf::FloatRect &playerDeactivationZone, const sf::FloatRect &playerBounds);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds);
 
     // Handle collisions - only with ground
     void onCollision(Entity &other, Game &game) override;

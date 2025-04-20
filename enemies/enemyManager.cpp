@@ -7,7 +7,7 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 }
 
 // Update all active enemies in current level/stage
-void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage)
+void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
     PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
 
@@ -15,28 +15,32 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            zombieSpawner.update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPos);
+            zombieSpawner.update(deltaTime, playerPtr->gPlayerActivationZone,
+                                 playerPtr->gPlayerDeactivationZone, playerPos, mapBounds);
         }
     }
     for (auto &leopard : leopard)
     {
         if (leopard->level == currentLevel && leopard->stage == currentStage)
         {
-            leopard->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getPosition(), playerPtr->getBounds());
+            leopard->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
         }
     }
     for (auto &bat : bat)
     {
         if (bat->level == currentLevel && bat->stage == currentStage)
         {
-            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds());
+            bat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                        playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
         }
     }
     for (auto &fishman : fishman)
     {
         if (fishman->level == currentLevel && fishman->stage == currentStage)
         {
-            fishman->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone, playerPtr->sprite->getGlobalBounds());
+            fishman->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getGlobalBounds(), mapBounds);
         }
     }
 }

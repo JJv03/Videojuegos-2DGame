@@ -70,7 +70,8 @@ void Enemy::onCollision_BreakableTile(const sf::FloatRect &tileBound)
 {
     sf::FloatRect enemyHitbox = this->sprite->getGlobalBounds();
 
-    if (tileBound.size.x == 0 || tileBound.size.y == 0) return;
+    if (tileBound.size.x == 0 || tileBound.size.y == 0)
+        return;
 
     if (const std::optional<sf::FloatRect> intersection = enemyHitbox.findIntersection(tileBound))
     {
@@ -148,6 +149,22 @@ void Enemy::onCollision_OnlyGround(Entity &solidTile)
             }
         }
     }
+}
+
+bool Enemy::checkMapBoundaries(const sf::FloatRect &mapBounds)
+{
+    sf::FloatRect enemyBounds = sprite->getGlobalBounds();
+
+    if (enemyBounds.position.x <= mapBounds.position.x ||
+        enemyBounds.position.x + enemyBounds.size.x >= mapBounds.position.x + mapBounds.size.x ||
+        enemyBounds.position.y <= mapBounds.position.y ||
+        enemyBounds.position.y + enemyBounds.size.y >= mapBounds.position.y + mapBounds.size.y)
+    {
+        isActive = false;
+        return true;
+    }
+
+    return false;
 }
 
 bool Enemy::checkForLedge(Entity &solidTile)

@@ -48,8 +48,8 @@ public:
     void draw(sf::RenderWindow &window) override;
 
     // Update bat logic (spawn, movement, etc.)
-    void update(float deltaTime, const sf::FloatRect &playerActivationZone,
-                const sf::FloatRect &playerDeactivationZone, const float playerDir, const sf::FloatRect &playerBounds);
+    void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                const float playerDir, const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game) override;

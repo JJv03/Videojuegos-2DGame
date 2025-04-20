@@ -32,7 +32,8 @@ void ZombieSpawner::init()
 }
 
 // Main update - handles spawning and zombie management
-void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone, const PlayerPosition playerPos)
+void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
+                           const PlayerPosition playerPos, const sf::FloatRect &mapBounds)
 {
     // Check if player is in spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -118,6 +119,11 @@ void ZombieSpawner::update(float deltaTime, const sf::FloatRect &playerActivatio
     {
         if (zombie->isActive)
         {
+            if (zombie->checkMapBoundaries(mapBounds))
+            {
+                return;
+            }
+
             bool zombieInsideDeactivationZone = false;
 
             for (const auto &hitbox : zombie->hitboxes)
