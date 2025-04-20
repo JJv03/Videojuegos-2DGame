@@ -128,8 +128,8 @@ void GameGS::handleInput(sf::Event event){
     game.handleInput(event);
 }
 
-void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition){
-    game.update(deltaTime, viewPosition);
+void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
+    game.update(deltaTime, viewPosition, windowHasFocus);
 
     if(goBack){
         gameSoundManager.stopAllMusic();
@@ -307,7 +307,7 @@ void MenuGS::handleInput(sf::Event event){
     }
 }
 
-void MenuGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void MenuGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     timeOut += deltaTime;
 
     if (timeOut >= timeInterval) { // X seconds to go back
@@ -522,7 +522,7 @@ void walkingAnimGS::handleInput(sf::Event event){
     // }
 }
 
-void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     if(walkingAnimSoundManager.musicHasFinished("animMusic")){
         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
     }
@@ -824,7 +824,7 @@ void PauseGS::handleInput(sf::Event event){
     }
 }
 
-void PauseGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void PauseGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     
 }
 
@@ -1049,7 +1049,7 @@ void ConfigGS::handleInput(sf::Event event){
     }
 }
 
-void ConfigGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void ConfigGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     
 }
 
@@ -1462,7 +1462,7 @@ void ControlsConfGS::handleInput(sf::Event event){
     }
 }
 
-void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void ControlsConfGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     sf::Sprite torch = controlsConfigSprites.back();
     controlsConfigSprites.pop_back();
     if (waitingInput) {
@@ -1785,7 +1785,7 @@ void VolumeConfGS::handleInput(sf::Event event){
     }
 }
 
-void VolumeConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void VolumeConfGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     
 }
 
@@ -2065,7 +2065,7 @@ void GameplayConfGS::handleInput(sf::Event event){
     }
 }
 
-void GameplayConfGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void GameplayConfGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     
 }
 
@@ -2258,7 +2258,7 @@ void InitMenuGS::handleInput(sf::Event event){
     }
 }
 
-void InitMenuGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void InitMenuGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     animationManager->update(deltaTime);
     if (animationManager->isAnimationFinished()){
         animationManager->playAnimation(zoomedBat);
@@ -2775,7 +2775,7 @@ void InitAnimationGS::handleInput(sf::Event event){
     }
 }
 
-void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     timer += deltaTime;
 
     float alphaMin = 25.f;
@@ -3216,7 +3216,7 @@ void levelSelectorGS::handleInput(sf::Event event){
     }
 }
 
-void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
+void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     batManager->update(deltaTime);
 
     int size = levels.size();

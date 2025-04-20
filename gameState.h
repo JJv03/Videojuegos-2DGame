@@ -35,7 +35,7 @@ public:
     virtual void handleInput(sf::Event event) = 0;
 
     // Method that manages the game logic every frame
-    virtual void update(float deltaTime, const sf::Vector2f& viewPosition) = 0;
+    virtual void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) = 0;
 
     // Method that displays the game graphics onto the <window>
     virtual void draw(sf::RenderWindow& window, Camera& camera) = 0;
@@ -65,7 +65,7 @@ public:
     ~GameGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -93,7 +93,7 @@ public:
     ~walkingAnimGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void drawHealthBars(sf::RenderWindow &window, int health, int bossHealth,
         sf::Vector2f virtualWorldset);
@@ -118,7 +118,7 @@ public:
     ~MenuGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -140,7 +140,7 @@ public:
     ~PauseGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos);
     void pause() override;
@@ -162,7 +162,7 @@ public:
     ~ConfigGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -191,7 +191,7 @@ public:
     void setDefault();
     bool checkInputErrors();
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -213,7 +213,7 @@ public:
     ~VolumeConfGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos);
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
@@ -236,7 +236,7 @@ public:
     ~GameplayConfGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -259,7 +259,7 @@ public:
     ~InitMenuGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;
@@ -284,7 +284,7 @@ public:
     ~InitAnimationGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void drawSlide(sf::RenderWindow& window);
     void resetMovingSprites();
@@ -315,7 +315,7 @@ public:
     ~levelSelectorGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
-    void update(float deltaTime, const sf::Vector2f& viewPosition) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
     void draw(sf::RenderWindow& window, Camera& camera) override;
     void pause() override;
     void resume() override;

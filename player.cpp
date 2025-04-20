@@ -67,9 +67,9 @@ void Player::handleInput(sf::Event event)
     getActiveState()->handleInput(*this, event);
 }
 
-void Player::update(float deltaTime, const sf::Vector2f &viewPosition)
+void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
-    getActiveState()->update(*this, deltaTime);
+    getActiveState()->update(*this, deltaTime, windowHasFocus);
     updateActivationZones(viewPosition);
     updateActiveSubWeapons(deltaTime, viewPosition);
 

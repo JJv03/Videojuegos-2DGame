@@ -339,10 +339,10 @@ void Game::handleInput(sf::Event event)
 }
 
 // Updates the game (logic, graphics, etc)
-void Game::update(float deltaTime, const sf::Vector2f &viewPosition)
+void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
-    player.update(deltaTime, viewPosition);
+    player.update(deltaTime, viewPosition, windowHasFocus);
 
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
 

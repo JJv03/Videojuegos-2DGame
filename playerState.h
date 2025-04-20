@@ -20,7 +20,7 @@ public:
     virtual void handleInput(Player& player, sf::Event event) = 0;
 
     // Method that manages the player's logic
-    virtual void update(Player& player, float deltaTime) = 0;
+    virtual void update(Player& player, float deltaTime, bool windowHasFocus) = 0;
 
     // Method that displays the player's graphics onto the window
     virtual void draw(Player& player, sf::RenderWindow &window) = 0;
@@ -42,7 +42,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -56,7 +56,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -70,7 +70,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -84,7 +84,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -98,7 +98,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -113,7 +113,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -128,7 +128,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -143,7 +143,7 @@ PlayerStairIdleState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -158,7 +158,7 @@ PlayerStairWalkState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -172,7 +172,7 @@ PlayerAttackIdleState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -187,7 +187,7 @@ PlayerAttackJumpState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -202,7 +202,7 @@ PlayerAttackDuckState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -217,7 +217,7 @@ PlayerAttackStairState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -231,7 +231,7 @@ PlayerHurtState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -245,7 +245,7 @@ public:
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -259,7 +259,7 @@ PlayerDeadState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -273,7 +273,7 @@ PlayerInvulnerableState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -288,7 +288,7 @@ PlayerAttackSecondaryState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -302,7 +302,7 @@ PlayerAttackJumpSecondaryState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;
@@ -316,7 +316,7 @@ PlayerWhipUpgradeState();
 
     void init(Player& player) override;
     void handleInput(Player& player, sf::Event event) override;
-    void update(Player& player, float deltaTime) override;
+    void update(Player& player, float deltaTime, bool windowHasFocus) override;
     void draw(Player& player, sf::RenderWindow &window) override;
     void end(Player& player) override;
     void hello() override;

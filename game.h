@@ -53,7 +53,7 @@ public:
     void handleInput(sf::Event event);
 
     // Updates the game logic, graphics, etc
-    void update(float deltaTime, const sf::Vector2f &viewPosition);
+    void update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus);
 
     // Updates in-game GUI time with <time> attribute
     void updateGUITime();

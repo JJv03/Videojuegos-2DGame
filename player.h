@@ -318,7 +318,7 @@ public:
     ~Player() = default;
 
     void handleInput(sf::Event event);
-    void update(float deltaTime, const sf::Vector2f &viewPosition);
+    void update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus);
     void draw(sf::RenderWindow &window);
 
     // Finishes the current state, replaces it with <newState> and initializes this new state

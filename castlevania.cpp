@@ -83,7 +83,7 @@ void Castlevania::run(){
         sf::View view = currentState->getView(window, camera);
         window.setView(view);
 
-        currentState->update(deltaTime, getVirtualUpperLeftCornerCoordOfGameView(window));
+        currentState->update(deltaTime, getVirtualUpperLeftCornerCoordOfGameView(window), window.hasFocus());
         
         window.clear();
         currentState->draw(window, camera);

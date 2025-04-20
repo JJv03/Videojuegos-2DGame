@@ -147,7 +147,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerIdleState::update(Player& player, float deltaTime)
+void PlayerIdleState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(!player.isOnGround && !player.isJumping){
         player.setState(state<Falling>());
@@ -158,13 +158,13 @@ void PlayerIdleState::update(Player& player, float deltaTime)
     }
     
     auto controls = configManager.getControls();
-    if(sf::Keyboard::isKeyPressed(controls.right)){
+    if(sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus){
         player.dir = RIGHT;
         player.isWalking = true;
         player.setState(state<Walk>());
     }
 
-    if(sf::Keyboard::isKeyPressed(controls.left)){
+    if(sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus){
         player.dir = LEFT;
         player.isWalking = true;
         player.setState(state<Walk>());
@@ -301,7 +301,7 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerWalkState::update(Player& player, float deltaTime)
+void PlayerWalkState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(!player.isOnGround && !player.isJumping){
         player.setState(state<Falling>());
@@ -370,7 +370,7 @@ void PlayerAutoWalkState::handleInput(Player& player, sf::Event event)
     
 }
 
-void PlayerAutoWalkState::update(Player& player, float deltaTime)
+void PlayerAutoWalkState::update(Player& player, float deltaTime, bool windowHasFocus)
 {   
     float move = deltaTime * gPlayerMovementSpeed;
 
@@ -511,7 +511,7 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
     } 
 }
 
-void PlayerJumpState::update(Player& player, float deltaTime)
+void PlayerJumpState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(player.isJumpStanding){
         player.currentAnimation = idleSimon;
@@ -595,7 +595,7 @@ void PlayerFallingState::handleInput(Player& player, sf::Event event)
 {
 }
 
-void PlayerFallingState::update(Player& player, float deltaTime)
+void PlayerFallingState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(player.isOnGround)
     {
@@ -654,7 +654,7 @@ void PlayerFallenState::handleInput(Player& player, sf::Event event)
 {  
 }
 
-void PlayerFallenState::update(Player& player, float deltaTime)
+void PlayerFallenState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     player.animationManager->update(deltaTime);
     if(player.animationManager->isPlaying(player.currentAnimation) && player.animationManager->isAnimationFinished()){
@@ -730,7 +730,7 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
     }    
 }
 
-void PlayerDuckState::update(Player& player, float deltaTime)
+void PlayerDuckState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if (player.upgradeWhip){
         player.setState(state<WhipUpgrade>());
@@ -800,23 +800,23 @@ void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerStairIdleState::update(Player& player, float deltaTime)
+void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     auto controls = configManager.getControls();
 
-    if (sf::Keyboard::isKeyPressed(controls.right)) {
+    if (sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus) {
         player.dir = RIGHT;
         player.isWalking = true;
         player.setState(state<StairWalk>());
     }
     
-    if (sf::Keyboard::isKeyPressed(controls.left)) {
+    if (sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus) {
         player.dir = LEFT;
         player.isWalking = true;
         player.setState(state<StairWalk>());
     }
 
-    if (sf::Keyboard::isKeyPressed(controls.up)) {
+    if (sf::Keyboard::isKeyPressed(controls.up) && windowHasFocus) {
         player.isWalking = true;
 
         if(player.isStairUpRight){
@@ -829,7 +829,7 @@ void PlayerStairIdleState::update(Player& player, float deltaTime)
         }
     }
 
-    if (sf::Keyboard::isKeyPressed(controls.down)) {
+    if (sf::Keyboard::isKeyPressed(controls.down) && windowHasFocus) {
         player.isWalking = true;
 
         if(player.isStairUpRight){
@@ -930,7 +930,7 @@ void PlayerStairWalkState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerStairWalkState::update(Player& player, float deltaTime)
+void PlayerStairWalkState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     /*
     if(!player.isOnStairs){
@@ -1079,7 +1079,7 @@ void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
     
 }
 
-void PlayerAttackIdleState::update(Player& player, float deltaTime)
+void PlayerAttackIdleState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     player.currentAnimation = attackSimon;
 
@@ -1207,7 +1207,7 @@ void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerAttackJumpState::update(Player& player, float deltaTime)
+void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     player.currentAnimation = attackSimon;
    
@@ -1359,7 +1359,7 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
     }
 }
 
-void PlayerAttackDuckState::update(Player& player, float deltaTime)
+void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowHasFocus)
 {   
     player.currentAnimation = attackFloorSimon;
    
@@ -1468,7 +1468,7 @@ void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
 {
 }
 
-void PlayerAttackStairState::update(Player& player, float deltaTime)
+void PlayerAttackStairState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(player.isStairUpRight){
         if(player.dir == LEFT){
@@ -1598,7 +1598,7 @@ void PlayerHurtState::handleInput(Player& player, sf::Event event)
 {
 }
 
-void PlayerHurtState::update(Player& player, float deltaTime)
+void PlayerHurtState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     player.currentAnimation = hurtSimon;
 
@@ -1682,7 +1682,7 @@ void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
 {
 }
 
-void PlayerHurtStairState::update(Player& player, float deltaTime)
+void PlayerHurtStairState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     player.blinkTimer = 0.0f; 
     player.visible = true; 
@@ -1744,7 +1744,7 @@ void PlayerDeadState::handleInput(Player& player, sf::Event event)
 {
 }
 
-void PlayerDeadState::update(Player& player, float deltaTime)
+void PlayerDeadState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     if(!player.hasDied){
         player.currentAnimation=deathSimon;
@@ -1824,7 +1824,7 @@ void PlayerAttackSecondaryState::handleInput(Player& player, sf::Event event)
     
 }
 
-void PlayerAttackSecondaryState::update(Player& player, float deltaTime)
+void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool windowHasFocus)
 {   
     player.currentAnimation = attackSimon;
     if (!player.animationManager->isPlaying(player.currentAnimation)){
@@ -1945,7 +1945,7 @@ void PlayerAttackJumpSecondaryState::handleInput(Player& player, sf::Event event
     
 }
 
-void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime)
+void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, bool windowHasFocus)
 {   
     
     player.currentAnimation = attackSimon;
@@ -2063,11 +2063,9 @@ void PlayerWhipUpgradeState::init(Player& player)
 
 void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
 {
-    
-    
 }
 
-void PlayerWhipUpgradeState::update(Player& player, float deltaTime)
+void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool windowHasFocus)
 {
     //std::cout << "UPGRADE WHIP" << std::endl;
     player.currentAnimation = whipUpgrade;
@@ -2116,7 +2114,6 @@ void PlayerWhipUpgradeState::draw(Player& player, sf::RenderWindow &window)
 
 void PlayerWhipUpgradeState::end(Player& player)
 {
-
 }
 
 void PlayerWhipUpgradeState::hello(){
