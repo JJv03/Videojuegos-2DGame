@@ -3125,6 +3125,22 @@ void levelSelectorGS::init(){
     text.setPosition(sf::Vector2f(posX[i], posY[i]));
     infos.push_back(text);
     }
+    
+    showPopUp = false;
+
+    if (!levelSelectorTextures["popUp"].loadFromFile("./assets/sprites/menu/warningLevel.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite popUp(levelSelectorTextures["popUp"]);
+    popUp.setScale(sf::Vector2f(0.6, 0.6));
+
+    spriteBounds = popUp.getGlobalBounds();
+    spriteWidth = spriteBounds.size.x;
+    spriteHeight = spriteBounds.size.y;
+
+    popUp.setPosition(sf::Vector2f((gWindowWidth - spriteWidth) / 2, (gWindowHeight - spriteHeight) / 2));
+
+    levelSelectorSprites.push_back(popUp);
 
     // menuSoundManager.loadSound("menuEnter", "./assets/sounds/menuEnter.mp3");
 
@@ -3141,51 +3157,62 @@ void levelSelectorGS::init(){
 void levelSelectorGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(!enterPressed){
-        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-            if (keyPressed->scancode == controls.right && position < 6){
-                position ++;
-                std::cout << position << std::endl;
-            }
-            
-            if (keyPressed->scancode == controls.left && position > 0){
-                position --;
-                std::cout << position << std::endl;
-            }
-
-            if (keyPressed->scancode == controls.escape){
-                stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
-            }
-
-            if (keyPressed->scancode == controls.enter) {
-                // enterPressed = true;
-                auto audio = configManager.getAudio();
-                levelSelectorSounds.playSound("menuEnter", levelSelectorSounds.realVolume(audio.master_volume, audio.sound_volume));
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
-                switch (position) {
-                    case 0: // Lvl 1
-                        gStartingLevel = 1;
-                        gStartingStage = 1;
-                        stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
-                        break;
-                    case 1: // Lvl 2
-                        break;
-                    case 2: // Lvl 3
-                        break;
-                    case 3: // Lvl 4
-                        break;
-                    case 4: // Lvl 5
-                        break;
-                    case 5: // Lvl 6
-                        break;
-                    case 6: // Lvl Dracula Boss
-                        gStartingLevel = 7;
-                        gStartingStage = 1; 
-                        //gStartingStage = 2;
-                        stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
-                        break;
+        if(!showPopUp){
+            if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+                if (keyPressed->scancode == controls.right && position < 6){
+                    position ++;
+                    std::cout << position << std::endl;
+                }
+                
+                if (keyPressed->scancode == controls.left && position > 0){
+                    position --;
+                    std::cout << position << std::endl;
+                }
+    
+                if (keyPressed->scancode == controls.escape){
+                    stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+                }
+    
+                if (keyPressed->scancode == controls.enter) {
+                    enterPressed = true;
+                    auto audio = configManager.getAudio();
+                    levelSelectorSounds.playSound("menuEnter", levelSelectorSounds.realVolume(audio.master_volume, audio.sound_volume));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
+                    switch (position) {
+                        case 0: // Lvl 1
+                            gStartingLevel = 1;
+                            gStartingStage = 1;
+                            stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+                            break;
+                        case 1: // Lvl 2
+                            showPopUp = true;
+                            break;
+                        case 2: // Lvl 3
+                            showPopUp = true;
+                            break;
+                        case 3: // Lvl 4
+                            showPopUp = true;
+                            break;
+                        case 4: // Lvl 5
+                            showPopUp = true;
+                            break;
+                        case 5: // Lvl 6
+                            showPopUp = true;
+                            break;
+                        case 6: // Lvl Dracula Boss
+                            gStartingLevel = 7;
+                            gStartingStage = 1; 
+                            //gStartingStage = 2;
+                            stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
+                            break;
+                    }
                 }
             }
         }
+        else{
+
+        }
+        
     }
 }
 
@@ -3219,6 +3246,24 @@ void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition){
         bat->setColor(sf::Color::White);
     }
     
+
+    sf::Sprite popUp = levelSelectorSprites.back();
+    levelSelectorSprites.pop_back();
+    if (showPopUp){
+        popUp.setColor(sf::Color::White);
+        popUpTimer += deltaTime;
+
+        if(popUpTimer >= popUpInterval){
+            popUp.setColor(sf::Color::Transparent);
+            popUpTimer = 0.0f;
+            showPopUp = false;
+            enterPressed = false;
+        }
+    }
+    else{
+        popUp.setColor(sf::Color::Transparent);
+    }
+    levelSelectorSprites.push_back(popUp);
 }
 
 void levelSelectorGS::draw(sf::RenderWindow& window, Camera& camera){

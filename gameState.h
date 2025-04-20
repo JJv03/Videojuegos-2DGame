@@ -302,9 +302,11 @@ private:
     std::vector<sf::Text> levels;
     std::vector<sf::Text> infos;
     int position;
-    bool enterPressed;
-    float blinkTimer = 0.0;
+    bool enterPressed, showPopUp;
+    float blinkTimer = 0.0f;
     float blinkInterval = 0.25f;
+    float popUpTimer = 0.0f;
+    float popUpInterval = 2.0f;
     std::vector<sf::Vector2f> pos;
     AnimationManager *batManager{nullptr};
     std::shared_ptr<sf::Sprite> bat;

@@ -101,7 +101,7 @@ extern bool bossExist;
 
 // ============ GAME VARIABLES ============
 extern SoundManager gameSoundManager;
-extern bool goBack;
+extern bool goBack;     // Flag to go back from game
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;
