@@ -300,7 +300,6 @@ void Game::handleInput(sf::Event event)
 {
     if(!isLoading){
         if(!withOutLives){
-            std::cout << "aaaaaaa" << std::endl;
             player.handleInput(event);
         }
         else{

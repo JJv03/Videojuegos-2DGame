@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "soundManager.h"
 
 /* =================================================================
  * =========================== CONSTANTS ===========================
@@ -97,6 +98,8 @@ extern const float gPlayerJumpForce;
 
 // ============ ENEMIES VARIABLES =============
 extern bool bossExist;
+
+extern SoundManager gameSoundManager;
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

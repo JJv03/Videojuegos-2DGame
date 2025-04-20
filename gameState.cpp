@@ -742,6 +742,7 @@ void PauseGS::handleInput(sf::Event event){
                     break;
             }
             pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.left) {    
@@ -769,22 +770,25 @@ void PauseGS::handleInput(sf::Event event){
                     break;
             }
             pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
         }
 
         if (keyPressed->scancode == controls.enter) {
+            configManager::Audio newAudio;
+            newAudio.master_volume = masterVol;
+            newAudio.music_volume = musicVol;
+            newAudio.sound_volume = soundVol;
+
+            configManager.setAudio(newAudio);
+            configManager.saveConfiguration("config.json");
+            
             if (position == 3 && col == 0){
                 std::cout << "Road back to config menu" << std::endl;
+                gameSoundManager.stopAllMusic();
                 stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
             }
 
             if (position == 3 && col == 1){
-                configManager::Audio newAudio;
-                newAudio.master_volume = masterVol;
-                newAudio.music_volume = musicVol;
-                newAudio.sound_volume = soundVol;
-
-                configManager.setAudio(newAudio);
-                configManager.saveConfiguration("config.json");
 
                 std::cout << "Road back to config menu after saving" << std::endl;
                 stateMachine->removeState();

@@ -13,7 +13,6 @@
 class Game
 {
 private:
-    SoundManager gameSoundManager;
     int time = gLevelTimeLimit;
     configManager &configManager;
 
