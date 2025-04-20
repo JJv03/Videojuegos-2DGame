@@ -162,34 +162,32 @@ void Game::init()
 
     // Create subweapon sprite
     auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
-    // subweaponSprite->setTextureRect(sf::IntRect({354, 477}, {16, 16}));
     subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
     subweaponSprite->setPosition({-20.f, 171.f});
+    subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
 
-    // subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
     //  Set up the subweapon (subweapon)
     player.subWeapon.sprite = subweaponSprite;
     player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
 
     // Initialize subweapon AnimationManager
-    /*AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite, &player.subWeapon);
+    AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite, &player.subWeapon);
     if (!subweaponAnimationManager)
     {
         std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
     }
 
     // Add animations (similar to whip)
+    subweaponAnimationManager->addAnimation(subweaponNoAttack, player.subWeapon.noAttackFrames, false);
     subweaponAnimationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames);
     subweaponAnimationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false);
-
     subweaponAnimationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false);
-    //subweaponAnimationManager->addAnimation(stunThrowing, player.subWeapon.stopwatchFrames, false);
-    subweaponAnimationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames, false);
+    subweaponAnimationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames);
 
     // Assign animation managers
     player.subWeapon.animationManager = subweaponAnimationManager;
-    //player.subWeapon.animationManager->playAnimation(daggerThrowing);
-    */
+    player.subWeapon.animationManager->playAnimation(subweaponNoAttack);
+    
     // Load item textures
     if (!loadItemTextures())
     {

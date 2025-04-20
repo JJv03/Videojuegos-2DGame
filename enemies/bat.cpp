@@ -114,6 +114,13 @@ void Bat::onCollision(Entity &other, Game &game)
             resetPosition();
         }
     }
+    else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
+    {
+        if (applyDamage(subWeapon->subDamage))
+        {
+            resetPosition();
+        }
+    }
     else if (dynamic_cast<Player *>(&other))
     {
         isActive = false;

@@ -92,6 +92,10 @@ class SubWeapon : public EntitySprite
 public:
     AnimationManager *animationManager{nullptr};
 
+    std::vector<AnimationManager::Frame> noAttackFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
+    };
+
     std::vector<AnimationManager::Frame> daggerFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(354, 477), sf::Vector2(16, 16)), 0.1f},
     };
@@ -129,18 +133,21 @@ public:
     PlayerDirection direction;
     float verticalSpeed = 0.f;
     float horizontalSpeed = 0.f;
-
+    bool intersected = false;
+    float subDamage = 3.0f;
     // Boomerang
     bool changedDirection = false;
-    bool intersected = false;
+    
 
     // Fire Bomb
     bool isExploding = false;
+    bool intersectedBomb = false;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
     void hello() const override;
+    bool onCollision_SolidTile(Entity &solidTile);
 };
 
 class Player : public EntitySprite

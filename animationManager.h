@@ -59,6 +59,7 @@ enum animationID{
     fireBombThrowing,
     stopwatchThrowing,
     boomerangThrowing,
+    subweaponNoAttack,
 
     // FIRST SCREEN
     // Comming bat to zoom
