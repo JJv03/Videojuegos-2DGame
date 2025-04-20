@@ -1676,6 +1676,7 @@ void PlayerHurtStairState::init(Player& player)
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
     player.isOnStairs = true;
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
@@ -2059,6 +2060,7 @@ void PlayerWhipUpgradeState::init(Player& player)
 {
     player.visible = true;
     player.isInvulnerable = true;
+    player.whip.animationManager->playAnimation(whipNoAttack);
 }
 
 void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)
