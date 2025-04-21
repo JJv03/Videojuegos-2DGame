@@ -121,14 +121,14 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
                 player.hearts -= 1;
                 player.setState(state<AttackSecondary>());
                 if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
-                    player.hearts -= 3;
+                    player.hearts -= 4;
                 }
             }
             
@@ -275,14 +275,14 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
                 player.hearts -= 1;
                 player.setState(state<AttackSecondary>());
                 if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
-                    player.hearts -= 3;
+                    player.hearts -= 4;
                 }
             }
             
@@ -486,14 +486,14 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE){
+            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
                 player.hearts -= 1;
                 player.setState(state<AttackJumpSecondary>());
                 if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
-                    player.hearts -= 3;
+                    player.hearts -= 4;
                 }
             }
             
@@ -1841,7 +1841,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
         player.subWeapon.direction = player.dir;
         player.subWeapon.sprite->setPosition(spawnPos);
 
-        //player.subWeapon.type = ItemType::FIRE_BOMB; // Depuracion
+        //player.subWeapon.type = ItemType::STOPWATCH; // Depuracion
         player.subWeapon.type = player.subWeaponType;
 
         player.subWeapon.changedDirection = false;
@@ -1852,12 +1852,12 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
 
        if (player.subWeapon.type == ItemType::AXE) {
         player.subWeapon.verticalSpeed = -350.f; 
-        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.horizontalSpeed = 100.f;
         player.subWeapon.animationManager->playAnimation(axeThrowing); 
 
     } else if (player.subWeapon.type == ItemType::DAGGER) {
         player.subWeapon.verticalSpeed = 0.f;
-        player.subWeapon.horizontalSpeed = 150.f;
+        player.subWeapon.horizontalSpeed = 100.f;
         player.subWeapon.animationManager->playAnimation(daggerThrowing); 
     } else if (player.subWeapon.type == ItemType::BOOMERANG) {
         //player.hearts++; // Depuracion
@@ -1871,9 +1871,11 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
         player.subWeapon.animationManager->playAnimation(fireBombThrowing);
         
     } else if (player.subWeapon.type == ItemType::STOPWATCH) {
-        player.hearts -= 4; 
-        // Flag stop time
-    } 
+        std::cout << "STOPWATCH" << std::endl;
+        player.isStopWatchActive = true;
+        player.stopWatchTimeCounter = 0.0f;
+        player.stopWatchTime = 2.0f;
+    }  
         player.activeSubWeapons.push_back(std::move(player.subWeapon));
         player.weaponIsActive = true;
     }
@@ -1979,7 +1981,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
         player.subWeapon.direction = player.dir;
         player.subWeapon.sprite->setPosition(spawnPos);
 
-        //player.subWeapon.type = ItemType::FIRE_BOMB; // Depuracion
+        //player.subWeapon.type = ItemType::STOPWATCH; // Depuracion
         player.subWeapon.type = player.subWeaponType;
 
         player.subWeapon.changedDirection = false;
@@ -2009,8 +2011,10 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
         player.subWeapon.animationManager->playAnimation(fireBombThrowing);
         
     } else if (player.subWeapon.type == ItemType::STOPWATCH) {
-        player.hearts -= 4; 
-        // Flag stop time
+        std::cout << "STOPWATCH" << std::endl;
+        player.isStopWatchActive = true;
+        player.stopWatchTimeCounter = 0.0f;
+        player.stopWatchTime = 2.0f;
     } 
 
         

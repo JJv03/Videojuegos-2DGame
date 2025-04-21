@@ -605,7 +605,15 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         
     }
     else if (this->subWeapon.type == ItemType::STOPWATCH){
+        if (this->stopWatchTimeCounter >= this->stopWatchTime) {
+            this->isStopWatchActive = false;
+            this->stopWatchTimeCounter = 0.0f; // Reset the counter
+            this->subWeapon.intersected = true;
+        } else {
+            this->stopWatchTimeCounter += deltaTime;
+        }
 
+        
     }
     else if(this->subWeapon.type == ItemType::DAGGER)
     { // Dagger

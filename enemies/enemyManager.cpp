@@ -11,7 +11,9 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
     PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
-
+    if(playerPtr->isStopWatchActive){
+        return;
+    }
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
