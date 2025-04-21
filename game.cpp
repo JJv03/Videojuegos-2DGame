@@ -1193,6 +1193,7 @@ void Game::restartStage()
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
+    player.subWeapon.sprite->setPosition({-100.f,0.f});
     player.subWeapon.intersected = true;
     player.hearts = 5;
 

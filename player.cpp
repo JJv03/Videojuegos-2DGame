@@ -89,6 +89,12 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     updateActivationZones(viewPosition);
     updateActiveSubWeapons(deltaTime, viewPosition);
 
+    if(this->activateRosario && this->rosarioTimeCounter < this->invulnerableTime){
+        this->rosarioTimeCounter += deltaTime;
+    }
+    else{
+        this->activateRosario = false;
+    }
     // If player is near stair, collisions will make it true
     this->isNearStair = false;
     this->stairStart = new StairTile();
@@ -544,100 +550,105 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         return;
     }
     
-
-    if (this->subWeapon.type == ItemType::AXE)
-    {
-        this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-        this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
-        this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
-        if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(axeThrowing)) {
-            this->subWeapon.animationManager->playAnimation(axeThrowing);
-        }
-        this->subWeapon.animationManager->update(deltaTime);
-
-    }else if (this->subWeapon.type == ItemType::FIRE_BOMB){
-        if (!this->subWeapon.intersectedBomb){
-            this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-            this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime;
-            this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
-            // Check if it collides, if so, explode
-            
-            this->subWeapon.isExploding = false;
-
-        }
-        
-        else
+    if(!this->subWeapon.intersected){
+        if (this->subWeapon.type == ItemType::AXE)
         {
-            //std::cout << "Fire bomb exploding" << std::endl;
-            if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(fireBombThrowing)) {
-                this->subWeapon.animationManager->playAnimation(fireBombThrowing);
+            this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
+            this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+            this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
+            if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(axeThrowing)) {
+                this->subWeapon.animationManager->playAnimation(axeThrowing);
             }
             this->subWeapon.animationManager->update(deltaTime);
-            if (this->subWeapon.animationManager->isAnimationFinished()){
-                //std::cout << "Fire bomb finished exploding" << std::endl;
-                this->subWeapon.isExploding = true;
+
+        }else if (this->subWeapon.type == ItemType::FIRE_BOMB){
+            if (!this->subWeapon.intersectedBomb){
+                this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
+                this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime;
+                this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
+                // Check if it collides, if so, explode
+                
+                this->subWeapon.isExploding = false;
+
             }
             
-        }
-        
-        
+            else
+            {
+                //std::cout << "Fire bomb exploding" << std::endl;
+                if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(fireBombThrowing)) {
+                    this->subWeapon.animationManager->playAnimation(fireBombThrowing);
+                }
+                this->subWeapon.animationManager->update(deltaTime);
+                if (this->subWeapon.animationManager->isAnimationFinished()){
+                    //std::cout << "Fire bomb finished exploding" << std::endl;
+                    this->subWeapon.isExploding = true;
+                }
+                
+            }
+            
+            
 
-    }else if(this->subWeapon.type == ItemType::BOOMERANG)
-    {
-        if ((this->subWeapon.sprite->getPosition().x + 20 >= viewPosition.x + gGameVisibleWorld_size_x || 
-                this->subWeapon.sprite->getPosition().x -10  <= viewPosition.x  ) && !this->subWeapon.changedDirection) { 
-            this->subWeapon.changedDirection = true;
-            this->subWeapon.horizontalSpeed = -this->subWeapon.horizontalSpeed;
-        }
-        this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-        if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(boomerangThrowing)){
-            this->subWeapon.animationManager->playAnimation(boomerangThrowing);
-        }
-        this->subWeapon.animationManager->update(deltaTime);
+        }else if(this->subWeapon.type == ItemType::BOOMERANG)
+        {
+            if ((this->subWeapon.sprite->getPosition().x + 20 >= viewPosition.x + gGameVisibleWorld_size_x || 
+                    this->subWeapon.sprite->getPosition().x -10  <= viewPosition.x  ) && !this->subWeapon.changedDirection) { 
+                this->subWeapon.changedDirection = true;
+                this->subWeapon.horizontalSpeed = -this->subWeapon.horizontalSpeed;
+            }
+            this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
+            if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(boomerangThrowing)){
+                this->subWeapon.animationManager->playAnimation(boomerangThrowing);
+            }
+            this->subWeapon.animationManager->update(deltaTime);
 
-        // Hanlde boomerang colision with player
-        if (isIntersecting(this->subWeapon.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && this->subWeapon.changedDirection) {
-            //std::cout << "Boomerang colision with player" << std::endl;
-            this->subWeapon.intersected = true;
+            // Hanlde boomerang colision with player
+            if (isIntersecting(this->subWeapon.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && this->subWeapon.changedDirection) {
+                //std::cout << "Boomerang colision with player" << std::endl;
+                this->subWeapon.intersected = true;
+                
+            }
+            
             
         }
-        
-        
-    }
-    else if (this->subWeapon.type == ItemType::STOPWATCH){
-        if (this->stopWatchTimeCounter >= this->stopWatchTime) {
-            this->isStopWatchActive = false;
-            this->stopWatchTimeCounter = 0.0f; // Reset the counter
-            this->subWeapon.intersected = true;
-        } else {
-            this->stopWatchTimeCounter += deltaTime;
-        }
+        else if (this->subWeapon.type == ItemType::STOPWATCH){
+            if (this->stopWatchTimeCounter >= this->stopWatchTime) {
+                this->isStopWatchActive = false;
+                this->stopWatchTimeCounter = 0.0f; // Reset the counter
+                this->subWeapon.intersected = true;
+            } else {
+                this->stopWatchTimeCounter += deltaTime;
+            }
 
-        
-    }
-    else if(this->subWeapon.type == ItemType::DAGGER)
-    { // Dagger
-        if (this->subWeapon.intersected)
-        {
-            this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+            
+        }
+        else if(this->subWeapon.type == ItemType::DAGGER)
+        { // Dagger
+            if (this->subWeapon.intersected)
+            {
+                this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+            }
+            else{
+                this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
+                if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(daggerThrowing)){
+                    this->subWeapon.animationManager->playAnimation(daggerThrowing);
+                }
+                this->subWeapon.animationManager->update(deltaTime);
+            }
+            
+            
         }
         else{
-            this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-            if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(daggerThrowing)){
-                this->subWeapon.animationManager->playAnimation(daggerThrowing);
-            }
-            this->subWeapon.animationManager->update(deltaTime);
+            std::cout << "Subweapon type not recognized" << std::endl;
         }
-        
-        
-    }
-    else{
-        std::cout << "Subweapon type not recognized" << std::endl;
-    }
     
+    
+    }
+
     bool isOutOfBounds =    this->subWeapon.sprite->getPosition().x >= viewPosition.x + gGameVisibleWorld_size_x || 
                             this->subWeapon.sprite->getPosition().x <= viewPosition.x ||
                             this->subWeapon.sprite->getPosition().y >= viewPosition.y + gGameVisibleWorld_size_y + 30.f;
+
+    
 
     if (isOutOfBounds || this->subWeapon.intersected || this->subWeapon.isExploding)  {
         
@@ -709,8 +720,9 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         //std::cout << "SubWeapon colision" << std::endl;
         this->intersected = true;
         
+        
     }
-    if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
+    else if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
     {
         //std::cout << "SubWeapon colision solid" << std::endl;
         if (this->onCollision_SolidTile(other))
@@ -719,6 +731,7 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         }
 
     }
+    
  
 }
 

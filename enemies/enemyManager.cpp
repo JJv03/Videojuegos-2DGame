@@ -14,6 +14,13 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
     if(playerPtr->isStopWatchActive){
         return;
     }
+    if (playerPtr->activateRosario)
+    {
+        std::cout << "ROSARIO" << std::endl;
+        return;
+    }
+    
+    
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)

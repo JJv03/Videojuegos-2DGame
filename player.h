@@ -211,6 +211,9 @@ public:
 
     // Rosario
     bool activateRosario;
+    bool justDeactivatedRosario = false;
+    float rosarioTimeCounter=0.0f;
+    float rosarioTime = 2.0f; // 2 segs
 
     // StopWatch
     bool isStopWatchActive;
