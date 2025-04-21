@@ -121,6 +121,9 @@ bool loadBreakableTextures()
     breakableTextureRects[BreakableType::BREAKABLE_WALL_3SQUARES] = sf::IntRect({146, 326}, {16, 16});
     breakableTypeToAtlasIndex[BreakableType::BREAKABLE_WALL_3SQUARES] = 1;
 
+    breakableTextureRects[BreakableType::DROP_TRIGGER] = sf::IntRect({120, 56}, {1, 1});
+    breakableTypeToAtlasIndex[BreakableType::DROP_TRIGGER] = 1;
+
     return true;
 }
 
@@ -181,12 +184,15 @@ std::shared_ptr<sf::Sprite> getBreakableTileSprite(BreakableType type) {
 }
 
 std::shared_ptr<BreakableTile> getBreakableTile(const BreakableType type, const sf::FloatRect& hitbox,
-                                const bool isBreakable, const DropType dropType) {
+                                const bool isBreakable, const DropType dropType, const int dropItem_x,
+                                const int dropItem_y) {
     std::shared_ptr<BreakableTile> tile = std::make_shared<BreakableTile>();
     tile->type = static_cast<BreakableType>(type);
     tile->hitboxes.push_back(hitbox);
     tile->isBreakable = isBreakable;
     tile->dropType = dropType;
+    tile->dropItem_position.x = dropItem_x;
+    tile->dropItem_position.y = dropItem_y;
 
     tile->sprite = getBreakableTileSprite(tile->type);
     tile->sprite->setPosition(hitbox.position);
@@ -203,7 +209,6 @@ std::shared_ptr<BreakableTile> getBreakableTile(const BreakableType type, const 
 
     return tile;
 }
-
 
 bool BreakableTile::isCollidable() const {
     if (this->type != BreakableType::CANDELABRUM && this->type != BreakableType::FIREPIT) {
@@ -233,7 +238,6 @@ void BreakableTile::onCollision(Entity& other, Game& game){
 void BreakableTile::onCollision_Whip(Game& game){
     if (this->isBreakable) {
         this->isDestroyed = true;
-        this->generatesItem = true;
         game.createDropItem(this->sprite->getPosition(), this->dropType);
     }
 }
@@ -241,9 +245,16 @@ void BreakableTile::onCollision_Whip(Game& game){
 void BreakableTile::onCollision_Player(Entity& other, Game& game) {
     sf::FloatRect tileBounds = this->hitboxes[0];   // Breakable tiles only have 1 hitbox
 
-    bool hasCollided = false;
-    game.computePlayerTileIntersection(hasCollided, tileBounds);
-    // Falta ponerlo en el suelo ?
+    if (this->type != BreakableType::DROP_TRIGGER) {
+        bool hasCollided = false;
+        game.computePlayerTileIntersection(hasCollided, tileBounds);
+    }
+    else {
+        game.createDropItem(sf::Vector2f{static_cast<float>(this->dropItem_position.x),
+                                         static_cast<float>(this->dropItem_position.y)},
+                                         this->dropType);
+        this->isDestroyed = true;
+    }
 }
 
 void BreakableTile::hello() const {

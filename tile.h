@@ -9,7 +9,6 @@
 
 
 class Game;
-//class Player;
 
 
 class Tile : public Entity
@@ -71,6 +70,7 @@ enum class BreakableType {
     BREAKABLE_WALL_1SQUARE = 2,
     BREAKABLE_WALL_4SQUARES = 3,
     BREAKABLE_WALL_3SQUARES = 4,
+    DROP_TRIGGER = 5,
 };
 
 // Hash function for the breakable tile type
@@ -97,7 +97,7 @@ public:
     BreakableType type;                      // Breakable type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
-    bool generatesItem = false;     // If the tile generates an item when destroyed
+    sf::Vector2i dropItem_position; // Position of the item that drops from the tile
     
     DropType dropType = DropType::NONE;          // If the tile drops an item
 
@@ -144,7 +144,8 @@ std::shared_ptr<sf::Sprite> getBreakableTileSprite(BreakableType type);
 
 // Returns the instance of a breakable tile based on its type, hitbox, isBreakable and dropType
 std::shared_ptr<BreakableTile> getBreakableTile(const BreakableType type, const sf::FloatRect& hitbox,
-                                                const bool isBreakable, const DropType dropType);
+                                                const bool isBreakable, const DropType dropType,
+                                                const int dropItem_x, const int dropItem_y);
 
 // -------------------------------------------------
 

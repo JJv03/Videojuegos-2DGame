@@ -175,10 +175,10 @@ sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
     case 3: // Breakable wall 4 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
-    case 4: // Breakable wall 4 square unbreakable
+    case 4: // Breakable wall 3 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
-    case 5: // Breakable wall 4 square unbreakable
-        return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
+    case 5: // Breakable wall DROP_TRIGGER
+        return collisionTypes.at(FULL_COLLISION);
     default:
         return collisionTypes.at(NO_COLLISION);
     }
@@ -756,19 +756,34 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             std::getline(ss, token, ',');
             int posY = std::stoi(token);
 
-            // Optional values: isBreakable and dropType.
+            // Optional values
             // By default, it is BREAKABLE and there is NO ITEM TO DROP (= NONE).
             bool isBreakable = true;
             DropType dropType = DropType::NONE;
+            int dropItem_x = -1;
+            int dropItem_y = -1;
 
             if (std::getline(ss, token, ','))       // Breakable: Optional value
             {                                          
                 isBreakable = (std::stoi(token) != 0); // If it is not 0, it is true.
             }
             if (std::getline(ss, token, ','))       // Drop item: Optional value
-            { // Optional value
+            {
                 // Expecting an integer representing the type of item that can be dropped
                 dropType = static_cast<DropType>(std::stoi(token));
+            }
+            if (std::getline(ss, token, ','))       // Drop item x position: Optional value
+            {                                          
+                dropItem_x = std::stoi(token);
+                
+                if (std::getline(ss, token, ','))       // Drop item y position: Optional value
+                {
+                    dropItem_y = std::stoi(token);
+                }
+                else
+                {
+                    std::cerr << "[Error] Expected drop item y position but found: " << token << std::endl;
+                }
             }
 
             sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
@@ -776,7 +791,7 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             hitbox.position.y += posY;
 
             std::shared_ptr<BreakableTile> tile = getBreakableTile(static_cast<BreakableType>(breakableType),
-                                                                    hitbox, isBreakable, dropType);
+                                                                    hitbox, isBreakable, dropType, dropItem_x, dropItem_y);
             m_breakableTiles.push_back(tile);
         }
         catch (const std::exception &e)
