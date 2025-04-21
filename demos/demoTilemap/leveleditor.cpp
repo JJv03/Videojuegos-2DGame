@@ -4,19 +4,22 @@
 #include <iostream>
 #include <sstream>
 
-const int TILE_SIZE = 32;
 const int MAP_WIDTH = 24;
 const int MAP_HEIGHT = 6;
-const int TILESET_WIDTH = 8;
-const int TILESET_HEIGHT = 11;
+const int TILESET_WIDTH = 6;
+const int TILESET_HEIGHT = 7;
+
+const int TILE_SIZE = 32;
 const int MARGIN = 4;
 const int OUTER_MARGIN = 2;
 
+const int OFFSET_X = 300;
+const int ALTURA_BOTON_GUARDAR = 400;
 
 class Game {
 public:
     Game() : window(sf::VideoMode({TILE_SIZE * MAP_WIDTH + TILE_SIZE * TILESET_WIDTH + 300, TILE_SIZE * MAP_HEIGHT + TILE_SIZE * TILESET_HEIGHT + 100}), "Tilemap Game", sf::Style::Default) {
-        if (!tilesetTexture.loadFromFile("../../assets/tilesets/tileset_1.png")) {
+        if (!tilesetTexture.loadFromFile("../../assets/tilesets/tileset_2.png")) {
             std::cerr << "Error loading tileset!" << std::endl;
             exit(-1);
         }
@@ -37,7 +40,7 @@ public:
         }
 
         acceptButton.setSize(sf::Vector2f(100, 50));
-        acceptButton.setPosition({650, 500});
+        acceptButton.setPosition({650, ALTURA_BOTON_GUARDAR});
         acceptButton.setFillColor(sf::Color::Green);
 
         selectedTile = -1;
@@ -102,7 +105,7 @@ private:
         for (int i = 0; i < MAP_HEIGHT; ++i) {
             for (int j = 0; j < MAP_WIDTH; ++j) {
                 sf::RectangleShape square(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-                square.setPosition({400 + j * TILE_SIZE, i * TILE_SIZE});
+                square.setPosition({OFFSET_X + j * TILE_SIZE, i * TILE_SIZE});
 
                 if (grid[i][j] != -1) {
                     int tileIndex = grid[i][j];
@@ -113,7 +116,7 @@ private:
                     int texY = OUTER_MARGIN + tv * (TILE_SIZE + MARGIN);
 
                     tileSprite.setTextureRect(sf::IntRect({texX, texY}, {TILE_SIZE, TILE_SIZE}));
-                    tileSprite.setPosition({400 + j * TILE_SIZE, i * TILE_SIZE});
+                    tileSprite.setPosition({OFFSET_X + j * TILE_SIZE, i * TILE_SIZE});
                     window.draw(tileSprite);
                 } else {
                     square.setFillColor(sf::Color(200, 200, 200));
@@ -137,23 +140,29 @@ private:
             std::cout << "Tile seleccionado: " << selectedTile << std::endl;
         }
 
-        if (x >= 400 && x < 400 + MAP_WIDTH * TILE_SIZE && y < MAP_HEIGHT * TILE_SIZE) {
-            int gridX = (x - 400) / TILE_SIZE;
+        if (x >= OFFSET_X && x < OFFSET_X + MAP_WIDTH * TILE_SIZE && y < MAP_HEIGHT * TILE_SIZE) {
+            int gridX = (x - OFFSET_X) / TILE_SIZE;
             int gridY = y / TILE_SIZE;
             if (selectedTile != -1) {
                 grid[gridY][gridX] = selectedTile;
             }
         }
 
-        if (x >= 650 && x <= 750 && y >= 500 && y <= 550) {
+        if (x >= 650 && x <= 750 && y >= ALTURA_BOTON_GUARDAR && y <= 550) {
             saveGrid();
         }
     }
 
     void saveGrid() {
         std::ofstream outFile("grid.txt");
+
+        // Map dimensions
         outFile << MAP_WIDTH << "," << MAP_HEIGHT << std::endl;
-        outFile << 64 << "," << 64 << std::endl;
+
+        // Initial position
+        outFile << 48 << "," << 64 << std::endl;
+
+        // Solid/background tiles
         for (int i = 0; i < MAP_HEIGHT; ++i) {
             for (int j = 0; j < MAP_WIDTH; ++j) {
                 outFile << grid[i][j];
@@ -163,9 +172,17 @@ private:
             }
             outFile << std::endl;
         }
-
+        
+        // Other tiles
         outFile << "doors" << std::endl;
+        outFile << "end_doors" << std::endl;
         outFile << "breakable" << std::endl;
+        outFile << "end_breakable" << std::endl;
+        outFile << "stair" << std::endl;
+        outFile << "end_stair" << std::endl;
+        outFile << "enemies" << std::endl;
+        outFile << "end_enemies" << std::endl;
+
         outFile.close();
         std::cout << "Datos guardados en 'grid.txt'" << std::endl;
     }
