@@ -158,13 +158,13 @@ void PlayerIdleState::update(Player& player, float deltaTime, bool windowHasFocu
     }
     
     auto controls = configManager.getControls();
-    if(sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus){
+    if(sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus && player.acceptsInput){
         player.dir = RIGHT;
         player.isWalking = true;
         player.setState(state<Walk>());
     }
 
-    if(sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus){
+    if(sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus && player.acceptsInput){
         player.dir = LEFT;
         player.isWalking = true;
         player.setState(state<Walk>());
@@ -804,19 +804,19 @@ void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHa
 {
     auto controls = configManager.getControls();
 
-    if (sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus) {
+    if (sf::Keyboard::isKeyPressed(controls.right) && windowHasFocus && player.acceptsInput) {
         player.dir = RIGHT;
         player.isWalking = true;
         player.setState(state<StairWalk>());
     }
     
-    if (sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus) {
+    if (sf::Keyboard::isKeyPressed(controls.left) && windowHasFocus && player.acceptsInput) {
         player.dir = LEFT;
         player.isWalking = true;
         player.setState(state<StairWalk>());
     }
 
-    if (sf::Keyboard::isKeyPressed(controls.up) && windowHasFocus) {
+    if (sf::Keyboard::isKeyPressed(controls.up) && windowHasFocus && player.acceptsInput) {
         player.isWalking = true;
 
         if(player.isStairUpRight){
@@ -829,7 +829,7 @@ void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHa
         }
     }
 
-    if (sf::Keyboard::isKeyPressed(controls.down) && windowHasFocus) {
+    if (sf::Keyboard::isKeyPressed(controls.down) && windowHasFocus && player.acceptsInput) {
         player.isWalking = true;
 
         if(player.isStairUpRight){

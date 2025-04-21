@@ -320,6 +320,7 @@ void Game::handleInput(sf::Event event)
                             position = 0;
                             gameSoundManager.stopAllMusic();
                             setLevelMusic(currentLevel);
+                            player.acceptsInput = true;
                             break;
                         case 1:
                             std::cout << "Going back to the menu" << std::endl;
@@ -431,6 +432,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         else
         {
             withOutLives = true;
+            player.acceptsInput = false;
             // LOGIC TO SHOW DEAD SCREEN
             // Black rectangle with 2 options and a heart as selector
             // -> RestartLevel (Continue)
@@ -456,6 +458,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             player.setState(std::make_unique<PlayerIdleState>());
         }
     }
+
+    std::cout << player.acceptsInput << std::endl;
 }
 
 void Game::updateGUITime()
@@ -478,6 +482,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
     if (loadingClock.getElapsedTime().asSeconds() < gLoadingTime)
     {
         isLoading = true;
+        player.acceptsInput = false;
 
         sf::RectangleShape blackScreen(camera.getView(window.getSize()).getSize());
         blackScreen.setFillColor(sf::Color::Black);
@@ -486,11 +491,14 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
     else
     {
         // Just finished loading
-        if (isLoading)
+        if (isLoading){
+            isLoading = false;
             beginStageEntrance = true;
-
-        isLoading = false;
-
+            if(!withOutLives){
+                player.acceptsInput = true;
+            }
+        }
+            
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
 
