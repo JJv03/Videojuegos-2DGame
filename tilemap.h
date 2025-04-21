@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "tile.h"
 #include "item.h"
+//#include "bvhTree.h"
 
 using StairType = StairTile::Type;
 
@@ -106,6 +107,8 @@ public:
 
     // Vector with the properties of each stair tile
     std::vector<StairTile> m_stairTiles;
+
+    //BVHTree<Entity> solidTileBVH; // BVH tree for collision detection
 
     // Loads the tilemap with the given tiles
     bool load(int level, int stage);

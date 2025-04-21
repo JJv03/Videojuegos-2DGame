@@ -356,6 +356,17 @@ bool TileMap::load(int level, int stage)
         }
     }
 
+    
+    // std::vector<Entity*> temporal_solidTiles;
+    // for (int j = 0; j < m_tilesPerColumn; ++j) {
+    //     for (int i = 0; i < m_tilesPerRow; ++i) {
+    //         if (m_solidTiles[j][i].hitboxes.size() > 0 && m_solidTiles[j][i].hitboxes[0].size.x != 0.f && m_solidTiles[j][i].hitboxes[0].size.y != 0.f) {
+    //             temporal_solidTiles.push_back(&m_solidTiles[j][i]);
+    //         }
+    //     }
+    // }
+    // solidTileBVH.build(temporal_solidTiles);
+
     return true;
 }
 

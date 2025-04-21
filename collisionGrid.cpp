@@ -191,7 +191,8 @@ bool checkIntersections(const Entity& entityA, const Entity& entityB) {
     return false;
 }
 
-bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b){
+
+bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b) {
     return !(a.position.x + a.size.x < b.position.x ||
              a.position.x > b.position.x + b.size.x ||
              a.position.y + a.size.y < b.position.y ||

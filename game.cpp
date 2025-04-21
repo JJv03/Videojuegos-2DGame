@@ -660,7 +660,8 @@ void Game::checkCollisions()
 }
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
-{
+{   
+    std::cout << "Checking collisions 1" << std::endl;
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
@@ -688,6 +689,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     // Cálculo aparte porque no entra en CollisionGrid
     checkPlayerMapBoundCollisions();
+
     checkSolidTileCollisions(dynamicEntities);
 
     checkDoorTileCollisions();
@@ -711,6 +713,10 @@ void Game::checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities)
                 }
             }
         }
+        // tilemaps[currentStage].solidTileBVH.queryAndCollide(*e, [&](Entity& tile) {
+        //     e->onCollision(tile, *this);
+        //     tile.onCollision(*e, *this);
+        // });
     }
 }
 

@@ -40,3 +40,4 @@ sf::Vector2f getVirtualUpperLeftCornerCoordOfGameView(sf::RenderWindow &window);
  * @return VisibleTileRange The calculated range of visible tiles.
  */
 VisibleTileRange calculateVisibleTileRange(sf::RenderWindow& window, const int m_tilesPerRow, const int m_tilesPerColumn);
+
