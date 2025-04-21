@@ -204,6 +204,19 @@ public:
     float blinkInterval;
     float autoWalkDistance;
 
+    // Invisibility
+    bool isInvisible;
+    float invisibilityTimeCounter;
+    float invisibilityTime;
+
+    // Rosario
+    bool activateRosario;
+
+    // StopWatch
+    bool isStopWatchActive;
+    float stopWatchTimeCounter;
+    float stopWatchTime;
+
     float verticalSpeed;
     float horizontalSpeed;
 

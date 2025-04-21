@@ -57,6 +57,19 @@ Player::Player()
     blinkInterval = 0.05f; // 0.1 segs
     visible = true;
 
+    // Invisibility
+    isInvisible = false;
+    invisibilityTimeCounter = 0.0f;
+    invisibilityTime = 5.0f;
+
+    // Rosario
+    activateRosario = false;
+
+    // StopWatch
+    isStopWatchActive = false;
+    stopWatchTimeCounter = 0.0f;
+    stopWatchTime = 5.0f; // 5 segs
+
     // Stairs
     isNearStair = false;
     isPositionedInStair = false;
@@ -81,7 +94,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->stairStart = new StairTile();
 
     if(!this->isBeingHurt && !this->isDead){
-        if (this->isInvulnerable)
+        if (this->isInvulnerable && !this->isInvisible)
         {
             this->blinkTimer += deltaTime;
             if (this->blinkTimer >= this->blinkInterval) {
@@ -100,6 +113,22 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                 this->invulnerableTimeCounter += deltaTime;
             }
         }
+        else if (this->isInvulnerable && this->isInvisible)
+        {
+            std::cout << "Invisible and Invulnerable" << std::endl;
+            if (this->invisibilityTimeCounter >= this->invisibilityTime) {
+                this->isInvulnerable = false;
+                this->startInvulnerable = false;
+                this->isInvisible = false;
+                this->visible = true; // Ensure the player is visible after invulnerability ends
+                this->invisibilityTimeCounter = 0.0f; // Reset the counter
+                this->sprite->setColor(sf::Color::White);
+            } else {
+                this->sprite->setColor(sf::Color(255, 255, 255, 128));
+                this->invisibilityTimeCounter += deltaTime;
+            }
+        }
+        
     }
 }
 
@@ -457,18 +486,26 @@ void Player::onCollision_Item(Entity &entityItem)
     else if (itemType == ItemType::SMALL_HEART)
     {
         this->hearts += 1;
+        /*this->invisibilityTimeCounter = 0.0f; // Reset the counter
+        this->isInvisible = true;
+        this->isInvulnerable = true;*/
     }
     else if (itemType == ItemType::LARGE_HEART)
     {
         this->hearts += 5;
+        /*this->invisibilityTimeCounter = 0.0f; // Reset the counter
+        this->isInvisible = true;
+        this->isInvulnerable = true;*/
     }
     else if (isScoringItem(itemType))
     {
         this->score += getItemScore(itemType);
     }
-    // else if (itemType == ItemType::INVISIBILITY_POTION) {
-    //
-    // }
+    else if (itemType == ItemType::INVISIBILITY_POTION) {
+        this->invisibilityTimeCounter = 0.0f; // Reset the counter
+        this->isInvisible = true;
+        this->isInvulnerable = true;
+    }
     else if (itemType == ItemType::PORK_CHOP) {
         this->health += 6;
         if (this->health > this->maxHealth)
@@ -489,6 +526,12 @@ void Player::onCollision_Item(Entity &entityItem)
     {
         this->lives += 1;
     }
+    else if (itemType == ItemType::ROSARY)
+    {
+        this->activateRosario = true;
+        this->isInvulnerable = true;
+    }
+    
 }
 
 void Player::hello() const {
