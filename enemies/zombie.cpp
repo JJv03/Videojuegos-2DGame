@@ -1,4 +1,5 @@
 #include "zombie.h"
+#include "../game.h"
 #include <iostream>
 
 // Initialize zombie with default stats
@@ -62,14 +63,14 @@ void Zombie::onCollision(Entity &other, Game &game)
     }
     else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (applyDamage(whip->whipDmg))
+        if (applyDamage(whip->whipDmg, game.player))
         {
             resetPosition();
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (applyDamage(subWeapon->subDamage))
+        if (applyDamage(subWeapon->subDamage, game.player))
         {
             resetPosition();
         }

@@ -1,4 +1,5 @@
 #include "bat.h"
+#include "../game.h"
 #include <iostream>
 #include <cmath>
 
@@ -113,14 +114,17 @@ void Bat::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (applyDamage(whip->whipDmg))
+        if (applyDamage(whip->whipDmg, game.player))
+        {
+            resetPosition();
+        }
         {
             resetPosition();
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (applyDamage(subWeapon->subDamage))
+        if (applyDamage(subWeapon->subDamage, game.player))
         {
             resetPosition();
         }

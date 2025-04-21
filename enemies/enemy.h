@@ -39,7 +39,7 @@ public:
     bool checkMapBoundaries(const sf::FloatRect &mapBounds);
 
     // Applies damage to the enemy and returns true if the enemy is defeated
-    bool applyDamage(float damageAmount);
+    bool applyDamage(float damageAmount, Player &player);
 
     bool checkForLedge(Entity &solidTile);
 

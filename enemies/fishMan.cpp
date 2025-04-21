@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "../game.h"
 
 // Constructor: Initialize fishman with sprite, hitboxes, position, and game level/stage
 FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
@@ -278,14 +279,14 @@ void FishMan::onCollision(Entity &other, Game &game)
     // Collision with Whip (player attack)
     else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (applyDamage(whip->whipDmg))
+        if (applyDamage(whip->whipDmg, game.player))
         {
             resetPosition();
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (applyDamage(subWeapon->subDamage))
+        if (applyDamage(subWeapon->subDamage, game.player))
         {
             resetPosition();
         }

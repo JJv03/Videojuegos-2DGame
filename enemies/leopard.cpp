@@ -1,6 +1,7 @@
 #include "leopard.h"
 #include <iostream>
 #include <cmath>
+#include "../game.h"
 
 // Initialize leopard with stats and vision field
 Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
@@ -207,14 +208,14 @@ void Leopard::onCollision(Entity &other, Game &game)
     }
     else if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (applyDamage(whip->whipDmg))
+        if (applyDamage(whip->whipDmg, game.player))
         {
             resetPosition();
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (applyDamage(subWeapon->subDamage))
+        if (applyDamage(subWeapon->subDamage, game.player))
         {
             resetPosition();
         }

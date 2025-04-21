@@ -252,11 +252,12 @@ void Enemy::resetPosition()
     speed = {-75.0f, 0.0f};
 }
 
-bool Enemy::applyDamage(float damage)
+bool Enemy::applyDamage(float damage, Player& player)
 {
     life -= damage;
     if (life <= 0.0f)
-    {
+    {   
+        player.score += this->score;
         isActive = false;
         return true; // Enemy defeated
     }
