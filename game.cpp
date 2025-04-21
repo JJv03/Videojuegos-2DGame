@@ -661,7 +661,6 @@ void Game::checkCollisions()
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
 {   
-    std::cout << "Checking collisions 1" << std::endl;
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
