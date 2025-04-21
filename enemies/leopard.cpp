@@ -137,6 +137,16 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         updateVisionField();
 
+        playerDetected = false;
+        for (auto &hitbox : simonBounds)
+        {
+            if (visionField.findIntersection(hitbox).has_value())
+            {
+                playerDetected = true;
+                break;
+            }
+        }
+
         if (playerDetected && speed.x == 0) // Chase player if detected
         {
             float directionToPlayer = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
@@ -168,19 +178,10 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
             }
         }
 
-        updateAnimation(deltaTime);
-    }
+        // Right before checkCollisions
+        isOnGround = false;
 
-    // Right before checkCollisions
-    isOnGround = false;
-    playerDetected = false;
-    for (auto &hitbox : simonBounds)
-    {
-        if (visionField.findIntersection(hitbox).has_value())
-        {
-            playerDetected = true;
-            break;
-        }
+        updateAnimation(deltaTime);
     }
 }
 
@@ -191,7 +192,6 @@ void Leopard::onCollision(Entity &other, Game &game)
 
     if (dynamic_cast<SolidTile *>(&other))
     {
-        // std::cout << "LEOPARDO COLISIONA" << std::endl;
         onCollision_SolidTile(other);
 
         if (isOnGround && Enemy::checkForLedge(other))
@@ -222,10 +222,6 @@ void Leopard::onCollision(Entity &other, Game &game)
             resetPosition();
         }
     }
-    else if (dynamic_cast<Player *>(&other))
-    {
-        // Something?
-    }
 }
 
 // Reset to initial state
@@ -235,6 +231,8 @@ void Leopard::resetPosition()
 
     speed = {0.0f, 0.0f};
     life = LEOPARD_LIFE;
+
+    sprite->setScale({1.0f, 1.0f});
 
     animTimer = 0.0f;
     currentFrame = 0;

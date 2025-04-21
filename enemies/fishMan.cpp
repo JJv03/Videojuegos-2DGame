@@ -169,6 +169,9 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
             break;
         }
 
+        // Right before checkCollisions
+        isOnGround = false;
+
         updateAnimation(deltaTime);
     }
 
@@ -177,9 +180,6 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     {
         projectile->update(deltaTime, playerDeactivationZone);
     }
-
-    // Right before checkCollisions
-    isOnGround = false;
 }
 
 // Fire a projectile in the direction the fishman is facing
@@ -292,10 +292,6 @@ void FishMan::onCollision(Entity &other, Game &game)
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             resetPosition();
         }
-    }
-    // Collision with Player
-    else if (dynamic_cast<Player *>(&other))
-    {
     }
 }
 
