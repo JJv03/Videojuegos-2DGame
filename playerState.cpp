@@ -1059,6 +1059,10 @@ void PlayerAttackIdleState::init(Player& player)
     player.isAttacking = true;
     player.attackedFinished = false;
     player.hasToPressAgain = false;
+
+    if(player.restartJumpAnimation){
+        player.whip.collisionedEntities.clear(); 
+    }
 }
 
 void PlayerAttackIdleState::handleInput(Player& player, sf::Event event)
@@ -1192,6 +1196,8 @@ void PlayerAttackJumpState::init(Player& player)
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
+
+    player.whip.collisionedEntities.clear(); 
 }
 
 void PlayerAttackJumpState::handleInput(Player& player, sf::Event event)
@@ -1212,14 +1218,10 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowH
     player.currentAnimation = attackSimon;
    
     if (!player.animationManager->isPlaying(player.currentAnimation)){
-    
         player.animationManager->playAnimation(player.currentAnimation);
-
     }
     if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
-    
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
-
     }
 
 
@@ -1341,6 +1343,8 @@ void PlayerAttackDuckState::init(Player& player)
     player.hasToPressAgain = false;
     player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     player.animationManager->playAnimation(attackFloorSimon);
+
+    player.whip.collisionedEntities.clear(); 
 }
 
 void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
@@ -1364,12 +1368,9 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
     player.currentAnimation = attackFloorSimon;
    
     if (!player.animationManager->isPlaying(player.currentAnimation)){
-    
         player.animationManager->playAnimation(player.currentAnimation);
-
     }
     if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
-    
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     }
     
@@ -1462,6 +1463,8 @@ void PlayerAttackStairState::init(Player& player)
     player.hasToPressAgain = false;
     player.isAttacking = true;
     player.isOnStairs = true;
+
+    player.whip.collisionedEntities.clear(); 
 }
 
 void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
@@ -1488,12 +1491,9 @@ void PlayerAttackStairState::update(Player& player, float deltaTime, bool window
     
     
     if (!player.animationManager->isPlaying(player.currentAnimation)){
-    
         player.animationManager->playAnimation(player.currentAnimation);
-
     }
     if (!player.whip.animationManager->isPlaying(whipLevelAnimation(player.whip.whipLvl))){
-    
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     }
     
@@ -1874,8 +1874,6 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
         player.hearts -= 4; 
         // Flag stop time
     } 
-
-        
         player.activeSubWeapons.push_back(std::move(player.subWeapon));
         player.weaponIsActive = true;
     }

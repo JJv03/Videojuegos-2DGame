@@ -3,6 +3,7 @@
 #include <iostream>
 #include "globals.h"
 #include "tile.h"
+#include "player.h"
 #include <set>
 #include <algorithm>
 #include <utility>
@@ -146,6 +147,11 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
                 if (checkIntersections(*dynamicEntities[i], *dynamicEntities[j])) {
                     dynamicEntities[i]->onCollision(*dynamicEntities[j], *gameRef);
                     dynamicEntities[j]->onCollision(*dynamicEntities[i], *gameRef);
+
+                    if(Whip* whip = dynamic_cast<Whip*>(dynamicEntities[i])) whip->collisionedEntities.insert(dynamicEntities[j]);
+                    if(Whip* whip = dynamic_cast<Whip*>(dynamicEntities[j])) whip->collisionedEntities.insert(dynamicEntities[i]);
+                    if(SubWeapon* subweapon = dynamic_cast<SubWeapon*>(dynamicEntities[i])) subweapon->collisionedEntities.insert(dynamicEntities[j]);
+                    if(SubWeapon* subweapon = dynamic_cast<SubWeapon*>(dynamicEntities[j])) subweapon->collisionedEntities.insert(dynamicEntities[i]);
                 }
             }
         }

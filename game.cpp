@@ -458,8 +458,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             player.setState(std::make_unique<PlayerIdleState>());
         }
     }
-
-    std::cout << player.acceptsInput << std::endl;
 }
 
 void Game::updateGUITime()

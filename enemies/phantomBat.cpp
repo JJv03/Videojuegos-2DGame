@@ -131,14 +131,14 @@ void PhantomBat::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (applyDamage(whip->whipDmg, game.player))
+        if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             resetPosition();
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (applyDamage(subWeapon->subDamage, game.player))
+        if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             resetPosition();
         }

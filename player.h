@@ -9,6 +9,7 @@
 #include "item.h"
 #include "tile.h"
 #include "collisionGrid.h"
+#include <set>
 
 class PlayerState;
 class Game;
@@ -36,6 +37,7 @@ public:
     int whipLvl;
     int whipDmg;
 
+    std::set<const Entity*> collisionedEntities;
     AnimationManager *animationManager{nullptr};
 
     std::vector<AnimationManager::Frame> noAttackFrames{
@@ -135,9 +137,11 @@ public:
     float horizontalSpeed = 0.f;
     bool intersected = false;
     float subDamage = 3.0f;
+    std::set<const Entity*> collisionedEntities;
+
+    
     // Boomerang
     bool changedDirection = false;
-    
 
     // Fire Bomb
     bool isExploding = false;
