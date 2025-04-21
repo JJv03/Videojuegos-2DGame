@@ -137,6 +137,16 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         updateVisionField();
 
+        playerDetected = false;
+        for (auto &hitbox : simonBounds)
+        {
+            if (visionField.findIntersection(hitbox).has_value())
+            {
+                playerDetected = true;
+                break;
+            }
+        }
+
         if (playerDetected && speed.x == 0) // Chase player if detected
         {
             float directionToPlayer = (playerPosition.x > sprite->getPosition().x) ? 1.0f : -1.0f;
@@ -173,15 +183,6 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
     // Right before checkCollisions
     isOnGround = false;
-    playerDetected = false;
-    for (auto &hitbox : simonBounds)
-    {
-        if (visionField.findIntersection(hitbox).has_value())
-        {
-            playerDetected = true;
-            break;
-        }
-    }
 }
 
 void Leopard::onCollision(Entity &other, Game &game)
@@ -233,6 +234,8 @@ void Leopard::resetPosition()
 
     speed = {0.0f, 0.0f};
     life = LEOPARD_LIFE;
+
+    sprite->setScale({1.0f, 1.0f});
 
     animTimer = 0.0f;
     currentFrame = 0;
