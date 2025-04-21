@@ -38,7 +38,7 @@ void Castlevania::run(){
         states.addState(std::make_unique<InitMenuGS>(&states));
     }
 
-    states.addState(std::make_unique<InitMenuGS>(&states));
+    //states.addState(std::make_unique<InitMenuGS>(&states));
     states.processStateChanges();
 
     configManager &configManager = configManager.getInstance();
