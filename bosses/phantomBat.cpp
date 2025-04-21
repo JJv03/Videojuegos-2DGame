@@ -47,16 +47,16 @@ void PhantomBat::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (!whip->collisionedEntities.contains(this))
+        if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
-            applyDamage(whip->whipDmg, game.player);
+            game.createDropItem(DropType::MAGIC_CRYSTAL, sprite->getGlobalBounds().position);
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (!subWeapon->collisionedEntities.contains(this))
+        if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
-            applyDamage(subWeapon->subDamage, game.player);
+            game.createDropItem(DropType::MAGIC_CRYSTAL, sprite->getGlobalBounds().position);
         }
     }
 }
