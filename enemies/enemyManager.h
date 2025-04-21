@@ -28,7 +28,7 @@ public:
     void update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds);
     void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
 
-    std::vector<Enemy *> getEnemies(int currentLevel, int currentStage) const; // Get all enemies
+    std::vector<Entity *> getEnemies(int currentLevel, int currentStage) const; // Get all enemies
 
     // Level loading system
     void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);

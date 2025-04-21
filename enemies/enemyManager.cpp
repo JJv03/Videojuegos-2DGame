@@ -1,5 +1,6 @@
 #include "enemyManager.h"
 #include <iostream>
+#include "projectile.h"
 
 // Initialize with player reference and RNG
 EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::random_device{}())
@@ -146,9 +147,9 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     }
 }
 
-std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage) const
+std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStage) const
 {
-    std::vector<Enemy *> allEnemies;
+    std::vector<Entity *> allEnemies;
 
     for (auto &spawner : zombiesSpawner)
     {
@@ -181,6 +182,9 @@ std::vector<Enemy *> EnemyManager::getEnemies(int currentLevel, int currentStage
     {
         if (f->level == currentLevel && f->stage == currentStage && f->isActive)
         {
+            if(f->getProjectile()){
+                allEnemies.push_back(f->getProjectile().get());
+            }
             allEnemies.push_back(f);
         }
     }
