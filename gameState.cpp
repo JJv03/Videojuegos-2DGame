@@ -617,8 +617,8 @@ void PauseGS::init(){
     this->m_viewSize.y = gMenuGS_size_y;
 
     // Loads menu texture
-    position = 0;
-    col = 0;
+    position = 3;
+    col = 1;
 
     if (!pauseTextures["bg"].loadFromFile("./assets/sprites/menu/blankBox.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -666,19 +666,6 @@ void PauseGS::init(){
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
     }
-
-    if (!pauseTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
-        throw std::runtime_error("No se pudo cargar la imagen del menú.");
-    }
-    sf::Sprite torch(pauseTextures["torch"]);
-
-    torch.setScale(sf::Vector2f(torch.getScale().x * 1.25f, torch.getScale().y * 1.25f));
-
-    float torchX = configs[1].getPosition().x - 25.f;
-    float torchY = configs[1].getPosition().y + 2.f;
-    torch.setPosition(sf::Vector2f(torchX, torchY));
-
-    pauseSprites.push_back(torch);
     
     // BACK
     sf::Text text2(font, "EXIT", 20);
@@ -705,6 +692,19 @@ void PauseGS::init(){
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
+
+    if (!pauseTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite torch(pauseTextures["torch"]);
+
+    torch.setScale(sf::Vector2f(torch.getScale().x * 1.25f, torch.getScale().y * 1.25f));
+
+    float torchX = configs[5].getPosition().x - 25.f;
+    float torchY = configs[5].getPosition().y + 2.f;
+    torch.setPosition(sf::Vector2f(torchX, torchY));
+
+    pauseSprites.push_back(torch);
 
     pauseVolumeManager.loadSound("menuEnter", "./assets/sounds/05.wav");
 }
