@@ -1871,7 +1871,6 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
         player.subWeapon.animationManager->playAnimation(fireBombThrowing);
         
     } else if (player.subWeapon.type == ItemType::STOPWATCH) {
-        std::cout << "STOPWATCH" << std::endl;
         player.isStopWatchActive = true;
         player.stopWatchTimeCounter = 0.0f;
         player.stopWatchTime = 2.0f;
@@ -2011,7 +2010,6 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
         player.subWeapon.animationManager->playAnimation(fireBombThrowing);
         
     } else if (player.subWeapon.type == ItemType::STOPWATCH) {
-        std::cout << "STOPWATCH" << std::endl;
         player.isStopWatchActive = true;
         player.stopWatchTimeCounter = 0.0f;
         player.stopWatchTime = 2.0f;

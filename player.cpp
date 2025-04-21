@@ -651,6 +651,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         this->subWeapon.intersectedBomb = false;
         this->subWeapon.changedDirection = false;
         this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+        this->subWeapon.collisionedEntities.clear(); 
         return;
     }
 
