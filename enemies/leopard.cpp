@@ -178,11 +178,11 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
             }
         }
 
+        // Right before checkCollisions
+        isOnGround = false;
+
         updateAnimation(deltaTime);
     }
-
-    // Right before checkCollisions
-    isOnGround = false;
 }
 
 void Leopard::onCollision(Entity &other, Game &game)

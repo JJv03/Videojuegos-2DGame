@@ -38,11 +38,11 @@ void Zombie::update(float deltaTime)
             }
         }
 
+        // Right before checkCollisions
+        isOnGround = false;
+
         updateAnimation(deltaTime);
     }
-
-    // Right before checkCollisions
-    isOnGround = false;
 }
 
 void Zombie::onCollision(Entity &other, Game &game)

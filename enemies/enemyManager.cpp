@@ -11,16 +11,18 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
 void EnemyManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
     PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
-    if(playerPtr->isStopWatchActive){
+
+    if (playerPtr->isStopWatchActive)
+    {
         return;
     }
+
     if (playerPtr->activateRosario)
     {
         std::cout << "ROSARIO" << std::endl;
         return;
     }
-    
-    
+
     for (auto &zombieSpawner : zombiesSpawner)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
@@ -191,7 +193,8 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
     {
         if (f->level == currentLevel && f->stage == currentStage && f->isActive)
         {
-            if(f->getProjectile()){
+            if (f->getProjectile())
+            {
                 allEnemies.push_back(f->getProjectile().get());
             }
             allEnemies.push_back(f);
