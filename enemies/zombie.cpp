@@ -52,12 +52,12 @@ void Zombie::onCollision(Entity &other, Game &game)
 
     if (dynamic_cast<SolidTile *>(&other))
     {
-        // std::cout << "ZOMBIE COLISIONA" << std::endl;
         onCollision_SolidTile(other);
     }
-    else if (BreakableTile* breakableTile = dynamic_cast<BreakableTile*>(&other))
+    else if (BreakableTile *breakableTile = dynamic_cast<BreakableTile *>(&other))
     {
-        if (!breakableTile->isDestroyed && breakableTile->isCollidable()) {
+        if (!breakableTile->isDestroyed && breakableTile->isCollidable())
+        {
             onCollision_BreakableTile(breakableTile->getBounds()[0]);
         }
     }
@@ -74,10 +74,6 @@ void Zombie::onCollision(Entity &other, Game &game)
         {
             resetPosition();
         }
-    }
-    else if (dynamic_cast<Player *>(&other))
-    {
-        // Something?
     }
 }
 

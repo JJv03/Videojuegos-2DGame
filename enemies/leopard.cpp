@@ -192,7 +192,6 @@ void Leopard::onCollision(Entity &other, Game &game)
 
     if (dynamic_cast<SolidTile *>(&other))
     {
-        // std::cout << "LEOPARDO COLISIONA" << std::endl;
         onCollision_SolidTile(other);
 
         if (isOnGround && Enemy::checkForLedge(other))
@@ -220,10 +219,6 @@ void Leopard::onCollision(Entity &other, Game &game)
         {
             resetPosition();
         }
-    }
-    else if (dynamic_cast<Player *>(&other))
-    {
-        // Something?
     }
 }
 

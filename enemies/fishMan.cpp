@@ -291,10 +291,6 @@ void FishMan::onCollision(Entity &other, Game &game)
             resetPosition();
         }
     }
-    // Collision with Player
-    else if (dynamic_cast<Player *>(&other))
-    {
-    }
 }
 
 // Reset fishman to initial state
