@@ -3022,11 +3022,11 @@ void levelSelectorGS::init(){
     enterPressed = false;
     pos = {
         sf::Vector2f(68.f, 272.f),
-        sf::Vector2f(154.f, 265.f),
+        // sf::Vector2f(154.f, 265.f),
         sf::Vector2f(78.f, 222.f),
-        sf::Vector2f(259.f, 247.f),     // 176, 224
+        // sf::Vector2f(259.f, 247.f),     // 176, 224
         sf::Vector2f(292.f, 228.f),
-        sf::Vector2f(262.f, 160.f),
+        // sf::Vector2f(262.f, 160.f),
         sf::Vector2f(171.f, 124.f)
     };    
 
@@ -3074,7 +3074,7 @@ void levelSelectorGS::init(){
 
     batSprite->setTextureRect(sf::IntRect(sf::Vector2i(305, 953), sf::Vector2i(16, 16)));
     batSprite->setScale(sf::Vector2f(1.65, 1.65));
-    batSprite->setPosition(pos[6]);
+    batSprite->setPosition(pos[3]);
     batSprite->setColor(sf::Color::Transparent);
 
     bat = batSprite;
@@ -3098,10 +3098,12 @@ void levelSelectorGS::init(){
     }
 
     // Defines menu options
-    std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - OUTER TOWER",
-                             "LVL 4 - CAVES", "LVL 5 - PRISON", "LVL 6 - CLOCK TOWER",
-                             "LVL 7 - DRACULA'S CHAMBERS"};
-    for (int i = 0; i < 7; i++) {
+    // std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - OUTER TOWER",
+    //                          "LVL 4 - CAVES", "LVL 5 - PRISON", "LVL 6 - CLOCK TOWER",
+    //                          "LVL 7 - DRACULA'S CHAMBERS"};
+    std::string textos[4] = {"LVL 1 - ENTRANCE", "LVL 2 - OUTER TOWER",
+                                "LVL 3 - PRISON", "LVL 4 - DRACULA'S CHAMBERS"};
+    for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 15);
         text.setFillColor(sf::Color::Transparent);
         // text.setPosition(sf::Vector2f(330.f, 80.f + i * 40.f));
@@ -3159,7 +3161,7 @@ void levelSelectorGS::handleInput(sf::Event event){
     if(!enterPressed){
         if(!showPopUp){
             if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-                if (keyPressed->scancode == controls.right && position < 6){
+                if (keyPressed->scancode == controls.right && position < 3){
                     position ++;
                     std::cout << position << std::endl;
                 }
@@ -3184,22 +3186,13 @@ void levelSelectorGS::handleInput(sf::Event event){
                             gStartingStage = 1;
                             stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                             break;
-                        case 1: // Lvl 2
+                        case 1: // Lvl 3
                             showPopUp = true;
                             break;
-                        case 2: // Lvl 3
+                        case 2: // Lvl 5
                             showPopUp = true;
                             break;
-                        case 3: // Lvl 4
-                            showPopUp = true;
-                            break;
-                        case 4: // Lvl 5
-                            showPopUp = true;
-                            break;
-                        case 5: // Lvl 6
-                            showPopUp = true;
-                            break;
-                        case 6: // Lvl Dracula Boss
+                        case 3: // Lvl 7
                             gStartingLevel = 7;
                             gStartingStage = 1; 
                             //gStartingStage = 2;
@@ -3229,7 +3222,7 @@ void levelSelectorGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
         }
     }
 
-    if(position < 6){
+    if(position < 3){
         levelSelectorSprites[1].setPosition(pos[position]);
 
         blinkTimer += deltaTime;
