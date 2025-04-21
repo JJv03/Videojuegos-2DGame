@@ -352,6 +352,9 @@ public:
     bool onCollision_SolidTile(Entity &solidTile);
     void onCollision_Item(Entity &entityItem);
 
+    // Returns 'true' if Vampire Killer (the Whip) is at max level. Else 'false'
+    bool isWhipAtMaxLevel() const;
+
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;

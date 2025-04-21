@@ -65,6 +65,7 @@ void Zombie::onCollision(Entity &other, Game &game)
     {
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
+            game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             resetPosition();
         }
     }
@@ -72,6 +73,7 @@ void Zombie::onCollision(Entity &other, Game &game)
     {
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
+            game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             resetPosition();
         }
     }

@@ -94,7 +94,7 @@ extern std::unordered_map<BreakableType, int> breakableTypeToAtlasIndex;
 class BreakableTile : public TileSprite
 {
 public:
-    BreakableType type;                      // Breakable type
+    BreakableType type;             // Breakable type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
     sf::Vector2i dropItem_position; // Position of the item that drops from the tile

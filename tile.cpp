@@ -238,7 +238,7 @@ void BreakableTile::onCollision(Entity& other, Game& game){
 void BreakableTile::onCollision_Whip(Game& game){
     if (this->isBreakable) {
         this->isDestroyed = true;
-        game.createDropItem(this->sprite->getPosition(), this->dropType);
+        game.createDropItem(this->dropType, this->sprite->getPosition());
     }
 }
 
@@ -250,9 +250,9 @@ void BreakableTile::onCollision_Player(Entity& other, Game& game) {
         game.computePlayerTileIntersection(hasCollided, tileBounds);
     }
     else {
-        game.createDropItem(sf::Vector2f{static_cast<float>(this->dropItem_position.x),
-                                         static_cast<float>(this->dropItem_position.y)},
-                                         this->dropType);
+        game.createDropItem(this->dropType,
+                            sf::Vector2f{static_cast<float>(this->dropItem_position.x),
+                                         static_cast<float>(this->dropItem_position.y)});
         this->isDestroyed = true;
     }
 }

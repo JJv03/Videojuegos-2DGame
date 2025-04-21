@@ -91,7 +91,7 @@ public:
                         sf::Vector2f virtualWorldset);
 
     // Creates a drop item in a certain position
-    void createDropItem(sf::Vector2f itemPosition, DropType dropType);
+    void createDropItem(DropType dropType, sf::Vector2f itemPosition);
 
     // Handles the interaction of Simon with an item
     void handleSimonInteractionWithItem(ItemType itemType);

@@ -540,6 +540,10 @@ void Player::onCollision_Item(Entity &entityItem)
     
 }
 
+bool Player::isWhipAtMaxLevel() const {
+    return whip.whipLvl < gWhipMaxLevel;
+}
+
 void Player::hello() const {
     std::cout << "Soy Player" << std::endl;
 }

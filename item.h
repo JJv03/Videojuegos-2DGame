@@ -64,6 +64,7 @@ enum class DropType {
     TRIPLE_SHOT = 9,
     DEFAULT_OR_WEAPON = 10,
     FIREPIT_WEAPON = 11,
+    DEFAULT_ENEMIES = 12,
 };
 
 

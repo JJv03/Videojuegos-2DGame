@@ -950,7 +950,7 @@ void Game::checkPlayerCollisions()
                 if (breakableTile->isBreakable)
                 {
                     breakableTile->isDestroyed = true;
-                    createDropItem(breakableTile->sprite->getPosition(), breakableTile->dropType);
+                    createDropItem(breakableTile->dropType, breakableTile->sprite->getPosition());
                 }
             }
         }
@@ -1059,9 +1059,9 @@ void Game::activateDoorTile(int doorId)
 //                                    AUXILIARY FUNCTIONS
 // -------------------------------------------------------------------------------------
 
-void Game::createDropItem(sf::Vector2f itemPosition, DropType dropType)
+void Game::createDropItem(DropType dropType, sf::Vector2f itemPosition)
 {
-    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.whip.whipLvl < gWhipMaxLevel);
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel());
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));
