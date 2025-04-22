@@ -243,7 +243,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
 
     tilemaps[currentStage].updateItems(deltaTime);
-    tilemaps[currentStage].updateBreakableTiles(deltaTime);
+    tilemaps[currentStage].updateMiscTiles(deltaTime);
 
     static float timeAccumulator = 0.0f;
 
@@ -565,8 +565,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
-    for (auto breakableTile : tilemaps[currentStage].m_breakableTiles)
-        staticEntities.push_back(&*breakableTile);
+    for (auto miscTile : tilemaps[currentStage].m_miscTiles)
+        staticEntities.push_back(&*miscTile);
     for (auto &stairTile : tilemaps[currentStage].m_stairTiles)
         staticEntities.push_back(&stairTile);
 
@@ -825,29 +825,29 @@ void Game::checkPlayerCollisions()
         }
     }
 
-    // Breakable tiles: first we check Simon collisions
-    // for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
+    // Misc tiles: first we check Simon collisions
+    // for (auto &miscTile : tilemaps[currentStage].m_miscTiles)
     // {
-    //     // Breakable tiles only have 1 hitbox
-    //     sf::FloatRect tileBounds = breakableTile.hitboxes[0];
+    //     // Misc tiles only have 1 hitbox
+    //     sf::FloatRect tileBounds = miscTile.hitboxes[0];
 
     //     // ignore hitboxless tiles
     //     if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) continue;
 
-    //     if (breakableTile.isDestroyed) continue;
+    //     if (miscTile.isDestroyed) continue;
 
     //     computePlayerTileIntersection(hasCollided, tileBounds);
     // }
 
-    // Breakable tiles: second we check whip collisions
+    // Misc tiles: second we check whip collisions
     if (player.isAttacking)
     {
-        for (auto &breakableTile : tilemaps[currentStage].m_breakableTiles)
+        for (auto &miscTile : tilemaps[currentStage].m_miscTiles)
         {
-            if (breakableTile->isDestroyed)
+            if (miscTile->isDestroyed)
                 continue;
 
-            sf::FloatRect tileBounds = breakableTile->hitboxes[0]; // Breakable tiles only have 1 hitbox
+            sf::FloatRect tileBounds = miscTile->hitboxes[0]; // Misc tiles only have 1 hitbox
 
             // ignore hitboxless tiles
             if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f)
@@ -856,10 +856,10 @@ void Game::checkPlayerCollisions()
             sf::FloatRect whipBounds = player.whip.sprite->getGlobalBounds();
             if (const std::optional<sf::FloatRect> intersection = whipBounds.findIntersection(tileBounds))
             {
-                if (breakableTile->isBreakable)
+                if (miscTile->isBreakable)
                 {
-                    breakableTile->isDestroyed = true;
-                    createDropItem(breakableTile->dropType, breakableTile->sprite->getPosition());
+                    miscTile->isDestroyed = true;
+                    createDropItem(miscTile->dropType, miscTile->sprite->getPosition());
                 }
             }
         }
@@ -1094,7 +1094,7 @@ void Game::restartStage()
 
     setLevelMusic(currentLevel);
 
-    tilemaps.restartBreakableTiles();
+    tilemaps.restartMiscTiles();
 
     enemyManager->restartEnemies(currentLevel, currentStage);
 
@@ -1123,10 +1123,10 @@ void Game::restartLevel()
     {
         tilemap.m_items.clear();
 
-        for (auto &breakableTile : tilemap.m_breakableTiles)
+        for (auto &miscTile : tilemap.m_miscTiles)
         {
-            breakableTile->isBreakable = true;
-            breakableTile->isDestroyed = false;
+            miscTile->isBreakable = true;
+            miscTile->isDestroyed = false;
         }
     }
 

@@ -8,8 +8,8 @@
 0,10,11,26,2,26,13,14,13,28,13,14,28,7,13,14,13,14,13,14,13,14,13,0
 doors
 end_doors
-breakable
-end_breakable
+miscellaneous
+end_miscellaneous
 stair
 end_stair
 enemies

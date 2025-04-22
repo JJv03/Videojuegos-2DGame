@@ -98,12 +98,15 @@ extern const float gPlayerStairSpeed;
 extern const float gPlayerGravity;
 extern const float gPlayerJumpForce;
 
+
 // ============ ENEMIES VARIABLES =============
 extern bool bossExist;
+
 
 // ============ GAME VARIABLES ============
 extern SoundManager gameSoundManager;
 extern bool goBack;     // Flag to go back from game
+
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

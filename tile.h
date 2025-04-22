@@ -63,46 +63,46 @@ public:
 
 // -------------------------------------------------
 
-// Types of breakable tiles. Only in this scope
-enum class BreakableType {
+// Types of miscellaneous tiles. Only in this scope
+enum class MiscTileType {
     FIREPIT = 0,
     CANDELABRUM = 1,
-    BREAKABLE_WALL_1SQUARE = 2,
-    BREAKABLE_WALL_4SQUARES = 3,
-    BREAKABLE_WALL_3SQUARES = 4,
-    DROP_TRIGGER = 5,
+    WALL_1SQUARE = 2,
+    WALL_4SQUARES = 3,
+    WALL_3SQUARES = 4,
+    DROP_TRIGGER = 5,       // Zone in which a player collision triggers an item drop
 };
 
-// Hash function for the breakable tile type
-struct BreakableTypeHash
+// Hash function for the miscellaneous tile type
+struct MiscTileTypeHash
 {
-    std::size_t operator()(const BreakableType &t) const {
+    std::size_t operator()(const MiscTileType &t) const {
         return std::hash<int>()(static_cast<int>(t));
     }
 };
 
 
-// Dicctionary with the texture rectangles of the breakable tiles
-extern std::unordered_map<BreakableType, sf::IntRect, BreakableTypeHash> breakableTextureRects;
+// Dicctionary with the texture rectangles of the miscellaneous tiles
+extern std::unordered_map<MiscTileType, sf::IntRect, MiscTileTypeHash> miscTileTextureRects;
 
-// Atlas with the textures of all the breakable tiles
-extern std::vector<sf::Texture> breakableAtlas;
+// Atlas with the textures of all the miscellaneous tiles
+extern std::vector<sf::Texture> miscTileAtlas;
 
-// Map with the breakable tile type and its corresponding index in the atlas
-extern std::unordered_map<BreakableType, int> breakableTypeToAtlasIndex;
+// Map with the miscellaneous tile type and its corresponding index in the atlas
+extern std::unordered_map<MiscTileType, int> miscTileTypeToAtlasIndex;
 
-class BreakableTile : public TileSprite
+class MiscellaneousTile : public TileSprite
 {
 public:
-    BreakableType type;             // Breakable type
+    MiscTileType type;             // Misc type
     bool isBreakable = true;        // Enabling the tile to be destroyed
     bool isDestroyed = false;       // If the tile is destroyed
     sf::Vector2i dropItem_position; // Position of the item that drops from the tile
     
     DropType dropType = DropType::NONE;          // If the tile drops an item
 
-    BreakableTile();
-    ~BreakableTile() = default;
+    MiscellaneousTile();
+    ~MiscellaneousTile() = default;
 
     //////////////////////////////
     // Entity functions
@@ -112,7 +112,7 @@ public:
     void hello() const override;
 
     //////////////////////////////
-    // Breakable functions
+    // Misc functions
     //////////////////////////////
 
     // Returns whether this tile is collidable or not
@@ -127,23 +127,23 @@ public:
     AnimationManager::Animation m_animation;        // This tiles's animation
     
     // Returns whether this tile has an animation or not
-    bool hasAnimation(BreakableType type) const;
+    bool hasAnimation(MiscTileType type) const;
 
     // Updates the animation of the tile
     void update(const float& deltaTime);
 };
 
-// Function that loads the textures of the breakable tiles
-bool loadBreakableTextures();
+// Function that loads the textures of the miscellaneous tiles
+bool loadMiscTextures();
 
-// Returns the animation frames of a breakable tile based on its type
-const std::vector<AnimationManager::Frame>& getBreakableAnimationFrames(BreakableType type);
+// Returns the animation frames of a miscellaneous tile based on its type
+const std::vector<AnimationManager::Frame>& getMiscAnimationFrames(MiscTileType type);
 
-// Returns the sprite of a breakable tile based on its type
-std::shared_ptr<sf::Sprite> getBreakableTileSprite(BreakableType type);
+// Returns the sprite of a miscellaneous tile based on its type
+std::shared_ptr<sf::Sprite> getMiscTileSprite(MiscTileType type);
 
-// Returns the instance of a breakable tile based on its type, hitbox, isBreakable and dropType
-std::shared_ptr<BreakableTile> getBreakableTile(const BreakableType type, const sf::FloatRect& hitbox,
+// Returns the instance of a miscellaneous tile based on its type, hitbox, isBreakable and dropType
+std::shared_ptr<MiscellaneousTile> getMiscTile(const MiscTileType type, const sf::FloatRect& hitbox,
                                                 const bool isBreakable, const DropType dropType,
                                                 const int dropItem_x, const int dropItem_y);
 

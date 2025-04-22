@@ -268,12 +268,12 @@ void FishMan::onCollision(Entity &other, Game &game)
             onCollision_OnlyGround(other);
         }
     }
-    // Collision with breakable tiles
-    else if (BreakableTile *breakableTile = dynamic_cast<BreakableTile *>(&other))
+    // Collision with miscellaneous tiles
+    else if (MiscellaneousTile *miscTile = dynamic_cast<MiscellaneousTile *>(&other))
     {
-        if (speed.y <= 0 && !breakableTile->isDestroyed && breakableTile->isCollidable())
+        if (speed.y <= 0 && !miscTile->isDestroyed && miscTile->isCollidable())
         {
-            onCollision_BreakableTile(breakableTile->getBounds()[0]);
+            onCollision_MiscTile(miscTile->getBounds()[0]);
         }
     }
     // Collision with Whip (player attack)

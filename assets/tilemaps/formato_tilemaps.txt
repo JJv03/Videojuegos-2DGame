@@ -9,9 +9,9 @@ id,tipo_puerta,pos_ancho,pos_alto
 id,tipo_puerta,pos_ancho,pos_alto
 [SI SON ESCALERAS]id,tipo_puerta,pos_ancho,pos_alto,posAparicion_ancho,posAparicion_alto
 ...
-breakable
-tipo_tile_breakable,pos_ancho,pos_alto
-tipo_tile_breakable,pos_ancho,pos_alto
-tipo_tile_breakable,pos_ancho,pos_alto
+miscellaneous
+tipo_tile_miscellaneous,pos_ancho,pos_alto
+tipo_tile_miscellaneous,pos_ancho,pos_alto
+tipo_tile_miscellaneous,pos_ancho,pos_alto
 ...
 

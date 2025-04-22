@@ -163,7 +163,7 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
     }
 }
 
-sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
+sf::FloatRect TileMap::getHitboxForMiscTile(const int id) const
 {
     switch (id)
     {
@@ -171,13 +171,13 @@ sf::FloatRect TileMap::getHitboxForBreakableTile(const int id) const
         return collisionTypes.at(LEFT_HALF_COLLISION);
     case 1: // Candelabrum
         return collisionTypes.at(THIN_TOP_LEFT_COLLISION);
-    case 2: // Breakable wall 1 square
+    case 2: // Wall 1 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
-    case 3: // Breakable wall 4 square
+    case 3: // Wall 4 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
-    case 4: // Breakable wall 3 square
+    case 4: // Wall 3 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
-    case 5: // Breakable wall DROP_TRIGGER
+    case 5: // Wall DROP_TRIGGER
         return collisionTypes.at(FULL_COLLISION);
     default:
         return collisionTypes.at(NO_COLLISION);
@@ -219,9 +219,9 @@ bool TileMap::load(int level, int stage, bool hasBoss)
     std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" +
                                std::to_string(level) + "_" + std::to_string(stage) + ".txt";
 
-    if (!loadBreakableTextures())
+    if (!loadMiscTextures())
     {
-        std::cerr << "Error loading breakable textures" << std::endl;
+        std::cerr << "Error loading miscellaneous tile textures" << std::endl;
         return false;
     }
 
@@ -384,8 +384,8 @@ void TileMap::updateItems(const float& deltaTime) {
     }
 }
 
-void TileMap::updateBreakableTiles(const float& delfaTime) {
-    for (auto tile : m_breakableTiles) {
+void TileMap::updateMiscTiles(const float& delfaTime) {
+    for (auto tile : m_miscTiles) {
         if (!tile->isDestroyed) {
             tile->update(delfaTime);
         }
@@ -430,15 +430,15 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
         window.draw(rect);
     }
 
-    // Breakable tiles
-    for (size_t i = 0; i < this->m_breakableTiles.size(); ++i)
+    // Misc tiles
+    for (size_t i = 0; i < this->m_miscTiles.size(); ++i)
     {
-        if (this->m_breakableTiles[i]->isDestroyed)
+        if (this->m_miscTiles[i]->isDestroyed)
         {
             continue;
         }
 
-        for (auto hitbox : this->m_breakableTiles[i]->hitboxes)
+        for (auto hitbox : this->m_miscTiles[i]->hitboxes)
         {
             sf::RectangleShape rect = FloatRectToRectShape(hitbox);
             window.draw(rect);
@@ -473,10 +473,10 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
         }
     }
 
-    for (size_t i = 0; i < m_breakableTiles.size(); ++i)
+    for (size_t i = 0; i < m_miscTiles.size(); ++i)
     {
-        if (m_breakableTiles[i]->isDestroyed) continue;
-        window.draw(*m_breakableTiles[i]->sprite);
+        if (m_miscTiles[i]->isDestroyed) continue;
+        window.draw(*m_miscTiles[i]->sprite);
     }
 
     for (size_t i = 0; i < m_items.size(); ++i)
@@ -547,7 +547,7 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
 
     processFileDoorTiles(file);
 
-    processFileBreakableTiles(file);
+    processFileMiscTiles(file);
 
     processFileStairTiles(file);
 
@@ -722,26 +722,20 @@ void TileMap::processFileDoorTiles(std::ifstream &file)
     }
 }
 
-void TileMap::processFileBreakableTiles(std::ifstream &file)
+void TileMap::processFileMiscTiles(std::ifstream &file)
 {
     std::string line;
 
-    // For security, omit the lines until the "breakable" mark
-    // while (std::getline(file, line))
-    // {
-    //     if (line == "breakable")
-    //         break;
-    // }
     std::getline(file, line);
-    if (line != "breakable")
+    if (line != "miscellaneous")
     {
-        std::cerr << "[Error] Expected 'breakable' but found: " << line << std::endl;
+        std::cerr << "[Error] Expected 'miscellaneous' but found: " << line << std::endl;
         return;
     }
 
     while (std::getline(file, line))
-    { // Until we find "end_breakable"
-        if (line == "end_breakable")
+    { // Until we find "end_miscellaneous"
+        if (line == "end_miscellaneous")
             break;
         if (line.empty())
             continue;
@@ -751,9 +745,9 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
 
         try
         {
-            // Extraction of breakable tile type (mandatory !!!)
+            // Extraction of miscellaneous tile type (mandatory !!!)
             std::getline(ss, token, ',');
-            int breakableType = std::stoi(token);
+            int miscellaneousType = std::stoi(token);
 
             // Extraction of X position (mandatory !!!)
             std::getline(ss, token, ',');
@@ -770,7 +764,7 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
             int dropItem_x = -1;
             int dropItem_y = -1;
 
-            if (std::getline(ss, token, ','))       // Breakable: Optional value
+            if (std::getline(ss, token, ','))       // Misc: Optional value
             {                                          
                 isBreakable = (std::stoi(token) != 0); // If it is not 0, it is true.
             }
@@ -793,17 +787,17 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
                 }
             }
 
-            sf::FloatRect hitbox = getHitboxForBreakableTile(breakableType);
+            sf::FloatRect hitbox = getHitboxForMiscTile(miscellaneousType);
             hitbox.position.x += posX;
             hitbox.position.y += posY;
 
-            std::shared_ptr<BreakableTile> tile = getBreakableTile(static_cast<BreakableType>(breakableType),
+            std::shared_ptr<MiscellaneousTile> tile = getMiscTile(static_cast<MiscTileType>(miscellaneousType),
                                                                     hitbox, isBreakable, dropType, dropItem_x, dropItem_y);
-            m_breakableTiles.push_back(tile);
+            m_miscTiles.push_back(tile);
         }
         catch (const std::exception &e)
         {
-            std::cerr << "Error al procesar breakable tile en la línea: " << line
+            std::cerr << "Error al procesar miscellaneous tile en la línea: " << line
                       << ". Excepción: " << e.what() << std::endl;
         }
     }
@@ -812,13 +806,6 @@ void TileMap::processFileBreakableTiles(std::ifstream &file)
 void TileMap::processFileStairTiles(std::ifstream &file)
 {
     std::string line;
-
-    // For security, omit the lines until the "breakable" mark
-    // while (std::getline(file, line))
-    // {
-    //     if (line == "breakable")
-    //         break;
-    // }
     std::getline(file, line);
     if (line != "stair")
     {
@@ -838,7 +825,7 @@ void TileMap::processFileStairTiles(std::ifstream &file)
 
         try
         {
-            // Extraction of breakable tile type (mandatory !!!)
+            // Extraction of stair tile type (mandatory !!!)
             std::getline(ss, token, ',');
             int stairType = std::stoi(token);
 

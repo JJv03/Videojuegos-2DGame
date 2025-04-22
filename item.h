@@ -50,7 +50,7 @@ enum class ItemType {
 };
 
 
-// Types of items that can drop from breakable tiles.
+// Types of items that can drop from miscellaneous tiles.
 enum class DropType {       
     NONE = 0,               // No item drops
     DEFAULT = 1,            // Default item drop (whip, secondary weapon, etc).

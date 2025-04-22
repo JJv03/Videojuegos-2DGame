@@ -34,8 +34,8 @@ private:
     // Function to get the hitbox for a solid tile based on its ID
     sf::FloatRect getHitboxForSolidTile(const int level, const int id) const;
 
-    // Function to get the hitbox for a breakable tile based on its ID
-    sf::FloatRect getHitboxForBreakableTile(const int id) const;
+    // Function to get the hitbox for a miscellaneous tile based on its ID
+    sf::FloatRect getHitboxForMiscTile(const int id) const;
 
     // Function to get the hitbox for a door tile based on its ID
     sf::FloatRect getHitboxForDoorTile(const int id) const;
@@ -62,9 +62,9 @@ private:
     // storing its doors (type,positionX,positionY) in <m_doorTiles>
     void processFileDoorTiles(std::ifstream &file);
 
-    // Function that processes the tilemap file's breakable tiles section,
-    // storing its breakableTiles (type,positionX,positionY) in <m_breakableTiles>
-    void processFileBreakableTiles(std::ifstream &file);
+    // Function that processes the tilemap file's miscellaneous tiles section,
+    // storing its miscTiles (type,positionX,positionY) in <m_miscTiles>
+    void processFileMiscTiles(std::ifstream &file);
 
     // Function that processes the tilemap file's extra stair tiles section
     void processFileStairTiles(std::ifstream &file);
@@ -101,8 +101,8 @@ public:
     // Matrix with the properties of each solid tile.
     std::vector<std::vector<SolidTile>> m_solidTiles;
 
-    // Vector with the properties of each breakable tile
-    std::vector<std::shared_ptr<BreakableTile>> m_breakableTiles;
+    // Vector with the properties of each miscellaneous tile
+    std::vector<std::shared_ptr<MiscellaneousTile>> m_miscTiles;
 
     // Vector with the properties of each door tile
     std::vector<DoorTile> m_doorTiles;
@@ -118,8 +118,8 @@ public:
     // Function that updates the items in the tilemap and erases the ones that have no lifeTime left
     void updateItems(const float& deltaTime);
 
-    // Function that updates the animation of the breakable tiles in the tilemap
-    void updateBreakableTiles(const float& delfaTime);
+    // Function that updates the animation of the miscellaneous tiles in the tilemap
+    void updateMiscTiles(const float& delfaTime);
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow &window, Camera &camera);

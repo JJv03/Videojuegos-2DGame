@@ -9,7 +9,7 @@
 doors
 1,2,606,194,608,191
 end_doors
-breakable
+miscellaneous
 1,30,96,1,1
 1,93,96,1,1
 1,157,96,1,1
@@ -18,7 +18,7 @@ breakable
 1,349,96,1,1
 1,413,96,1,1
 1,477,64,1,11
-end_breakable
+end_miscellaneous
 stair
 3,536,96
 end_stair

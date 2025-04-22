@@ -66,7 +66,7 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
     }
 }
 
-void Enemy::onCollision_BreakableTile(const sf::FloatRect &tileBound)
+void Enemy::onCollision_MiscTile(const sf::FloatRect &tileBound)
 {
     sf::FloatRect enemyHitbox = this->sprite->getGlobalBounds();
 

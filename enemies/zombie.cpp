@@ -54,11 +54,11 @@ void Zombie::onCollision(Entity &other, Game &game)
     {
         onCollision_SolidTile(other);
     }
-    else if (BreakableTile *breakableTile = dynamic_cast<BreakableTile *>(&other))
+    else if (MiscellaneousTile *miscTile = dynamic_cast<MiscellaneousTile *>(&other))
     {
-        if (!breakableTile->isDestroyed && breakableTile->isCollidable())
+        if (!miscTile->isDestroyed && miscTile->isCollidable())
         {
-            onCollision_BreakableTile(breakableTile->getBounds()[0]);
+            onCollision_MiscTile(miscTile->getBounds()[0]);
         }
     }
     else if (Whip *whip = dynamic_cast<Whip *>(&other))

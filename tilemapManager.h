@@ -29,7 +29,7 @@ public:
     // Method that loads the indicated <level> in <tilemaps>, <doors>, ...
     void loadLevel(int level);
 
-    void restartBreakableTiles();
+    void restartMiscTiles();
 
     TileMap& operator[](int i) {
         return tilemaps[i-1];

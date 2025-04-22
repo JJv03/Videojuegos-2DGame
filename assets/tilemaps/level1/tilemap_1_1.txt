@@ -9,13 +9,13 @@
 doors
 1,0,672,64
 end_doors
-breakable
+miscellaneous
 0,95,130,1,1
 0,217,130,1,1
 0,351,130,1,1
 0,479,130,1,1
 0,607,130,1,11
-end_breakable
+end_miscellaneous
 stair
 end_stair
 enemies
