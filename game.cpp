@@ -76,19 +76,22 @@ void Game::init()
     {
         throw std::runtime_error("Failed to load player textures.");
     }
-    
+
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
 
     // Enemies -------------------------------------------------------------
     enemyManager = new EnemyManager(&player);
     enemyManager->loadEnemiesFromLevel(1, tilemaps);
 
+    // Bosses -------------------------------------------------------------
+    bossManager = new BossManager(&player);
+    bossManager->loadBossesFromLevel(1, tilemaps);
+
     // Load item textures
     if (!loadItemTextures())
     {
         throw std::runtime_error("Failed to load item textures.");
     }
-
 
     // --------------------------------------------------
     // GUI
@@ -192,45 +195,52 @@ void Game::init()
 // Effects changes depending on the input of the player
 void Game::handleInput(sf::Event event)
 {
-    if(!isLoading){
-        if(!withOutLives){
+    if (!isLoading)
+    {
+        if (!withOutLives)
+        {
             player.handleInput(event);
         }
-        else{
+        else
+        {
             auto controls = configManager.getControls();
-            if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-                if (keyPressed->scancode == controls.down && position < 1) {
-                    position ++;
-                }
-        
-                if (keyPressed->scancode == controls.up && position > 0) {
-                    position --;
+            if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->scancode == controls.down && position < 1)
+                {
+                    position++;
                 }
 
-                if (keyPressed->scancode == controls.enter) {
-                    switch (position) {
-                        case 0:
-                            std::cout << "Let's play again" << std::endl;
-                            withOutLives = false;
-                            position = 0;
-                            gameSoundManager.stopAllMusic();
-                            setLevelMusic(currentLevel);
-                            player.acceptsInput = true;
-                            break;
-                        case 1:
-                            std::cout << "Going back to the menu" << std::endl;
-                            withOutLives = false;
-                            position = 0;
-                            goBack = true;
-                            // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
-                            break;
+                if (keyPressed->scancode == controls.up && position > 0)
+                {
+                    position--;
+                }
+
+                if (keyPressed->scancode == controls.enter)
+                {
+                    switch (position)
+                    {
+                    case 0:
+                        std::cout << "Let's play again" << std::endl;
+                        withOutLives = false;
+                        position = 0;
+                        gameSoundManager.stopAllMusic();
+                        setLevelMusic(currentLevel);
+                        player.acceptsInput = true;
+                        break;
+                    case 1:
+                        std::cout << "Going back to the menu" << std::endl;
+                        withOutLives = false;
+                        position = 0;
+                        goBack = true;
+                        // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
+                        break;
                     }
                 }
 
                 std::cout << "Position:" << position << withOutLives << std::endl;
             }
         }
-        
     }
 }
 
@@ -238,16 +248,19 @@ void Game::handleInput(sf::Event event)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
+    // std::cout << player.sprite->getPosition().x << ", " << player.sprite->getPosition().y << std::endl;
     player.update(deltaTime, viewPosition, windowHasFocus);
 
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
+    bossManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
 
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateMiscTiles(deltaTime);
 
     static float timeAccumulator = 0.0f;
 
-    if (!withOutLives) timeAccumulator += deltaTime;
+    if (!withOutLives)
+        timeAccumulator += deltaTime;
 
     // Reduce time every second
     if (timeAccumulator >= 1.0f)
@@ -267,14 +280,15 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
         player.setState(std::make_unique<PlayerDeadState>());
     }
-    
+
     sf::Sprite heart = gSprites.back();
     gSprites.pop_back();
     float heartX = 0;
     float heartY = 0;
-    if (position <= 1){
-        heartX = deadScreenTexts[position+1].getPosition().x - 15.f;
-        heartY = deadScreenTexts[position+1].getPosition().y - 3.f;
+    if (position <= 1)
+    {
+        heartX = deadScreenTexts[position + 1].getPosition().x - 15.f;
+        heartY = deadScreenTexts[position + 1].getPosition().y - 3.f;
     }
     heart.setPosition(sf::Vector2f(heartX, heartY));
 
@@ -384,14 +398,16 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
     else
     {
         // Just finished loading
-        if (isLoading){
+        if (isLoading)
+        {
             isLoading = false;
             beginStageEntrance = true;
-            if(!withOutLives){
+            if (!withOutLives)
+            {
                 player.acceptsInput = true;
             }
         }
-            
+
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
 
@@ -465,6 +481,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         player.draw(window);
 
         enemyManager->draw(window, currentLevel, currentStage);
+        bossManager->draw(window, currentLevel, currentStage);
 
         if (withOutLives)
         {
@@ -561,7 +578,7 @@ void Game::checkCollisions()
 }
 
 void Game::checkCollisions(const sf::Vector2f &viewPosition)
-{   
+{
     // 1. Add tiles (static entities)
     staticEntities.clear();
 
@@ -593,7 +610,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     checkDoorTileCollisions();
 
-    if(tilemaps[currentStage].hasBoss && hasReachedEndStage && !isInBossFight)
+    if (tilemaps[currentStage].hasBoss && hasReachedEndStage && !isInBossFight)
     {
         isInBossFight = true;
 
@@ -684,14 +701,15 @@ void Game::checkPlayerMapBoundCollisions()
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
     sf::FloatRect mapBounds;
-    
-    if(isInBossFight){
+
+    if (isInBossFight)
+    {
         mapBounds = tilemaps[currentStage].getMapBoundsBossFight();
     }
-    else{
+    else
+    {
         mapBounds = tilemaps[currentStage].getMapBounds();
     }
-
 
     float halfPlayerWidth = playerBounds.size.x / 2;
     // float halfPlayerHeight = playerBounds.size.y / 2; // Comentado por warning
@@ -912,6 +930,7 @@ void Game::checkPlayerCollisions()
                 currentLevel += 1;
                 tilemaps.loadLevel(currentLevel);
                 enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+                bossManager->loadBossesFromLevel(currentLevel, tilemaps);
             }
             else
             {
@@ -958,6 +977,7 @@ void Game::activateDoorTile(int doorId)
         currentLevel += 1;
         tilemaps.loadLevel(currentLevel);
         enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+        bossManager->loadBossesFromLevel(currentLevel, tilemaps);
     }
     else
     {
@@ -1047,10 +1067,12 @@ int Game::startStage(int stage, int fromStairs)
 
     currentStage = stage;
 
-    if(!withOutLives){
+    if (!withOutLives)
+    {
         setLevelMusic(currentLevel);
     }
-    else{
+    else
+    {
         auto audio = configManager.getAudio();
         float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
         gameSoundManager.playMusic("gameOver", volume, false);
@@ -1104,7 +1126,7 @@ void Game::restartStage()
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
     player.subWeaponType = ItemType::NONE;
-    player.subWeapon.sprite->setPosition({-100.f,0.f});
+    player.subWeapon.sprite->setPosition({-100.f, 0.f});
     player.subWeapon.intersected = true;
     player.hearts = 5;
 

@@ -3,6 +3,7 @@
 #include "createEnemies.h"
 #include "../player.h"
 #include "../tilemapManager.h"
+#include "projectile.h"
 #include <random>
 #include <vector>
 

@@ -4,6 +4,7 @@
 #include "tilemapManager.h"
 #include "soundManager.h"
 #include "./enemies/enemyManager.h"
+#include "./bosses/bossManager.h"
 #include "item.h"
 #include "globals.h"
 #include "collisionGrid.h"
@@ -21,19 +22,20 @@ public:
     TilemapManager tilemaps;
     CollisionGrid collisionGrid;
     EnemyManager *enemyManager;
+    BossManager *bossManager;
 
     // Where all entities will be temporarily stored in order to
     // check their collisions
-    std::vector<Entity*> staticEntities;
-    std::vector<Entity*> dynamicEntities;
+    std::vector<Entity *> staticEntities;
+    std::vector<Entity *> dynamicEntities;
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
-    
+
     // Boss fight
     bool isInBossFight = false;
     bool hasReachedEndStage = false;
-    
+
     sf::Clock revivingClock;
     sf::Clock loadingClock;
     bool isLoading = false;
@@ -70,7 +72,7 @@ public:
     void checkCollisions();
     void checkCollisions(const sf::Vector2f &viewPosition);
 
-    void checkSolidTileCollisions(std::vector<Entity*> &dynamicEntities);
+    void checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities);
 
     void checkDoorTileCollisions();
 
@@ -79,7 +81,7 @@ public:
 
     // Check if the player is colliding with the tile that is passed
     // as argument "tileBounds". If it is, set hasCollided to true
-    void computePlayerTileIntersection(bool& hasCollided, const sf::FloatRect &tileBounds);
+    void computePlayerTileIntersection(bool &hasCollided, const sf::FloatRect &tileBounds);
 
     // Check map bound collisions
     void checkPlayerMapBoundCollisions();
@@ -96,7 +98,7 @@ public:
 
     // Handles the interaction of Simon with an item
     void handleSimonInteractionWithItem(ItemType itemType);
-    
+
     // Starts stage number <stage> at current level
     int startStage(int stage, int fromStairs = 0);
 
@@ -110,7 +112,7 @@ public:
     void restartLevel();
 
     void setLevelMusic(int level);
-    
+
 private:
     // ----- All refered to the GUI -----
     sf::Font font;

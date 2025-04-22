@@ -1,0 +1,34 @@
+#pragma once
+
+#include "createBosses.h"
+#include "../player.h"
+#include "../tilemapManager.h"
+#include <random>
+#include <vector>
+
+class BossManager
+{
+private:
+    // Bosses
+    PhantomBat *phantomBat = nullptr;
+
+    // Reference to player
+    Player *playerPtr;
+
+    // Random number generator
+    std::mt19937 globalRng;
+
+public:
+    BossManager(Player *player); // Initialize with player reference
+
+    // Core game loop functions
+    void update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds);
+    void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
+
+    std::vector<Entity *> getBosses(int currentLevel, int currentStage) const; // Get all enemies
+
+    // Level loading system
+    void loadBossesFromLevel(int level, const TilemapManager &tilemaps);
+
+    void restartBosses(int currentLevel, int currentStage);
+};

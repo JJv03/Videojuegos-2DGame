@@ -1,6 +1,5 @@
 #include "enemyManager.h"
 #include <iostream>
-#include "projectile.h"
 
 // Initialize with player reference and RNG
 EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::random_device{}())
@@ -130,6 +129,9 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
             // Create enemies from tilemap data
             for (const auto &enemyData : tilemap.m_enemyData)
             {
+                if (enemyData.type >= 100)
+                    continue; // Ignore bosses
+
                 switch (enemyData.type)
                 {
                 case 0: // Zombie
