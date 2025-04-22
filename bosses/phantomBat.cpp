@@ -22,7 +22,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     {
         for (const auto &hitbox : hitboxes)
         {
-            if (playerActivationZone.findIntersection(hitbox).has_value())
+            if (playerActivationZone.findIntersection(hitbox).has_value() && isInBossFight)
             {
                 isActive = true;
                 break;
@@ -37,6 +37,14 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
 
+        // Wait 2 seconds and then go to center
+        auto mode = configManager.getDifficulty();
+        if (!mode.hard_mode){   // Normal mode
+
+        }
+        else{                   // Enhanced AI mode
+
+        }
         updateAnimation(deltaTime);
     }
 }
@@ -65,7 +73,7 @@ void PhantomBat::onCollision(Entity &other, Game &game)
 // Render phantomBat and debug info (spawn zone)
 void PhantomBat::draw(sf::RenderWindow &window)
 {
-    if (sprite && isActive)
+    if (sprite)
     {
         Boss::draw(window);
     }

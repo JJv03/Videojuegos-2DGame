@@ -2,7 +2,7 @@
 #include <iostream>
 
 Boss::Boss(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : EntitySprite(_sprite, _hitboxes) {}
+    : EntitySprite(_sprite, _hitboxes), configManager(configManager::getInstance()) {}
 
 void Boss::onCollision_SolidTile(Entity &solidTile)
 {

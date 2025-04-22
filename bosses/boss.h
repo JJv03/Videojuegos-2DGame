@@ -11,6 +11,7 @@ private:
     const float GRAVITY = 750.0f; // Gravity force
 
 public:
+    configManager &configManager;
     sf::Vector2f speed = {-75.0f, 0.0f}; // Default movement speed (left direction)
     float score = 100.0f;                // Points awarded when defeated
     float damage = 2.0f;                 // Damage dealt to player on collision
