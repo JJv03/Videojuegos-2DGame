@@ -9,7 +9,7 @@ std::shared_ptr<Projectile> createProjectile(const sf::Vector2f &position, const
     switch (type)
     {
     case ProjectileType::FISHMAN:
-        spriteRegion = {{377, 28}, {8, 8}};
+        spriteRegion = {{377, 29}, {8, 6}};
         hitboxWidth = 7.0f;
         hitboxHeight = 7.0f;
         break;
