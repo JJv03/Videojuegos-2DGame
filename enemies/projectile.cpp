@@ -54,11 +54,14 @@ void Projectile::onCollision(Entity &other, Game &game)
     {
         isActive = false;
     }
-    // Handle collision with solid tiles
-    else if (dynamic_cast<SolidTile *>(&other))
+    // Handle collision with weapons
+    else if (dynamic_cast<Whip *>(&other))
     {
-        // en principio atraviesan los bloques
-        // isActive = false;
+        isActive = false;
+    }
+    else if (dynamic_cast<SubWeapon *>(&other))
+    {
+        isActive = false;
     }
 }
 

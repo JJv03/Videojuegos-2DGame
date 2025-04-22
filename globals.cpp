@@ -20,20 +20,17 @@ const float gLevelTimeLimit = 300.f;
 const float gLoadingTime = 0.5f;
 const float gRevivingTime = 2.0f;
 
-
 // ============ IMAGE / TEXTURE / SPRITE =============
 const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
-
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
-int gStartingStage = 2;
+int gStartingStage = 4;
 
 const float gTileSize = 32.f;
 
 const float gOverlapedTileSize = gTileSize / 2.f;
-
 
 // ============ GUI VARIABLES =============
 const float gGUI_size_x = gGameVisibleWorld_size_x; // +1px for error margin
@@ -65,7 +62,6 @@ const float gGUI_PlayerHpBar_position_y = 31.f - gGUI_size_y;
 const float gGUI_BossHpBar_position_x = 55.f;
 const float gGUI_BossHpBar_position_y = 40.f - gGUI_size_y;
 
-
 // ============ GAME STATE VARIABLES =============
 const float gMenuGS_size_x = 400.0f;
 const float gMenuGS_size_y = 400.0f;
@@ -77,10 +73,8 @@ const float gGameGS_size_y = gGUI_size_y + gGameVisibleWorld_size_y - gOverlaped
 const float gGameGS_position_x = 0.0f;
 const float gGameGS_position_y = gGUI_position_y;
 
-
 // ============ ITEM VARIABLES =============
 const float gItemGravity = 200.f;
-
 
 // ============ PLAYER VARIABLES =============
 const int gWhipMaxLevel = 3;
@@ -91,7 +85,6 @@ const float gPlayerMovementSpeed = 60.0f;
 const float gPlayerStairSpeed = 30.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 205.0f;
-
 
 // ============ ENEMIES VARIABLES =============
 bool bossExist = false;
