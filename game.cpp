@@ -107,6 +107,8 @@ void Game::init()
     animationManager->playAnimation(idleSimon);
     player.currentAnimation = idleSimon;
 
+    player.animationManager = animationManager;
+
     // Enemies -------------------------------------------------------------
     enemyManager = new EnemyManager(&player);
     enemyManager->loadEnemiesFromLevel(1, tilemaps);
@@ -146,7 +148,6 @@ void Game::init()
     whipAnimationManager->addAnimation(whipLvl3C4StandingJumping, player.whip.lvl3c4Frames, false);
 
     // Player and whip manage its animations so they don't have to be managed outside
-    player.animationManager = animationManager;
     player.whip.animationManager = whipAnimationManager;
 
     player.whip.animationManager->playAnimation(whipNoAttack);

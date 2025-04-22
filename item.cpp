@@ -107,7 +107,8 @@ void Item::onCollision_SolidTile(Entity& other){
 bool loadItemTextures() {
     sf::Image image1;
     if (!image1.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
-    image1.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+    image1.createMaskFromColor(gColorKeyGrey);
+    image1.createMaskFromColor(gColorKeyGreen);
     if (!itemAtlas.loadFromImage(image1)) return false;
     itemAtlas.setSmooth(false);
 
