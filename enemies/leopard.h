@@ -14,14 +14,6 @@ private:
     const float LEOPARD_SCORE = 200.0f;
     const float LEOPARD_DAMAGE = 2.0f;
 
-    // Animation settings
-    const float ANIM_FRAME_TIME = 0.2f;
-    const int TOTAL_FRAMES = 2;
-
-    // Animation tracking
-    float animTimer = 0.0f;
-    int currentFrame = 0;
-
     // Vision and AI
     const float VISION_RANGE = 75.0f;
     sf::FloatRect visionField;

@@ -10,6 +10,21 @@ Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     life = ZOMBIE_LIFE;
     score = ZOMBIE_SCORE;
     damage = ZOMBIE_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Bat AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(walkZombie, this->zombieWalkFrames);
+    animationManager->addAnimation(noAnimation, this->emptyFrames);
+
+    // animationManager->addAnimation(invulnerableSimon,this->invulnerableFrames,false);
+    this->currentAnimation = walkZombie;
+    animationManager->playAnimation(walkZombie);
+
+    this->animationManager = animationManager;
 }
 
 // Main update loop
@@ -86,9 +101,6 @@ void Zombie::resetPosition()
 
     speed = ZOMBIE_SPEED;
     life = ZOMBIE_LIFE;
-
-    animTimer = 0.0f;
-    currentFrame = 0;
 }
 
 // Move zombie at activation zone edge (for spawning)
@@ -135,19 +147,18 @@ void Zombie::updateAnimation(float deltaTime)
     if (!isActive || !sprite)
         return;
 
-    animTimer += deltaTime;
-
-    if (animTimer >= ANIM_FRAME_TIME)
-    {
-        animTimer = 0.0f;
-        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
-
-        /*if (currentFrame == 0) {
-
-        } else {
-
-        }*/
+    if(isActive){
+        currentAnimation = walkZombie;
+    } else {
+        currentAnimation = noAnimation;
     }
+
+    if(!animationManager->isPlaying(currentAnimation))
+    {
+        animationManager->playAnimation(currentAnimation);
+    }
+
+    animationManager->update(deltaTime);
 
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;

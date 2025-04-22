@@ -190,8 +190,6 @@ void Leopard::resetPosition()
 
     sprite->setScale({1.0f, 1.0f});
 
-    animTimer = 0.0f;
-    currentFrame = 0;
     playerDetected = false;
     hasRedirected = false;
 }
@@ -222,20 +220,6 @@ void Leopard::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
         return;
-
-    animTimer += deltaTime;
-
-    if (animTimer >= ANIM_FRAME_TIME)
-    {
-        animTimer = 0.0f;
-        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
-
-        /*if (currentFrame == 0) {
-
-        } else {
-
-        }*/
-    }
 
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;

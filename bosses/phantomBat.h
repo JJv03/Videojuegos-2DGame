@@ -11,14 +11,6 @@ private:
     const float PBAT_SCORE = 3000.0f;
     const float PBAT_DAMAGE = 2.0f;
 
-    // Animation settings
-    const float ANIM_FRAME_TIME = 0.2f;
-    const int TOTAL_FRAMES = 2;
-
-    // Animation tracking
-    float animTimer = 0.0f;
-    int currentFrame = 0;
-
 public:
     int level; // Current game level
     int stage; // Current stage within level

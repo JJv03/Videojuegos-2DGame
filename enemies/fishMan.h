@@ -16,10 +16,6 @@ private:
     const float FISHMAN_DAMAGE = 2.0f;
     const float JUMP_VELOCITY = 425.0f;
 
-    // Animation settings
-    const float ANIM_FRAME_TIME = 0.2f;
-    const int TOTAL_FRAMES = 2;
-
     // Attack settings
     const float ATTACK_INTERVAL = 2.5f;
     const float ATTACK_PAUSE_TIME = 1.0f;
@@ -49,10 +45,6 @@ private:
     // Attack and movement timing
     float attackTimer = 0.0f;
     float pauseTimer = 0.0f;
-
-    // Animation tracking
-    float animTimer = 0.0f;
-    int currentFrame = 0;
 
     // Generador de números aleatorios
     std::mt19937 &rng;

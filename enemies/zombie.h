@@ -13,15 +13,15 @@ private:
     const float ZOMBIE_SCORE = 100.0f;
     const float ZOMBIE_DAMAGE = 2.0f;
 
-    // Animation settings
-    const float ANIM_FRAME_TIME = 0.2f;
-    const int TOTAL_FRAMES = 2;
-
-    // Animation tracking
-    float animTimer = 0.0f;
-    int currentFrame = 0;
-
 public:
+    std::vector<AnimationManager::Frame> zombieWalkFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 28), sf::Vector2(16, 32)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(18, 28), sf::Vector2(16, 32)), 0.2f},
+    };
+    std::vector<AnimationManager::Frame> emptyFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 28), sf::Vector2(0, 0)), 0.1f},
+    };
+
     Zombie() = default;
     Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 

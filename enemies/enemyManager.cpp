@@ -12,7 +12,8 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
         std::cerr << "Error cargando la imagen de enemigos" << std::endl;
         throw std::runtime_error("Error cargando la imagen de enemy");
     }
-    enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
+    enemyImage.createMaskFromColor(gColorKeyGrey);
+    enemyImage.createMaskFromColor(gColorKeyGreen);
 
     sf::Texture *enemyTexture = new sf::Texture();
     if (!enemyTexture->loadFromImage(enemyImage))

@@ -77,20 +77,6 @@ void PhantomBat::updateAnimation(float deltaTime)
     if (!isActive || !sprite)
         return;
 
-    animTimer += deltaTime;
-
-    if (animTimer >= ANIM_FRAME_TIME)
-    {
-        animTimer = 0.0f;
-        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
-
-        /*if (currentFrame == 0) {
-
-        } else {
-
-        }*/
-    }
-
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 

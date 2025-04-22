@@ -11,10 +11,6 @@ private:
     const float BAT_SCORE = 200.0f;
     const float BAT_DAMAGE = 2.0f;
 
-    // Animation settings
-    const float ANIM_FRAME_TIME = 0.2f;
-    const int TOTAL_FRAMES = 2;
-
     // Oscillation (up-down movement) settings
     const float OSCILLATION_SPEED = 2.5f;
     const float OSCILLATION_AMPLITUDE = 0.5f;
@@ -25,10 +21,6 @@ private:
     bool batToSpawn{false};
     float spawnTime = 0.0f;
     float batSpawnTimers = 0.0f;
-
-    // Animation tracking
-    float animTimer = 0.0f;
-    int currentFrame = 0;
 
 public:
     std::vector<AnimationManager::Frame> flyBatFrames{

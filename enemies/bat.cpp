@@ -160,9 +160,6 @@ void Bat::resetPosition()
 
     spawnTime = 0.0f;
 
-    animTimer = 0.0f;
-    currentFrame = 0;
-
     currentAnimation = noAnimation;
 }
 

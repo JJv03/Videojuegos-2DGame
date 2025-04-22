@@ -308,9 +308,6 @@ void FishMan::resetPosition()
     attackTimer = 0.0f;
     pauseTimer = 0.0f;
 
-    animTimer = 0.0f;
-    currentFrame = 0;
-
     isOnGround = false;
 }
 
@@ -380,31 +377,21 @@ void FishMan::updateAnimation(float deltaTime)
     if (!isActive || !sprite)
         return;
 
-    animTimer += deltaTime;
+    
 
-    if (animTimer >= ANIM_FRAME_TIME)
+    switch (currentState)
     {
-        animTimer = 0.0f;
+    case State::JUMPING:
+        break;
 
-        // Different animations based on state
-        /*switch (currentState)
-        {
-        case State::JUMPING:
-            currentFrame = 0;
-            break;
+    case State::WALKING:
+        break;
 
-        case State::WALKING:
-            currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
-            break;
+    case State::PAUSED_FOR_ATTACK:
+        break;
 
-        case State::PAUSED_FOR_ATTACK:
-            currentFrame = 1;
-            break;
-
-        default:
-            currentFrame = 0;
-            break;
-        }*/
+    default:
+        break;
     }
 
     // Flip sprite based on movement direction
