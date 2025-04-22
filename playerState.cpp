@@ -2087,8 +2087,13 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool window
         player.whip.sprite->setColor(sf::Color::White);
         if(player.isOnStairs){
             player.setState(state<StairIdle>());
-        } else {
-            player.setState(state<Idle>());
+        }
+        else if(player.isJumping)
+        {
+            player.setState(state<Jump>());
+        }
+        else{
+           player.setState(state<Idle>());
         }
         //std::cout << "UPGRADE WHIP END" << std::endl;
     }
