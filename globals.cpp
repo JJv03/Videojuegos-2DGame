@@ -21,6 +21,8 @@ const float gLoadingTime = 0.5f;
 const float gRevivingTime = 2.0f;
 
 // ============ IMAGE / TEXTURE / SPRITE =============
+std::unordered_map<std::string, sf::Texture> gTextures;
+
 const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 

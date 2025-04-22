@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "soundManager.h"
+#include <unordered_map>
 
 /* =================================================================
  * =========================== CONSTANTS ===========================
@@ -27,6 +28,7 @@ extern const float gRevivingTime;         // Reviving time after dying
 // ============ IMAGE / TEXTURE / SPRITE =============
 extern const sf::Color gColorKeyGrey;
 extern const sf::Color gColorKeyGreen;
+extern std::unordered_map<std::string, sf::Texture> gTextures;
 
 
 // ============ TILEMAP VARIABLES =============

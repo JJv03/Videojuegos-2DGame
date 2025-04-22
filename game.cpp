@@ -7,8 +7,6 @@
 #include "utils.h"
 #include "item.h"
 
-std::unordered_map<std::string, sf::Texture> gTextures;
-
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
 {
@@ -196,6 +194,7 @@ void Game::init()
     {
         throw std::runtime_error("Failed to load item textures.");
     }
+
 
     // --------------------------------------------------
     // GUI
