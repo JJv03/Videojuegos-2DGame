@@ -29,7 +29,11 @@ public:
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
-
+    
+    // Boss fight
+    bool isInBossFight = false;
+    bool hasReachedEndStage = false;
+    
     sf::Clock revivingClock;
     sf::Clock loadingClock;
     bool isLoading = false;

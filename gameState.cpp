@@ -82,8 +82,17 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
 
     float centerX = std::max(minX, std::min(view.getCenter().x, maxX));
     float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
-    view.setCenter({std::round(centerX), std::round(centerY)});
 
+    if(game.isInBossFight){
+        view.setCenter({std::round(maxX), std::round(centerY)});
+
+    } else {
+        view.setCenter({std::round(centerX), std::round(centerY)});
+
+        if(centerX >= maxX && !game.hasReachedEndStage){
+            game.hasReachedEndStage = true;
+        }
+    }
 
     view.setViewport(getCenteredViewport(windowAspect, viewAspect)); 
 

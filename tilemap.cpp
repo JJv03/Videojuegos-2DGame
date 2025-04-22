@@ -211,8 +211,10 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
 }
 
 
-bool TileMap::load(int level, int stage)
+bool TileMap::load(int level, int stage, bool hasBoss)
 {
+    this->hasBoss = hasBoss;
+
     std::string tileset_path = "assets/tilesets/tileset_" + std::to_string(level) + ".png";
     std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" +
                                std::to_string(level) + "_" + std::to_string(stage) + ".txt";
@@ -488,6 +490,11 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
 sf::FloatRect TileMap::getMapBounds() const
 {
     return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * m_tilesPerRow, gTileSize * m_tilesPerColumn));
+}
+
+sf::FloatRect TileMap::getMapBoundsBossFight() const
+{
+    return sf::FloatRect(sf::Vector2f(gTileSize  * (m_tilesPerRow - 8.f), 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
 }
 
 // ------------------------ Auxiliar functions ------------------------

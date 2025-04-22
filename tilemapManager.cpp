@@ -28,7 +28,7 @@ void TilemapManager::loadLevel(int level) {
         tilemaps[3].load(1, 4);
 
         tilemaps.push_back(TileMap());
-        tilemaps[4].load(1, 5);
+        tilemaps[4].load(1, 5, true); // Boss
         
         // ------------------------
         doors.clear();
@@ -79,7 +79,7 @@ void TilemapManager::loadLevel(int level) {
         tilemaps[0].load(7, 1);
 
         tilemaps.push_back(TileMap());
-        tilemaps[1].load(7, 2);
+        tilemaps[1].load(7, 2, true); // Boss
         
         // ------------------------
         doors.clear();

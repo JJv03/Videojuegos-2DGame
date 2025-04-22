@@ -23,6 +23,7 @@ void Game::init()
     currentLevel = gStartingLevel;
     currentStage = gStartingStage;
     withOutLives = false;
+    isInBossFight = false;
 
     // Level 1
     gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
@@ -692,12 +693,18 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     // ... ADD THE REST OF ENTITIES
 
-    // Cálculo aparte porque no entra en CollisionGrid
     checkPlayerMapBoundCollisions();
 
     checkSolidTileCollisions(dynamicEntities);
 
     checkDoorTileCollisions();
+
+    if(tilemaps[currentStage].hasBoss && hasReachedEndStage && !isInBossFight)
+    {
+        isInBossFight = true;
+
+        // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
+    }
 
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
 }
@@ -782,7 +789,15 @@ void Game::checkPlayerMapBoundCollisions()
 {
     sf::FloatRect playerBounds = player.sprite->getGlobalBounds();
 
-    sf::FloatRect mapBounds = tilemaps[currentStage].getMapBounds();
+    sf::FloatRect mapBounds;
+    
+    if(isInBossFight){
+        mapBounds = tilemaps[currentStage].getMapBoundsBossFight();
+    }
+    else{
+        mapBounds = tilemaps[currentStage].getMapBounds();
+    }
+
 
     float halfPlayerWidth = playerBounds.size.x / 2;
     // float halfPlayerHeight = playerBounds.size.y / 2; // Comentado por warning
@@ -1124,6 +1139,8 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
 
 int Game::startStage(int stage, int fromStairs)
 {
+    hasReachedEndStage = false;
+    isInBossFight = false;
 
     if (unsigned(stage) > tilemaps.tilemaps.size())
     {
@@ -1197,6 +1214,8 @@ void Game::restartStage()
     player.subWeapon.intersected = true;
     player.hearts = 5;
 
+    hasReachedEndStage = false;
+    isInBossFight = false;
     player.visible = true;
 
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
@@ -1228,6 +1247,8 @@ void Game::restartLevel()
     player.score = 0;
     player.lives = 3;
 
+    hasReachedEndStage = false;
+    isInBossFight = false;
     player.visible = true;
 
     startStage(1);

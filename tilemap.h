@@ -19,6 +19,8 @@ public:
     int m_tilesPerRow;
     int m_tilesPerColumn;
 
+    bool hasBoss;
+
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
 
@@ -111,7 +113,7 @@ public:
     //BVHTree<Entity> solidTileBVH; // BVH tree for collision detection
 
     // Loads the tilemap with the given tiles
-    bool load(int level, int stage);
+    bool load(int level, int stage, bool hasBoss = false);
 
     // Function that updates the items in the tilemap and erases the ones that have no lifeTime left
     void updateItems(const float& deltaTime);
@@ -124,6 +126,9 @@ public:
 
     // Function that return the limit coordinates of the map
     sf::FloatRect getMapBounds() const;
+
+    // Function that return the limit coordinates of the screen while fighting the boss
+    sf::FloatRect getMapBoundsBossFight() const;
 
     // Function that draws the hitboxes of the solid tiles
     void drawHitboxes(sf::RenderWindow &window) const;
