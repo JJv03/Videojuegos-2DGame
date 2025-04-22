@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "animationManager.h"
 
 class Game; // forward declaration
 
@@ -24,6 +25,8 @@ class EntitySprite : public Entity
 {
 public:
     std::shared_ptr<sf::Sprite> sprite;
+    AnimationManager *animationManager{nullptr};
+
     bool isOnGround = false;
 
     EntitySprite() = default;

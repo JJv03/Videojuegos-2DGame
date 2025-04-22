@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "playerState.h"
-#include "animationManager.h"
 #include "globals.h"
 #include "entity.h"
 #include "item.h"
@@ -38,7 +37,6 @@ public:
     int whipDmg;
 
     std::set<const Entity*> collisionedEntities;
-    AnimationManager *animationManager{nullptr};
 
     std::vector<AnimationManager::Frame> noAttackFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
@@ -92,8 +90,6 @@ public:
 class SubWeapon : public EntitySprite
 {
 public:
-    AnimationManager *animationManager{nullptr};
-
     std::vector<AnimationManager::Frame> noAttackFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f},
     };
@@ -247,8 +243,6 @@ public:
     const float DEACTIVATION_HEIGHT = gWindowHeight * 1.2f;
 
     // Animations
-    AnimationManager *animationManager{nullptr};
-
     std::vector<AnimationManager::Frame> idleFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 22), sf::Vector2(16, 30)), 0.2f}};
 
