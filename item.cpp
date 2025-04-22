@@ -395,30 +395,23 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
         }
 
         case DropType::DEFAULT_ENEMIES: {
-            std::cout << "[DEBUG] DropType::DEFAULT_ENEMIES" << std::endl;
             float prob = uniformZeroToOne(rng);
-            std::cout << "[DEBUG] prob: " << prob << std::endl;
             if (prob < enemyDropProb) {   // Drop an item
-                std::cout << "[DEBUG] Passed enemyDropProb check" << std::endl;
                 if (canDropWhip && uniformZeroToOne(rng) < weaponWhipProb) {   // Drop a whip
-                    std::cout << "[DEBUG] Dropping whip (MORNING_STAR)" << std::endl;
                     type = ItemType::MORNING_STAR;
                 }
                 else {
                     if (uniformZeroToOne(rng) < enemySpecialDropProb) {   // Drop a special item
-                        std::cout << "[DEBUG] Dropping special item from defaultSpecialItems" << std::endl;
                         std::uniform_int_distribution<size_t> dist(0, defaultSpecialItems.size() - 1);
                         type = defaultSpecialItems[dist(rng)];
                     }
                     else {  // Drop a default item
-                        std::cout << "[DEBUG] Dropping default item from defaultDrops" << std::endl;
                         type = chooseWeightedItem(defaultDrops, uniformZeroToOne);
                     }
                 }
                 break;
             }
             else {  // No item to drop
-                std::cout << "[DEBUG] No item to drop (failed enemyDropProb check)" << std::endl;
                 return nullptr;
             }
         }
