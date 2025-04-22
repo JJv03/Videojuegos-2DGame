@@ -239,7 +239,9 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             fishman->isActive = false;
             fishman->resetPosition();
-            fishman->getProjectile().get()->reset();
+            if(fishman->getProjectile().get()){
+                fishman->getProjectile().get()->reset();
+            }   
         }
     }
 }
