@@ -11,8 +11,9 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
         std::cerr << "Error cargando la imagen de los bosses" << std::endl;
         throw std::runtime_error("Error cargando la imagen de boss");
     }
-    bossImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
-
+    bossImage.createMaskFromColor(gColorKeyGrey);
+    bossImage.createMaskFromColor(gColorKeyGreen);
+    
     sf::Texture *bossTexture = new sf::Texture();
     if (!bossTexture->loadFromImage(bossImage))
     {

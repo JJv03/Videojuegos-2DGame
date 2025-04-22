@@ -18,6 +18,7 @@ public:
     float life = 1.0f;                   // Boss health
 
     bool isActive = false; // Whether the boss is currently active/visible
+    animationID currentAnimation;
 
     Boss() = default;
     Boss(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);

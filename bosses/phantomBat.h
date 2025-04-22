@@ -11,6 +11,19 @@ private:
     const float PBAT_SCORE = 3000.0f;
     const float PBAT_DAMAGE = 2.0f;
 
+    bool starting = true;
+
+    float sleepTimer = 0.f;
+    const float sleepInterval = 2.f;
+
+    std::vector<AnimationManager::Frame> idlePhBatFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
+    };
+    std::vector<AnimationManager::Frame> flyPhBatFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(18, 11), sf::Vector2(48, 24)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(67, 11), sf::Vector2(32, 24)), 0.15f}
+    };
+
 public:
     int level; // Current game level
     int stage; // Current stage within level

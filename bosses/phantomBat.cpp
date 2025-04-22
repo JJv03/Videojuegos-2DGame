@@ -11,6 +11,18 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
     life = PBAT_LIFE;
     score = PBAT_SCORE;
     damage = PBAT_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Fishman AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(sleepPhantomBat, this->idlePhBatFrames);
+    animationManager->addAnimation(flyPhantomBat, this->flyPhBatFrames);
+
+    this->animationManager = animationManager;
+    currentAnimation = sleepPhantomBat;
 }
 
 // Update phantomBat logic: handle spawning, movement, and deactivation
@@ -31,21 +43,32 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     }
 
     // MOVEMENT LOGIC
-    if (isActive)
+    if (isActive && isInBossFight)
     {
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
 
         // Wait 2 seconds and then go to center
-        auto mode = configManager.getDifficulty();
-        if (!mode.hard_mode){   // Normal mode
-
+        if(starting){
+            sleepTimer += deltaTime;
+            
+            if (sleepTimer >= sleepInterval) {
+                sleepTimer = 0.0f;
+                starting = false;
+                currentAnimation = flyPhantomBat;
+            }
         }
-        else{                   // Enhanced AI mode
+        else{
+            auto mode = configManager.getDifficulty();
+            if (!mode.hard_mode){   // Normal mode
+                
+            }
+            else{                   // Enhanced AI mode
 
+            }
+            updateAnimation(deltaTime);
         }
-        updateAnimation(deltaTime);
     }
 }
 
@@ -82,20 +105,27 @@ void PhantomBat::draw(sf::RenderWindow &window)
 // Update animation frame and flip sprite based on direction
 void PhantomBat::updateAnimation(float deltaTime)
 {
-    if (!isActive || !sprite)
-        return;
+    // if (!isActive || !sprite)
+    //     return;
 
-    // Flip sprite based on movement direction
-    sf::Vector2f currentSpeed = speed;
+    // // Flip sprite based on movement direction
+    // sf::Vector2f currentSpeed = speed;
 
-    if (currentSpeed.x < 0)
+    // if (currentSpeed.x < 0)
+    // {
+    //     sprite->setScale({1.0f, 1.0f});
+    // }
+    // else if (currentSpeed.x > 0)
+    // {
+    //     sprite->setScale({-1.0f, 1.0f});
+    // }
+
+    if(!animationManager->isPlaying(currentAnimation))
     {
-        sprite->setScale({1.0f, 1.0f});
+        animationManager->playAnimation(currentAnimation);
     }
-    else if (currentSpeed.x > 0)
-    {
-        sprite->setScale({-1.0f, 1.0f});
-    }
+
+    animationManager->update(deltaTime);
 }
 
 void PhantomBat::hello() const

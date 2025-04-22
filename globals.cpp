@@ -106,5 +106,5 @@ bool goBack = false;
 
 
 // ============ DEBUG =============
-const bool gDrawHitboxes = false;
+const bool gDrawHitboxes = true;
 const bool gSkipAnims = true;

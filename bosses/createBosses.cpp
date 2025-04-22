@@ -5,8 +5,9 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect PBAT_SPRITE_REGION = {{1, 11}, {16, 16}};
-    const float HITBOX_WIDTH = 40.f;
-    const float HITBOX_HEIGHT = 18.f;
+    const float HITBOX_WIDTH_1 = 48.f;
+    // const float HITBOX_WIDTH_2 = 32.f;
+    const float HITBOX_HEIGHT = 24.f;
 
     // Configure sprite
     auto phantomBatSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
@@ -19,9 +20,14 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
 
     // Create collision hitbox
     std::vector<sf::FloatRect> hitboxes = {
+        // Wings opened
         sf::FloatRect(
-            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
-            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+            {position.x - (HITBOX_WIDTH_1 / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH_1, HITBOX_HEIGHT}),
+        // Wings closed
+        // sf::FloatRect(
+        //     {position.x - (HITBOX_WIDTH_2 / 2.f), position.y - HITBOX_HEIGHT},
+        //     {HITBOX_WIDTH_2, HITBOX_HEIGHT}),
     };
 
     return new PhantomBat(phantomBatSprite, hitboxes, position, level, stage);
