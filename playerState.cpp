@@ -1146,7 +1146,7 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime, bool windowH
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
         player.currentAnimation = idleSimon;
-        player.whip.animationManager->playAnimation(whipNoAttack);
+        player.whip.animationManager->playAnimation(noAnimation);
         player.setState(state<Idle>());
     }
 }
@@ -1299,7 +1299,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowH
         player.attackedFinished = true;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
-        player.whip.animationManager->playAnimation(whipNoAttack);
+        player.whip.animationManager->playAnimation(noAnimation);
         player.isJumpStanding = true;
         player.setState(state<Jump>());
     }
@@ -1357,7 +1357,7 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
         if (KeyReleased->scancode == controls.down)
         {
             player.isDucking = false;
-            player.whip.animationManager->playAnimation(whipNoAttack);
+            player.whip.animationManager->playAnimation(noAnimation);
             player.setState(state<Idle>());
         }
     }
@@ -1424,7 +1424,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
         player.currentAnimation = duckSimon;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
-        player.whip.animationManager->playAnimation(whipNoAttack);
+        player.whip.animationManager->playAnimation(noAnimation);
         player.setState(state<Duck>());
     }
 
@@ -1548,7 +1548,7 @@ void PlayerAttackStairState::update(Player& player, float deltaTime, bool window
         player.attackedFinished = true;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
-        player.whip.animationManager->playAnimation(whipNoAttack);
+        player.whip.animationManager->playAnimation(noAnimation);
         if(player.stairStepDistance == 0.f){
             player.setState(state<StairIdle>());
         } else {
@@ -1569,7 +1569,7 @@ void PlayerAttackStairState::draw(Player& player, sf::RenderWindow &window)
 void PlayerAttackStairState::end(Player& player)
 {
     player.isAttacking = false;
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.whip.animationManager->playAnimation(noAnimation);
 }
 
 void PlayerAttackStairState::hello(){
@@ -1591,7 +1591,7 @@ void PlayerHurtState::init(Player& player)
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
     player.isJumpStanding = false;
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.whip.animationManager->playAnimation(noAnimation);
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -1676,7 +1676,7 @@ void PlayerHurtStairState::init(Player& player)
     player.isBeingHurt = true; 
     player.isInvulnerable = true;
     player.isOnStairs = true;
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.whip.animationManager->playAnimation(noAnimation);
 }
 
 void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
@@ -1727,7 +1727,7 @@ PlayerDeadState::PlayerDeadState() : PlayerState()
 void PlayerDeadState::init(Player& player)
 {
     player.currentAnimation = deathSimon;
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.whip.animationManager->playAnimation(noAnimation);
     player.animationManager->playAnimation(player.currentAnimation);
     // Initial position adjustment for first frame
     player.isDead = true;
@@ -2060,7 +2060,7 @@ void PlayerWhipUpgradeState::init(Player& player)
 {
     player.visible = true;
     player.isInvulnerable = true;
-    player.whip.animationManager->playAnimation(whipNoAttack);
+    player.whip.animationManager->playAnimation(noAnimation);
 }
 
 void PlayerWhipUpgradeState::handleInput(Player& player, sf::Event event)

@@ -851,7 +851,7 @@ bool Player::loadSpritesAndAnimations()
         return false;
     }
     whipAnimationManager->addAnimation(whipLvl1StandingJumping, this->whip.lvl1Frames, false);
-    whipAnimationManager->addAnimation(whipNoAttack, this->whip.noAttackFrames, false);
+    whipAnimationManager->addAnimation(noAnimation, this->whip.noAttackFrames, false);
     whipAnimationManager->addAnimation(whipLvl2StandingJumping, this->whip.lvl2Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C1StandingJumping, this->whip.lvl3c1Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C2StandingJumping, this->whip.lvl3c2Frames, false);
@@ -861,7 +861,7 @@ bool Player::loadSpritesAndAnimations()
     // Player and whip manage its animations so they don't have to be managed outside
     this->whip.animationManager = whipAnimationManager;
 
-    this->whip.animationManager->playAnimation(whipNoAttack);
+    this->whip.animationManager->playAnimation(noAnimation);
 
     // ----------------- SUBWEAPON -----------------
 
