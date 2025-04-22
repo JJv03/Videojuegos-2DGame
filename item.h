@@ -80,9 +80,6 @@ struct ItemTypeHash {
 // Texture rects for each item type
 extern std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 
-// All the items are in the same texture 'atlas'
-extern sf::Texture itemAtlas;
-
 
 class Item : public EntitySprite {
 public:

@@ -71,6 +71,10 @@ enum class MiscTileType {
     WALL_4SQUARES = 3,
     WALL_3SQUARES = 4,
     DROP_TRIGGER = 5,       // Zone in which a player collision triggers an item drop
+    
+    WALL_1SQUARE_BROKE = 6,     // Slight modification that has a crack
+    WALL_4SQUARES_BROKE = 7,    // Slight modification that has a crack
+    WALL_3SQUARES_BROKE = 8,    // Slight modification that has a crack
 };
 
 // Hash function for the miscellaneous tile type
@@ -83,13 +87,10 @@ struct MiscTileTypeHash
 
 
 // Dicctionary with the texture rectangles of the miscellaneous tiles
-extern std::unordered_map<MiscTileType, sf::IntRect, MiscTileTypeHash> miscTileTextureRects;
+extern std::unordered_map<MiscTileType, sf::IntRect, MiscTileTypeHash> miscType_to_TextureRects;
 
-// Atlas with the textures of all the miscellaneous tiles
-extern std::vector<sf::Texture> miscTileAtlas;
-
-// Map with the miscellaneous tile type and its corresponding index in the atlas
-extern std::unordered_map<MiscTileType, int> miscTileTypeToAtlasIndex;
+// Map with the miscellaneous tile type and its corresponding key in the texture atlas
+extern std::unordered_map<MiscTileType, std::string> miscType_to_TextureAtlasKey;
 
 class MiscellaneousTile : public TileSprite
 {

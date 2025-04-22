@@ -3,11 +3,11 @@
 #include <vector>
 #include "tile.h"
 #include "game.h"
+#include "globals.h"
 
 
-std::unordered_map<MiscTileType, sf::IntRect, MiscTileTypeHash> miscTileTextureRects;
-std::vector<sf::Texture> miscTileAtlas;
-std::unordered_map<MiscTileType, int> miscTileTypeToAtlasIndex;
+std::unordered_map<MiscTileType, sf::IntRect, MiscTileTypeHash> miscType_to_TextureRects;
+std::unordered_map<MiscTileType, std::string> miscType_to_TextureAtlasKey;
 
 
 // -------------------------- TILE (virtual) --------------------------
@@ -64,7 +64,7 @@ MiscellaneousTile::MiscellaneousTile() : TileSprite() {
 bool loadMiscTextures()
 {
     // If they're already loaded, return true
-    if (!miscTileTextureRects.empty())
+    if (!miscType_to_TextureRects.empty())
     {
         return true;
     }
@@ -74,12 +74,12 @@ bool loadMiscTextures()
     //////////////////////////////////////
     sf::Image itemsObjectsImage;
     if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
-    itemsObjectsImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+    itemsObjectsImage.createMaskFromColor(gColorKeyGrey);
 
     sf::Texture tex1;
     if (!tex1.loadFromImage(itemsObjectsImage)) return false;
     tex1.setSmooth(false);
-    miscTileAtlas.emplace_back(std::move(tex1)); 
+    gTextures["miscTile_1"] = std::move(tex1); 
 
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
@@ -90,11 +90,11 @@ bool loadMiscTextures()
     //     std::cout << "Error cargando textura Firepit." << std::endl;
     //     return false;
     // }
-    miscTileTextureRects[MiscTileType::FIREPIT] = sf::IntRect({175, 2}, {16, 31});
-    miscTileTypeToAtlasIndex[MiscTileType::FIREPIT] = 0;
+    miscType_to_TextureRects[MiscTileType::FIREPIT] = sf::IntRect({175, 2}, {16, 31});
+    miscType_to_TextureAtlasKey[MiscTileType::FIREPIT] = "miscTile_1";
 
-    miscTileTextureRects[MiscTileType::CANDELABRUM] = sf::IntRect({157, 1}, {8, 16});
-    miscTileTypeToAtlasIndex[MiscTileType::CANDELABRUM] = 0;
+    miscType_to_TextureRects[MiscTileType::CANDELABRUM] = sf::IntRect({157, 1}, {8, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::CANDELABRUM] = "miscTile_1";
 
 
     //////////////////////////////////////
@@ -102,27 +102,52 @@ bool loadMiscTextures()
     //////////////////////////////////////
     sf::Image tilesetLvl1Image;
     if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png")) return false;
-    tilesetLvl1Image.createMaskFromColor(sf::Color(0x74, 0x74, 0x74));
+    tilesetLvl1Image.createMaskFromColor(gColorKeyGrey);
 
     sf::Texture tex2;
     if (!tex2.loadFromImage(tilesetLvl1Image)) return false;
     tex2.setSmooth(false);
-    miscTileAtlas.emplace_back(std::move(tex2)); 
+    gTextures["miscTile_2"] = std::move(tex2); 
 
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
     ////////////////////////////////////////////////////////////////////////////
-    miscTileTextureRects[MiscTileType::WALL_1SQUARE] = sf::IntRect({18, 342}, {16, 16});
-    miscTileTypeToAtlasIndex[MiscTileType::WALL_1SQUARE] = 1;
+    miscType_to_TextureRects[MiscTileType::WALL_1SQUARE] = sf::IntRect({18, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_1SQUARE] = "miscTile_2";
 
-    miscTileTextureRects[MiscTileType::WALL_4SQUARES] = sf::IntRect({162, 342}, {16, 16});
-    miscTileTypeToAtlasIndex[MiscTileType::WALL_4SQUARES] = 1;
+    miscType_to_TextureRects[MiscTileType::WALL_4SQUARES] = sf::IntRect({162, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_4SQUARES] = "miscTile_2";
 
-    miscTileTextureRects[MiscTileType::WALL_3SQUARES] = sf::IntRect({146, 326}, {16, 16});
-    miscTileTypeToAtlasIndex[MiscTileType::WALL_3SQUARES] = 1;
+    miscType_to_TextureRects[MiscTileType::WALL_3SQUARES] = sf::IntRect({146, 326}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_3SQUARES] = "miscTile_2";
 
-    miscTileTextureRects[MiscTileType::DROP_TRIGGER] = sf::IntRect({120, 56}, {1, 1});
-    miscTileTypeToAtlasIndex[MiscTileType::DROP_TRIGGER] = 1;
+    miscType_to_TextureRects[MiscTileType::DROP_TRIGGER] = sf::IntRect({120, 56}, {1, 1});
+    miscType_to_TextureAtlasKey[MiscTileType::DROP_TRIGGER] = "miscTile_2";
+
+
+    //////////////////////////////////////
+    // Load the third texture to the atlas
+    //////////////////////////////////////
+    sf::Image tilesetLvl1Image_for_miscTiles;
+    if (!tilesetLvl1Image_for_miscTiles.loadFromFile("./assets/tilesets/tileset_1-paraMiscTiles.png")) return false;
+    tilesetLvl1Image_for_miscTiles.createMaskFromColor(gColorKeyGrey);
+
+    sf::Texture tex3;
+    if (!tex3.loadFromImage(tilesetLvl1Image_for_miscTiles)) return false;
+    tex3.setSmooth(false);
+    gTextures["miscTile_3"] = std::move(tex3); 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Load the texture rectangles for each miscellaneous tile of that texture atlas
+    ////////////////////////////////////////////////////////////////////////////
+    miscType_to_TextureRects[MiscTileType::WALL_1SQUARE_BROKE] = sf::IntRect({18, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_1SQUARE_BROKE] = "miscTile_3";
+
+    miscType_to_TextureRects[MiscTileType::WALL_4SQUARES_BROKE] = sf::IntRect({162, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_4SQUARES_BROKE] = "miscTile_3";
+
+    miscType_to_TextureRects[MiscTileType::WALL_3SQUARES_BROKE] = sf::IntRect({146, 326}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::WALL_3SQUARES_BROKE] = "miscTile_3";
 
     return true;
 }
@@ -145,20 +170,20 @@ const std::vector<AnimationManager::Frame>& getMiscAnimationFrames(MiscTileType 
 
     static const std::unordered_map<MiscTileType, std::vector<Frame>, MiscTileTypeHash> miscTileTypeToAnimation = {
         { MiscTileType::FIREPIT, {
-            { miscTileTextureRects.at(MiscTileType::FIREPIT), 0.2f },
-            { sf::IntRect({miscTileTextureRects.at(MiscTileType::FIREPIT).position.x
-                            + 1 + miscTileTextureRects.at(MiscTileType::FIREPIT).size.x,
-                           miscTileTextureRects.at(MiscTileType::FIREPIT).position.y},
-                          {miscTileTextureRects.at(MiscTileType::FIREPIT).size.x,
-                           miscTileTextureRects.at(MiscTileType::FIREPIT).size.y}), 0.2f },
+            { miscType_to_TextureRects.at(MiscTileType::FIREPIT), 0.2f },
+            { sf::IntRect({miscType_to_TextureRects.at(MiscTileType::FIREPIT).position.x
+                            + 1 + miscType_to_TextureRects.at(MiscTileType::FIREPIT).size.x,
+                           miscType_to_TextureRects.at(MiscTileType::FIREPIT).position.y},
+                          {miscType_to_TextureRects.at(MiscTileType::FIREPIT).size.x,
+                           miscType_to_TextureRects.at(MiscTileType::FIREPIT).size.y}), 0.2f },
         }},
         { MiscTileType::CANDELABRUM, {
-            { miscTileTextureRects.at(MiscTileType::CANDELABRUM), 0.2f },
-            { sf::IntRect({miscTileTextureRects.at(MiscTileType::CANDELABRUM).position.x
-                            + 1 + miscTileTextureRects.at(MiscTileType::CANDELABRUM).size.x,
-                           miscTileTextureRects.at(MiscTileType::CANDELABRUM).position.y},
-                          {miscTileTextureRects.at(MiscTileType::CANDELABRUM).size.x,
-                           miscTileTextureRects.at(MiscTileType::CANDELABRUM).size.y}), 0.2f },
+            { miscType_to_TextureRects.at(MiscTileType::CANDELABRUM), 0.2f },
+            { sf::IntRect({miscType_to_TextureRects.at(MiscTileType::CANDELABRUM).position.x
+                            + 1 + miscType_to_TextureRects.at(MiscTileType::CANDELABRUM).size.x,
+                           miscType_to_TextureRects.at(MiscTileType::CANDELABRUM).position.y},
+                          {miscType_to_TextureRects.at(MiscTileType::CANDELABRUM).size.x,
+                           miscType_to_TextureRects.at(MiscTileType::CANDELABRUM).size.y}), 0.2f },
         }},
     };
 
@@ -170,14 +195,14 @@ const std::vector<AnimationManager::Frame>& getMiscAnimationFrames(MiscTileType 
 
 
 std::shared_ptr<sf::Sprite> getMiscTileSprite(MiscTileType type) {
-    auto iterator = miscTileTextureRects.find(type);
-    if (iterator == miscTileTextureRects.end()) {
+    auto iterator = miscType_to_TextureRects.find(type);
+    if (iterator == miscType_to_TextureRects.end()) {
         std::cerr << "[ERROR] Texture for miscellaneous type \"" << static_cast<int>(type) << "\" not found." << std::endl;
         return nullptr;
     }
 
     sf::IntRect textureRect = iterator->second;
-    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(miscTileAtlas[miscTileTypeToAtlasIndex[type]]);
+    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(gTextures.at(miscType_to_TextureAtlasKey[type]));
     sprite->setTextureRect(textureRect);
 
     return sprite;

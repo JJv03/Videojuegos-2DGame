@@ -15,7 +15,6 @@ static std::mt19937 rng(rd());
 
 
 std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
-sf::Texture itemAtlas;
 
 
 
@@ -109,8 +108,11 @@ bool loadItemTextures() {
     if (!image1.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
     image1.createMaskFromColor(gColorKeyGrey);
     image1.createMaskFromColor(gColorKeyGreen);
-    if (!itemAtlas.loadFromImage(image1)) return false;
-    itemAtlas.setSmooth(false);
+
+    sf::Texture tex1;
+    if (!tex1.loadFromImage(image1)) return false;
+    tex1.setSmooth(false);
+    gTextures["items_1"] = std::move(tex1);
 
     item_To_TextureRect[ItemType::NONE] = sf::IntRect({0, 0}, {0, 0});      // No item, won't draw anything
     
@@ -476,7 +478,7 @@ std::shared_ptr<sf::Sprite> getItemSprite(ItemType type) {
     }
 
     sf::IntRect textureRect = iterator->second;
-    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(itemAtlas);
+    std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>(gTextures.at("items_1"));
     sprite->setTextureRect(textureRect);
 
     return sprite;
