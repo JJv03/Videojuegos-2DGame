@@ -236,9 +236,6 @@ void Leopard::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void Leopard::updateAnimation(float deltaTime)
 {
-    std::cout << "Isonground: " << isOnGround << std::endl;
-    std::cout << "Speed: " << speed.x << ", " << speed.y << std::endl;
-
     if(isActive){
         if (!isOnGround) {
             currentAnimation = jumpLeopard;
