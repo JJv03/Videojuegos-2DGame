@@ -65,6 +65,8 @@ enum class DropType {
     DEFAULT_OR_WEAPON = 10,
     FIREPIT_WEAPON = 11,
     DEFAULT_ENEMIES = 12,
+    INVISIBILITY_POTION = 13,
+    WHITE_MONEY_BAG = 14,
 };
 
 

@@ -416,12 +416,21 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             }
         }
 
+        case DropType::INVISIBILITY_POTION:
+            type = ItemType::INVISIBILITY_POTION;
+            break;
+
         case DropType::PURPLE_MONEY_BAG:
             type = ItemType::PURPLE_MONEY_BAG;
+            break;
+        
+        case DropType::WHITE_MONEY_BAG:
+            type = ItemType::WHITE_MONEY_BAG;
             break;
 
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
+            lifeTime = 10.f;
             break;
 
         case DropType::PORK_CHOP:
@@ -455,7 +464,6 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
     std::vector<AnimationManager::Frame> animationFrames = getItemAnimationFrames(type);
     
     return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
-    //return std::make_shared<Item>(type, sprite, hitboxes, lifeTime);
 }
 
 
