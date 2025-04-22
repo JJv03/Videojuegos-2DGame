@@ -787,3 +787,112 @@ bool SubWeapon::onCollision_SolidTile(Entity &solidTile) {
 void SubWeapon::hello() const {
     std::cout << "Soy SubWeapon" << std::endl;
 }
+
+
+
+bool Player::loadSpritesAndAnimations()
+{
+    // ----------------- SIMON -----------------
+    auto simonSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
+    simonSprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
+    sf::FloatRect bounds = simonSprite->getLocalBounds();
+
+    // Adjusts the transformation origin to the bottom center
+    simonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    this->sprite = simonSprite;
+    this->hitboxes.push_back(this->sprite.get()->getLocalBounds());
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
+        return false;
+    }
+    animationManager->addAnimation(idleSimon, this->idleFrames);
+    animationManager->addAnimation(jumpSimon, this->jumpFrames);
+    animationManager->addAnimation(walkSimon, this->walkFrames);
+    animationManager->addAnimation(walkSlowSimon, this->walkSlowFrames, false);
+    animationManager->addAnimation(duckSimon, this->duckFrames);
+    animationManager->addAnimation(fallenSimon, this->fallenFrames, false);
+    animationManager->addAnimation(attackSimon, this->attackFrames, false);
+    animationManager->addAnimation(attackFloorSimon, this->attackFloorFrames, false);
+    animationManager->addAnimation(stairDescendIdleSimon, this->stairDescendIdleFrames, false);
+    animationManager->addAnimation(stairAscendIdleSimon, this->stairAscendIdleFrames, false);
+    animationManager->addAnimation(stairDescendWalkSimon, this->stairDescendWalkFrames, false);
+    animationManager->addAnimation(stairAscendWalkSimon, this->stairAscendWalkFrames, false);
+    animationManager->addAnimation(stairDescendAttackSimon, this->stairDescendAttackFrames, false);
+    animationManager->addAnimation(stairAscendAttackSimon, this->stairAscendAttackFrames, false);
+    animationManager->addAnimation(hurtSimon, this->hurtFrames, false);
+    animationManager->addAnimation(deathSimon, this->deadFrames, false);
+    animationManager->addAnimation(whipUpgrade, this->colorFrames, false);
+    // animationManager->addAnimation(invulnerableSimon,this->invulnerableFrames,false);
+    animationManager->playAnimation(idleSimon);
+    this->currentAnimation = idleSimon;
+
+    this->animationManager = animationManager;
+
+
+    // ----------------- WHIP -----------------
+    auto whipSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
+    whipSprite->setTextureRect(sf::IntRect({1, 477}, {8, 32}));
+    whipSprite->setPosition({245.f, 171.f});
+
+    whipSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    this->whip.sprite = whipSprite;
+    this->whip.hitboxes.push_back(this->whip.sprite.get()->getLocalBounds());
+
+    // Inicialize whip AnimationManager ----------------------------------------------------------------
+    AnimationManager *whipAnimationManager = new AnimationManager(*this->whip.sprite, &this->whip);
+
+    if (!whipAnimationManager)
+    {
+        std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
+        return false;
+    }
+    whipAnimationManager->addAnimation(whipLvl1StandingJumping, this->whip.lvl1Frames, false);
+    whipAnimationManager->addAnimation(whipNoAttack, this->whip.noAttackFrames, false);
+    whipAnimationManager->addAnimation(whipLvl2StandingJumping, this->whip.lvl2Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C1StandingJumping, this->whip.lvl3c1Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C2StandingJumping, this->whip.lvl3c2Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C3StandingJumping, this->whip.lvl3c3Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3C4StandingJumping, this->whip.lvl3c4Frames, false);
+
+    // Player and whip manage its animations so they don't have to be managed outside
+    this->whip.animationManager = whipAnimationManager;
+
+    this->whip.animationManager->playAnimation(whipNoAttack);
+
+    // ----------------- SUBWEAPON -----------------
+
+    // Create subweapon sprite
+    auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
+    subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
+    subweaponSprite->setPosition({-20.f, 171.f});
+    subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    //  Set up the subweapon (subweapon)
+    this->subWeapon.sprite = subweaponSprite;
+    this->subWeapon.hitboxes.push_back(this->subWeapon.sprite->getLocalBounds());
+
+    // Initialize subweapon AnimationManager
+    AnimationManager *subweaponAnimationManager = new AnimationManager(*this->subWeapon.sprite, &this->subWeapon);
+    if (!subweaponAnimationManager)
+    {
+        std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
+        return false;
+    }
+
+    // Add animations (similar to whip)
+    subweaponAnimationManager->addAnimation(subweaponNoAttack, this->subWeapon.noAttackFrames, false);
+    subweaponAnimationManager->addAnimation(axeThrowing, this->subWeapon.axeFrames);
+    subweaponAnimationManager->addAnimation(daggerThrowing, this->subWeapon.daggerFrames, false);
+    subweaponAnimationManager->addAnimation(fireBombThrowing, this->subWeapon.firebombFrames, false);
+    subweaponAnimationManager->addAnimation(boomerangThrowing, this->subWeapon.boomerangFrames);
+
+    // Assign animation managers
+    this->subWeapon.animationManager = subweaponAnimationManager;
+    this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+
+    return true;
+}

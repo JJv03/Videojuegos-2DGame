@@ -71,105 +71,17 @@ void Game::init()
     tilemaps.loadLevel(currentLevel);
 
     // Simon ----------------------------------------------------------------
-
-    auto simonSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
-    simonSprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
-    simonSprite->setPosition(tilemaps[currentStage].initialPosition);
-    sf::FloatRect bounds = simonSprite->getLocalBounds();
-
-    // Adjusts the transformation origin to the bottom center
-    simonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    player.sprite = simonSprite;
-    player.hitboxes.push_back(player.sprite.get()->getLocalBounds());
-
-    AnimationManager *animationManager = new AnimationManager(*player.sprite, &player);
-
-    animationManager->addAnimation(idleSimon, player.idleFrames);
-    animationManager->addAnimation(jumpSimon, player.jumpFrames);
-    animationManager->addAnimation(walkSimon, player.walkFrames);
-    animationManager->addAnimation(walkSlowSimon, player.walkSlowFrames, false);
-    animationManager->addAnimation(duckSimon, player.duckFrames);
-    animationManager->addAnimation(fallenSimon, player.fallenFrames, false);
-    animationManager->addAnimation(attackSimon, player.attackFrames, false);
-    animationManager->addAnimation(attackFloorSimon, player.attackFloorFrames, false);
-    animationManager->addAnimation(stairDescendIdleSimon, player.stairDescendIdleFrames, false);
-    animationManager->addAnimation(stairAscendIdleSimon, player.stairAscendIdleFrames, false);
-    animationManager->addAnimation(stairDescendWalkSimon, player.stairDescendWalkFrames, false);
-    animationManager->addAnimation(stairAscendWalkSimon, player.stairAscendWalkFrames, false);
-    animationManager->addAnimation(stairDescendAttackSimon, player.stairDescendAttackFrames, false);
-    animationManager->addAnimation(stairAscendAttackSimon, player.stairAscendAttackFrames, false);
-    animationManager->addAnimation(hurtSimon, player.hurtFrames, false);
-    animationManager->addAnimation(deathSimon, player.deadFrames, false);
-    animationManager->addAnimation(whipUpgrade, player.colorFrames, false);
-    // animationManager->addAnimation(invulnerableSimon,player.invulnerableFrames,false);
-    animationManager->playAnimation(idleSimon);
-    player.currentAnimation = idleSimon;
-
-    player.animationManager = animationManager;
+    // Load item textures
+    if (!player.loadSpritesAndAnimations())
+    {
+        throw std::runtime_error("Failed to load player textures.");
+    }
+    
+    player.sprite->setPosition(tilemaps[currentStage].initialPosition);
 
     // Enemies -------------------------------------------------------------
     enemyManager = new EnemyManager(&player);
     enemyManager->loadEnemiesFromLevel(1, tilemaps);
-
-    // Whip ----------------------------------------------------------------
-    auto whipSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
-    whipSprite->setTextureRect(sf::IntRect({1, 477}, {8, 32}));
-    whipSprite->setPosition({245.f, 171.f});
-
-    whipSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-
-    player.whip.sprite = whipSprite;
-    player.whip.hitboxes.push_back(player.whip.sprite.get()->getLocalBounds());
-
-    // Inicialize whip AnimationManager ----------------------------------------------------------------
-    AnimationManager *whipAnimationManager = new AnimationManager(*player.whip.sprite, &player.whip);
-
-    if (!whipAnimationManager)
-    {
-        std::cerr << "Error: Failed to initialize Whip AnimationManager!" << std::endl;
-    }
-    whipAnimationManager->addAnimation(whipLvl1StandingJumping, player.whip.lvl1Frames, false);
-    whipAnimationManager->addAnimation(whipNoAttack, player.whip.noAttackFrames, false);
-    whipAnimationManager->addAnimation(whipLvl2StandingJumping, player.whip.lvl2Frames, false);
-    whipAnimationManager->addAnimation(whipLvl3C1StandingJumping, player.whip.lvl3c1Frames, false);
-    whipAnimationManager->addAnimation(whipLvl3C2StandingJumping, player.whip.lvl3c2Frames, false);
-    whipAnimationManager->addAnimation(whipLvl3C3StandingJumping, player.whip.lvl3c3Frames, false);
-    whipAnimationManager->addAnimation(whipLvl3C4StandingJumping, player.whip.lvl3c4Frames, false);
-
-    // Player and whip manage its animations so they don't have to be managed outside
-    player.whip.animationManager = whipAnimationManager;
-
-    player.whip.animationManager->playAnimation(whipNoAttack);
-
-    // Secondary weapons ----------------------------------------------------------------
-    
-    // Create subweapon sprite
-    auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
-    subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
-    subweaponSprite->setPosition({-20.f, 171.f});
-    subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-
-    //  Set up the subweapon (subweapon)
-    player.subWeapon.sprite = subweaponSprite;
-    player.subWeapon.hitboxes.push_back(player.subWeapon.sprite->getLocalBounds());
-
-    // Initialize subweapon AnimationManager
-    AnimationManager *subweaponAnimationManager = new AnimationManager(*player.subWeapon.sprite, &player.subWeapon);
-    if (!subweaponAnimationManager)
-    {
-        std::cerr << "Error: Failed to initialize subweapon AnimationManager!" << std::endl;
-    }
-
-    // Add animations (similar to whip)
-    subweaponAnimationManager->addAnimation(subweaponNoAttack, player.subWeapon.noAttackFrames, false);
-    subweaponAnimationManager->addAnimation(axeThrowing, player.subWeapon.axeFrames);
-    subweaponAnimationManager->addAnimation(daggerThrowing, player.subWeapon.daggerFrames, false);
-    subweaponAnimationManager->addAnimation(fireBombThrowing, player.subWeapon.firebombFrames, false);
-    subweaponAnimationManager->addAnimation(boomerangThrowing, player.subWeapon.boomerangFrames);
-
-    // Assign animation managers
-    player.subWeapon.animationManager = subweaponAnimationManager;
-    player.subWeapon.animationManager->playAnimation(subweaponNoAttack);
 
     // Load item textures
     if (!loadItemTextures())

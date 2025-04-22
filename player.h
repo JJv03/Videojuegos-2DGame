@@ -333,6 +333,7 @@ public:
     Player();
     ~Player() = default;
 
+    bool loadSpritesAndAnimations();
     void handleInput(sf::Event event);
     void update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus);
     void draw(sf::RenderWindow &window);
