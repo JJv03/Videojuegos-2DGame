@@ -14,7 +14,7 @@ Zombie::Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
-        std::cerr << "Error: Failed to initialize Bat AnimationManager!" << std::endl;
+        std::cerr << "Error: Failed to initialize Zombie AnimationManager!" << std::endl;
     }
 
     animationManager->addAnimation(walkZombie, this->zombieWalkFrames);

@@ -43,7 +43,7 @@ Leopard *createLeopard(const sf::Vector2f &position, const size_t &level, const 
     // Center sprite origin
     sf::FloatRect bounds = leopardSprite->getLocalBounds();
     leopardSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-
+    
     // Create collision hitbox
     std::vector<sf::FloatRect> hitboxes = {
         sf::FloatRect(

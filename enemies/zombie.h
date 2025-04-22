@@ -13,7 +13,6 @@ private:
     const float ZOMBIE_SCORE = 100.0f;
     const float ZOMBIE_DAMAGE = 2.0f;
 
-public:
     std::vector<AnimationManager::Frame> zombieWalkFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 28), sf::Vector2(16, 32)), 0.2f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(18, 28), sf::Vector2(16, 32)), 0.2f},
@@ -22,6 +21,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 28), sf::Vector2(0, 0)), 0.1f},
     };
 
+public:
     Zombie() = default;
     Zombie(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 

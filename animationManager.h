@@ -44,8 +44,7 @@ enum animationID{
     walkZombie,
     idleLeopard,
     walkLeopard,
-    flyRedBat,
-    sleepBat,
+    jumpLeopard,
     flyBat,
 
     // Bosses

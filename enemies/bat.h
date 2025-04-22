@@ -22,7 +22,6 @@ private:
     float spawnTime = 0.0f;
     float batSpawnTimers = 0.0f;
 
-public:
     std::vector<AnimationManager::Frame> flyBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(184, 11), sf::Vector2(16, 16)), 0.125f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(201, 11), sf::Vector2(16, 16)), 0.125f},
@@ -33,6 +32,7 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(184, 11), sf::Vector2(0, 0)), 0.1f},
     };
 
+public:
     int level; // Current game level
     int stage; // Current stage within level
 

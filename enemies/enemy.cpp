@@ -48,10 +48,14 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
             {
                 if (enemyHitbox.position.y < tileBound.position.y + tileBound.size.y / 2.f)
                 {
-                    // Up
-                    sprite->move({0.f, -overlapY});
-                    for (auto &h : hitboxes)
-                        h.position.y -= overlapY;
+                    if(overlapY >= 0.01f){
+                        sprite->move({0.f, -overlapY + 0.01f});
+                        for (auto &h : hitboxes){
+                            h.position.y -= overlapY;
+                            h.position.y += 0.01f;
+                        }
+                    }
+                    
                     isOnGround = true;
                 }
                 else
@@ -63,6 +67,10 @@ void Enemy::onCollision_SolidTile(Entity &solidTile)
                 }
             }
         }
+    }
+
+    if(speed.y == 0.f){
+        isOnGround = true;
     }
 }
 

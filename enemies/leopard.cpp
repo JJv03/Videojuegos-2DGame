@@ -19,6 +19,23 @@ Leopard::Leopard(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
             {hitboxes[0].position.x - VISION_RANGE, hitboxes[0].position.y - VISION_RANGE},
             {hitboxes[0].size.x + (VISION_RANGE * 2), hitboxes[0].size.y + (VISION_RANGE * 2)});
     }
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Leopard AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(idleLeopard, this->idleLeopardFrames);
+    animationManager->addAnimation(jumpLeopard, this->jumpLeopardFrames);
+    animationManager->addAnimation(walkLeopard, this->walkLeopardFrames);
+    animationManager->addAnimation(noAnimation, this->emptyFrames);
+
+    // animationManager->addAnimation(invulnerableSimon,this->invulnerableFrames,false);
+    this->currentAnimation = flyBat;
+    animationManager->playAnimation(flyBat);
+
+    this->animationManager = animationManager;
 }
 
 // Update vision field based on current position
@@ -134,10 +151,11 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
             }
         }
 
+        updateAnimation(deltaTime);
+
+        
         // Right before checkCollisions
         isOnGround = false;
-
-        updateAnimation(deltaTime);
     }
 }
 
@@ -218,13 +236,33 @@ void Leopard::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void Leopard::updateAnimation(float deltaTime)
 {
-    if (!isActive || !sprite)
-        return;
+    std::cout << "Isonground: " << isOnGround << std::endl;
+    std::cout << "Speed: " << speed.x << ", " << speed.y << std::endl;
 
+    if(isActive){
+        if (!isOnGround) {
+            currentAnimation = jumpLeopard;
+        } else if (speed.x != 0){
+            currentAnimation = walkLeopard;
+        } else {
+            currentAnimation = idleLeopard;
+        }
+    } else {
+        currentAnimation = noAnimation;
+    }
+
+    if(!animationManager->isPlaying(currentAnimation))
+    {
+        animationManager->playAnimation(currentAnimation);
+    }
+
+    animationManager->update(deltaTime);
+
+    
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 
-    if (currentSpeed.x < 0)
+    if (currentSpeed.x <= 0)
     {
         sprite->setScale({1.0f, 1.0f});
     }
