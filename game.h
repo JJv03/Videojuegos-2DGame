@@ -20,6 +20,7 @@ public:
     Player player;
     TilemapManager tilemaps;
     CollisionGrid collisionGrid;
+    EnemyManager *enemyManager;
 
     // Where all entities will be temporarily stored in order to
     // check their collisions
@@ -28,10 +29,6 @@ public:
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
-
-    // Gestor de enemigos
-    EnemyManager *enemyManager;
-
 
     sf::Clock revivingClock;
     sf::Clock loadingClock;
