@@ -5,6 +5,24 @@
 // Initialize with player reference and RNG
 EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::random_device{}())
 {
+    // Load and process enemy texture
+    sf::Image enemyImage;
+    if (!enemyImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
+    {
+        std::cerr << "Error cargando la imagen del zombie" << std::endl;
+        throw std::runtime_error("Error cargando la imagen de enemy");
+    }
+    enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
+
+    sf::Texture *enemyTexture = new sf::Texture();
+    if (!enemyTexture->loadFromImage(enemyImage))
+    {
+        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
+        delete enemyTexture;
+        throw std::runtime_error("Error cargando la textura desde la imagen");
+    }
+
+    gTextures["enemy"] = *enemyTexture;
 }
 
 // Update all active enemies in current level/stage

@@ -13,6 +13,17 @@ Game::Game() : configManager(configManager::getInstance())
     Player player;
     tilemaps = TilemapManager();
     collisionGrid = CollisionGrid(this);
+
+    // Loads simon texture
+    sf::Image simonImage;
+    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    simonImage.createMaskFromColor(gColorKeyGrey);
+    simonImage.createMaskFromColor(gColorKeyGreen);
+
+    gTextures["simon"] = sf::Texture(simonImage, false);
 }
 
 // Initializes a new game from the beggining
@@ -61,17 +72,6 @@ void Game::init()
 
     // Simon ----------------------------------------------------------------
 
-    // Loads simon texture
-    sf::Image simonImage;
-    if (!simonImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
-    {
-        std::cerr << "Error cargando la imagen de Simon" << std::endl;
-    }
-    simonImage.createMaskFromColor(gColorKeyGrey);
-    simonImage.createMaskFromColor(gColorKeyGreen);
-
-    gTextures["simon"] = sf::Texture(simonImage, false);
-
     auto simonSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
     simonSprite->setTextureRect(sf::IntRect({1, 21}, {16, 32}));
     simonSprite->setPosition(tilemaps[currentStage].initialPosition);
@@ -112,16 +112,7 @@ void Game::init()
     enemyManager->loadEnemiesFromLevel(1, tilemaps);
 
     // Whip ----------------------------------------------------------------
-    sf::Image whipImage;
-    if (!whipImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
-    {
-        std::cerr << "Error cargando la imagen de Simon" << std::endl;
-    }
-    whipImage.createMaskFromColor(gColorKeyGrey);
-    whipImage.createMaskFromColor(gColorKeyGreen);
-    gTextures["whip"] = sf::Texture(whipImage, false);
-
-    auto whipSprite = std::make_shared<sf::Sprite>(gTextures["whip"]);
+    auto whipSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
     whipSprite->setTextureRect(sf::IntRect({1, 477}, {8, 32}));
     whipSprite->setPosition({245.f, 171.f});
 
@@ -151,18 +142,9 @@ void Game::init()
     player.whip.animationManager->playAnimation(whipNoAttack);
 
     // Secondary weapons ----------------------------------------------------------------
-    // Load subweapon weapon image
-    sf::Image subweaponImage;
-    if (!subweaponImage.loadFromFile("./assets/sprites/player/simonBelmont.png"))
-    {
-        std::cerr << "Error loading subweapon image" << std::endl;
-    }
-    subweaponImage.createMaskFromColor(gColorKeyGrey);
-    subweaponImage.createMaskFromColor(gColorKeyGreen);
-    gTextures["subweapon"] = sf::Texture(subweaponImage, false);
-
+    
     // Create subweapon sprite
-    auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["subweapon"]);
+    auto subweaponSprite = std::make_shared<sf::Sprite>(gTextures["simon"]);
     subweaponSprite->setTextureRect(sf::IntRect({587, 477}, {16, 16}));
     subweaponSprite->setPosition({-20.f, 171.f});
     subweaponSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});

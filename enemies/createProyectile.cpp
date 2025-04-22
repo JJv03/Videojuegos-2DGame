@@ -3,7 +3,6 @@
 std::shared_ptr<Projectile> createProjectile(const sf::Vector2f &position, const sf::Vector2f &velocity, ProjectileType type, float damage)
 {
     sf::IntRect spriteRegion;
-    std::string texturePath = "./assets/sprites/enemies/enemies.png";
     float hitboxWidth = 8.0f;
     float hitboxHeight = 8.0f;
 
@@ -21,25 +20,8 @@ std::shared_ptr<Projectile> createProjectile(const sf::Vector2f &position, const
         break;
     }
 
-    // Load and process sprite texture
-    sf::Image projectileImage;
-    if (!projectileImage.loadFromFile(texturePath))
-    {
-        std::cerr << "Error loading projectile sprite sheet" << std::endl;
-        throw std::runtime_error("Error loading projectile sprite sheet");
-    }
-    projectileImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove background color
-
-    sf::Texture *projectileTexture = new sf::Texture();
-    if (!projectileTexture->loadFromImage(projectileImage))
-    {
-        std::cerr << "Error loading texture from image" << std::endl;
-        delete projectileTexture;
-        throw std::runtime_error("Error loading texture from image");
-    }
-
     // Configure sprite
-    auto projectileSprite = std::make_shared<sf::Sprite>(*projectileTexture);
+    auto projectileSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
     projectileSprite->setTextureRect(spriteRegion);
     projectileSprite->setPosition(position);
 

@@ -8,25 +8,8 @@ Zombie *createZombie(const sf::Vector2f &position)
     const float HITBOX_WIDTH = 12.f;
     const float HITBOX_HEIGHT = 30.f;
 
-    // Load and process sprite texture
-    sf::Image zombieImage;
-    if (!zombieImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del zombie" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del zombie");
-    }
-    zombieImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
-
-    sf::Texture *zombieTexture = new sf::Texture();
-    if (!zombieTexture->loadFromImage(zombieImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete zombieTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
     // Configure sprite
-    auto zombieSprite = std::make_shared<sf::Sprite>(*zombieTexture);
+    auto zombieSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
     zombieSprite->setTextureRect(ZOMBIE_SPRITE_REGION);
     zombieSprite->setPosition(position);
 
@@ -52,25 +35,8 @@ Leopard *createLeopard(const sf::Vector2f &position, const size_t &level, const 
     const float HITBOX_WIDTH = 22.f;
     const float HITBOX_HEIGHT = 18.f;
 
-    // Load and process sprite texture
-    sf::Image leopardImage;
-    if (!leopardImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del leopard" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del leopard");
-    }
-    leopardImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
-
-    sf::Texture *leopardTexture = new sf::Texture();
-    if (!leopardTexture->loadFromImage(leopardImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete leopardTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
     // Configure sprite
-    auto leopardSprite = std::make_shared<sf::Sprite>(*leopardTexture);
+    auto leopardSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
     leopardSprite->setTextureRect(LEOPARD_SPRITE_REGION);
     leopardSprite->setPosition(position);
 
@@ -96,25 +62,8 @@ Bat *createBatSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize
     const float HITBOX_WIDTH = 15.f;
     const float HITBOX_HEIGHT = 15.f;
 
-    // Load and process sprite texture
-    sf::Image batImage;
-    if (!batImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del bat" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del bat");
-    }
-    batImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
-
-    sf::Texture *batTexture = new sf::Texture();
-    if (!batTexture->loadFromImage(batImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete batTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
     // Configure sprite
-    auto batSprite = std::make_shared<sf::Sprite>(*batTexture);
+    auto batSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
     batSprite->setTextureRect(BAT_SPRITE_REGION);
     batSprite->setPosition(position);
 
@@ -140,25 +89,8 @@ FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &
     const float HITBOX_WIDTH = 15.f;
     const float HITBOX_HEIGHT = 28.f;
 
-    // Load and process sprite texture
-    sf::Image fishmanImage;
-    if (!fishmanImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
-    {
-        std::cerr << "Error cargando la imagen del fishman" << std::endl;
-        throw std::runtime_error("Error cargando la imagen del fishman");
-    }
-    fishmanImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
-
-    sf::Texture *fishmanTexture = new sf::Texture();
-    if (!fishmanTexture->loadFromImage(fishmanImage))
-    {
-        std::cerr << "Error cargando la textura desde la imagen" << std::endl;
-        delete fishmanTexture;
-        throw std::runtime_error("Error cargando la textura desde la imagen");
-    }
-
     // Configure sprite
-    auto fishmanSprite = std::make_shared<sf::Sprite>(*fishmanTexture);
+    auto fishmanSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
     fishmanSprite->setTextureRect(FISHMAN_SPRITE_REGION);
     fishmanSprite->setPosition(position);
 
