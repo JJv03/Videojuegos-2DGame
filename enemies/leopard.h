@@ -30,8 +30,7 @@ private:
     sf::Vector2f playerPosition;
 
     // Navigation methods
-    bool checkForLedge(const TileMap &tileMap); // Detect edges/cliffs
-    void jump();                                // Jump action
+    void jump(); // Jump action
 
 public:
     int level; // Current game level

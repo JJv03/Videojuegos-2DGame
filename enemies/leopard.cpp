@@ -32,50 +32,6 @@ void Leopard::updateVisionField()
     }
 }
 
-// Detect ledges/cliffs to prevent falling
-bool Leopard::checkForLedge(const TileMap &tileMap)
-{
-    if (!isOnGround || std::abs(speed.x) < 0.1f)
-        return false;
-
-    // Check area in movement direction
-    float offsetX = (speed.x > 0) ? hitboxes[0].size.x + 10.0f : -10.0f;
-
-    sf::Vector2f checkPoint = {
-        hitboxes[0].position.x + offsetX,
-        hitboxes[0].position.y + hitboxes[0].size.y + 5.0f};
-
-    // Small rectangle to check collision with the ground
-    sf::FloatRect checkRect = sf::FloatRect(
-        {checkPoint.x - 5.0f, checkPoint.y},
-        {10.0f, 10.0f});
-
-    const float minHeightThreshold = 5.0f; // Vertical tolerance
-
-    // Scan solid tiles for ground collision
-    for (const auto &row : tileMap.m_solidTiles)
-    {
-        for (const auto &tile : row)
-        {
-            for (const auto &hitbox : tile.hitboxes)
-            {
-                if (hitbox.size.x == 0 || hitbox.size.y == 0)
-                    continue;
-
-                if (const std::optional<sf::FloatRect> intersection = checkRect.findIntersection(hitbox))
-                {
-                    if (intersection->size.y >= minHeightThreshold)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
 // Jump action
 void Leopard::jump()
 {
