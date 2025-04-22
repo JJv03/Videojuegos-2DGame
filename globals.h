@@ -26,9 +26,10 @@ extern const float gRevivingTime;         // Reviving time after dying
 
 
 // ============ IMAGE / TEXTURE / SPRITE =============
+extern std::unordered_map<std::string, sf::Texture> gTextures;  // Stores all the textures used in the game
+
 extern const sf::Color gColorKeyGrey;
 extern const sf::Color gColorKeyGreen;
-extern std::unordered_map<std::string, sf::Texture> gTextures;
 
 
 // ============ TILEMAP VARIABLES =============
