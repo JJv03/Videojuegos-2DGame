@@ -28,8 +28,9 @@ private:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(56, 11), sf::Vector2(24, 16)), 0.1f}
     };
     std::vector<AnimationManager::Frame> walkLeopardFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(114, 11), sf::Vector2(32, 16)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 11), sf::Vector2(32, 16)), 0.15f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 11), sf::Vector2(32, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(114, 11), sf::Vector2(32, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(81, 11), sf::Vector2(32, 16)), 0.1f}
     };
     std::vector<AnimationManager::Frame> jumpLeopardFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(81, 11), sf::Vector2(32, 16)), 0.1f}

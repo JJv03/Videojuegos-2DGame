@@ -370,27 +370,26 @@ void FishMan::draw(sf::RenderWindow &window)
         window.draw(zoneShape);
     }
 }
-
+ 
 // Update animation frame and flip sprite based on direction
 void FishMan::updateAnimation(float deltaTime)
 {
-    if (!isActive || !sprite)
-        return;
-
-    
-
     switch (currentState)
     {
     case State::JUMPING:
+
         break;
 
     case State::WALKING:
+
         break;
 
     case State::PAUSED_FOR_ATTACK:
+
         break;
 
     default:
+
         break;
     }
 
