@@ -54,6 +54,20 @@ private:
     bool hasFiredDuringPause = {false};
     bool hasProjectile{false};
 
+    std::vector<AnimationManager::Frame> idleFishmanFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(309, 28), sf::Vector2(16, 32)), 0.1f}
+    };
+    std::vector<AnimationManager::Frame> walkFishmanFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(309, 28), sf::Vector2(16, 32)), 0.35f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(326, 28), sf::Vector2(16, 32)), 0.35f}
+    };
+    std::vector<AnimationManager::Frame> pauseAttackFishmanFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(343, 28), sf::Vector2(16, 32)), 0.1f}
+    };
+    std::vector<AnimationManager::Frame> emptyFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(309, 28), sf::Vector2(0, 0)), 0.1f},
+    };
+
 public:
     int level; // Current game level
     int stage; // Current stage within level

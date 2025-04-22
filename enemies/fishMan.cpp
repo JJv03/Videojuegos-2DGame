@@ -18,6 +18,19 @@ FishMan::FishMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
     life = FISHMAN_LIFE;
     score = FISHMAN_SCORE;
     damage = FISHMAN_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Fishman AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(idleFishman, this->idleFishmanFrames);
+    animationManager->addAnimation(walkFishman, this->walkFishmanFrames);
+    animationManager->addAnimation(pauseAttackFishman, this->pauseAttackFishmanFrames);
+    animationManager->addAnimation(noAnimation, this->emptyFrames);
+
+    this->animationManager = animationManager;
 }
 
 // Update fishman logic: handle spawning, movement, and deactivation
@@ -374,24 +387,37 @@ void FishMan::draw(sf::RenderWindow &window)
 // Update animation frame and flip sprite based on direction
 void FishMan::updateAnimation(float deltaTime)
 {
-    switch (currentState)
-    {
-    case State::JUMPING:
+    
 
-        break;
+    if(isActive){
+        switch (currentState)
+        {
+        case State::JUMPING:
+            currentAnimation = idleFishman;
+            break;
 
-    case State::WALKING:
+        case State::WALKING:
+            currentAnimation = walkFishman;
+            break;
 
-        break;
+        case State::PAUSED_FOR_ATTACK:
+            currentAnimation = pauseAttackFishman;
+            break;
 
-    case State::PAUSED_FOR_ATTACK:
-
-        break;
-
-    default:
-
-        break;
+        default:
+            currentAnimation = idleFishman;
+            break;
+        }
+    } else {
+        currentAnimation = noAnimation;
     }
+
+    if(!animationManager->isPlaying(currentAnimation))
+    {
+        animationManager->playAnimation(currentAnimation);
+    } 
+
+    animationManager->update(deltaTime);
 
     // Flip sprite based on movement direction
     if (speed.x < 0)
