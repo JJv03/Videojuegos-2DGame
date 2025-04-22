@@ -11,7 +11,22 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
     speed = BAT_SPEED;
     life = BAT_LIFE;
     score = BAT_SCORE;
-    damage = BAT_DAMAGE;
+    damage = BAT_DAMAGE; 
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Bat AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(flyBat, this->flyBatFrames);
+    animationManager->addAnimation(noAnimation, this->emptyFrames);
+
+    // animationManager->addAnimation(invulnerableSimon,this->invulnerableFrames,false);
+    this->currentAnimation = flyBat;
+    animationManager->playAnimation(flyBat);
+
+    this->animationManager = animationManager;
 }
 
 // Update bat logic: handle spawning, movement, and deactivation
@@ -147,6 +162,8 @@ void Bat::resetPosition()
 
     animTimer = 0.0f;
     currentFrame = 0;
+
+    currentAnimation = noAnimation;
 }
 
 // Move bat to spawn position at the edge of player's activation zone
@@ -200,22 +217,18 @@ void Bat::draw(sf::RenderWindow &window)
 // Update animation frame and flip sprite based on direction
 void Bat::updateAnimation(float deltaTime)
 {
-    if (!isActive || !sprite)
-        return;
-
-    animTimer += deltaTime;
-
-    if (animTimer >= ANIM_FRAME_TIME)
-    {
-        animTimer = 0.0f;
-        currentFrame = (currentFrame + 1) % TOTAL_FRAMES;
-
-        /*if (currentFrame == 0) {
-
-        } else {
-
-        }*/
+    if(isActive){
+        currentAnimation = flyBat;
+    } else {
+        currentAnimation = noAnimation;
     }
+
+    if(!animationManager->isPlaying(currentAnimation))
+    {
+        animationManager->playAnimation(currentAnimation);
+    }
+
+    animationManager->update(deltaTime);
 
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;

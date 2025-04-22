@@ -9,6 +9,7 @@ class EntitySprite;
 
 enum animationID{
     notRelevant,
+    noAnimation,
 
     // Simon
     idleSimon,
@@ -36,9 +37,7 @@ enum animationID{
     whipLvl3C1StandingJumping,
     whipLvl3C2StandingJumping,
     whipLvl3C3StandingJumping,
-    whipLvl3C4StandingJumping,
-    whipNoAttack,
-    
+    whipLvl3C4StandingJumping,    
 
     
     // Enemies

@@ -21,6 +21,8 @@ public:
     bool isActive = false;               // Whether the enemy is currently active/visible
     bool needsPlayerToLeaveZone = false; // Reset condition flag
 
+    animationID currentAnimation;        // Current animation ID
+
     Enemy() = default;
     Enemy(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
