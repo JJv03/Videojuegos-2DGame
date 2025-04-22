@@ -27,6 +27,7 @@ jobs:
         run: |
           if (!(Test-Path -Path "build")) { New-Item -ItemType Directory -Path "build" }
           if (!(Test-Path -Path "build/enemies")) { New-Item -ItemType Directory -Path "build/enemies" }
+          if (!(Test-Path -Path "build/bosses")) { New-Item -ItemType Directory -Path "build/bosses" }
 
       - name: Build project with make
         run: make

@@ -7,7 +7,7 @@ LDFLAGS     := -L"./SFML/lib" -lSFML-audio -lSFML-graphics -lSFML-window -lSFML-
 OBJ_DIR     := build
 SRC_DIR     := .
 
-SRCS        := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/enemies/*.cpp)
+SRCS        := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/enemies/*.cpp) $(wildcard $(SRC_DIR)/bosses/*.cpp)
 OBJS        := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 EXEC        := $(OBJ_DIR)/Castlevania.exe
 
