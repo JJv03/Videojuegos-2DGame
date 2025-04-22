@@ -12,14 +12,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
 {
     PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
 
-    if (playerPtr->isStopWatchActive)
+    if (playerPtr->isStopWatchActive || playerPtr->upgradeWhip)
     {
         return;
     }
 
     if (playerPtr->activateRosario)
     {
-        std::cout << "ROSARIO" << std::endl;
+        //std::cout << "ROSARIO" << std::endl;
         return;
     }
 
