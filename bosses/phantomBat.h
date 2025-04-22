@@ -13,7 +13,7 @@ private:
 
     bool starting = true;
 
-    float sleepTimer = 0.f;
+    float timer = 0.f;
     const float sleepInterval = 2.f;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{

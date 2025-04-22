@@ -51,10 +51,10 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 
         // Wait 2 seconds and then go to center
         if(starting){
-            sleepTimer += deltaTime;
+            timer += deltaTime;
             
-            if (sleepTimer >= sleepInterval) {
-                sleepTimer = 0.0f;
+            if (timer >= sleepInterval) {
+                timer = 0.0f;
                 starting = false;
                 currentAnimation = flyPhantomBat;
             }
@@ -67,8 +67,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             else{                   // Enhanced AI mode
 
             }
-            updateAnimation(deltaTime);
         }
+        updateAnimation(deltaTime);
     }
 }
 
