@@ -5,7 +5,7 @@
 
 // Constructor: Initialize phantomBat with sprite, hitboxes, position, and game level/stage
 PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                       const sf::Vector2f &zoneSize, const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
+                       const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
 {
     speed = PBAT_SPEED;
     life = PBAT_LIFE;
@@ -35,6 +35,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     {
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
+        // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
 
         updateAnimation(deltaTime);
     }

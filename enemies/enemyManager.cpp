@@ -9,7 +9,7 @@ EnemyManager::EnemyManager(Player *player) : playerPtr(player), globalRng(std::r
     sf::Image enemyImage;
     if (!enemyImage.loadFromFile("./assets/sprites/enemies/enemies.png"))
     {
-        std::cerr << "Error cargando la imagen del zombie" << std::endl;
+        std::cerr << "Error cargando la imagen de enemigos" << std::endl;
         throw std::runtime_error("Error cargando la imagen de enemy");
     }
     enemyImage.createMaskFromColor(sf::Color(0x74, 0x74, 0x74)); // Remove magenta background
@@ -37,7 +37,7 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
 
     if (playerPtr->activateRosario)
     {
-        //std::cout << "ROSARIO" << std::endl;
+        // std::cout << "ROSARIO" << std::endl;
         return;
     }
 
@@ -257,9 +257,10 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             fishman->isActive = false;
             fishman->resetPosition();
-            if(fishman->getProjectile().get()){
+            if (fishman->getProjectile().get())
+            {
                 fishman->getProjectile().get()->reset();
-            }   
+            }
         }
     }
 }

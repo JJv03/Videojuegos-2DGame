@@ -25,7 +25,7 @@ public:
 
     PhantomBat() = default;
     PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-               const sf::Vector2f &zoneSize, const int &level, const int &stage);
+               const int &level, const int &stage);
 
     // Render phantomBat and debug info
     void draw(sf::RenderWindow &window) override;
