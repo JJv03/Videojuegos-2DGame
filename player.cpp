@@ -259,7 +259,8 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (Projectile *projectile = dynamic_cast<Projectile *>(&other))
     {   
-        if(!this->isInvulnerable && !this->isDead){
+        // Change when projectile has animationManager and can have hitbox = 0
+        if(projectile->getActive() && !this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - projectile->damage, 0.f);
 
             if (this->health > 0)

@@ -25,7 +25,7 @@ private:
     const float ATTACK_PAUSE_TIME = 1.0f;
 
     // Projectile settings
-    const float PROJECTILE_SPEED = 60.0f;
+    const float PROJECTILE_SPEED = 80.0f;
     const float PROJECTILE_DAMAGE = 1.0f;
 
     // State management
