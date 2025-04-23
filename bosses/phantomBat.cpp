@@ -84,10 +84,11 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         timer += deltaTime;
                         if (timer >= waitingInterval) {
                             // Decide moverse hacia el lado opuesto
-                            
-                            goal = (position.x > map.x + size.x / 2)
-                                ? sf::Vector2f(position.x + 50.f, position.y)
-                                : sf::Vector2f(position.x - 50.f, position.y);
+                            std::cout << "Pos: " << position.x << std::endl;
+                            std::cout << "Mid: " << map.x + size.x / 2 << std::endl;
+                            goal = (position.x + 24 > map.x + size.x / 2)
+                                ? sf::Vector2f(position.x - 50.f, position.y)
+                                : sf::Vector2f(position.x + 50.f, position.y);
                             std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
                             getLinelSpeed();
                             waiting = false;
@@ -141,20 +142,19 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 hitbox.position.y -= speed.y * deltaTime;
             }
         }
-        isGoingOut();
     }
 }
 
 void PhantomBat::randomObjective(){
-    const float limitWidth = 55.0f;     // 48 size
-    const float limitHeight = 30.0f;    // 24 size
+    const float limitWidth = 60.0f;     // 48 size
+    const float limitHeight = 35.0f;    // 24 size
 
     doubleMoveTimer = 0.f;
     startPosition = position;
 
-    float minX = mapDims.position.x + 5;
+    float minX = mapDims.position.x + 15;
     float maxX = mapDims.position.x + mapDims.size.x - limitWidth;
-    float minY = mapDims.position.y + 5;
+    float minY = mapDims.position.y + 15;
     float maxY = mapDims.position.y + mapDims.size.y - limitHeight;
 
     static std::random_device rd;
@@ -245,14 +245,14 @@ void PhantomBat::updateAnimation(float deltaTime)
     // // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 
-    if (currentSpeed.x < 0)
-    {
-        sprite->setScale({1.0f, 1.0f});
-    }
-    else if (currentSpeed.x > 0)
-    {
-        sprite->setScale({-1.0f, 1.0f});
-    }
+    // if (currentSpeed.x < 0)
+    // {
+    //     sprite->setScale({1.0f, 1.0f});
+    // }
+    // else if (currentSpeed.x > 0)
+    // {
+    //     sprite->setScale({-1.0f, 1.0f});
+    // }
 
     if(!animationManager->isPlaying(currentAnimation))
     {

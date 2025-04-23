@@ -18,8 +18,8 @@ private:
     const float sleepInterval = 2.f;
 
     float doubleMoveTimer = 0.f;
-    const float moveLeftRight = 2.f;
-    const float moveInterval = 3.f;
+    const float moveLeftRight = 1.5f;
+    const float moveInterval = 2.f;
 
     bool goingToCenter = true;
 
@@ -29,7 +29,7 @@ private:
     bool attacking = false;
 
     sf::Vector2f startPosition;
-    float arcHeight = 100.f;
+    float arcHeight = 25.f;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}

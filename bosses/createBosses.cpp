@@ -24,10 +24,6 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
         sf::FloatRect(
             {position.x - (HITBOX_WIDTH_1 / 2.f), position.y - HITBOX_HEIGHT},
             {HITBOX_WIDTH_1, HITBOX_HEIGHT}),
-        // Wings closed
-        // sf::FloatRect(
-        //     {position.x - (HITBOX_WIDTH_2 / 2.f), position.y - HITBOX_HEIGHT},
-        //     {HITBOX_WIDTH_2, HITBOX_HEIGHT}),
     };
 
     return new PhantomBat(phantomBatSprite, hitboxes, position, level, stage, mapDims);
