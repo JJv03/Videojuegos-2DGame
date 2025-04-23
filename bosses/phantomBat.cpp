@@ -86,8 +86,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             // Decide moverse hacia el lado opuesto
                             
                             goal = (position.x > map.x + size.x / 2)
-                                ? sf::Vector2f(position.x + 25.f, position.y)
-                                : sf::Vector2f(position.x - 25.f, position.y);
+                                ? sf::Vector2f(position.x + 50.f, position.y)
+                                : sf::Vector2f(position.x - 50.f, position.y);
                             std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
                             getLinelSpeed();
                             waiting = false;
@@ -96,7 +96,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     }
                     else{
                         if(!attacking){ // moving left or right
-                            if(timer >= moveInterval){
+                            if(timer >= moveLeftRight){
                                 attacking = true;
                                 timer = 0.f;
                                 speed = sf::Vector2f(0, 0);
@@ -141,20 +141,20 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 hitbox.position.y -= speed.y * deltaTime;
             }
         }
-
+        isGoingOut();
     }
 }
 
 void PhantomBat::randomObjective(){
-    const float limitWidth = 75.0f;
-    const float limitHeight = 125.0f;
+    const float limitWidth = 55.0f;     // 48 size
+    const float limitHeight = 30.0f;    // 24 size
 
     doubleMoveTimer = 0.f;
     startPosition = position;
 
-    float minX = mapDims.position.x;
+    float minX = mapDims.position.x + 5;
     float maxX = mapDims.position.x + mapDims.size.x - limitWidth;
-    float minY = mapDims.position.y;
+    float minY = mapDims.position.y + 5;
     float maxY = mapDims.position.y + mapDims.size.y - limitHeight;
 
     static std::random_device rd;
@@ -175,21 +175,19 @@ void PhantomBat::getLinelSpeed(){
 }
 
 void PhantomBat::getDoubleSpeed() {
-    // U-shaped motion using a parabola: y = a*(x - h)^2 + k
-    // In this case we simulate an interpolation between two points with easing
     float t = doubleMoveTimer / moveInterval;
     if (t > 1.f) t = 1.f;
 
-    // componente horizontal: velocidad constante
+    // horizontal component: constant velocity
     float totalDx   = goal.x - startPosition.x;
     float xVel      = totalDx / moveInterval;
 
-    // componente vertical “lineal”
+    // “linear” vertical component
     float totalDy   = goal.y - startPosition.y;
     float yVelLin   = totalDy / moveInterval;
 
-    // arco parabólico: 
-    // f(t) = -4*H*(t-0.5)^2 + H    => parte vertical extra
+    // Parabolic arch: 
+    // f(t) = -4*H*(t-0.5)^2 + H => Extra vertical part
     // f'(t) = d/dt = -8*H*(t - 0.5)
     float arcDeriv = -8.f * arcHeight * (t - 0.5f);
     float yVelArc  = arcDeriv / moveInterval;

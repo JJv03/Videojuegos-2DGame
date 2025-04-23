@@ -18,6 +18,7 @@ private:
     const float sleepInterval = 2.f;
 
     float doubleMoveTimer = 0.f;
+    const float moveLeftRight = 2.f;
     const float moveInterval = 3.f;
 
     bool goingToCenter = true;
