@@ -48,7 +48,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
-        sf::Vector2f pos = position;
+        // sf::Vector2f pos = position;
         sf::Vector2f map = mapDims.position;
         sf::Vector2f size = mapDims.size;
         // Wait 2 seconds and then go to center
@@ -58,14 +58,20 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 timer = 0.0f;
                 starting = false;
                 currentAnimation = flyPhantomBat;
+                goal = sf::Vector2f(map.x + size.x / 2, map.y + size.y / 2);
+                // std::cout << "Map pos: " << map.x << " " << map.y << std::endl;
+                // std::cout << "Map size: " << size.x << " " << size.y << std::endl;
+                // std::cout << "Goal: " << goal.x << " " << goal.y << std::endl;
+                getLinelSpeed();
             }
         }
         else{
             auto mode = configManager.getDifficulty();
             if (!mode.hard_mode){   // Normal mode
-                
-
-
+                if(timer >= moveInterval){
+                    timer = 0.0f;
+                    speed = sf::Vector2f(0, 0);
+                }
             }
             else{                   // Enhanced AI mode
 
@@ -94,13 +100,13 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 }
 
 void PhantomBat::randomObjective(){
-    const float spriteWidth = 48.0f;
-    const float spriteHeight = 24.0f;
+    const float limitWidth = 75.0f;
+    const float limitHeight = 100.0f;
 
     float minX = mapDims.position.x;
-    float maxX = mapDims.position.x + mapDims.size.x - spriteWidth;
+    float maxX = mapDims.position.x + mapDims.size.x - limitWidth;
     float minY = mapDims.position.y;
-    float maxY = mapDims.position.y + mapDims.size.y - spriteHeight;
+    float maxY = mapDims.position.y + mapDims.size.y - limitHeight;
 
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -110,10 +116,25 @@ void PhantomBat::randomObjective(){
     goal = sf::Vector2f(distX(gen), distY(gen)); 
 }
 
-void PhantomBat::getSpeed(){
+void PhantomBat::getLinelSpeed(){
     sf::Vector2f delta = goal - position;
 
-    speed = sf::Vector2f(delta.x / moveInterval, delta.y / moveInterval);
+    speed = sf::Vector2f(delta.x / moveInterval, -delta.y / moveInterval);
+}
+
+void PhantomBat::getDoubleSpeed() {
+    // U-shaped motion using a parabola: y = a*(x - h)^2 + k
+    // In this case we simulate an interpolation between two points with easing
+
+    float t = doubleMoveTimer / moveInterval; // Normalize between 0 and 1
+
+    // x: goes from -vel to +vel or vice versa
+    float xVel = (position.x > goal.x ? -1.0f : 1.0f) * 80.f;
+
+    // y: inverted parabola, moving upwards and downwards (U curve)
+    float yVel = -400.f * (t - 0.5f) * (t - 0.5f) + 100.f;
+
+    speed = {xVel, yVel};
 }
 
 void PhantomBat::onCollision(Entity &other, Game &game)
