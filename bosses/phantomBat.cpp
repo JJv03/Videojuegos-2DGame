@@ -63,65 +63,61 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 goal = sf::Vector2f(map.x + size.x / 2, map.y + size.y / 2);
                 // std::cout << "Map pos: " << map.x << " " << map.y << std::endl;
                 // std::cout << "Map size: " << size.x << " " << size.y << std::endl;
-                std::cout << "Goal tras dormir: " << goal.x << " " << goal.y << std::endl;
+                // std::cout << "Goal tras dormir: " << goal.x << " " << goal.y << std::endl;
                 getLinelSpeed();
             }
         }
         else{
             auto mode = configManager.getDifficulty();
-            if (!mode.hard_mode){   // Normal mode
-                if(goingToCenter){
-                    if(timer >= moveInterval){
-                        timer = 0.0f;
-                        speed = sf::Vector2f(0, 0);
-                        goingToCenter = false;
-                        std::cout << "Pos en el centro: " << position.x << " " << position.y << std::endl;
+            if(goingToCenter){
+                if(timer >= moveInterval){
+                    timer = 0.0f;
+                    speed = sf::Vector2f(0, 0);
+                    goingToCenter = false;
+                    // std::cout << "Pos en el centro: " << position.x << " " << position.y << std::endl;
+                }
+            }
+            else{
+                if (waiting) {
+                    speed = sf::Vector2f(0, 0);
+                    timer += deltaTime;
+                    if (timer >= waitingInterval) {
+                        // Decide moverse hacia el lado opuesto
+                        goal = (position.x + 24 > map.x + size.x / 2)
+                            ? sf::Vector2f(position.x - 50.f, position.y)
+                            : sf::Vector2f(position.x + 50.f, position.y);
+                        // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
+                        getLinelSpeed();
+                        waiting = false;
+                        timer = 0.f;
                     }
                 }
                 else{
-                    if (waiting) {
-                        speed = sf::Vector2f(0, 0);
-                        timer += deltaTime;
-                        if (timer >= waitingInterval) {
-                            // Decide moverse hacia el lado opuesto
-                            std::cout << "Pos: " << position.x << std::endl;
-                            std::cout << "Mid: " << map.x + size.x / 2 << std::endl;
-                            goal = (position.x + 24 > map.x + size.x / 2)
-                                ? sf::Vector2f(position.x - 50.f, position.y)
-                                : sf::Vector2f(position.x + 50.f, position.y);
-                            std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
-                            getLinelSpeed();
-                            waiting = false;
+                    if(!attacking){ // moving left or right
+                        if(timer >= moveLeftRight){
+                            attacking = true;
                             timer = 0.f;
+                            speed = sf::Vector2f(0, 0);
+                            randomObjective();
                         }
                     }
-                    else{
-                        if(!attacking){ // moving left or right
-                            if(timer >= moveLeftRight){
-                                attacking = true;
-                                timer = 0.f;
-                                speed = sf::Vector2f(0, 0);
-                                randomObjective();
-                            }
+                    else{   // attacking
+                        if(timer >= moveInterval){
+                            attacking = false;
+                            waiting = true;
+                            timer = 0.f;
+                            speed = sf::Vector2f(0, 0);
                         }
-                        else{   // attacking
-                            if(timer >= moveInterval){
-                                attacking = false;
-                                waiting = true;
-                                timer = 0.f;
-                                speed = sf::Vector2f(0, 0);
-                            }
-                            else{
-                                getDoubleSpeed();
-                                doubleMoveTimer += deltaTime;
-                            }
+                        else{
+                            getDoubleSpeed();
+                            doubleMoveTimer += deltaTime;
                         }
                     }
                 }
             }
-
-            else{                   // Enhanced AI mode
-
+            if(mode.hard_mode){ // Enhanced AI mode
+                // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)
+                // the phantomBat is able to avoid the attack flying up
             }
         }
         updateAnimation(deltaTime);
@@ -163,7 +159,7 @@ void PhantomBat::randomObjective(){
     std::uniform_real_distribution<float> distY(minY, maxY);
     
     goal = sf::Vector2f(distX(gen), distY(gen)); 
-    std::cout << "New goal: " << goal.x << " " << goal.y << std::endl;
+    // std::cout << "New goal: " << goal.x << " " << goal.y << std::endl;
 }
 
 void PhantomBat::getLinelSpeed(){
@@ -171,7 +167,7 @@ void PhantomBat::getLinelSpeed(){
     float deltaY = goal.y - position.y;
 
     speed = sf::Vector2f(deltaX / moveInterval, -deltaY / moveInterval);
-    std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
+    // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
 }
 
 void PhantomBat::getDoubleSpeed() {
@@ -195,7 +191,7 @@ void PhantomBat::getDoubleSpeed() {
     float yVel = yVelLin + yVelArc;
 
     speed = sf::Vector2f(xVel, -yVel);
-    std::cout << "Double speed: " << speed.x << " " << speed.y << std::endl;
+    // std::cout << "Double speed: " << speed.x << " " << speed.y << std::endl;
 }
 
 void PhantomBat::onCollision(Entity &other, Game &game)
@@ -227,13 +223,15 @@ void PhantomBat::draw(sf::RenderWindow &window)
         Boss::draw(window);
     }
 
-    sf::RectangleShape goalMarker;
-    goalMarker.setSize(sf::Vector2f(10.f, 10.f));
-    goalMarker.setFillColor(sf::Color::Red);
-    goalMarker.setPosition(goal);
-    goalMarker.setOrigin(sf::Vector2f(5.f, 5.f));
+    if(gDrawHitboxes){
+        sf::RectangleShape goalMarker;
+        goalMarker.setSize(sf::Vector2f(10.f, 10.f));
+        goalMarker.setFillColor(sf::Color::Red);
+        goalMarker.setPosition(goal);
+        goalMarker.setOrigin(sf::Vector2f(5.f, 5.f));
 
-    window.draw(goalMarker);
+        window.draw(goalMarker);
+    }
 }
 
 // Update animation frame and flip sprite based on direction
@@ -243,7 +241,7 @@ void PhantomBat::updateAnimation(float deltaTime)
     //     return;
 
     // // Flip sprite based on movement direction
-    sf::Vector2f currentSpeed = speed;
+    // sf::Vector2f currentSpeed = speed;
 
     // if (currentSpeed.x < 0)
     // {

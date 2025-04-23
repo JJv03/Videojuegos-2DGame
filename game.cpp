@@ -664,6 +664,11 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     {
         isInBossFight = true;
 
+        // Starting boss music (DIFFENT FOR DRACULA)
+        gameSoundManager.stopAllMusic();
+        auto audio = configManager.getAudio();
+        gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
+
         // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
     }
 
