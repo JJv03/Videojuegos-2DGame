@@ -121,8 +121,8 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
         }
         else if (this->isInvulnerable && this->isInvisible)
         {
-            std::cout << "Invisible and Invulnerable" << std::endl;
             if (this->invisibilityTimeCounter >= this->invisibilityTime) {
+                playSound("invisibility_off");
                 this->isInvulnerable = false;
                 this->startInvulnerable = false;
                 this->isInvisible = false;
@@ -472,10 +472,12 @@ void Player::onCollision_Item(Entity &entityItem)
 
     if (isSubweaponItem(itemType))
     {
+        playSound("other_item_pick");
         this->subWeaponType = itemType;
     }
     else if (itemType == ItemType::MORNING_STAR)
     {
+        playSound("other_item_pick");
         //std::cout << "MORNING STAR" << std::endl;
         this->upgradeWhip = true;
         this->isInvulnerable = true;
@@ -492,6 +494,7 @@ void Player::onCollision_Item(Entity &entityItem)
     }
     else if (itemType == ItemType::SMALL_HEART)
     {
+        playSound("heart_pick");
         this->hearts += 1;
         /*this->invisibilityTimeCounter = 0.0f; // Reset the counter
         this->isInvisible = true;
@@ -499,6 +502,7 @@ void Player::onCollision_Item(Entity &entityItem)
     }
     else if (itemType == ItemType::LARGE_HEART)
     {
+        playSound("heart_pick");
         this->hearts += 5;
         /*this->invisibilityTimeCounter = 0.0f; // Reset the counter
         this->isInvisible = true;
@@ -506,37 +510,47 @@ void Player::onCollision_Item(Entity &entityItem)
     }
     else if (isScoringItem(itemType))
     {
+        playSound("score_item_pick");
         this->score += getItemScore(itemType);
     }
     else if (itemType == ItemType::INVISIBILITY_POTION) {
+        playSound("invisibility_on");
         this->invisibilityTimeCounter = 0.0f; // Reset the counter
         this->isInvisible = true;
         this->isInvulnerable = true;
     }
     else if (itemType == ItemType::PORK_CHOP) {
+        playSound("other_item_pick");
         this->health += 6;
         if (this->health > this->maxHealth)
             this->health = this->maxHealth;
     }
     // else if (itemType == ItemType::DOUBLE_SHOT)
     // {
+    //     playSound("other_item_pick");
     //     this->subWeaponType = ItemType::DOUBLE_SHOT;
     // }
     // else if (itemType == ItemType::TRIPLE_SHOT)
     // {
+    //     playSound("other_item_pick");
     //     this->subWeaponType = ItemType::TRIPLE_SHOT;
     // }
     else if (itemType == ItemType::MAGIC_CRYSTAL) {
+        playSound("other_item_pick");
         return;
     }
     else if (itemType == ItemType::ONEUP)
     {
+        playSound("one_up");
         this->lives += 1;
     }
     else if (itemType == ItemType::ROSARY)
     {
+        playSound("rosary");
         this->activateRosario = true;
         this->isInvulnerable = true;
+    } else {
+        playSound("other_item_pick");
     }
     
 }
@@ -694,7 +708,31 @@ std::vector<sf::FloatRect> Whip::getBounds() const
 }
 
 void Whip::onCollision(Entity &other, Game &game)
-{
+{   
+    /*
+    if (!this->collisionedEntities.contains(&other)) {
+        if (dynamic_cast<Enemy *>(&other))
+        {
+            gameSoundManager.stopSound("whip_use");
+            playSound("whip_hit");
+        }
+        else if (dynamic_cast<Boss *>(&other))
+        {
+            gameSoundManager.stopSound("whip_use");
+            playSound("strong_enemy_hit");
+        }
+        else if (dynamic_cast<Projectile *>(&other))
+        {
+            gameSoundManager.stopSound("whip_use");
+            playSound("whip_hit");
+        }
+        else if (dynamic_cast<MiscellaneousTile *>(&other))
+        {
+            gameSoundManager.stopSound("whip_use");
+            playSound("whip_hit");
+        }
+    }
+    */
 }
 
 void Whip::hello() const {
@@ -723,6 +761,10 @@ void SubWeapon::onCollision(Entity &other, Game &game)
     if (dynamic_cast<Enemy *>(&other) && this->type == ItemType::DAGGER)
     {
         //std::cout << "SubWeapon colision" << std::endl;
+        if(!this->intersected){
+            playSound("whip_hit");
+        }
+
         this->intersected = true;
         
         
@@ -732,6 +774,10 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         //std::cout << "SubWeapon colision solid" << std::endl;
         if (this->onCollision_SolidTile(other))
         {
+            if(!this->intersectedBomb){
+                playSound("firebomb");
+            }
+
             this->intersectedBomb = true;
         }
 
@@ -895,4 +941,9 @@ bool Player::loadSpritesAndAnimations()
     this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
 
     return true;
+}
+
+void playSound(const std::string& soundName){
+    auto audio = configManager::getInstance().getAudio();
+    gameSoundManager.playSound(soundName, gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
 }

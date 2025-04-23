@@ -48,6 +48,15 @@ public:
     // Initializes a new game from the beggining
     void init();
 
+    // Loads the GUI of the game
+    void loadGUI();
+
+    // Loads the music of the game
+    void loadMusic();
+
+    // Loads the sounds of the game
+    void loadSounds();
+
     // Effects changes depending on the input of the player
     void handleInput(sf::Event event);
 

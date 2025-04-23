@@ -46,6 +46,19 @@ void SoundManager::playSound(const std::string& id, float volume) {
     sounds[id].back()->play();
 }
 
+void SoundManager::stopSound(const std::string& soundToStop){
+    for (auto& [id, soundList] : sounds) {
+        if(id == soundToStop) {
+            for (auto& sound : soundList) {
+                if (sound) {
+                    sound->stop();
+                }
+            }
+            return; // Stop searching after stopping the sound
+        }
+    }
+}
+
 void SoundManager::stopAllSounds() {
     for (auto& [id, soundList] : sounds) {
         for (auto& sound : soundList) {

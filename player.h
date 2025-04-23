@@ -357,4 +357,7 @@ public:
 
     // SubWeapon functions
     void updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition);
+
 };
+
+void playSound(const std::string& soundName);

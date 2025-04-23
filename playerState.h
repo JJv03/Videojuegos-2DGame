@@ -32,6 +32,10 @@ public:
     virtual void hello() = 0;
 
     configManager &configManager;
+
+    void playSound(const std::string& soundName);
+
+
 };
 
 // ---------------------------- IDLE ----------------------------

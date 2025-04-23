@@ -41,6 +41,12 @@ public:
     void stopAllSounds();
     
     /**
+     * @brief Stops a sound associated with the given ID.
+     * @param soundToStop The unique identifier for the sound to stop.
+     */
+    void stopSound(const std::string& soundToStop);
+
+    /**
      * @brief Loads a music track from a file and associates it with an ID.
      * @param id The unique identifier for the music track.
      * @param filepath The file path of the music track to load.

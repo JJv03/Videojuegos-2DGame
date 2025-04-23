@@ -41,6 +41,9 @@ using WhipUpgrade = PlayerWhipUpgradeState;
 //constexpr auto KEY_HURT = sf::Keyboard::Scancode::H;
 //constexpr auto KEY_DEAD = sf::Keyboard::Scancode::D;
 //constexpr auto KEY_REVIVE = sf::Keyboard::Scancode::R;
+
+
+
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
 animationID whipLevelAnimation(int level){
@@ -57,6 +60,11 @@ animationID whipLevelAnimation(int level){
     } else  {
         return whipLvl3C4StandingJumping;
     } 
+}
+
+void PlayerState::playSound(const std::string& soundName){
+    auto audio = configManager.getAudio();
+    gameSoundManager.playSound(soundName, gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
 }
 
 // ---------------------------- IDLE ----------------------------
@@ -640,6 +648,7 @@ PlayerFallenState::PlayerFallenState() : PlayerState()
 
 void PlayerFallenState::init(Player& player)
 {
+    this->playSound("fallen");
     player.currentAnimation = fallenSimon;
     player.animationManager->playAnimation(player.currentAnimation);
 
@@ -1048,11 +1057,12 @@ PlayerAttackIdleState::PlayerAttackIdleState() : PlayerState()
 
 void PlayerAttackIdleState::init(Player& player)
 {
+
     player.isAttacking = true;
     
     if (!player.animationManager->isPlaying(attackSimon) || player.animationManager->isAnimationFinished()){
+        playSound("whip_use");
         player.animationManager->playAnimation(attackSimon);
-
         player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     }
 
@@ -1183,7 +1193,9 @@ PlayerAttackJumpState::PlayerAttackJumpState() : PlayerState()
 }
 
 void PlayerAttackJumpState::init(Player& player)
-{
+{    
+    playSound("whip_use");
+
     // Start the whip and attack animations
     player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
     player.animationManager->playAnimation(attackSimon);
@@ -1335,6 +1347,7 @@ PlayerAttackDuckState::PlayerAttackDuckState() : PlayerState()
 
 void PlayerAttackDuckState::init(Player& player)
 {
+    playSound("whip_use");
 
     player.isAttacking = true;
     
@@ -1457,7 +1470,8 @@ PlayerAttackStairState::PlayerAttackStairState() : PlayerState()
 
 void PlayerAttackStairState::init(Player& player)
 {
-   
+    playSound("whip_use");
+
     player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     player.hasToPressAgain = false;
@@ -1592,6 +1606,7 @@ void PlayerHurtState::init(Player& player)
     player.isInvulnerable = true;
     player.isJumpStanding = false;
     player.whip.animationManager->playAnimation(noAnimation);
+    this->playSound("hurt");
 }
 
 void PlayerHurtState::handleInput(Player& player, sf::Event event)
@@ -1726,6 +1741,9 @@ PlayerDeadState::PlayerDeadState() : PlayerState()
 
 void PlayerDeadState::init(Player& player)
 {
+    gameSoundManager.stopAllSounds();
+    gameSoundManager.stopAllMusic();
+    this->playSound("deadMusic");
     player.currentAnimation = deathSimon;
     player.whip.animationManager->playAnimation(noAnimation);
     player.animationManager->playAnimation(player.currentAnimation);
@@ -1858,6 +1876,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
     } else if (player.subWeapon.type == ItemType::DAGGER) {
         player.subWeapon.verticalSpeed = 0.f;
         player.subWeapon.horizontalSpeed = 100.f;
+        playSound("throw_dagger");
         player.subWeapon.animationManager->playAnimation(daggerThrowing); 
     } else if (player.subWeapon.type == ItemType::BOOMERANG) {
         //player.hearts++; // Depuracion

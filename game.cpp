@@ -34,39 +34,9 @@ void Game::init()
     withOutLives = false;
     isInBossFight = false;
 
-    // Level 1
-    gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
-
-    // Level 2
-    gameSoundManager.loadMusic("stalker1", "./assets/music/04Stalker(1).mp3");
-    gameSoundManager.loadMusic("stalker2", "./assets/music/04Stalker(2).mp3");
-
-    // Level 3
-    gameSoundManager.loadMusic("wicked1", "./assets/music/05Wicked_Child(1).mp3");
-    gameSoundManager.loadMusic("wicked2", "./assets/music/05Wicked_Child(2).mp3");
-
-    // Level 4
-    gameSoundManager.loadMusic("edge1", "./assets/music/06Walking_On_the_Edge(1).mp3");
-    gameSoundManager.loadMusic("edge2", "./assets/music/06Walking_On_the_Edge(2).mp3");
-
-    // Level 5
-    gameSoundManager.loadMusic("heart1", "./assets/music/07Heart_of_Fire(1).mp3");
-    gameSoundManager.loadMusic("heart2", "./assets/music/07Heart_of_Fire(2).mp3");
-
-    // Level 6
-    gameSoundManager.loadMusic("outTime", "./assets/music/08Out_of_Time.mp3");
-
-    // Boss Music
-    gameSoundManager.loadMusic("boss", "./assets/music/10Poison_Mind.mp3");
-    gameSoundManager.loadMusic("victoryBoss", "./assets/music/15Stage_Clear.mp3");
-    gameSoundManager.loadMusic("dracula1", "./assets/music/09Nothing_to_Lose.mp3");
-    gameSoundManager.loadMusic("dracula2.1", "./assets/music/11Black_Night(1).mp3");
-    gameSoundManager.loadMusic("dracula2.2", "./assets/music/11Black_Night(2).mp3");
-    gameSoundManager.loadMusic("victoryDracula", "./assets/music/16All_Clear.mp3");
-
-    // Dead/Game over
-    gameSoundManager.loadMusic("deadMusic", "./assets/music/13Player_Miss.mp3");
-    gameSoundManager.loadMusic("gameOver", "./assets/music/14Game_Over.mp3");
+    // Music and sounds
+    loadMusic();
+    loadSounds();
 
     tilemaps.loadLevel(currentLevel);
 
@@ -93,9 +63,11 @@ void Game::init()
         throw std::runtime_error("Failed to load item textures.");
     }
 
-    // --------------------------------------------------
-    // GUI
-    // --------------------------------------------------
+    // Load GUI
+    loadGUI();
+}
+
+void Game::loadGUI(){
     if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
         std::cout << "No se ha encontrado la fuente" << std::endl;
@@ -190,6 +162,84 @@ void Game::init()
     sf::Sprite hSprite(gTextures["heart"], sf::IntRect({18, 1}, {8, 8}));
     hSprite.setScale(sf::Vector2f(1.5, 1.5));
     gSprites.push_back(hSprite);
+}
+
+
+void Game::loadMusic(){
+    // Level 1
+    gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
+
+    // Level 2
+    gameSoundManager.loadMusic("stalker1", "./assets/music/04Stalker(1).mp3");
+    gameSoundManager.loadMusic("stalker2", "./assets/music/04Stalker(2).mp3");
+
+    // Level 3
+    gameSoundManager.loadMusic("wicked1", "./assets/music/05Wicked_Child(1).mp3");
+    gameSoundManager.loadMusic("wicked2", "./assets/music/05Wicked_Child(2).mp3");
+
+    // Level 4
+    gameSoundManager.loadMusic("edge1", "./assets/music/06Walking_On_the_Edge(1).mp3");
+    gameSoundManager.loadMusic("edge2", "./assets/music/06Walking_On_the_Edge(2).mp3");
+
+    // Level 5
+    gameSoundManager.loadMusic("heart1", "./assets/music/07Heart_of_Fire(1).mp3");
+    gameSoundManager.loadMusic("heart2", "./assets/music/07Heart_of_Fire(2).mp3");
+
+    // Level 6
+    gameSoundManager.loadMusic("outTime", "./assets/music/08Out_of_Time.mp3");
+
+    // Boss Music
+    gameSoundManager.loadMusic("boss", "./assets/music/10Poison_Mind.mp3");
+    gameSoundManager.loadMusic("victoryBoss", "./assets/music/15Stage_Clear.mp3");
+    gameSoundManager.loadMusic("dracula1", "./assets/music/09Nothing_to_Lose.mp3");
+    gameSoundManager.loadMusic("dracula2.1", "./assets/music/11Black_Night(1).mp3");
+    gameSoundManager.loadMusic("dracula2.2", "./assets/music/11Black_Night(2).mp3");
+    gameSoundManager.loadMusic("victoryDracula", "./assets/music/16All_Clear.mp3");
+
+    // Dead/Game over
+    gameSoundManager.loadMusic("deadMusic", "./assets/music/13Player_Miss.mp3");
+    gameSoundManager.loadMusic("gameOver", "./assets/music/14Game_Over.mp3");
+}
+
+
+void Game::loadSounds(){
+    gameSoundManager.loadSound("pause", "./assets/sounds/01.wav");
+    gameSoundManager.loadSound("02", "./assets/sounds/02.wav");
+    gameSoundManager.loadSound("deflecting", "./assets/sounds/03.wav");
+    gameSoundManager.loadSound("time_tally", "./assets/sounds/04.wav");
+    gameSoundManager.loadSound("heart_tally", "./assets/sounds/05.wav");
+    gameSoundManager.loadSound("end_lvl_points", "./assets/sounds/06.wav");
+    gameSoundManager.loadSound("between_lvl_steps", "./assets/sounds/07.wav");
+    gameSoundManager.loadSound("whip", "./assets/sounds/08.wav");
+    gameSoundManager.loadSound("throw_dagger", "./assets/sounds/09.wav");
+    gameSoundManager.loadSound("whip_use", "./assets/sounds/10.wav");
+    gameSoundManager.loadSound("falling_stage", "./assets/sounds/11.wav");
+    gameSoundManager.loadSound("falling_stage2", "./assets/sounds/12.wav");
+    gameSoundManager.loadSound("fallen", "./assets/sounds/13.wav");
+    gameSoundManager.loadSound("splash", "./assets/sounds/14.wav");
+    gameSoundManager.loadSound("water_surface_hit", "./assets/sounds/15.wav");
+    gameSoundManager.loadSound("strong_enemy_hit", "./assets/sounds/16.wav");
+    gameSoundManager.loadSound("17", "./assets/sounds/17.wav");
+    gameSoundManager.loadSound("18", "./assets/sounds/18.wav");
+    gameSoundManager.loadSound("19", "./assets/sounds/19.wav");
+    gameSoundManager.loadSound("whip_hit", "./assets/sounds/20.wav");
+    gameSoundManager.loadSound("block_break", "./assets/sounds/21.wav");
+    gameSoundManager.loadSound("heart_pick", "./assets/sounds/22.wav");
+    gameSoundManager.loadSound("score_item_pick", "./assets/sounds/23.wav");
+    gameSoundManager.loadSound("other_item_pick", "./assets/sounds/24.wav");
+    gameSoundManager.loadSound("castle_entrance", "./assets/sounds/25.wav");
+    gameSoundManager.loadSound("stopwatch", "./assets/sounds/26.wav");
+    gameSoundManager.loadSound("invisibility_on", "./assets/sounds/27.wav");
+    gameSoundManager.loadSound("invisibility_off", "./assets/sounds/28.wav");
+    gameSoundManager.loadSound("door", "./assets/sounds/29.wav");
+    gameSoundManager.loadSound("firebomb", "./assets/sounds/30.wav");
+    gameSoundManager.loadSound("castle_collapsing", "./assets/sounds/31.wav");
+    gameSoundManager.loadSound("castle_collapsing2", "./assets/sounds/32.wav");
+    gameSoundManager.loadSound("low_on_time", "./assets/sounds/33.wav");
+    gameSoundManager.loadSound("secret_treasure", "./assets/sounds/34.wav");
+    gameSoundManager.loadSound("rosary", "./assets/sounds/35.wav");
+    gameSoundManager.loadSound("one_up", "./assets/sounds/36.wav");
+    gameSoundManager.loadSound("hurt", "./assets/sounds/37.wav");
 }
 
 // Effects changes depending on the input of the player
