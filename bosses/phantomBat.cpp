@@ -37,6 +37,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             if (playerActivationZone.findIntersection(hitbox).has_value() && isInBossFight)
             {
                 isActive = true;
+                maxLife = life;
                 break;
             }
         }
@@ -45,6 +46,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {
+        // BOSS LIFE FOR THE GUI
+        currentBossLife = life;
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
@@ -98,7 +101,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
-                            randomObjective();
+                            randomObjective(); // Maybe a direct attack to the player
                         }
                     }
                     else{   // attacking

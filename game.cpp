@@ -501,7 +501,19 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         }
 
         // Draw the health bars
-        drawHealthBars(window, player.health, 16, virtualWorldOffset); // CHANGE FOR BOSS HEALTH!!!!!
+        if(!isInBossFight){
+            drawHealthBars(window, player.health, 16, virtualWorldOffset);
+        }
+        else{   // Boss fight
+            int maxSquares = 16;
+            std::cout << currentBossLife << std::endl;
+            int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
+            if (scaledBossLife > maxSquares) scaledBossLife = maxSquares;
+            if (scaledBossLife < 0) scaledBossLife = 0;
+            std::cout << scaledBossLife << std::endl;
+            drawHealthBars(window, player.health, scaledBossLife, virtualWorldOffset);
+        }
+        
 
         // Subweapon box (the red rectangle)
         sf::RectangleShape redBorder(sf::Vector2f(gGUI_subweaponBox_size_x, gGUI_subweaponBox_size_y));
@@ -648,6 +660,10 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     //      Add enemies
     for (auto &enemy : enemyManager->getEnemies(currentLevel, currentStage))
         dynamicEntities.push_back(enemy);
+
+    //      Add bosses
+    for (auto &boss : bossManager->getBosses(currentLevel, currentStage))
+        dynamicEntities.push_back(boss);
 
     for (auto &item : tilemaps[currentStage].m_items)
         dynamicEntities.push_back(item.get());
