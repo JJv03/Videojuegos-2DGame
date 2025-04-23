@@ -9,6 +9,8 @@
 #include "globals.h"
 #include "collisionGrid.h"
 #include "configManager.h"
+#include "particleSystem.h"
+
 
 // Implements de logic of a castlevania game: Player, stats, enemies, map, etc.
 class Game
@@ -40,6 +42,9 @@ public:
 
     std::vector<sf::Text> deadScreenTexts;
     std::vector<sf::Sprite> gSprites;
+
+    ParticleSystem particleSystem;
+
 
     // Constructor, destructor
     Game();

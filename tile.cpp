@@ -264,6 +264,12 @@ void MiscellaneousTile::onCollision_Whip(Game& game){
     if (this->isBreakable) {
         this->isDestroyed = true;
         game.createDropItem(this->dropType, this->sprite->getPosition());
+        
+        if (isCollidable()) {
+            game.particleSystem.spawn<BreakBlockParticle>(gTextures.at("miscTile_1"),
+                                                    sf::Vector2f{this->sprite->getPosition().x,
+                                                                    this->sprite->getPosition().y});
+        }
     }
 }
 

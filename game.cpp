@@ -11,8 +11,11 @@
 Game::Game() : configManager(configManager::getInstance())
 {
     Player player;
+
     tilemaps = TilemapManager();
     collisionGrid = CollisionGrid(this);
+
+    particleSystem = ParticleSystem();
 
     // Loads simon texture
     sf::Image simonImage;
@@ -307,6 +310,9 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateMiscTiles(deltaTime);
 
+    particleSystem.update(deltaTime);
+
+
     static float timeAccumulator = 0.0f;
 
     if (!withOutLives)
@@ -460,6 +466,9 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
+
+        particleSystem.draw(window);
+
 
         // DEBUG: Draw player and whip hitbox
         if (gDrawHitboxes)
