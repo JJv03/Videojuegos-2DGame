@@ -4,4 +4,4 @@
 #include "phantomBat.h"
 
 // Factory functions for creating boss instances
-PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, const size_t &stage);
+PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims);

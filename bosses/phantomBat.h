@@ -6,15 +6,18 @@ class PhantomBat : public Boss
 {
 private:
     // Movement and combat constants
-    const sf::Vector2f PBAT_SPEED = {-75.0f, 0.0f};
+    const sf::Vector2f PBAT_SPEED = {0.0f, 0.0f};   // By default static
     const float PBAT_LIFE = 12.0f;
     const float PBAT_SCORE = 3000.0f;
     const float PBAT_DAMAGE = 2.0f;
 
     bool starting = true;
+    sf::Vector2f goal = sf::Vector2f(0, 0);
 
     float timer = 0.f;
     const float sleepInterval = 2.f;
+    const float moveInterval = 3.5f;
+    const float nextAttackInterval = 3.f;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
@@ -27,10 +30,12 @@ private:
 public:
     int level; // Current game level
     int stage; // Current stage within level
+    sf::Vector2f position;
+    sf::FloatRect mapDims;
 
     PhantomBat() = default;
     PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-               const int &level, const int &stage);
+               const int &level, const int &stage, const sf::FloatRect &mapDims);
 
     // Render phantomBat and debug info
     void draw(sf::RenderWindow &window) override;
@@ -44,6 +49,10 @@ public:
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    void randomObjective();
+
+    void getSpeed();
 
     void hello() const override;
 };

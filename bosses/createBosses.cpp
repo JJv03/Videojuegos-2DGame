@@ -1,7 +1,7 @@
 #include "createBosses.h"
 
 // Creates a phantomBat enemy with spawn zone parameters
-PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect PBAT_SPRITE_REGION = {{1, 11}, {16, 16}};
@@ -30,5 +30,5 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
         //     {HITBOX_WIDTH_2, HITBOX_HEIGHT}),
     };
 
-    return new PhantomBat(phantomBatSprite, hitboxes, position, level, stage);
+    return new PhantomBat(phantomBatSprite, hitboxes, position, level, stage, mapDims);
 }

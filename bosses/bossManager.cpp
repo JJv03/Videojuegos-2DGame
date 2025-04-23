@@ -72,7 +72,7 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
                 switch (bossData.type)
                 {
                 case 100: // PhantomBat
-                    phantomBat = createPhantomBat(bossData.position, level, currentStage);
+                    phantomBat = createPhantomBat(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
                     break;
                 default:
                     std::cerr << "Unknown boss type: " << bossData.type << std::endl;

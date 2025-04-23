@@ -5,7 +5,7 @@
 
 // Constructor: Initialize phantomBat with sprite, hitboxes, position, and game level/stage
 PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                       const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
+                       const int &level, const int &stage, const sf::FloatRect &mapDims) : Boss(_sprite, _hitboxes), level(level), stage(stage), position(position), mapDims(mapDims)
 {
     speed = PBAT_SPEED;
     life = PBAT_LIFE;
@@ -48,11 +48,12 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
-
+        sf::Vector2f pos = position;
+        sf::Vector2f map = mapDims.position;
+        sf::Vector2f size = mapDims.size;
         // Wait 2 seconds and then go to center
-        if(starting){
-            timer += deltaTime;
-            
+        timer += deltaTime;
+        if(starting){            
             if (timer >= sleepInterval) {
                 timer = 0.0f;
                 starting = false;
@@ -63,13 +64,56 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             auto mode = configManager.getDifficulty();
             if (!mode.hard_mode){   // Normal mode
                 
+
+
             }
             else{                   // Enhanced AI mode
 
             }
         }
         updateAnimation(deltaTime);
+
+        if (speed.x != 0)
+        {
+            sprite->move({speed.x * deltaTime, 0.f});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.x += speed.x * deltaTime;
+            }
+        }
+        if (speed.y != 0)
+        {
+            sprite->move({0.f, -speed.y * deltaTime});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.y -= speed.y * deltaTime;
+            }
+        }
+
     }
+}
+
+void PhantomBat::randomObjective(){
+    const float spriteWidth = 48.0f;
+    const float spriteHeight = 24.0f;
+
+    float minX = mapDims.position.x;
+    float maxX = mapDims.position.x + mapDims.size.x - spriteWidth;
+    float minY = mapDims.position.y;
+    float maxY = mapDims.position.y + mapDims.size.y - spriteHeight;
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distX(minX, maxX);
+    std::uniform_real_distribution<float> distY(minY, maxY);
+    
+    goal = sf::Vector2f(distX(gen), distY(gen)); 
+}
+
+void PhantomBat::getSpeed(){
+    sf::Vector2f delta = goal - position;
+
+    speed = sf::Vector2f(delta.x / moveInterval, delta.y / moveInterval);
 }
 
 void PhantomBat::onCollision(Entity &other, Game &game)
@@ -109,16 +153,16 @@ void PhantomBat::updateAnimation(float deltaTime)
     //     return;
 
     // // Flip sprite based on movement direction
-    // sf::Vector2f currentSpeed = speed;
+    sf::Vector2f currentSpeed = speed;
 
-    // if (currentSpeed.x < 0)
-    // {
-    //     sprite->setScale({1.0f, 1.0f});
-    // }
-    // else if (currentSpeed.x > 0)
-    // {
-    //     sprite->setScale({-1.0f, 1.0f});
-    // }
+    if (currentSpeed.x < 0)
+    {
+        sprite->setScale({1.0f, 1.0f});
+    }
+    else if (currentSpeed.x > 0)
+    {
+        sprite->setScale({-1.0f, 1.0f});
+    }
 
     if(!animationManager->isPlaying(currentAnimation))
     {
