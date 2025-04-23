@@ -20,6 +20,13 @@ private:
     float doubleMoveTimer = 0.f;
     const float moveInterval = 3.f;
 
+    bool goingToCenter = true;
+
+    bool waiting = true;
+    const float waitingInterval = 1.f;
+
+    bool attacking = false;
+
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
     };
