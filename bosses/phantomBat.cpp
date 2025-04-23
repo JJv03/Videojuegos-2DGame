@@ -147,7 +147,10 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 
 void PhantomBat::randomObjective(){
     const float limitWidth = 75.0f;
-    const float limitHeight = 100.0f;
+    const float limitHeight = 125.0f;
+
+    doubleMoveTimer = 0.f;
+    startPosition = position;
 
     float minX = mapDims.position.x;
     float maxX = mapDims.position.x + mapDims.size.x - limitWidth;
@@ -174,16 +177,26 @@ void PhantomBat::getLinelSpeed(){
 void PhantomBat::getDoubleSpeed() {
     // U-shaped motion using a parabola: y = a*(x - h)^2 + k
     // In this case we simulate an interpolation between two points with easing
+    float t = doubleMoveTimer / moveInterval;
+    if (t > 1.f) t = 1.f;
 
-    float t = doubleMoveTimer / moveInterval; // Normalize between 0 and 1
+    // componente horizontal: velocidad constante
+    float totalDx   = goal.x - startPosition.x;
+    float xVel      = totalDx / moveInterval;
 
-    // x: goes from -vel to +vel or vice versa
-    float xVel = (position.x > goal.x ? -1.0f : 1.0f) * 80.f;
+    // componente vertical “lineal”
+    float totalDy   = goal.y - startPosition.y;
+    float yVelLin   = totalDy / moveInterval;
 
-    // y: inverted parabola, moving upwards and downwards (U curve)
-    float yVel = -400.f * (t - 0.5f) * (t - 0.5f) + 100.f;
+    // arco parabólico: 
+    // f(t) = -4*H*(t-0.5)^2 + H    => parte vertical extra
+    // f'(t) = d/dt = -8*H*(t - 0.5)
+    float arcDeriv = -8.f * arcHeight * (t - 0.5f);
+    float yVelArc  = arcDeriv / moveInterval;
 
-    speed = {xVel, yVel};
+    float yVel = yVelLin + yVelArc;
+
+    speed = sf::Vector2f(xVel, -yVel);
     std::cout << "Double speed: " << speed.x << " " << speed.y << std::endl;
 }
 
@@ -215,6 +228,14 @@ void PhantomBat::draw(sf::RenderWindow &window)
     {
         Boss::draw(window);
     }
+
+    sf::RectangleShape goalMarker;
+    goalMarker.setSize(sf::Vector2f(10.f, 10.f));
+    goalMarker.setFillColor(sf::Color::Red);
+    goalMarker.setPosition(goal);
+    goalMarker.setOrigin(sf::Vector2f(5.f, 5.f));
+
+    window.draw(goalMarker);
 }
 
 // Update animation frame and flip sprite based on direction

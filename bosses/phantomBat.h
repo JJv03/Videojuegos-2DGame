@@ -27,6 +27,9 @@ private:
 
     bool attacking = false;
 
+    sf::Vector2f startPosition;
+    float arcHeight = 100.f;
+
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
     };
