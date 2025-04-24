@@ -13,7 +13,7 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
     }
     bossImage.createMaskFromColor(gColorKeyGrey);
     bossImage.createMaskFromColor(gColorKeyGreen);
-    
+
     sf::Texture *bossTexture = new sf::Texture();
     if (!bossTexture->loadFromImage(bossImage))
     {
@@ -28,11 +28,20 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 // Update all active bosses in current level/stage
 void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
-    if(phantomBat){
+    if (phantomBat)
+    {
         if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
         {
             phantomBat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
-                            playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
+                               playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
+        }
+    }
+
+    if (dracula)
+    {
+        if (dracula->level == currentLevel && dracula->stage == currentStage)
+        {
+            dracula->update(deltaTime, playerPtr->gPlayerActivationZone);
         }
     }
 }
@@ -40,10 +49,18 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
 // Render all bosses in current level/stage with debug visuals
 void BossManager::draw(sf::RenderWindow &window, const int currentLevel, const int currentStage)
 {
-    if(phantomBat){
+    if (phantomBat)
+    {
         if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
         {
             phantomBat->draw(window);
+        }
+    }
+    if (dracula)
+    {
+        if (dracula->level == currentLevel && dracula->stage == currentStage)
+        {
+            dracula->draw(window);
         }
     }
 }
@@ -56,6 +73,11 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
     {
         delete phantomBat;
         phantomBat = nullptr;
+    }
+    if (dracula != nullptr)
+    {
+        delete dracula;
+        dracula = nullptr;
     }
 
     switch (level)
@@ -86,7 +108,30 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
         }
         break;
 
-    case 2:
+    case 7:
+
+        for (size_t stageIndex = 0; stageIndex < tilemaps.tilemaps.size(); ++stageIndex)
+        {
+            const TileMap &tilemap = tilemaps.tilemaps[stageIndex];
+            int currentStage = static_cast<int>(stageIndex) + 1;
+
+            // Create bosses from tilemap data
+            for (const auto &bossData : tilemap.m_enemyData)
+            {
+                if (bossData.type < 100)
+                    continue; // Ignore enemies
+
+                switch (bossData.type)
+                {
+                case 101: // Dracula
+                    dracula = createDracula(bossData.position, level, currentStage);
+                    break;
+                default:
+                    std::cerr << "Unknown boss type: " << bossData.type << std::endl;
+                    break;
+                }
+            }
+        }
         break;
 
     default:
@@ -99,10 +144,18 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
 {
     std::vector<Entity *> allBosses;
 
-    if(phantomBat){
+    if (phantomBat)
+    {
         if (phantomBat->level == currentLevel && phantomBat->stage == currentStage && phantomBat->isActive)
         {
             allBosses.push_back(phantomBat);
+        }
+    }
+    if (dracula)
+    {
+        if (dracula->level == currentLevel && dracula->stage == currentStage && dracula->isActive)
+        {
+            allBosses.push_back(dracula);
         }
     }
 

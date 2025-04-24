@@ -11,6 +11,7 @@ class BossManager
 private:
     // Bosses
     PhantomBat *phantomBat = nullptr;
+    Dracula *dracula = nullptr;
 
     // Reference to player
     Player *playerPtr;
@@ -25,10 +26,8 @@ public:
     void update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds);
     void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
 
-    std::vector<Entity *> getBosses(int currentLevel, int currentStage) const; // Get all enemies
+    std::vector<Entity *> getBosses(int currentLevel, int currentStage) const; // Get all bosses
 
     // Level loading system
     void loadBossesFromLevel(int level, const TilemapManager &tilemaps);
-
-    void restartBosses(int currentLevel, int currentStage);
 };
