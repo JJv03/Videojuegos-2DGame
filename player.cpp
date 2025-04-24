@@ -725,10 +725,13 @@ void Whip::onCollision(Entity &other, Game &game)
             gameSoundManager.stopSound("whip_use");
             playSound("whip_hit");
         }
-        else if (dynamic_cast<MiscellaneousTile *>(&other))
+        else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other))
         {
-            gameSoundManager.stopSound("whip_use");
-            playSound("whip_hit");
+            if(tile->isBreakable && !tile->isDestroyed){
+                std::cout << "Sonido" << std::endl;
+                gameSoundManager.stopSound("whip_use");
+                playSound("whip_hit");
+            }
         }
     }
 }

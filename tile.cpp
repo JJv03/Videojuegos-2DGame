@@ -249,11 +249,9 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game){
     if (tileBounds.size.x == 0.0f || tileBounds.size.y == 0.0f) return;  // No hitbox
 
     if (dynamic_cast<Whip*>(&other)) {
-        //std::cout << "Es un SolidTile\n";
         this->onCollision_Whip(game);
     }
     else if (dynamic_cast<Player*>(&other)) {
-        //std::cout << "Es un Player\n";
         if (isCollidable()) {
             this->onCollision_Player(other, game);
         }
@@ -263,7 +261,6 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game){
 void MiscellaneousTile::onCollision_Whip(Game& game){
     if (this->isBreakable) {
         this->isDestroyed = true;
-        hitboxes.clear();
         game.createDropItem(this->dropType, this->sprite->getPosition());
         
         if (isCollidable()) {
