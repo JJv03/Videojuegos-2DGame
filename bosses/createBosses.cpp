@@ -28,9 +28,9 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
             {position.x + 4.f, position.y},
             {16.f, 7.f}
         ),
-        sf::FloatRect(
-            {position.x - 8.f, position.y - 16.f},
-            {48.f, 16.f}),
+        // sf::FloatRect(
+        //     {position.x - 8.f, position.y - 16.f},
+        //     {48.f, 16.f}),
         sf::FloatRect(
             {position.x - 8.f, position.y - 16.f},
             {32.f, 16.f}),
