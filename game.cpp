@@ -423,6 +423,11 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             player.setState(std::make_unique<PlayerIdleState>());
         }
     }
+
+    // For killing bosses (destroying)
+    if(killPhBat){
+        bossManager->killBoss(phantomBatID);
+    }
 }
 
 void Game::updateGUITime()
@@ -516,13 +521,11 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         else
         { // Boss fight
             int maxSquares = 16;
-            std::cout << currentBossLife << std::endl;
             int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
             if (scaledBossLife > maxSquares)
                 scaledBossLife = maxSquares;
             if (scaledBossLife < 0)
                 scaledBossLife = 0;
-            std::cout << scaledBossLife << std::endl;
             drawHealthBars(window, player.health, scaledBossLife, virtualWorldOffset);
         }
 

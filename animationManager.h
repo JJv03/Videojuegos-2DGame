@@ -51,8 +51,10 @@ enum animationID{
     pauseAttackFishman,
 
     // Bosses
+    // PhantomBat
     sleepPhantomBat,
     flyPhantomBat,
+    deathPhantomBat,
 
     // Secondary weapon
     daggerThrowing,

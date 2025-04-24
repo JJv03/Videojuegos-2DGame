@@ -11,6 +11,8 @@ private:
     const float PBAT_SCORE = 3000.0f;
     const float PBAT_DAMAGE = 2.0f;
 
+    bool dead = false;
+
     bool starting = true;
     sf::Vector2f goal = sf::Vector2f(0, 0);
 
@@ -37,6 +39,14 @@ private:
     std::vector<AnimationManager::Frame> flyPhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(18, 11), sf::Vector2(48, 24)), 0.15f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(67, 11), sf::Vector2(32, 24)), 0.15f}
+    };
+    std::vector<AnimationManager::Frame> deadPhBatFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(32, 243), sf::Vector2(24, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(57, 243), sf::Vector2(24, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(82, 243), sf::Vector2(24, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(32, 243), sf::Vector2(24, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(57, 243), sf::Vector2(24, 32)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(82, 243), sf::Vector2(24, 32)), 0.15f}
     };
 
 public:

@@ -30,7 +30,7 @@ const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
-int gStartingStage = 3;
+int gStartingStage = 5;
 
 const float gTileSize = 32.f;
 
@@ -100,6 +100,7 @@ bool isInBossFight = false;
 bool hasReachedEndStage = false;
 float currentBossLife = 16.f;
 float maxLife = 16.f;
+bool killPhBat = false;
 
 
 // ============ GAME VARIABLES ============
@@ -109,4 +110,4 @@ bool goBack = false;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
-const bool gSkipAnims = false;
+const bool gSkipAnims = true;

@@ -12,6 +12,8 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
     score = PBAT_SCORE;
     damage = PBAT_DAMAGE;
 
+    killPhBat = false;
+
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
@@ -20,6 +22,7 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
 
     animationManager->addAnimation(sleepPhantomBat, this->idlePhBatFrames);
     animationManager->addAnimation(flyPhantomBat, this->flyPhBatFrames);
+    animationManager->addAnimation(deathPhantomBat, this->deadPhBatFrames, false);
 
     this->animationManager = animationManager;
     currentAnimation = sleepPhantomBat;
@@ -30,7 +33,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         const float playerDir, const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC
-    if (!isActive)
+    if (!isActive && !dead)
     {
         for (const auto &hitbox : hitboxes)
         {
@@ -45,9 +48,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
-    {
+    {   
         // BOSS LIFE FOR THE GUI
-        currentBossLife = life;
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
         // ESTA EN REPOSO HASTA QUE SE BLOQUEA LA OPCION DE IR HACIA ATRÁS QUE ES CUANDO SE EMPIEZA A MOVER
@@ -123,7 +125,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 // the phantomBat is able to avoid the attack flying up
             }
         }
-        updateAnimation(deltaTime);
 
         if (speed.x != 0)
         {
@@ -142,6 +143,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             }
         }
     }
+    updateAnimation(deltaTime);
 }
 
 void PhantomBat::randomObjective(){
@@ -206,16 +208,23 @@ void PhantomBat::onCollision(Entity &other, Game &game)
     {
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
-            game.createDropItem(DropType::MAGIC_CRYSTAL, sprite->getGlobalBounds().position);
+            game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+            currentAnimation = deathPhantomBat;
+            dead = true;
+            speed = sf::Vector2f(0, 0);
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
-            game.createDropItem(DropType::MAGIC_CRYSTAL, sprite->getGlobalBounds().position);
+            game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+            currentAnimation = deathPhantomBat;
+            dead = true;
+            speed = sf::Vector2f(0, 0);
         }
     }
+    currentBossLife = life;
 }
 
 // Render phantomBat and debug info (spawn zone)
@@ -240,27 +249,16 @@ void PhantomBat::draw(sf::RenderWindow &window)
 // Update animation frame and flip sprite based on direction
 void PhantomBat::updateAnimation(float deltaTime)
 {
-    // if (!isActive || !sprite)
-    //     return;
-
-    // // Flip sprite based on movement direction
-    // sf::Vector2f currentSpeed = speed;
-
-    // if (currentSpeed.x < 0)
-    // {
-    //     sprite->setScale({1.0f, 1.0f});
-    // }
-    // else if (currentSpeed.x > 0)
-    // {
-    //     sprite->setScale({-1.0f, 1.0f});
-    // }
-
     if(!animationManager->isPlaying(currentAnimation))
     {
         animationManager->playAnimation(currentAnimation);
     }
 
     animationManager->update(deltaTime);
+
+    if(currentAnimation == deathPhantomBat && animationManager->isAnimationFinished()){
+        killPhBat = true;
+    }
 }
 
 void PhantomBat::hello() const

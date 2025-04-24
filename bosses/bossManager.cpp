@@ -189,3 +189,21 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
 
     return allBosses;
 }
+
+void BossManager::killBoss(bossID boss){
+    if (phantomBat != nullptr && boss == phantomBatID)
+    {
+        delete phantomBat;
+        phantomBat = nullptr;
+    }
+    if (dracula != nullptr && boss == draculaID)
+    {
+        delete dracula;
+        dracula = nullptr;
+    }
+    if (draculaSpirit != nullptr && boss == draculaSpiritID)
+    {
+        delete draculaSpirit;
+        draculaSpirit = nullptr;
+    }
+}

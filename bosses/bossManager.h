@@ -6,6 +6,12 @@
 #include <random>
 #include <vector>
 
+enum bossID{
+    phantomBatID,
+    draculaID,
+    draculaSpiritID,
+};
+
 class BossManager
 {
 private:
@@ -31,4 +37,6 @@ public:
 
     // Level loading system
     void loadBossesFromLevel(int level, const TilemapManager &tilemaps);
+
+    void killBoss(bossID boss);
 };
