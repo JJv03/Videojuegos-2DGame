@@ -172,7 +172,7 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir){
     if(isOn){
         
         int chance = rand() % 3;
-        if(/*Using whip or subWeapon && chance == 0*/ 0){
+        if(/*Using whip or subWeapon && chance == 0*/ 0){ // Meter factor cercanía del jugador
             enhancedActivated = true;
             // bool dir = (playerBounds.position.x + (playerBounds.size.x / 2)) > (mapBounds.position.x + (mapBounds.size.x / 2));
             if(playerDir >= 0){         // Left
