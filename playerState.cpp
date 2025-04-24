@@ -2105,7 +2105,11 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool window
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
         if(player.isOnStairs){
-            player.setState(state<StairIdle>());
+            if(player.stairStepDistance == 0.f){
+                player.setState(state<StairIdle>());
+            } else {
+                player.setState(state<StairWalk>());
+            }
         }
         else if(player.isJumping)
         {

@@ -213,7 +213,7 @@ void FishMan::fireProjectile()
     // Adjust position to be in front of the fishman based on direction
     sf::Vector2f projectilePos = {
         fishmanPos.x + (directionX * 5.0f),
-        fishmanPos.y - 26.0f};
+        fishmanPos.y - 27.0f};
 
     // Create and store the projectile using the generic creator
     projectile = createProjectile(
