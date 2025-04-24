@@ -1,20 +1,20 @@
-#include "dracula.h"
+#include "draculaSpirit.h"
 #include "../game.h"
 #include <iostream>
 #include <cmath>
 
-// Constructor: Initialize dracula with sprite, hitboxes, position, and game level/stage
-Dracula::Dracula(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                 const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
+// Constructor: Initialize draculaSpirit with sprite, hitboxes, position, and game level/stage
+DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
+                             const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
 {
-    speed = DRACULA_SPEED;
-    life = DRACULA_LIFE;
-    score = DRACULA_SCORE;
-    damage = DRACULA_DAMAGE;
+    speed = DRACULASPIRIT_SPEED;
+    life = DRACULASPIRIT_LIFE;
+    score = DRACULASPIRIT_SCORE;
+    damage = DRACULASPIRIT_DAMAGE;
 }
 
-// Update dracula logic: handle spawning, movement, and deactivation
-void Dracula::update(float deltaTime, const sf::FloatRect &playerActivationZone)
+// Update draculaSpirit logic: handle spawning, movement, and deactivation
+void DraculaSpirit::update(float deltaTime, const sf::FloatRect &playerActivationZone)
 {
     // SPAWN LOGIC
     if (!isActive)
@@ -39,7 +39,7 @@ void Dracula::update(float deltaTime, const sf::FloatRect &playerActivationZone)
     }
 }
 
-void Dracula::onCollision(Entity &other, Game &game)
+void DraculaSpirit::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)
         return;
@@ -48,20 +48,20 @@ void Dracula::onCollision(Entity &other, Game &game)
     {
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
-            // DROP (la fase uno creo que no da nada)
+            // DROP
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
-            // DROP (la fase uno creo que no da nada)
+            // DROP
         }
     }
 }
 
-// Render dracula and debug info
-void Dracula::draw(sf::RenderWindow &window)
+// Render draculaSpirit
+void DraculaSpirit::draw(sf::RenderWindow &window)
 {
     if (sprite && isActive)
     {
@@ -70,7 +70,7 @@ void Dracula::draw(sf::RenderWindow &window)
 }
 
 // Update animation frame and flip sprite based on direction
-void Dracula::updateAnimation(float deltaTime)
+void DraculaSpirit::updateAnimation(float deltaTime)
 {
     if (!isActive || !sprite)
         return;
@@ -88,7 +88,7 @@ void Dracula::updateAnimation(float deltaTime)
     }
 }
 
-void Dracula::hello() const
+void DraculaSpirit::hello() const
 {
-    std::cout << "Soy Dracula" << std::endl;
+    std::cout << "Soy DraculaSpirit" << std::endl;
 }
