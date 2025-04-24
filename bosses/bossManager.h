@@ -39,4 +39,6 @@ public:
     void loadBossesFromLevel(int level, const TilemapManager &tilemaps);
 
     void killBoss(bossID boss);
+
+    void restartBosses(int currentLevel, int currentStage);
 };

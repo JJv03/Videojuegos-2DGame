@@ -261,6 +261,23 @@ void PhantomBat::updateAnimation(float deltaTime)
     }
 }
 
+void PhantomBat::resetPosition()
+{
+    Boss::resetPosition();
+
+    speed = PBAT_SPEED;
+    life = PBAT_LIFE;
+
+    currentAnimation = sleepPhantomBat;
+    dead = false;
+    starting = true;
+    timer = 0.f;
+    doubleMoveTimer = 0.f;
+    goingToCenter = true;
+    waiting = true;
+    attacking = false;
+}
+
 void PhantomBat::hello() const
 {
     std::cout << "Soy PhantomBat" << std::endl;

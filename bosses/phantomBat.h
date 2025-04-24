@@ -78,5 +78,8 @@ public:
 
     void getDoubleSpeed();
 
+    // Reset phantomBat to initial state
+    void resetPosition() override;
+
     void hello() const override;
 };

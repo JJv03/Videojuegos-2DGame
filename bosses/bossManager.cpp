@@ -207,3 +207,15 @@ void BossManager::killBoss(bossID boss){
         draculaSpirit = nullptr;
     }
 }
+
+void BossManager::restartBosses(int currentLevel, int currentStage)
+{
+    if(phantomBat)
+    {
+        if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
+        {
+            phantomBat->isActive = false;
+            phantomBat->resetPosition();
+        }
+    }
+}

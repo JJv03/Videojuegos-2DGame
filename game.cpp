@@ -1204,6 +1204,7 @@ void Game::restartStage()
     tilemaps.restartMiscTiles();
 
     enemyManager->restartEnemies(currentLevel, currentStage);
+    bossManager->restartBosses(currentLevel, currentStage);
 
     time = 300;
     updateGUITime();

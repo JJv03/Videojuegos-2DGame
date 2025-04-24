@@ -6,12 +6,6 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
     // Sprite sheet coordinates and dimensions
     const sf::IntRect PBAT_SPRITE_REGION = {{1, 11}, {16, 16}};
 
-    // Base hitbox: 16x7 centered
-    const sf::Vector2f BASE_HITBOX_SIZE = {16.f, 7.f};
-    const float HITBOX_WIDTH_1 = 48.f;
-    // const float HITBOX_WIDTH_2 = 32.f;
-    const float HITBOX_HEIGHT = 24.f;
-
     // Configure sprite
     auto phantomBatSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
     phantomBatSprite->setTextureRect(PBAT_SPRITE_REGION);

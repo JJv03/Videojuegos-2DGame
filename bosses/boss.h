@@ -10,6 +10,8 @@ class Boss : public EntitySprite
 private:
     const float GRAVITY = 750.0f; // Gravity force
 
+    sf::Vector2f originalPosition;
+    std::vector<sf::FloatRect> originalHitboxes;
 public:
     configManager &configManager;
     sf::Vector2f speed = {-75.0f, 0.0f}; // Default movement speed (left direction)
@@ -24,6 +26,9 @@ public:
     Boss(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes);
 
     virtual void applyGravity(float deltaTime);
+
+    // Resets boss to its original position
+    virtual void resetPosition();
 
     virtual void draw(sf::RenderWindow &window);
 

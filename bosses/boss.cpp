@@ -2,7 +2,12 @@
 #include <iostream>
 
 Boss::Boss(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes)
-    : EntitySprite(_sprite, _hitboxes), configManager(configManager::getInstance()) {}
+    : EntitySprite(_sprite, _hitboxes), configManager(configManager::getInstance()) 
+{
+    // Store initial position for later reset
+    originalPosition = sprite->getPosition();
+    originalHitboxes = _hitboxes;
+}
 
 void Boss::onCollision_SolidTile(Entity &solidTile)
 {
@@ -91,6 +96,14 @@ void Boss::applyGravity(float deltaTime)
     {
         speed.y = 0.0f;
     }
+}
+
+void Boss::resetPosition()
+{
+    // Reset to original position and restore initial speed
+    sprite->setPosition(originalPosition);
+
+    hitboxes = originalHitboxes;
 }
 
 bool Boss::applyDamage(float damage, Player &player)
