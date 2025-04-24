@@ -19,8 +19,6 @@ public:
     int m_tilesPerRow;
     int m_tilesPerColumn;
 
-    bool hasBoss;
-
     // Initial position when player starts stage
     sf::Vector2f initialPosition;
 
@@ -53,6 +51,9 @@ private:
     // Function that processes the tilemap file's initial position section,
     // storing the players initial position when starting the stage for the first time
     void processFileInitialPosition(std::ifstream &file);
+
+    // Function that processes the tilemap file's boss position (if it has any) and number of phases
+    void processFileBossSettings(std::ifstream &file);
 
     // Function that processes the tilemap file's solidTiles section,
     // storing its numbers in <solitTileNumberList>
@@ -92,6 +93,22 @@ public:
         float height;          // Optional: height of spawning area
     };
 
+    struct BossData
+    {
+        enum class Type
+        {
+            NO_BOSS = 0,
+            BOSS_LEFT = 1,
+            BOSS_RIGHT = 2,
+        };
+
+        Type type;              // Boss position type (0: NO_BOSS, 1: BOSS_LEFT, 2: BOSS_RIGHT)
+        int phase = 1;          // Actual phase (1: first phase, 2: second phase, ...)
+        int maxPhases = 1;      // Max phase
+    };
+
+    BossData bossData;
+
     // Vector to store enemy data
     std::vector<EnemyData> m_enemyData;
 
@@ -113,7 +130,7 @@ public:
     //BVHTree<Entity> solidTileBVH; // BVH tree for collision detection
 
     // Loads the tilemap with the given tiles
-    bool load(int level, int stage, bool hasBoss = false);
+    bool load(int level, int stage);
 
     // Function that updates the items in the tilemap and erases the ones that have no lifeTime left
     void updateItems(const float& deltaTime);

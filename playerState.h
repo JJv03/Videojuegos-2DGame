@@ -33,7 +33,7 @@ public:
 
     configManager &configManager;
 
-    void playSound(const std::string& soundName);
+    void playSound(const std::string& soundName, bool isMusic = false);
 
 
 };

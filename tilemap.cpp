@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <memory>
 
-
+using BossType = TileMap::BossData::Type;
 
 // Collision Types (only used here)
 enum CollisionType
@@ -212,10 +212,8 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
 }
 
 
-bool TileMap::load(int level, int stage, bool hasBoss)
+bool TileMap::load(int level, int stage)
 {
-    this->hasBoss = hasBoss;
-
     std::string tileset_path = "assets/tilesets/tileset_" + std::to_string(level) + ".png";
     std::string tilemap_path = "assets/tilemaps/level" + std::to_string(level) + "/tilemap_" +
                                std::to_string(level) + "_" + std::to_string(stage) + ".txt";
@@ -495,7 +493,11 @@ sf::FloatRect TileMap::getMapBounds() const
 
 sf::FloatRect TileMap::getMapBoundsBossFight() const
 {
-    return sf::FloatRect(sf::Vector2f(gTileSize  * (m_tilesPerRow - 8.f), 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
+    if(bossData.type == BossType::BOSS_LEFT){
+        return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
+    } else {
+        return sf::FloatRect(sf::Vector2f(gTileSize  * (m_tilesPerRow - 8.f), 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
+    }
 }
 
 // ------------------------ Auxiliar functions ------------------------
@@ -543,6 +545,8 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
     processFileMapDimensions(file);
 
     processFileInitialPosition(file);
+
+    processFileBossSettings(file);
 
     processFileSolidTiles(file, solidTileNumberList);
 
@@ -617,6 +621,53 @@ void TileMap::processFileInitialPosition(std::ifstream &file)
             }
 
             initialPosition = sf::Vector2f(posX, posY);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error parsing initial position: " << e.what() << std::endl;
+            return;
+        }
+    }
+    else
+    {
+        std::cerr << "Error: Empty or corrupted tilemap file." << std::endl;
+        return;
+    }
+}
+
+void TileMap::processFileBossSettings(std::ifstream &file)
+{
+    std::string line;
+
+    if (std::getline(file, line))
+    {
+        std::stringstream ss(line);
+        std::string numberStr;
+
+        try
+        {
+            std::getline(ss, numberStr, ',');
+            int bossPosition = std::stoi(numberStr);
+
+            if (bossPosition < 0 || bossPosition > 2)
+            {
+                std::cerr << "Invalid boss position type (0 <= n <= 2): " << bossPosition << std::endl;
+                return;
+            }
+
+            bossData.type = static_cast<BossData::Type>(bossPosition);
+            bossData.phase = 1; // Default phase
+
+            std::getline(ss, numberStr, ',');
+            int bossPhases = std::stoi(numberStr);
+
+            if (bossPhases < 0)
+            {
+                std::cerr << "Invalid boss number of phases (0 <= n): " << bossPhases << std::endl;
+                return;
+            }
+
+            bossData.maxPhases = bossPhases;
         }
         catch (const std::exception &e)
         {

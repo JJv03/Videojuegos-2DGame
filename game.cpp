@@ -7,6 +7,8 @@
 #include "utils.h"
 #include "item.h"
 
+using BossType = TileMap::BossData::Type;
+
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
 {
@@ -332,8 +334,9 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
     if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
     {
-        std::cout << "Falling " << std::endl;
 
+        std::cout << "Falling " << std::endl;
+        std::cout << viewPosition.y << ", " << gGameVisibleWorld_size_y << ", " << player.sprite->getPosition().y << std::endl;
         player.setState(std::make_unique<PlayerDeadState>());
     }
 
@@ -690,16 +693,20 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     checkDoorTileCollisions();
 
-    if (tilemaps[currentStage].hasBoss && hasReachedEndStage && !isInBossFight)
-    {
-        isInBossFight = true;
+    if(tilemaps[currentStage].bossData.type != BossType::NO_BOSS){
+        if (!isInBossFight && 
+            ((tilemaps[currentStage].bossData.type == BossType::BOSS_RIGHT && hasReachedEndStage) || 
+            (tilemaps[currentStage].bossData.type == BossType::BOSS_LEFT && hasReachedStartStage)))    
+        {
+            isInBossFight = true;
 
-        // Starting boss music (DIFFENT FOR DRACULA)
-        gameSoundManager.stopAllMusic();
-        auto audio = configManager.getAudio();
-        gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
+            // Starting boss music (DIFFENT FOR DRACULA)
+            gameSoundManager.stopAllMusic();
+            auto audio = configManager.getAudio();
+            gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
 
-        // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
+            // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
+        }
     }
 
     collisionGrid.checkCollisions(staticEntities, dynamicEntities, viewPosition);
@@ -1139,6 +1146,7 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
 int Game::startStage(int stage, int fromStairs)
 {
     hasReachedEndStage = false;
+    hasReachedStartStage = false;
     isInBossFight = false;
 
     if (unsigned(stage) > tilemaps.tilemaps.size())
@@ -1217,6 +1225,7 @@ void Game::restartStage()
     player.hearts = 5;
 
     hasReachedEndStage = false;
+    hasReachedStartStage = false;
     isInBossFight = false;
     player.visible = true;
 
@@ -1250,6 +1259,7 @@ void Game::restartLevel()
     player.lives = 3;
 
     hasReachedEndStage = false;
+    hasReachedStartStage = false;
     isInBossFight = false;
     player.visible = true;
 

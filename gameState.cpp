@@ -17,6 +17,8 @@ constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
 // constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 // constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
+using BossType = TileMap::BossData::Type;
+
 
 const bool debug = false;
 
@@ -84,13 +86,19 @@ sf::View GameGS::getView(sf::RenderWindow& window, Camera& camera) {
     float centerY = std::max(minY, std::min(view.getCenter().y, maxY));
 
     if(isInBossFight){
-        view.setCenter({std::round(maxX), std::round(centerY)});
-
+        if(game.tilemaps[game.currentStage].bossData.type == BossType::BOSS_LEFT){
+            view.setCenter({std::round(minX), std::round(centerY)});
+        }
+        else{
+            view.setCenter({std::round(maxX), std::round(centerY)});
+        }
     } else {
         view.setCenter({std::round(centerX), std::round(centerY)});
 
         if(centerX >= maxX && !hasReachedEndStage){
             hasReachedEndStage = true;
+        } else if(centerX <= minX && !hasReachedStartStage){
+            hasReachedStartStage = true;
         }
     }
 

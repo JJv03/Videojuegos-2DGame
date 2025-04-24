@@ -62,9 +62,13 @@ animationID whipLevelAnimation(int level){
     } 
 }
 
-void PlayerState::playSound(const std::string& soundName){
+void PlayerState::playSound(const std::string& soundName, bool isMusic){
     auto audio = configManager.getAudio();
-    gameSoundManager.playSound(soundName, gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+    if(!isMusic){
+        gameSoundManager.playSound(soundName, gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+    } else {
+        gameSoundManager.playMusic(soundName, gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+    }
 }
 
 // ---------------------------- IDLE ----------------------------
@@ -1743,7 +1747,7 @@ void PlayerDeadState::init(Player& player)
 {
     gameSoundManager.stopAllSounds();
     gameSoundManager.stopAllMusic();
-    this->playSound("deadMusic");
+    this->playSound("deadMusic", true);
     player.currentAnimation = deathSimon;
     player.whip.animationManager->playAnimation(noAnimation);
     player.animationManager->playAnimation(player.currentAnimation);

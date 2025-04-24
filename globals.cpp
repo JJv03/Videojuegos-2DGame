@@ -98,6 +98,7 @@ const float gPlayerJumpForce = 205.0f;
 // ============ ENEMIES VARIABLES =============
 bool isInBossFight = false;
 bool hasReachedEndStage = false;
+bool hasReachedStartStage = false;
 float currentBossLife = 16.f;
 float maxLife = 16.f;
 bool killPhBat = false;

@@ -103,6 +103,7 @@ extern const float gPlayerJumpForce;
 // ============ ENEMIES VARIABLES =============
 extern bool isInBossFight;
 extern bool hasReachedEndStage;
+extern bool hasReachedStartStage;
 extern float currentBossLife;
 extern float maxLife;
 extern bool killPhBat;
