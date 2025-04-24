@@ -263,6 +263,7 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game){
 void MiscellaneousTile::onCollision_Whip(Game& game){
     if (this->isBreakable) {
         this->isDestroyed = true;
+        hitboxes.clear();
         game.createDropItem(this->dropType, this->sprite->getPosition());
         
         if (isCollidable()) {

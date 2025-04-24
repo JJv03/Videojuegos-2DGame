@@ -274,9 +274,9 @@ public:
     };
 
     std::vector<AnimationManager::Frame> attackFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 79), sf::Vector2(16, 31)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 79), sf::Vector2(16, 31)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 80), sf::Vector2(16, 31)), 0.2f}};
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 78), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(26, 78), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 78), sf::Vector2(16, 31)), 0.2f}};
 
     std::vector<AnimationManager::Frame> attackFloorFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(147, 79), sf::Vector2(16, 23)), 0.1f},

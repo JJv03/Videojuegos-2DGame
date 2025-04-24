@@ -709,7 +709,6 @@ std::vector<sf::FloatRect> Whip::getBounds() const
 
 void Whip::onCollision(Entity &other, Game &game)
 {   
-    /*
     if (!this->collisionedEntities.contains(&other)) {
         if (dynamic_cast<Enemy *>(&other))
         {
@@ -732,7 +731,6 @@ void Whip::onCollision(Entity &other, Game &game)
             playSound("whip_hit");
         }
     }
-    */
 }
 
 void Whip::hello() const {
