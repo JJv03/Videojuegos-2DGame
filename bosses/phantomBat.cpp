@@ -104,8 +104,15 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
-                            objectivePlayer(playerBounds);  // Direct to the player
-                            // randomObjective();
+                            int chance = rand() % 4;
+                            if(chance == 0){ // 1/4
+                                // Direct to the player
+                                objectivePlayer(playerBounds);
+                            }
+                            else{   // 3/4
+                                // Random position
+                                randomObjective();
+                            }
                         }
                     }
                     else{   // attacking
