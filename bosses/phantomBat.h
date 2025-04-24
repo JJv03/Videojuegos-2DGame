@@ -20,8 +20,8 @@ private:
     const float sleepInterval = 2.f;
 
     float doubleMoveTimer = 0.f;
-    const float moveLeftRight = 1.5f;
-    const float moveInterval = 2.f;
+    const float moveLeftRight = 1.f;
+    const float moveInterval = 1.5f;
 
     bool goingToCenter = true;
 
@@ -32,6 +32,10 @@ private:
 
     sf::Vector2f startPosition;
     float arcHeight = 25.f;
+
+    bool enhancedActivated = false;
+    float enhancedTimer = 0.f;
+    const float enhancedInterval = 1.5f;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
@@ -82,6 +86,8 @@ public:
     void resetPosition() override;
 
     void objectivePlayer(const sf::FloatRect &playerBounds);
+
+    void enhancedAI(bool isOn, const int playerDir);
 
     void hello() const override;
 };

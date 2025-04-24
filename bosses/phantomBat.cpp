@@ -74,7 +74,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             }
         }
         else{
-            auto mode = configManager.getDifficulty();
             if(goingToCenter){
                 if(timer >= moveInterval){
                     timer = 0.0f;
@@ -84,7 +83,23 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 }
             }
             else{
-                if (waiting) {
+                auto mode = configManager.getDifficulty();
+                if(enhancedActivated){
+                    enhancedTimer += deltaTime;
+                    getLinelSpeed();
+                    if(enhancedTimer >= enhancedInterval){
+                        // Return to waiting
+                        enhancedTimer = 0;
+                        timer = 0;
+                        doubleMoveTimer = 0;
+                        attacking = false;
+                        waiting = true;
+                        speed = sf::Vector2f(0, 0);
+                        enhancedActivated = false;
+                    }
+                }
+                else if (waiting) {
+                    enhancedAI(mode.hard_mode, playerDir);
                     speed = sf::Vector2f(0, 0);
                     timer += deltaTime;
                     if (timer >= waitingInterval) {
@@ -100,6 +115,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 }
                 else{
                     if(!attacking){ // moving left or right
+                        enhancedAI(mode.hard_mode, playerDir);
                         if(timer >= moveLeftRight){
                             attacking = true;
                             timer = 0.f;
@@ -116,6 +132,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         }
                     }
                     else{   // attacking
+                        enhancedAI(mode.hard_mode, playerDir);
                         if(timer >= moveInterval){
                             attacking = false;
                             waiting = true;
@@ -128,10 +145,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         }
                     }
                 }
-            }
-            if(mode.hard_mode){ // Enhanced AI mode
-                // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)
-                // the phantomBat is able to avoid the attack flying up
             }
         }
 
@@ -153,6 +166,25 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
         }
     }
     updateAnimation(deltaTime);
+}
+
+void PhantomBat::enhancedAI(bool isOn, const int playerDir){
+    if(isOn){
+        
+        int chance = rand() % 3;
+        if(/*Using whip or subWeapon && chance == 0*/ 0){
+            enhancedActivated = true;
+            // bool dir = (playerBounds.position.x + (playerBounds.size.x / 2)) > (mapBounds.position.x + (mapBounds.size.x / 2));
+            if(playerDir >= 0){         // Left
+
+            }
+            else if(playerDir < 0){   // Right
+
+            }
+        }
+    }
+    // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)
+    // the phantomBat is able to avoid the attack flying up
 }
 
 void PhantomBat::randomObjective(){
