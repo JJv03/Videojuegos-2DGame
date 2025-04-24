@@ -28,19 +28,23 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 // Update all active bosses in current level/stage
 void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
-    if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
-    {
-        phantomBat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
-                           playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
+    if(phantomBat){
+        if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
+        {
+            phantomBat->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
+        }
     }
 }
 
 // Render all bosses in current level/stage with debug visuals
 void BossManager::draw(sf::RenderWindow &window, const int currentLevel, const int currentStage)
 {
-    if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
-    {
-        phantomBat->draw(window);
+    if(phantomBat){
+        if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)
+        {
+            phantomBat->draw(window);
+        }
     }
 }
 
@@ -95,9 +99,11 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
 {
     std::vector<Entity *> allBosses;
 
-    if (phantomBat->level == currentLevel && phantomBat->stage == currentStage && phantomBat->isActive)
-    {
-        allBosses.push_back(phantomBat);
+    if(phantomBat){
+        if (phantomBat->level == currentLevel && phantomBat->stage == currentStage && phantomBat->isActive)
+        {
+            allBosses.push_back(phantomBat);
+        }
     }
 
     return allBosses;

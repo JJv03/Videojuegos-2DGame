@@ -1281,6 +1281,7 @@ void Game::setLevelMusic(int level)
 
         break;
     case 7:
+        std::cout << "Dracula"  << std::endl;
         gameSoundManager.playMusic("dracula1", volume);
         break;
     }
