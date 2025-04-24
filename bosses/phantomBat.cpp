@@ -49,6 +49,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {   
+        std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
         // BOSS LIFE FOR THE GUI
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
@@ -103,7 +104,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
-                            randomObjective(); // Maybe a direct attack to the player
+                            objectivePlayer(playerBounds);  // Direct to the player
+                            // randomObjective();
                         }
                     }
                     else{   // attacking
@@ -165,6 +167,12 @@ void PhantomBat::randomObjective(){
     
     goal = sf::Vector2f(distX(gen), distY(gen)); 
     // std::cout << "New goal: " << goal.x << " " << goal.y << std::endl;
+}
+
+void PhantomBat::objectivePlayer(const sf::FloatRect &playerBounds){
+    doubleMoveTimer = 0.f;
+    startPosition = position;
+    goal = sf::Vector2f(playerBounds.position.x + 10, playerBounds.position.y - 10);
 }
 
 void PhantomBat::getLinelSpeed(){

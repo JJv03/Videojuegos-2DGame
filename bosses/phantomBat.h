@@ -81,5 +81,7 @@ public:
     // Reset phantomBat to initial state
     void resetPosition() override;
 
+    void objectivePlayer(const sf::FloatRect &playerBounds);
+
     void hello() const override;
 };
