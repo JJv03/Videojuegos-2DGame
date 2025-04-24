@@ -12,6 +12,7 @@ private:
     // Bosses
     PhantomBat *phantomBat = nullptr;
     Dracula *dracula = nullptr;
+    DraculaSpirit *draculaSpirit = nullptr;
 
     // Reference to player
     Player *playerPtr;

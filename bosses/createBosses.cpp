@@ -55,3 +55,30 @@ Dracula *createDracula(const sf::Vector2f &position, const size_t &level, const 
 
     return new Dracula(draculaSprite, hitboxes, position, level, stage);
 }
+
+// Creates DraculaSpirit boss
+DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect DRACULA_SPRITE_REGION = {{1, 148}, {48, 64}};
+    const float HITBOX_WIDTH = 46.f;
+    const float HITBOX_HEIGHT = 62.f;
+
+    // Configure sprite
+    auto draculaSpiritSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+    draculaSpiritSprite->setTextureRect(DRACULA_SPRITE_REGION);
+    draculaSpiritSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = draculaSpiritSprite->getLocalBounds();
+    draculaSpiritSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    return new DraculaSpirit(draculaSpiritSprite, hitboxes, position, level, stage);
+}

@@ -36,12 +36,18 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
                                playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
         }
     }
-
     if (dracula)
     {
         if (dracula->level == currentLevel && dracula->stage == currentStage)
         {
             dracula->update(deltaTime, playerPtr->gPlayerActivationZone);
+        }
+    }
+    if (draculaSpirit)
+    {
+        if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage)
+        {
+            draculaSpirit->update(deltaTime, playerPtr->gPlayerActivationZone);
         }
     }
 }
@@ -63,6 +69,13 @@ void BossManager::draw(sf::RenderWindow &window, const int currentLevel, const i
             dracula->draw(window);
         }
     }
+    if (draculaSpirit)
+    {
+        if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage)
+        {
+            draculaSpirit->draw(window);
+        }
+    }
 }
 
 // Load boss layout for specified level from tilemap data
@@ -78,6 +91,11 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
     {
         delete dracula;
         dracula = nullptr;
+    }
+    if (draculaSpirit != nullptr)
+    {
+        delete draculaSpirit;
+        draculaSpirit = nullptr;
     }
 
     switch (level)
@@ -126,6 +144,9 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
                 case 101: // Dracula
                     dracula = createDracula(bossData.position, level, currentStage);
                     break;
+                case 102: // Dracula Spirit
+                    draculaSpirit = createDraculaSpirit(bossData.position, level, currentStage);
+                    break;
                 default:
                     std::cerr << "Unknown boss type: " << bossData.type << std::endl;
                     break;
@@ -156,6 +177,13 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         if (dracula->level == currentLevel && dracula->stage == currentStage && dracula->isActive)
         {
             allBosses.push_back(dracula);
+        }
+    }
+    if (draculaSpirit)
+    {
+        if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage && draculaSpirit->isActive)
+        {
+            allBosses.push_back(draculaSpirit);
         }
     }
 
