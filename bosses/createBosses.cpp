@@ -5,6 +5,9 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect PBAT_SPRITE_REGION = {{1, 11}, {16, 16}};
+
+    // Base hitbox: 16x7 centered
+    const sf::Vector2f BASE_HITBOX_SIZE = {16.f, 7.f};
     const float HITBOX_WIDTH_1 = 48.f;
     // const float HITBOX_WIDTH_2 = 32.f;
     const float HITBOX_HEIGHT = 24.f;
@@ -22,8 +25,15 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
     std::vector<sf::FloatRect> hitboxes = {
         // Wings opened
         sf::FloatRect(
-            {position.x - (HITBOX_WIDTH_1 / 2.f), position.y - HITBOX_HEIGHT},
-            {HITBOX_WIDTH_1, HITBOX_HEIGHT}),
+            {position.x + 4.f, position.y},
+            {16.f, 7.f}
+        ),
+        sf::FloatRect(
+            {position.x - 8.f, position.y - 16.f},
+            {48.f, 16.f}),
+        sf::FloatRect(
+            {position.x - 8.f, position.y - 16.f},
+            {32.f, 16.f}),
     };
 
     return new PhantomBat(phantomBatSprite, hitboxes, position, level, stage, mapDims);
