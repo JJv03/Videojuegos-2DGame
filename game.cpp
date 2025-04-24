@@ -54,11 +54,11 @@ void Game::init()
 
     // Enemies -------------------------------------------------------------
     enemyManager = new EnemyManager(&player);
-    enemyManager->loadEnemiesFromLevel(1, tilemaps);
+    enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
 
     // Bosses -------------------------------------------------------------
     bossManager = new BossManager(&player);
-    bossManager->loadBossesFromLevel(1, tilemaps);
+    bossManager->loadBossesFromLevel(currentLevel, tilemaps);
 
     // Load item textures
     if (!loadItemTextures())
@@ -70,7 +70,8 @@ void Game::init()
     loadGUI();
 }
 
-void Game::loadGUI(){
+void Game::loadGUI()
+{
     if (!font.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf"))
     {
         std::cout << "No se ha encontrado la fuente" << std::endl;
@@ -167,8 +168,8 @@ void Game::loadGUI(){
     gSprites.push_back(hSprite);
 }
 
-
-void Game::loadMusic(){
+void Game::loadMusic()
+{
     // Level 1
     gameSoundManager.loadMusic("vampireKiller", "./assets/music/03Vampire_Killer.mp3");
 
@@ -204,8 +205,8 @@ void Game::loadMusic(){
     gameSoundManager.loadMusic("gameOver", "./assets/music/14Game_Over.mp3");
 }
 
-
-void Game::loadSounds(){
+void Game::loadSounds()
+{
     gameSoundManager.loadSound("pause", "./assets/sounds/01.wav");
     gameSoundManager.loadSound("02", "./assets/sounds/02.wav");
     gameSoundManager.loadSound("deflecting", "./assets/sounds/03.wav");
@@ -311,7 +312,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     tilemaps[currentStage].updateMiscTiles(deltaTime);
 
     particleSystem.update(deltaTime);
-
 
     static float timeAccumulator = 0.0f;
 
@@ -469,7 +469,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         particleSystem.draw(window);
 
-
         // DEBUG: Draw player and whip hitbox
         if (gDrawHitboxes)
         {
@@ -510,19 +509,22 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         }
 
         // Draw the health bars
-        if(!isInBossFight){
+        if (!isInBossFight)
+        {
             drawHealthBars(window, player.health, 16, virtualWorldOffset);
         }
-        else{   // Boss fight
+        else
+        { // Boss fight
             int maxSquares = 16;
             std::cout << currentBossLife << std::endl;
             int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
-            if (scaledBossLife > maxSquares) scaledBossLife = maxSquares;
-            if (scaledBossLife < 0) scaledBossLife = 0;
+            if (scaledBossLife > maxSquares)
+                scaledBossLife = maxSquares;
+            if (scaledBossLife < 0)
+                scaledBossLife = 0;
             std::cout << scaledBossLife << std::endl;
             drawHealthBars(window, player.health, scaledBossLife, virtualWorldOffset);
         }
-        
 
         // Subweapon box (the red rectangle)
         sf::RectangleShape redBorder(sf::Vector2f(gGUI_subweaponBox_size_x, gGUI_subweaponBox_size_y));
@@ -1281,7 +1283,7 @@ void Game::setLevelMusic(int level)
 
         break;
     case 7:
-        std::cout << "Dracula"  << std::endl;
+        std::cout << "Dracula" << std::endl;
         gameSoundManager.playMusic("dracula1", volume);
         break;
     }
