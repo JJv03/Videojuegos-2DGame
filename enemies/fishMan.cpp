@@ -295,7 +295,7 @@ void FishMan::onCollision(Entity &other, Game &game)
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
-            game.particleSystem.spawnFireParticle(this->sprite->getPosition());
+            game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
         }
     }

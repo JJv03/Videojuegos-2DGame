@@ -82,7 +82,7 @@ void Zombie::onCollision(Entity &other, Game &game)
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             
-            game.particleSystem.spawnFireParticle(this->sprite->getPosition());
+            game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
         }
     }
