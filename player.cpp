@@ -117,7 +117,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->isNearStair = false;
     this->stairStart = new StairTile();
 
-    if(!this->isBeingHurt && !this->isDead){
+    if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip){
         if (this->isInvulnerable && !this->isInvisible)
         {
             this->blinkTimer += deltaTime;
@@ -137,7 +137,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                 this->invulnerableTimeCounter += deltaTime;
             }
         }
-        else if (this->isInvulnerable && this->isInvisible)
+        else if (this->isInvisible)
         {
             if (this->invisibilityTimeCounter >= this->invisibilityTime) {
                 playSound("invisibility_off");
