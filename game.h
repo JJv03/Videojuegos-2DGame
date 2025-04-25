@@ -140,4 +140,10 @@ private:
 
     bool withOutLives;
     int position;
+
+    // Blinking screen when rosary is used
+    sf::Clock rosarioBlinkClock;
+    bool isRosarioBlinking = false; 
+    float rosarioBlinkDuration = 1.0f; 
+    float rosarioBlinkInterval = 0.1f; 
 };

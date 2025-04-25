@@ -29,6 +29,8 @@ Game::Game() : configManager(configManager::getInstance())
     simonImage.createMaskFromColor(gColorKeyGreen);
 
     gTextures["simon"] = sf::Texture(simonImage, false);
+
+
 }
 
 // Initializes a new game from the beggining
@@ -386,7 +388,9 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
     if(player.activateRosario){
         enemyManager->restartEnemies(currentLevel, currentStage);
-        
+        isRosarioBlinking = true;
+        rosarioBlinkClock.restart();
+        player.activateRosario = false;
     }
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
@@ -452,6 +456,22 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         restartLoadingClock = false;
         loadingClock.restart();
     }
+    if (isRosarioBlinking) {
+        std::cout << "Blinking" << std::endl;
+        float elapsed = rosarioBlinkClock.getElapsedTime().asSeconds();
+        
+        if (elapsed < rosarioBlinkDuration) {
+            if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0) {
+                sf::RectangleShape whiteScreen(camera.getView(window.getSize()).getSize());
+                whiteScreen.setFillColor(sf::Color::White);
+                window.draw(whiteScreen);
+                window.display();
+                sf::sleep(sf::milliseconds(50));
+            }
+        } else {
+            isRosarioBlinking = false;
+        }
+    }
 
     if (loadingClock.getElapsedTime().asSeconds() < gLoadingTime)
     {
@@ -474,7 +494,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
                 player.acceptsInput = true;
             }
         }
-        
+
 
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
