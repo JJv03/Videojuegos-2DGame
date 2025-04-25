@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <memory>
 
-using BossType = TileMap::BossData::Type;
+using BossPos = TileMap::BossPosition;
 
 // Collision Types (only used here)
 enum CollisionType
@@ -493,7 +493,7 @@ sf::FloatRect TileMap::getMapBounds() const
 
 sf::FloatRect TileMap::getMapBoundsBossFight() const
 {
-    if(bossData.type == BossType::BOSS_LEFT){
+    if(bossPosition == BossPos::BOSS_LEFT){
         return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
     } else {
         return sf::FloatRect(sf::Vector2f(gTileSize  * (m_tilesPerRow - 8.f), 0.f), sf::Vector2f(gTileSize * 8.f, gTileSize * m_tilesPerColumn));
@@ -647,27 +647,15 @@ void TileMap::processFileBossSettings(std::ifstream &file)
         try
         {
             std::getline(ss, numberStr, ',');
-            int bossPosition = std::stoi(numberStr);
+            int bossPositionInt = std::stoi(numberStr);
 
-            if (bossPosition < 0 || bossPosition > 2)
+            if (bossPositionInt < 0 || bossPositionInt > 2)
             {
-                std::cerr << "Invalid boss position type (0 <= n <= 2): " << bossPosition << std::endl;
+                std::cerr << "Invalid boss position type (0 <= n <= 2): " << bossPositionInt << std::endl;
                 return;
             }
 
-            bossData.type = static_cast<BossData::Type>(bossPosition);
-            bossData.phase = 1; // Default phase
-
-            std::getline(ss, numberStr, ',');
-            int bossPhases = std::stoi(numberStr);
-
-            if (bossPhases < 0)
-            {
-                std::cerr << "Invalid boss number of phases (0 <= n): " << bossPhases << std::endl;
-                return;
-            }
-
-            bossData.maxPhases = bossPhases;
+            bossPosition = static_cast<BossPos>(bossPositionInt);
         }
         catch (const std::exception &e)
         {

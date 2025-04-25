@@ -33,6 +33,7 @@ public:
 
     size_t currentLevel = 0;
     size_t currentStage = 0;
+    size_t currentBossPhase = 0;
 
     sf::Clock revivingClock;
     sf::Clock loadingClock;

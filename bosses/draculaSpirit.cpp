@@ -14,14 +14,13 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
 }
 
 // Update draculaSpirit logic: handle spawning, movement, and deactivation
-void DraculaSpirit::update(float deltaTime, const sf::FloatRect &playerActivationZone)
-{
+void DraculaSpirit::update(float deltaTime, const Player &player, const sf::FloatRect &mapBounds){
     // SPAWN LOGIC
     if (!isActive)
     {
         for (const auto &hitbox : hitboxes)
         {
-            if (playerActivationZone.findIntersection(hitbox).has_value())
+            if (player.gPlayerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
                 break;

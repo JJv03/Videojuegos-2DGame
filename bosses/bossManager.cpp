@@ -26,7 +26,7 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 }
 
 // Update all active bosses in current level/stage
-void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
+void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const int phase, const sf::FloatRect &mapBounds)
 {
     if (playerPtr->upgradeWhip)
     {
@@ -44,14 +44,14 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
     {
         if (dracula->level == currentLevel && dracula->stage == currentStage)
         {
-            dracula->update(deltaTime, playerPtr->gPlayerActivationZone);
+            dracula->update(deltaTime, phase, *playerPtr, mapBounds);
         }
     }
     if (draculaSpirit)
     {
         if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage)
         {
-            draculaSpirit->update(deltaTime, playerPtr->gPlayerActivationZone);
+            draculaSpirit->update(deltaTime, *playerPtr, mapBounds);
         }
     }
 }

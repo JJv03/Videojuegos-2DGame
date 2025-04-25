@@ -108,7 +108,7 @@ extern bool hasReachedEndStage;
 extern bool hasReachedStartStage;
 extern float currentBossLife;
 extern float maxLife;
-extern bool killPhBat;
+extern bool gKilledBoss;
 
 // ============ GAME VARIABLES ============
 extern SoundManager gameSoundManager;

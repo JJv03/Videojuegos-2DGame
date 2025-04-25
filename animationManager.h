@@ -56,6 +56,10 @@ enum animationID{
     sleepPhantomBat,
     flyPhantomBat,
     deathPhantomBat,
+    // Dracula
+    draculaMask,
+    draculaIdle,
+    draculaAttack,
 
     // Secondary weapon
     daggerThrowing,

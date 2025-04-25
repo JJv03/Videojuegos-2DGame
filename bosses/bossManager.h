@@ -30,7 +30,7 @@ public:
     BossManager(Player *player); // Initialize with player reference
 
     // Core game loop functions
-    void update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds);
+    void update(float deltaTime, const int currentLevel, const int currentStage, const int phase, const sf::FloatRect &mapBounds);
     void draw(sf::RenderWindow &window, const int currentLevel, const int currentStage);
 
     std::vector<Entity *> getBosses(int currentLevel, int currentStage) const; // Get all bosses

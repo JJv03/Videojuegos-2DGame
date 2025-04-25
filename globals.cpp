@@ -103,7 +103,7 @@ bool hasReachedEndStage = false;
 bool hasReachedStartStage = false;
 float currentBossLife = 16.f;
 float maxLife = 16.f;
-bool killPhBat = false;
+bool gKilledBoss = false;
 
 
 // ============ GAME VARIABLES ============

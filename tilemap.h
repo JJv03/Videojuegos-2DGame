@@ -93,21 +93,14 @@ public:
         float height;          // Optional: height of spawning area
     };
 
-    struct BossData
+    enum class BossPosition
     {
-        enum class Type
-        {
-            NO_BOSS = 0,
-            BOSS_LEFT = 1,
-            BOSS_RIGHT = 2,
-        };
-
-        Type type;              // Boss position type (0: NO_BOSS, 1: BOSS_LEFT, 2: BOSS_RIGHT)
-        int phase = 1;          // Actual phase (1: first phase, 2: second phase, ...)
-        int maxPhases = 1;      // Max phase
+        NO_BOSS = 0,
+        BOSS_LEFT = 1,
+        BOSS_RIGHT = 2,
     };
 
-    BossData bossData;
+    BossPosition bossPosition;              // Boss position type (0: NO_BOSS, 1: BOSS_LEFT, 2: BOSS_RIGHT)
 
     // Vector to store enemy data
     std::vector<EnemyData> m_enemyData;

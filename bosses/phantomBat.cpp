@@ -12,7 +12,7 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
     score = PBAT_SCORE;
     damage = PBAT_DAMAGE;
 
-    killPhBat = false;
+    gKilledBoss = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -326,7 +326,7 @@ void PhantomBat::updateAnimation(float deltaTime)
     animationManager->update(deltaTime);
 
     if(currentAnimation == deathPhantomBat && animationManager->isAnimationFinished()){
-        killPhBat = true;
+        gKilledBoss = true;
     }
 }
 

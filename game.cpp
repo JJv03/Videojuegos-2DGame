@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "item.h"
 
-using BossType = TileMap::BossData::Type;
+using BossPos = TileMap::BossPosition;
 
 // Constructor, destructor
 Game::Game() : configManager(configManager::getInstance())
@@ -310,7 +310,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     player.update(deltaTime, viewPosition, windowHasFocus);
 
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
-    bossManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
+    bossManager->update(deltaTime, currentLevel, currentStage, currentBossPhase, tilemaps[currentStage].getMapBounds());
 
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateMiscTiles(deltaTime);
@@ -435,8 +435,20 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
 
     // For killing bosses (destroying)
-    if(killPhBat){
-        bossManager->killBoss(phantomBatID);
+    if(gKilledBoss){
+        if(currentLevel == 1){
+            bossManager->killBoss(phantomBatID);
+        }
+        if(currentLevel == 7 && currentBossPhase == 1){
+            currentBossPhase++;
+            bossManager->killBoss(draculaID);
+        }
+        if(currentLevel == 7 && currentBossPhase == 2){
+            bossManager->killBoss(draculaSpiritID);
+            
+            // WINNING ?
+        }
+        gKilledBoss = false;
     }
 }
 
@@ -739,12 +751,13 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     checkDoorTileCollisions();
 
-    if(tilemaps[currentStage].bossData.type != BossType::NO_BOSS){
+    if(tilemaps[currentStage].bossPosition != BossPos::NO_BOSS){
         if (!isInBossFight && 
-            ((tilemaps[currentStage].bossData.type == BossType::BOSS_RIGHT && hasReachedEndStage) || 
-            (tilemaps[currentStage].bossData.type == BossType::BOSS_LEFT && hasReachedStartStage)))    
+            ((tilemaps[currentStage].bossPosition == BossPos::BOSS_RIGHT && hasReachedEndStage) || 
+            (tilemaps[currentStage].bossPosition == BossPos::BOSS_LEFT && hasReachedStartStage)))    
         {
             isInBossFight = true;
+            currentBossPhase = 1;
 
             // Starting boss music (DIFFENT FOR DRACULA)
             gameSoundManager.stopAllMusic();
@@ -1194,6 +1207,8 @@ int Game::startStage(int stage, int fromStairs)
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
+    gKilledBoss = false;
+    currentBossPhase = 0;
 
     if (unsigned(stage) > tilemaps.tilemaps.size())
     {
@@ -1273,6 +1288,8 @@ void Game::restartStage()
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
+    gKilledBoss = false;
+    currentBossPhase = 0;
     player.visible = true;
 
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
@@ -1307,6 +1324,8 @@ void Game::restartLevel()
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
+    gKilledBoss = false;
+    currentBossPhase = 0;
     player.visible = true;
 
     startStage(1);

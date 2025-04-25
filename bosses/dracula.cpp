@@ -11,22 +11,31 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect>
     life = DRACULA_LIFE;
     score = DRACULA_SCORE;
     damage = DRACULA_DAMAGE;
+
+    gKilledBoss = false;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Fishman AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(noAnimation, this->noAnimationFrames);
+    animationManager->addAnimation(draculaMask, this->maskDraculaFrames);
+    animationManager->addAnimation(draculaIdle, this->idleDraculaFrames);
+    animationManager->addAnimation(draculaAttack, this->attackDraculaFrames);
+
+    this->animationManager = animationManager;
+    currentAnimation = sleepPhantomBat;
 }
 
 // Update dracula logic: handle spawning, movement, and deactivation
-void Dracula::update(float deltaTime, const sf::FloatRect &playerActivationZone)
+void Dracula::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC
-    if (!isActive)
+    if (!isActive && phase == 1)
     {
-        for (const auto &hitbox : hitboxes)
-        {
-            if (playerActivationZone.findIntersection(hitbox).has_value())
-            {
-                isActive = true;
-                break;
-            }
-        }
+        isActive = true;
     }
 
     // MOVEMENT LOGIC
@@ -34,6 +43,47 @@ void Dracula::update(float deltaTime, const sf::FloatRect &playerActivationZone)
     {
         // MAQUINA DE ESTADOS DEL BOSS
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
+        switch(currentState){
+            case DraculaState::ASLEEP:
+                if(!animationManager->isPlaying(noAnimation)){
+                    animationManager->playAnimation(noAnimation);
+                }
+
+                
+                break;
+
+            case DraculaState::MASK_APPEAR:
+
+                break;
+
+            case DraculaState::MASK_ELEVATE:
+
+                break;
+
+            case DraculaState::BATTLE_IDLE:
+
+                break;
+
+            case DraculaState::BATTLE_APPEAR:
+
+                break;
+
+            case DraculaState::BATTLE_ATTACK:
+
+                break;
+
+            case DraculaState::BATTLE_DISAPPEAR:
+
+                break;
+
+            case DraculaState::DEAD_MASK_OFF:
+
+                break;
+
+            default:
+                break;
+        }
+
 
         updateAnimation(deltaTime);
     }
