@@ -384,7 +384,10 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
-
+    if(player.activateRosario){
+        enemyManager->restartEnemies(currentLevel, currentStage);
+        
+    }
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
         player.lives -= 1;
@@ -471,6 +474,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
                 player.acceptsInput = true;
             }
         }
+        
 
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
