@@ -5,19 +5,25 @@
 #include "particle.h"
 
 
-BreakBlockParticle::BreakBlockParticle(const sf::Texture& texture, sf::Vector2f position)
-    : m_gravity(100.f), m_lifetime(4.f), m_alive(true)
-{
-    for (int i = 0; i < 3; ++i) {
-        // Random direction in angle (-45° to 45°) and speed
-        float angle = (static_cast<float>(rand()) / RAND_MAX) *
-                        (std::numbers::pi / 2.f) - (std::numbers::pi / 4.f);    // [-π/4, π/4]
+const float PARTICLE_GRAVITY = 300.f; // Gravity acceleration in pixels per second squared
+const float PARTICLE_LIFETIME = 4.f; // Particle lifetime in seconds
 
-        float speed = 80.f + static_cast<float>(rand() % 60);   // between 80 and 140
+
+BreakBlockParticle::BreakBlockParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_gravity(PARTICLE_GRAVITY), m_lifetime(PARTICLE_LIFETIME), m_alive(true)
+{
+    const float angle_in_deg[] = {105.f, 75.f, 55.f };  // angle in which the debris will be thrown
+    const float sign[] = {-1.f, 1.f, 1.f };             // sign of the horizontal velocity of the debris
+    const float speed = 140.f;
+    const float max_angle_variation = 5.f; // 5 degrees of random variation
+
+    for (int i = 0; i < 3; ++i) {
+        float angle_variation = (static_cast<float>(rand()) / RAND_MAX) * max_angle_variation;
+        float angle_in_radians = (angle_in_deg[i] + angle_variation) * std::numbers::pi / 360.f;
 
         sf::Vector2f velocity = {
-            std::cos(angle) * speed / 4.f,
-            -std::abs(std::sin(angle) * speed)
+            sign[i] * std::cos(angle_in_radians) * speed / 4.f,
+            -std::abs(std::sin(angle_in_radians) * speed)
         };
 
         Debris d {
