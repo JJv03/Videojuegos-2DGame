@@ -216,6 +216,16 @@ public:
     float stopWatchTimeCounter;
     float stopWatchTime;
 
+    // Double Shot
+    SubWeapon subWeapon2;
+    bool weaponIsActive2;
+    bool isDoubleShotActive;
+    float delayBetweenShots;
+    float delayBetweenShotsCounter;
+    float timeDoubleShotActive;
+    float timeDoubleShotActiveCounter;
+    bool oneHasBeenUsed = false;
+    
     float verticalSpeed;
     float horizontalSpeed;
 
@@ -357,7 +367,7 @@ public:
 
     // SubWeapon functions
     void updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition);
-
+    void updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPosition);
 };
 
 void playSound(const std::string& soundName);

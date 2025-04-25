@@ -489,6 +489,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             {
                 window.draw(FloatRectToRectShape(player.subWeapon.sprite->getGlobalBounds()));
             }
+            if (player.weaponIsActive2)
+            {
+                window.draw(FloatRectToRectShape(player.subWeapon2.sprite->getGlobalBounds()));
+            }
         }
 
         // =========================================
@@ -550,6 +554,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             guiSubWeaponSprite->setPosition(redBorderPosition);
             window.draw(*guiSubWeaponSprite);
         }
+
+        
+
+
 
         // Draw the heart counter icon
         guiHeartSprite->setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
@@ -673,6 +681,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     dynamicEntities.push_back(&player);
     dynamicEntities.push_back(&player.whip);
     dynamicEntities.push_back(&player.subWeapon);
+    dynamicEntities.push_back(&player.subWeapon2);
 
     //      Add enemies
     for (auto &enemy : enemyManager->getEnemies(currentLevel, currentStage))
