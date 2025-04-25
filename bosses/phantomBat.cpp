@@ -22,7 +22,7 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
 
     animationManager->addAnimation(sleepPhantomBat, this->idlePhBatFrames);
     animationManager->addAnimation(flyPhantomBat, this->flyPhBatFrames);
-    animationManager->addAnimation(deathPhantomBat, this->deadPhBatFrames, false);
+    // animationManager->addAnimation(deathPhantomBat, this->deadPhBatFrames, false);
 
     this->animationManager = animationManager;
     currentAnimation = sleepPhantomBat;
@@ -278,9 +278,10 @@ void PhantomBat::onCollision(Entity &other, Game &game)
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
-            currentAnimation = deathPhantomBat;
+            // currentAnimation = deathPhantomBat;
             dead = true;
-            speed = sf::Vector2f(0, 0);
+            gKilledBoss = true;
+            game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -288,9 +289,10 @@ void PhantomBat::onCollision(Entity &other, Game &game)
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
-            currentAnimation = deathPhantomBat;
+            // currentAnimation = deathPhantomBat;
             dead = true;
-            speed = sf::Vector2f(0, 0);
+            gKilledBoss = true;
+            game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
     currentBossLife = life;
@@ -324,10 +326,6 @@ void PhantomBat::updateAnimation(float deltaTime)
     }
 
     animationManager->update(deltaTime);
-
-    if(currentAnimation == deathPhantomBat && animationManager->isAnimationFinished()){
-        gKilledBoss = true;
-    }
 }
 
 void PhantomBat::resetPosition()

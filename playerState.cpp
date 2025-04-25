@@ -1877,7 +1877,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             
     
            if (player.subWeapon.type == ItemType::AXE) {
-            player.subWeapon.verticalSpeed = -550.f; 
+            player.subWeapon.verticalSpeed = -350.f; 
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
@@ -1921,7 +1921,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             
     
            if (player.subWeapon2.type == ItemType::AXE) {
-            player.subWeapon2.verticalSpeed = -550.f; 
+            player.subWeapon2.verticalSpeed = -350.f; 
             player.subWeapon2.horizontalSpeed = 100.f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
@@ -2066,7 +2066,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             
     
            if (player.subWeapon.type == ItemType::AXE) {
-            player.subWeapon.verticalSpeed = -550.f; 
+            player.subWeapon.verticalSpeed = -350.f; 
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
@@ -2110,7 +2110,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             
     
            if (player.subWeapon2.type == ItemType::AXE) {
-            player.subWeapon2.verticalSpeed = -550.f; 
+            player.subWeapon2.verticalSpeed = -350.f; 
             player.subWeapon2.horizontalSpeed = 100.f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
