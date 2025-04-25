@@ -387,7 +387,7 @@ bool Player::onCollision_SolidTile(Entity &solidTile)
                         this->verticalSpeed = 0.0f; // (For security) Simon stops falling
                         this->isOnGround = true;    // Set Simon to be on ground
 
-                        if(tileBound.position.y - this->lastHeight > 32.f){
+                        if(this->lastHeight > 0.f && tileBound.position.y - this->lastHeight > 32.f){
                             this->hasFallen = true;
                         }
 
