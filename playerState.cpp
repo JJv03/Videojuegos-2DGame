@@ -2204,7 +2204,6 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool window
     }
     else{
         player.upgradeWhip = false;
-        player.isInvulnerable = false;
         player.visible = true;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
