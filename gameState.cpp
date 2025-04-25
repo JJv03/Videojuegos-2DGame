@@ -630,11 +630,12 @@ void PauseGS::init(){
     masterVol = audio.master_volume;
     musicVol = audio.music_volume;
     soundVol = audio.sound_volume;
+    cheats = configManager.getCheats().enabled;
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
     // Loads menu texture
-    position = 3;
+    position = 4;
     col = 1;
 
     if (!pauseTextures["bg"].loadFromFile("./assets/sprites/menu/blankBox.png")) {
@@ -642,7 +643,7 @@ void PauseGS::init(){
     }
     sf::Sprite bg(pauseTextures["bg"]);
 
-    bg.setScale(sf::Vector2f(0.5, 1.8));
+    bg.setScale(sf::Vector2f(0.5, 2));
 
     sf::FloatRect spriteBounds = bg.getGlobalBounds();
     float spriteWidth = spriteBounds.size.x;
@@ -656,6 +657,10 @@ void PauseGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
+        std::cout<<"No se ha encontrado la fuente"<<std::endl;
+        throw std::runtime_error("No se pudo cargar la fuente.");
+    }
 
     sf::Text text(font, "PAUSED GAME", 20);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -665,7 +670,7 @@ void PauseGS::init(){
 
     // Centers position
     float xPos = (gWindowWidth - textBounds.size.x) / 2;
-    float yPos = 90.f;
+    float yPos = 80.f;
 
     text.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text);
@@ -678,37 +683,48 @@ void PauseGS::init(){
 
         // Centers position
         float xPos = (gWindowWidth - textBounds.size.x) / 2;
-        float yPos = 125.f + i * 50.f;
+        float yPos = 115.f + i * 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
     }
-    
-    // BACK
-    sf::Text text2(font, "EXIT", 20);
+
+    // CHEATS
+    sf::Text text2(font, "CHEATS", 15);
     text2.setFillColor(sf::Color::White);
-    text2.setOutlineColor(sf::Color(128, 128, 128));
-    text2.setOutlineThickness(1.5);
     textBounds = text2.getLocalBounds();
 
-    xPos = (gWindowWidth - textBounds.size.x) / 2.f  - 75.f;
-    yPos = 285.f;
+    xPos = (gWindowWidth - textBounds.size.x) / 2.f  - 25.f;
+    yPos = 270.f;
 
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
-
-    // CONFIRM
-    sf::Text text3(font, "RESUME", 20);
-    text3.setFillColor(sf::Color(0, 190, 0));
-    text3.setOutlineColor(sf::Color(0, 100, 0));
+    
+    // BACK
+    sf::Text text3(font, "EXIT", 20);
+    text3.setFillColor(sf::Color::White);
+    text3.setOutlineColor(sf::Color(128, 128, 128));
     text3.setOutlineThickness(1.5);
     textBounds = text3.getLocalBounds();
 
-    xPos = (gWindowWidth - textBounds.size.x) / 2.f  + 65.f;
-    yPos = 285.f;
+    xPos = (gWindowWidth - textBounds.size.x) / 2.f  - 75.f;
+    yPos = 300.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
+
+    // CONFIRM
+    sf::Text text4(font, "RESUME", 20);
+    text4.setFillColor(sf::Color(0, 190, 0));
+    text4.setOutlineColor(sf::Color(0, 100, 0));
+    text4.setOutlineThickness(1.5);
+    textBounds = text4.getLocalBounds();
+
+    xPos = (gWindowWidth - textBounds.size.x) / 2.f  + 65.f;
+    yPos = 300.f;
+
+    text4.setPosition(sf::Vector2f(xPos, yPos));
+    configs.push_back(text4);
 
     if (!pauseTextures["torch"].loadFromFile("./assets/sprites/menu/selectorMenu.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -717,8 +733,8 @@ void PauseGS::init(){
 
     torch.setScale(sf::Vector2f(torch.getScale().x * 1.25f, torch.getScale().y * 1.25f));
 
-    float torchX = configs[5].getPosition().x - 25.f;
-    float torchY = configs[5].getPosition().y + 2.f;
+    float torchX = configs[6].getPosition().x - 25.f;
+    float torchY = configs[6].getPosition().y + 2.f;
     torch.setPosition(sf::Vector2f(torchX, torchY));
 
     pauseSprites.push_back(torch);
@@ -734,7 +750,7 @@ void PauseGS::handleInput(sf::Event event){
             stateMachine->removeState();
         }
 
-        if (keyPressed->scancode == controls.down && position < 3) {    
+        if (keyPressed->scancode == controls.down && position < 4) {    
             position ++;
         }
 
@@ -760,7 +776,7 @@ void PauseGS::handleInput(sf::Event event){
                     }
                     pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
                     break;
-                case 3:
+                case 4:
                     if (col == 0){
                         col = 1;
                     }
@@ -788,7 +804,7 @@ void PauseGS::handleInput(sf::Event event){
                     }
                     pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
                     break;
-                case 3:
+                case 4:
                     if (col == 1){
                         col = 0;
                     }
@@ -799,21 +815,29 @@ void PauseGS::handleInput(sf::Event event){
         }
 
         if (keyPressed->scancode == controls.enter) {
+            if (position == 3){ // Cheats
+                cheats = !cheats;
+            }
+
             configManager::Audio newAudio;
             newAudio.master_volume = masterVol;
             newAudio.music_volume = musicVol;
             newAudio.sound_volume = soundVol;
 
-            configManager.setAudio(newAudio);
-            configManager.saveConfiguration("config.json");
+            configManager::Cheats newCheats;
+            newCheats.enabled = cheats;
             
-            if (position == 3 && col == 0){
+            configManager.setAudio(newAudio);
+            configManager.setCheats(newCheats);
+            configManager.saveConfiguration("config.json");
+
+            if (position == 4 && col == 0){
                 std::cout << "Road back to config menu" << std::endl;
                 gameSoundManager.stopAllMusic();
                 stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
             }
 
-            if (position == 3 && col == 1){
+            if (position == 4 && col == 1){
 
                 std::cout << "Road back to config menu after saving" << std::endl;
                 stateMachine->removeState();
@@ -825,7 +849,7 @@ void PauseGS::handleInput(sf::Event event){
             pauseSprites.pop_back();
             float torchX = 0;
             float torchY = 0;
-            if (position <= 2){
+            if (position <= 3){
                 torchX = configs[position+1].getPosition().x - 25.f;
                 torchY = configs[position+1].getPosition().y + 2.f;
             }
@@ -852,9 +876,22 @@ void PauseGS::draw(sf::RenderWindow& window, Camera& camera){
     for (const auto& text : configs) {
         window.draw(text);
     }
-    drawVolumeBars(window, masterVol, sf::Vector2f(125, 150));
-    drawVolumeBars(window, musicVol, sf::Vector2f(125, 200));
-    drawVolumeBars(window, soundVol, sf::Vector2f(125, 250));
+
+    std::string boolText = cheats ? "ON" : "OFF";
+
+    sf::Text statusText(fontinputs, boolText, 10);
+    statusText.setFillColor(sf::Color(255, 140, 0));
+
+    // Posición a la derecha del texto base
+    float x = configs[4].getPosition().x + configs[4].getLocalBounds().size.x + 20.f;
+    float y = configs[4].getPosition().y + 2.5f;
+    statusText.setPosition(sf::Vector2f(x, y));
+
+    window.draw(statusText);
+
+    drawVolumeBars(window, masterVol, sf::Vector2f(125, 140));
+    drawVolumeBars(window, musicVol, sf::Vector2f(125, 190));
+    drawVolumeBars(window, soundVol, sf::Vector2f(125, 240));
 }
 
 void PauseGS::drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
