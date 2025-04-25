@@ -94,6 +94,8 @@ const float gPlayerStairSpeed = 30.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 205.0f;
 
+bool gIsWhipBeingUsed = false;
+bool gIsSubWeaponBeingUsed = false;
 
 // ============ ENEMIES VARIABLES =============
 bool isInBossFight = false;

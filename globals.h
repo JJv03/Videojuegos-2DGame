@@ -99,6 +99,8 @@ extern const float gPlayerStairSpeed;
 extern const float gPlayerGravity;
 extern const float gPlayerJumpForce;
 
+extern bool gIsWhipBeingUsed;
+extern bool gIsSubWeaponBeingUsed;
 
 // ============ ENEMIES VARIABLES =============
 extern bool isInBossFight;

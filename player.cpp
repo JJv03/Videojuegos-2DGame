@@ -154,6 +154,19 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
         }
         
     }
+
+    gIsWhipBeingUsed = !this->whip.animationManager->isPlaying(noAnimation);
+    gIsSubWeaponBeingUsed = !this->subWeapon.animationManager->isPlaying(noAnimation);
+
+    /* DEBUG
+    if(gIsWhipBeingUsed){
+        std::cout << "WHIP" << std::endl;
+    }
+
+    if(gIsSubWeaponBeingUsed){
+        std::cout << "SUBWEAPON" << std::endl;
+    }
+    */
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -690,7 +703,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         { // Dagger
             if (this->subWeapon.intersected)
             {
-                this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+                this->subWeapon.animationManager->playAnimation(noAnimation);
             }
             else{
                 this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
@@ -726,7 +739,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         this->subWeapon.isExploding = false;
         this->subWeapon.intersectedBomb = false;
         this->subWeapon.changedDirection = false;
-        this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+        this->subWeapon.animationManager->playAnimation(noAnimation);
         this->subWeapon.collisionedEntities.clear(); 
         return;
     }
@@ -814,7 +827,7 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
         { // Dagger
             if (this->subWeapon2.intersected)
             {
-                this->subWeapon2.animationManager->playAnimation(subweaponNoAttack);
+                this->subWeapon2.animationManager->playAnimation(noAnimation);
             }
             else{
                 this->subWeapon2.sprite->move((this->subWeapon2.direction == RIGHT) ? sf::Vector2f(this->subWeapon2.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon2.horizontalSpeed*deltaTime, 0.f)); 
@@ -850,7 +863,7 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
         this->subWeapon2.isExploding = false;
         this->subWeapon2.intersectedBomb = false;
         this->subWeapon2.changedDirection = false;
-        this->subWeapon2.animationManager->playAnimation(subweaponNoAttack);
+        this->subWeapon2.animationManager->playAnimation(noAnimation);
         this->subWeapon2.collisionedEntities.clear(); 
         return;
     }
@@ -919,7 +932,7 @@ SubWeapon::SubWeapon()
 
 std::vector<sf::FloatRect> SubWeapon::getBounds() const
 {
-    if(this->type != ItemType::NONE && !this->animationManager->isPlaying(subweaponNoAttack)){
+    if(this->type != ItemType::NONE && !this->animationManager->isPlaying(noAnimation)){
         return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
     }
     return std::vector<sf::FloatRect>();
@@ -1100,7 +1113,7 @@ bool Player::loadSpritesAndAnimations()
     }
 
     // Add animations (similar to whip)
-    subweaponAnimationManager->addAnimation(subweaponNoAttack, this->subWeapon.noAttackFrames, false);
+    subweaponAnimationManager->addAnimation(noAnimation, this->subWeapon.noAttackFrames, false);
     subweaponAnimationManager->addAnimation(axeThrowing, this->subWeapon.axeFrames);
     subweaponAnimationManager->addAnimation(daggerThrowing, this->subWeapon.daggerFrames, false);
     subweaponAnimationManager->addAnimation(fireBombThrowing, this->subWeapon.firebombFrames, false);
@@ -1108,7 +1121,7 @@ bool Player::loadSpritesAndAnimations()
 
     // Assign animation managers
     this->subWeapon.animationManager = subweaponAnimationManager;
-    this->subWeapon.animationManager->playAnimation(subweaponNoAttack);
+    this->subWeapon.animationManager->playAnimation(noAnimation);
 
     // SubW2
     // Create subweapon sprite
@@ -1130,7 +1143,7 @@ bool Player::loadSpritesAndAnimations()
     }
 
     // Add animations (similar to whip)
-    subweaponAnimationManager2->addAnimation(subweaponNoAttack, this->subWeapon2.noAttackFrames, false);
+    subweaponAnimationManager2->addAnimation(noAnimation, this->subWeapon2.noAttackFrames, false);
     subweaponAnimationManager2->addAnimation(axeThrowing, this->subWeapon2.axeFrames);
     subweaponAnimationManager2->addAnimation(daggerThrowing, this->subWeapon2.daggerFrames, false);
     subweaponAnimationManager2->addAnimation(fireBombThrowing, this->subWeapon2.firebombFrames, false);
@@ -1138,7 +1151,7 @@ bool Player::loadSpritesAndAnimations()
 
     // Assign animation managers
     this->subWeapon2.animationManager = subweaponAnimationManager2;
-    this->subWeapon2.animationManager->playAnimation(subweaponNoAttack);
+    this->subWeapon2.animationManager->playAnimation(noAnimation);
     
     return true;
 }
