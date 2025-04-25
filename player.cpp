@@ -80,7 +80,7 @@ Player::Player()
     // Doube Shot
     weaponIsActive2 = false;
     isDoubleShotActive = false;
-    delayBetweenShots = 0.5f; // 0.5 segs
+    delayBetweenShots = 1.5f; // 0.5 segs
     delayBetweenShotsCounter = 0.0f;
     timeDoubleShotActive = 10.0f; // 5 segs
     timeDoubleShotActiveCounter = 0.0f;
@@ -105,6 +105,14 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
         this->activateRosario = false;
     }
 
+    if (!this->weaponIsActive2)
+    {
+        delayBetweenShotsCounter += deltaTime;
+    }
+    else{
+        delayBetweenShotsCounter = 0.f;
+    }
+    
     if(this->isDoubleShotActive && this->timeDoubleShotActiveCounter < this->timeDoubleShotActive){
         this->timeDoubleShotActiveCounter += deltaTime;
 
@@ -632,7 +640,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
         if (this->subWeapon.type == ItemType::AXE)
         {
             this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
-            this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+            this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime * 2.5f;
             this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
             if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(axeThrowing)) {
                 this->subWeapon.animationManager->playAnimation(axeThrowing);
@@ -756,7 +764,7 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
         if (this->subWeapon2.type == ItemType::AXE)
         {
             this->subWeapon2.sprite->move((this->subWeapon2.direction == RIGHT) ? sf::Vector2f(this->subWeapon2.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon2.horizontalSpeed*deltaTime, 0.f)); 
-            this->subWeapon2.verticalSpeed += gPlayerGravity * deltaTime * 3.5f;
+            this->subWeapon2.verticalSpeed += gPlayerGravity * deltaTime * 2.5f;
             this->subWeapon2.sprite->move(sf::Vector2f(0.f, this->subWeapon2.verticalSpeed * deltaTime));
             if (this->subWeapon2.animationManager && !this->subWeapon2.animationManager->isPlaying(axeThrowing)) {
                 this->subWeapon2.animationManager->playAnimation(axeThrowing);

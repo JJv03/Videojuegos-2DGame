@@ -132,11 +132,13 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
             bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive );
+                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive && 
+                                    player.delayBetweenShotsCounter >= player.delayBetweenShots);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
+                
                 player.hearts -= 1;
                 player.setState(state<AttackSecondary>());
                 if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
@@ -287,7 +289,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            if(player.hearts>0 && !player.weaponIsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
+            bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
+                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive);
+            if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
@@ -1858,7 +1862,6 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
     if (!player.oneHasBeenUsed)
     {
         if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
-            std::cout << "Subweapon 1" << std::endl;
             player.subWeapon.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
             sf::Vector2f spawnPos = player.sprite->getPosition();
             player.subWeapon.direction = player.dir;
@@ -1874,7 +1877,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             
     
            if (player.subWeapon.type == ItemType::AXE) {
-            player.subWeapon.verticalSpeed = -350.f; 
+            player.subWeapon.verticalSpeed = -550.f; 
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
@@ -1918,7 +1921,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             
     
            if (player.subWeapon2.type == ItemType::AXE) {
-            player.subWeapon2.verticalSpeed = -350.f; 
+            player.subWeapon2.verticalSpeed = -550.f; 
             player.subWeapon2.horizontalSpeed = 100.f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
@@ -2048,7 +2051,6 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
     if (!player.oneHasBeenUsed)
     {
         if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
-            std::cout << "Subweapon 1" << std::endl;
             player.subWeapon.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
             sf::Vector2f spawnPos = player.sprite->getPosition();
             player.subWeapon.direction = player.dir;
@@ -2064,7 +2066,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             
     
            if (player.subWeapon.type == ItemType::AXE) {
-            player.subWeapon.verticalSpeed = -350.f; 
+            player.subWeapon.verticalSpeed = -550.f; 
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
@@ -2108,7 +2110,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             
     
            if (player.subWeapon2.type == ItemType::AXE) {
-            player.subWeapon2.verticalSpeed = -350.f; 
+            player.subWeapon2.verticalSpeed = -550.f; 
             player.subWeapon2.horizontalSpeed = 100.f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
