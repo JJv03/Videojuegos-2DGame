@@ -38,3 +38,10 @@ void ParticleSystem::spawnFireParticle(sf::Vector2f position, bool addOffset) {
     }
     spawn<FireParticle>(gTextures.at("enemy"), position);
 }
+
+void ParticleSystem::spawnBigFireParticle(sf::Vector2f position, bool addOffset) {
+    if (addOffset) {
+        position += sf::Vector2f{5.f, 0.f};
+    }
+    spawn<BigFireParticle>(gTextures.at("boss"), position);
+}

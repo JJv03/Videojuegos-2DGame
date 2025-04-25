@@ -21,6 +21,7 @@ public:
     void spawnBreakBlockParticle(sf::Vector2f position);
     void spawnHitParticle(sf::Vector2f position);
     void spawnFireParticle(sf::Vector2f position, bool addOffset = true);
+    void spawnBigFireParticle(sf::Vector2f position, bool addOffset = true);
 
 private:
     std::vector<std::unique_ptr<Particle>> particles;

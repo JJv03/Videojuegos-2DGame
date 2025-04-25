@@ -15,6 +15,9 @@ const float HIT_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
 // Fire constants
 const float FIRE_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
 
+// Big fire constants
+const float BIG_FIRE_PARTICLE_LIFETIME = 0.9f; // Particle lifetime in seconds
+
 
 // =================================================================================================
 // ===================================== BREAK BLOCK PARTICLE ======================================
@@ -139,5 +142,48 @@ void FireParticle::draw(sf::RenderTarget& target) const {
 }
 
 bool FireParticle::isAlive() const {
+    return m_alive;
+}
+
+
+// =================================================================================================
+// ================================== BIG FIRE PARTICLE ============================================
+// =================================================================================================
+
+BigFireParticle::BigFireParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_lifetime(BIG_FIRE_PARTICLE_LIFETIME), m_alive(true) {
+    m_sprite = std::make_unique<sf::Sprite>(texture);
+    m_sprite->setTextureRect(sf::IntRect({362, 122}, {8, 16}));
+    m_sprite->setPosition(position);
+
+    m_animationManager = std::make_unique<AnimationManager>(*m_sprite);
+    m_animation = {
+        notRelevant,
+        {
+            {sf::IntRect({32, 243}, {24, 32}), BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)},
+            {sf::IntRect({57, 243}, {24, 32}), BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)},
+            {sf::IntRect({82, 243}, {24, 32}), BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)}
+        },
+        true
+    };
+
+    m_animationManager->playAnimation(m_animation);
+};
+
+void BigFireParticle::update(float deltaTime) {
+    m_lifetime -= deltaTime;
+
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+
+    m_animationManager->update(deltaTime);
+}
+
+void BigFireParticle::draw(sf::RenderTarget& target) const {
+    target.draw(*m_sprite);
+}
+
+bool BigFireParticle::isAlive() const {
     return m_alive;
 }

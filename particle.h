@@ -65,3 +65,20 @@ private:
     std::unique_ptr<AnimationManager> m_animationManager{nullptr};
     AnimationManager::Animation m_animation;
 };
+
+
+class BigFireParticle : public Particle {
+public:
+    BigFireParticle(const sf::Texture& texture, sf::Vector2f position);
+
+    void update(float dt) override;
+    void draw(sf::RenderTarget& target) const override;
+    bool isAlive() const override;
+
+private:
+    float m_lifetime;
+    bool m_alive;
+    std::unique_ptr<sf::Sprite> m_sprite;
+    std::unique_ptr<AnimationManager> m_animationManager{nullptr};
+    AnimationManager::Animation m_animation;
+};
