@@ -88,7 +88,7 @@ public:
 
     void objectivePlayer(const sf::FloatRect &playerBounds);
 
-    void enhancedAI(bool isOn, const int playerDir);
+    void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
 
     void hello() const override;
 };

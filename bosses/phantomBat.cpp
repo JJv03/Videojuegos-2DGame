@@ -89,6 +89,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     enhancedTimer += deltaTime;
                     if(enhancedTimer >= enhancedInterval){
                         enhancedTimer = 0;
+                        triedAI = false;
                     }
                 }
 
@@ -108,7 +109,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     }
                 }
                 else if (waiting) {
-                    enhancedAI(mode.hard_mode, playerDir);
+                    enhancedAI(mode.hard_mode, playerDir, playerBounds);
                     speed = sf::Vector2f(0, 0);
                     timer += deltaTime;
                     if (timer >= waitingInterval) {
@@ -125,7 +126,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 }
                 else{
                     if(!attacking){ // moving left or right
-                        enhancedAI(mode.hard_mode, playerDir);
+                        enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveLeftRight){
                             std::cout << "End Moving left / right" << std::endl;
                             attacking = true;
@@ -143,7 +144,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         }
                     }
                     else{   // attacking
-                        enhancedAI(mode.hard_mode, playerDir);
+                        enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveInterval){
                             std::cout << "End Ataccking" << std::endl;
                             attacking = false;
@@ -180,22 +181,29 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     updateAnimation(deltaTime);
 }
 
-void PhantomBat::enhancedAI(bool isOn, const int playerDir){
+void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds){
     std::cout << "Inside enhanced AI" << std::endl;
-    if(isOn && !triedAI && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
-        std::cout << "Is on and hasnt tried (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
+    sf::Vector2f batCenterPos(position.x + 12, position.y + 8);
+    sf::Vector2f playerPos(playerBounds.position.x + playerBounds.size.x, playerBounds.position.y);
+    float dx = batCenterPos.x - playerPos.x;
+    float dy = batCenterPos.y - playerPos.y;
+    float distance = std::sqrt(dx * dx + dy * dy);
+    std::cout << "Distance: " << distance << std::endl;
+    bool isClose = distance < 75;
+    if(isOn && !triedAI && isClose && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
+        std::cout << "Is on, hasnt tried and is close (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
         triedAI = true;     // To prevent permatrying
-        int chance = rand() % 3;
+        int chance = rand() % 2;
         if(chance == 0){ // Meter factor cercanía del jugador
             std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
             enhancedActivated = true;
             enhancedTimer = 0;
-            // bool dir = (playerBounds.position.x + (playerBounds.size.x / 2)) > (mapBounds.position.x + (mapBounds.size.x / 2));
+            // Scape depending on the direction of the player
             if(playerDir >= 0){         // Left
-
+                goal = sf::Vector2f(mapDims.position.x + mapDims.size.x - 55, mapDims.position.y + 25);
             }
             else if(playerDir < 0){   // Right
-
+                goal = sf::Vector2f(mapDims.position.x + 55, mapDims.position.y + 25);
             }
         }
     }
