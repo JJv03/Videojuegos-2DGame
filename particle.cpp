@@ -5,12 +5,24 @@
 #include "particle.h"
 
 
-const float PARTICLE_GRAVITY = 300.f; // Gravity acceleration in pixels per second squared
-const float PARTICLE_LIFETIME = 4.f; // Particle lifetime in seconds
+// BreakBlock constants
+const float BB_PARTICLE_GRAVITY = 400.f; // Gravity acceleration in pixels per second squared
+const float BB_PARTICLE_LIFETIME = 4.f;  // Particle lifetime in seconds
+
+// Hit constants
+const float HIT_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
+
+// Fire constants
+const float FIRE_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
+
+
+// =================================================================================================
+// ===================================== BREAK BLOCK PARTICLE ======================================
+// =================================================================================================
 
 
 BreakBlockParticle::BreakBlockParticle(const sf::Texture& texture, sf::Vector2f position)
-    : m_gravity(PARTICLE_GRAVITY), m_lifetime(PARTICLE_LIFETIME), m_alive(true)
+    : m_gravity(BB_PARTICLE_GRAVITY), m_lifetime(BB_PARTICLE_LIFETIME), m_alive(true)
 {
     const float angle_in_deg[] = {105.f, 75.f, 55.f };  // angle in which the debris will be thrown
     const float sign[] = {-1.f, 1.f, 1.f };             // sign of the horizontal velocity of the debris
@@ -56,5 +68,76 @@ void BreakBlockParticle::draw(sf::RenderTarget& target) const {
 }
 
 bool BreakBlockParticle::isAlive() const {
+    return m_alive;
+}
+
+
+// =================================================================================================
+// ===================================== HIT PARTICLE ==============================================
+// =================================================================================================
+
+
+HitParticle::HitParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_lifetime(HIT_PARTICLE_LIFETIME), m_alive(true) {
+    m_sprite = std::make_unique<sf::Sprite>(texture);
+    m_sprite->setTextureRect(sf::IntRect({727, 477}, {8, 10}));
+    m_sprite->setPosition(position);
+}
+
+void HitParticle::update(float dt) {
+    m_lifetime -= dt;
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+}
+
+void HitParticle::draw(sf::RenderTarget& target) const {
+    target.draw(*m_sprite);
+}
+
+bool HitParticle::isAlive() const {
+    return m_alive;
+}
+
+
+// =================================================================================================
+// ===================================== FIRE PARTICLE =============================================
+// =================================================================================================
+
+FireParticle::FireParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_lifetime(FIRE_PARTICLE_LIFETIME), m_alive(true) {
+    m_sprite = std::make_unique<sf::Sprite>(texture);
+    m_sprite->setTextureRect(sf::IntRect({362, 122}, {8, 16}));
+    m_sprite->setPosition(position);
+
+    m_animationManager = std::make_unique<AnimationManager>(*m_sprite);
+    m_animation = {
+        notRelevant,
+        {
+            {sf::IntRect({362, 122}, {8, 16}), FIRE_PARTICLE_LIFETIME/3.f},
+            {sf::IntRect({371, 122}, {8, 16}), FIRE_PARTICLE_LIFETIME/3.f},
+            {sf::IntRect({380, 122}, {8, 16}), FIRE_PARTICLE_LIFETIME/3.f},
+        },
+        true
+    };
+
+    m_animationManager->playAnimation(m_animation);
+};
+
+void FireParticle::update(float deltaTime) {
+    m_lifetime -= deltaTime;
+
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+
+    m_animationManager->update(deltaTime);
+}
+
+void FireParticle::draw(sf::RenderTarget& target) const {
+    target.draw(*m_sprite);
+}
+
+bool FireParticle::isAlive() const {
     return m_alive;
 }

@@ -1216,6 +1216,8 @@ int Game::startStage(int stage, int fromStairs)
         return -1;
     }
 
+    particleSystem.clear();
+
     player.verticalSpeed = 0.f;
     player.horizontalSpeed = 0.f;
 
@@ -1269,6 +1271,8 @@ void Game::restartStage()
     // std::cout << "Current stage: " << currentStage << std::endl;
 
     setLevelMusic(currentLevel);
+
+    particleSystem.clear();
 
     tilemaps.restartMiscTiles();
 

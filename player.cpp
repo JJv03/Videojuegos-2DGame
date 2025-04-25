@@ -894,22 +894,26 @@ void Whip::onCollision(Entity &other, Game &game)
     if (!this->collisionedEntities.contains(&other)) {
         if (dynamic_cast<Enemy *>(&other))
         {
+            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             gameSoundManager.stopSound("whip_use");
             playSound("whip_hit");
         }
         else if (dynamic_cast<Boss *>(&other))
         {
+            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
         else if (dynamic_cast<Projectile *>(&other))
         {
+            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             gameSoundManager.stopSound("whip_use");
             playSound("whip_hit");
         }
         else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other))
         {
             if(tile->isBreakable && !tile->isDestroyed){
+                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                 gameSoundManager.stopSound("whip_use");
                 playSound("whip_hit");
             }
@@ -956,8 +960,6 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         }
 
         this->intersected = true;
-        
-        
     }
     else if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
     {
@@ -970,7 +972,6 @@ void SubWeapon::onCollision(Entity &other, Game &game)
 
             this->intersectedBomb = true;
         }
-
     }
     
  

@@ -95,7 +95,7 @@ public:
     Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
          std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime);
 
-    void update(const float& deltaTime);
+    void update(const float deltaTime);
 
     void draw(sf::RenderWindow& window);
     

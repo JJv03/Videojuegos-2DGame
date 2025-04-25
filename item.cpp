@@ -37,7 +37,7 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 }
 
 
-void Item::update(const float& deltaTime) {
+void Item::update(const float deltaTime) {
     if (m_lifeTime > 0.f) {       // Item can disappear
         m_lifeTime -= deltaTime;
         if (m_lifeTime < 0.f)     // Prevent negative lifetime because it's not a permanent item
