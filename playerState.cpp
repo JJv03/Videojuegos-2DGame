@@ -2203,10 +2203,22 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool window
         player.animationManager->update(deltaTime);
     }
     else{
+        if(player.invisibilityTimeCounter == 0.0f){ // Not invisible before
+            player.isInvisible = false;
+            player.sprite->setColor(sf::Color::White);
+            player.whip.sprite->setColor(sf::Color::White);
+            player.visible = true;
+        }
+        
+        
+        if(player.invulnerableTimeCounter == 0.0f){ // Not invulnerable before
+            player.isInvulnerable = false;
+        }
+        
+        
+
         player.upgradeWhip = false;
-        player.visible = true;
-        player.sprite->setColor(sf::Color::White);
-        player.whip.sprite->setColor(sf::Color::White);
+
         if(player.isOnStairs){
             if(player.stairStepDistance == 0.f){
                 player.setState(state<StairIdle>());
