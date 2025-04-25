@@ -19,7 +19,7 @@
         "useSubWeapon": "C"
     },
     "difficulty": {
-        "hard_mode": false
+        "hard_mode": true
     },
     "video": {
         "window_mode": false

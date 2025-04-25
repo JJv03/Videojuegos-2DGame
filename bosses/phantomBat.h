@@ -36,6 +36,7 @@ private:
     bool enhancedActivated = false;
     float enhancedTimer = 0.f;
     const float enhancedInterval = 1.5f;
+    bool triedAI = false;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}

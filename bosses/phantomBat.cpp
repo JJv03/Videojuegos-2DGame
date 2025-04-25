@@ -49,7 +49,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {   
-        std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
+        // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
         // BOSS LIFE FOR THE GUI
         // MAQUINA DE ESTADOS DEL BOSS: PRIMERO ESTA UN TIEMPO QUIETO Y DESPUES EMPIZA A MOVERSE/ATACAR
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
@@ -84,6 +84,14 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
             }
             else{
                 auto mode = configManager.getDifficulty();
+
+                if(triedAI && !enhancedActivated){
+                    enhancedTimer += deltaTime;
+                    if(enhancedTimer >= enhancedInterval){
+                        enhancedTimer = 0;
+                    }
+                }
+
                 if(enhancedActivated){
                     enhancedTimer += deltaTime;
                     getLinelSpeed();
@@ -96,6 +104,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         waiting = true;
                         speed = sf::Vector2f(0, 0);
                         enhancedActivated = false;
+                        triedAI = false;
                     }
                 }
                 else if (waiting) {
@@ -103,6 +112,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     speed = sf::Vector2f(0, 0);
                     timer += deltaTime;
                     if (timer >= waitingInterval) {
+                        std::cout << "End Waiting" << std::endl;
                         // Decide moverse hacia el lado opuesto
                         goal = (position.x + 24 > map.x + size.x / 2)
                             ? sf::Vector2f(position.x - 50.f, position.y)
@@ -117,6 +127,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     if(!attacking){ // moving left or right
                         enhancedAI(mode.hard_mode, playerDir);
                         if(timer >= moveLeftRight){
+                            std::cout << "End Moving left / right" << std::endl;
                             attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
@@ -134,6 +145,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     else{   // attacking
                         enhancedAI(mode.hard_mode, playerDir);
                         if(timer >= moveInterval){
+                            std::cout << "End Ataccking" << std::endl;
                             attacking = false;
                             waiting = true;
                             timer = 0.f;
@@ -169,11 +181,15 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 }
 
 void PhantomBat::enhancedAI(bool isOn, const int playerDir){
-    if(isOn){
-        
+    std::cout << "Inside enhanced AI" << std::endl;
+    if(isOn && !triedAI && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
+        std::cout << "Is on and hasnt tried (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
+        triedAI = true;     // To prevent permatrying
         int chance = rand() % 3;
-        if(/*Using whip or subWeapon && chance == 0*/ 0){ // Meter factor cercanía del jugador
+        if(chance == 0){ // Meter factor cercanía del jugador
+            std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
             enhancedActivated = true;
+            enhancedTimer = 0;
             // bool dir = (playerBounds.position.x + (playerBounds.size.x / 2)) > (mapBounds.position.x + (mapBounds.size.x / 2));
             if(playerDir >= 0){         // Left
 
