@@ -962,6 +962,7 @@ void SubWeapon::onCollision(Entity &other, Game &game)
     
     if (dynamic_cast<Enemy *>(&other) && this->type == ItemType::DAGGER)
     {
+        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
         //std::cout << "SubWeapon colision" << std::endl;
         if(!this->intersected){
             playSound("whip_hit");
