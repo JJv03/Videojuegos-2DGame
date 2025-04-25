@@ -82,7 +82,7 @@ Player::Player()
     isDoubleShotActive = false;
     delayBetweenShots = 0.5f; // 0.5 segs
     delayBetweenShotsCounter = 0.0f;
-    timeDoubleShotActive = 7.0f; // 5 segs
+    timeDoubleShotActive = 10.0f; // 5 segs
     timeDoubleShotActiveCounter = 0.0f;
 }
 
