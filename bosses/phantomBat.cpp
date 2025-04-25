@@ -113,7 +113,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     speed = sf::Vector2f(0, 0);
                     timer += deltaTime;
                     if (timer >= waitingInterval) {
-                        std::cout << "End Waiting" << std::endl;
+                        // std::cout << "End Waiting" << std::endl;
                         // Decide moverse hacia el lado opuesto
                         goal = (position.x + 24 > map.x + size.x / 2)
                             ? sf::Vector2f(position.x - 50.f, position.y)
@@ -128,7 +128,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     if(!attacking){ // moving left or right
                         enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveLeftRight){
-                            std::cout << "End Moving left / right" << std::endl;
+                            // std::cout << "End Moving left / right" << std::endl;
                             attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
@@ -146,7 +146,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     else{   // attacking
                         enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveInterval){
-                            std::cout << "End Ataccking" << std::endl;
+                            // std::cout << "End Ataccking" << std::endl;
                             attacking = false;
                             waiting = true;
                             timer = 0.f;
@@ -190,11 +190,11 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect 
     // std::cout << "Distance: " << distance << std::endl;
     bool isClose = distance < 65;
     if(isOn && !triedAI && isClose && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
-        std::cout << "Is on, hasnt tried and is close (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
+        // std::cout << "Is on, hasnt tried and is close (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
         triedAI = true;     // To prevent permatrying
         int chance = rand() % 2;
         if(chance == 0){ // Meter factor cercanía del jugador
-            std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
+            // std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
             enhancedActivated = true;
             enhancedTimer = 0;
             // Scape depending on the direction of the player
@@ -204,9 +204,6 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect 
             else if(playerDir < 0){   // Right
                 goal = sf::Vector2f(mapDims.position.x + mapDims.size.x - 55, mapDims.position.y + 25);
             }
-        }
-        else{
-            std::cout << "Bad luck :(" << std::endl;
         }
     }
     // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)

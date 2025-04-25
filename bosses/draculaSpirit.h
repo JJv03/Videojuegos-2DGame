@@ -7,7 +7,7 @@ class DraculaSpirit : public Boss
 private:
     // Movement and combat constants
     const sf::Vector2f DRACULASPIRIT_SPEED = {0.0f, 0.0f};
-    const float DRACULASPIRIT_LIFE = 14.0f;
+    const float DRACULASPIRIT_LIFE = 48.0f;
     const float DRACULASPIRIT_SCORE = 0.0f;
     const float DRACULASPIRIT_DAMAGE = 4.0f;
 

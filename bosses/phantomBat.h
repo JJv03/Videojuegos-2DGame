@@ -7,7 +7,7 @@ class PhantomBat : public Boss
 private:
     // Movement and combat constants
     const sf::Vector2f PBAT_SPEED = {0.0f, 0.0f};   // By default static
-    const float PBAT_LIFE = 12.0f;
+    const float PBAT_LIFE = 24.0f;
     const float PBAT_SCORE = 3000.0f;
     const float PBAT_DAMAGE = 2.0f;
 
