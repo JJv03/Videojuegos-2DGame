@@ -70,7 +70,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 // std::cout << "Map pos: " << map.x << " " << map.y << std::endl;
                 // std::cout << "Map size: " << size.x << " " << size.y << std::endl;
                 // std::cout << "Goal tras dormir: " << goal.x << " " << goal.y << std::endl;
-                getLinelSpeed();
+                getLinelSpeed(moveInterval);
             }
         }
         else{
@@ -95,8 +95,8 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 
                 if(enhancedActivated){
                     enhancedTimer += deltaTime;
-                    getLinelSpeed();
-                    if(enhancedTimer >= enhancedInterval){
+                    getLinelSpeed(enhancedSpeed);
+                    if(enhancedTimer >= enhancedSpeed){
                         // Return to waiting
                         enhancedTimer = 0;
                         timer = 0;
@@ -119,7 +119,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             ? sf::Vector2f(position.x - 50.f, position.y)
                             : sf::Vector2f(position.x + 50.f, position.y);
                         // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
-                        getLinelSpeed();
+                        getLinelSpeed(moveLeftRight);
                         waiting = false;
                         timer = 0.f;
                     }
@@ -182,14 +182,13 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 }
 
 void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds){
-    std::cout << "Inside enhanced AI" << std::endl;
     sf::Vector2f batCenterPos(position.x + 12, position.y + 8);
     sf::Vector2f playerPos(playerBounds.position.x + playerBounds.size.x, playerBounds.position.y);
     float dx = batCenterPos.x - playerPos.x;
     float dy = batCenterPos.y - playerPos.y;
     float distance = std::sqrt(dx * dx + dy * dy);
-    std::cout << "Distance: " << distance << std::endl;
-    bool isClose = distance < 75;
+    // std::cout << "Distance: " << distance << std::endl;
+    bool isClose = distance < 65;
     if(isOn && !triedAI && isClose && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
         std::cout << "Is on, hasnt tried and is close (attacking)oooooooooooooooooooooooooooooooooooooo" << std::endl;
         triedAI = true;     // To prevent permatrying
@@ -200,11 +199,14 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect 
             enhancedTimer = 0;
             // Scape depending on the direction of the player
             if(playerDir >= 0){         // Left
-                goal = sf::Vector2f(mapDims.position.x + mapDims.size.x - 55, mapDims.position.y + 25);
-            }
-            else if(playerDir < 0){   // Right
                 goal = sf::Vector2f(mapDims.position.x + 55, mapDims.position.y + 25);
             }
+            else if(playerDir < 0){   // Right
+                goal = sf::Vector2f(mapDims.position.x + mapDims.size.x - 55, mapDims.position.y + 25);
+            }
+        }
+        else{
+            std::cout << "Bad luck :(" << std::endl;
         }
     }
     // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)
@@ -238,11 +240,11 @@ void PhantomBat::objectivePlayer(const sf::FloatRect &playerBounds){
     goal = sf::Vector2f(playerBounds.position.x + 10, playerBounds.position.y - 10);
 }
 
-void PhantomBat::getLinelSpeed(){
+void PhantomBat::getLinelSpeed(float timeToMove){
     float deltaX = goal.x - position.x;
     float deltaY = goal.y - position.y;
 
-    speed = sf::Vector2f(deltaX / moveInterval, -deltaY / moveInterval);
+    speed = sf::Vector2f(deltaX / timeToMove, -deltaY / timeToMove);
     // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
 }
 

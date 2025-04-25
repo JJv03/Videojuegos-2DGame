@@ -36,6 +36,7 @@ private:
     bool enhancedActivated = false;
     float enhancedTimer = 0.f;
     const float enhancedInterval = 1.5f;
+    const float enhancedSpeed = 0.5f;
     bool triedAI = false;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
@@ -79,7 +80,7 @@ public:
 
     void randomObjective();
 
-    void getLinelSpeed();
+    void getLinelSpeed(float timeToMove);
 
     void getDoubleSpeed();
 

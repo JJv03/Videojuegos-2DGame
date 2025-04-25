@@ -28,6 +28,10 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 // Update all active bosses in current level/stage
 void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const sf::FloatRect &mapBounds)
 {
+    if (playerPtr->upgradeWhip)
+    {
+        return;
+    }
     if (phantomBat)
     {
         if (phantomBat->level == currentLevel && phantomBat->stage == currentStage)

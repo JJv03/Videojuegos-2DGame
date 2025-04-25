@@ -725,8 +725,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
         dynamicEntities.push_back(enemy);
 
     //      Add bosses
-    // for (auto &boss : bossManager->getBosses(currentLevel, currentStage))
-    //     dynamicEntities.push_back(boss);
+    for (auto &boss : bossManager->getBosses(currentLevel, currentStage))
+        dynamicEntities.push_back(boss);
 
     for (auto &item : tilemaps[currentStage].m_items)
         dynamicEntities.push_back(item.get());
