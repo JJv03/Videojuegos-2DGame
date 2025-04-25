@@ -47,20 +47,18 @@ using WhipUpgrade = PlayerWhipUpgradeState;
 PlayerState::PlayerState():configManager(configManager::getInstance()){}
 
 animationID whipLevelAnimation(int level){
-    if (level== 1) {
-        return whipLvl1StandingJumping;
-    } else if (level == 2) {
+
+    if (level == 2) {
         return whipLvl2StandingJumping;
     } else if (level == 3) {
-        return whipLvl3C1StandingJumping;
-    } else if (level == 4) {
-        return whipLvl3C2StandingJumping;
-    } else if (level == 5) {
-        return whipLvl3C3StandingJumping;
-    } else  {
-        return whipLvl3C4StandingJumping;
+        return whipLvl3StandingJumping;
+    } else {
+        return whipLvl1StandingJumping;
     } 
+        
 }
+
+
 
 void PlayerState::playSound(const std::string& soundName, bool isMusic){
     auto audio = configManager.getAudio();
@@ -1118,7 +1116,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime, bool windowH
     player.animationManager->update(deltaTime);
     player.whip.animationManager->update(deltaTime);
 
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+    
+    if (player.whip.isStretched()) {
         int xoffset= 0;
         if(player.whip.whipLvl <3){
             xoffset = 24;
@@ -1129,13 +1128,13 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime, bool windowH
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 5.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 5.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
@@ -1256,7 +1255,7 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowH
     player.animationManager->update(deltaTime);
     player.whip.animationManager->update(deltaTime);
 
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+    if (player.whip.isStretched()) {
         int xoffset= 0;
         if(player.whip.whipLvl <3){
             xoffset = 24;
@@ -1267,13 +1266,13 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowH
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 5.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); // Flip whip to face right
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, // Adjust X offset
-                            player.sprite->getPosition().y + 3.f)  // Adjust Y offset
+                            player.sprite->getPosition().y + 5.f)  // Adjust Y offset
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); // Flip whip to face left
         }
@@ -1398,7 +1397,7 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
     player.animationManager->update(deltaTime);
     player.whip.animationManager->update(deltaTime);
 
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+    if (player.whip.isStretched()) {
         
         int xoffset= 0;
         if(player.whip.whipLvl <3){
@@ -1410,13 +1409,13 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
         if (player.dir == RIGHT) {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x + xoffset, 
-                             player.sprite->getPosition().y + 4.f)  
+                             player.sprite->getPosition().y + 5.f)  
             );
             player.whip.sprite->setScale(sf::Vector2f(-1.f, 1.f)); 
         } else {
             player.whip.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x - xoffset, 
-                             player.sprite->getPosition().y + 4.f)  
+                             player.sprite->getPosition().y + 5.f)  
             );
             player.whip.sprite->setScale(sf::Vector2f(1.f, 1.f)); 
         }
@@ -1522,7 +1521,7 @@ void PlayerAttackStairState::update(Player& player, float deltaTime, bool window
     player.whip.animationManager->update(deltaTime);
     player.animationManager->update(deltaTime);
 
-    if (player.whip.animationManager->getCurrentFrameIndex() == 2) {
+    if (player.whip.isStretched()) {
         
         int xoffset= 0;
         if(player.whip.whipLvl <3){
@@ -1781,11 +1780,7 @@ void PlayerDeadState::update(Player& player, float deltaTime, bool windowHasFocu
         }
         
         
-        if (player.animationManager->getCurrentFrameIndex()==0)
-        {
-            
-        }
-        else{
+        if (player.animationManager->getCurrentFrameIndex()!=0){
             // Second frame - lower by additional 8 pixels (total 16 from original)
             player.sprite->setPosition(
                 sf::Vector2f(player.sprite->getPosition().x, player.sprite->getPosition().y+8.f)

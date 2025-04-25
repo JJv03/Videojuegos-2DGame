@@ -32,7 +32,6 @@ class Whip : public EntitySprite
 {
 public:
     int whipState;
-    int whipFrames;
     int whipLvl;
     int whipDmg;
 
@@ -78,6 +77,27 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(306, 484), sf::Vector2(41, 10)), 0.2f}
     };
 
+    std::vector<AnimationManager::Frame> lvl3Frames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(51, 477), sf::Vector2(8, 32)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(60, 477), sf::Vector2(8, 32)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(69, 477), sf::Vector2(8, 32)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(78, 477), sf::Vector2(8, 32)), 0.025f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(88, 477), sf::Vector2(16, 25)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(105, 477), sf::Vector2(16, 25)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(122, 477), sf::Vector2(16, 25)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(139, 477), sf::Vector2(16, 25)), 0.025f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(181, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(222, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(263, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(304, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(181, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(222, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(263, 484), sf::Vector2(41, 10)), 0.025f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(304, 484), sf::Vector2(41, 10)), 0.025f}
+    };
+
     Whip();
     ~Whip() = default;
 
@@ -85,6 +105,7 @@ public:
     std::vector<sf::FloatRect> getBounds() const override;
     void onCollision(Entity &other, Game &game) override;
     void hello() const override;
+    bool isStretched() const;
 };
 
 class SubWeapon : public EntitySprite

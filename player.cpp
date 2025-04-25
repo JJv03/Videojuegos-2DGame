@@ -536,20 +536,20 @@ void Player::onCollision_Item(Entity &entityItem)
     }
     else if (itemType == ItemType::MORNING_STAR)
     {
-        playSound("other_item_pick");
-        //std::cout << "MORNING STAR" << std::endl;
-        this->upgradeWhip = true;
-        this->isInvulnerable = true;
-        this->setState(std::make_unique<PlayerWhipUpgradeState>());
-        if (this->whip.whipLvl < 6 )
-        {
-            this->whip.whipLvl++;
+        if(this->whip.whipLvl < gWhipMaxLevel){
+            playSound("other_item_pick");
+            //std::cout << "MORNING STAR" << std::endl;
+            this->upgradeWhip = true;
+            this->isInvulnerable = true;
+            this->setState(std::make_unique<PlayerWhipUpgradeState>());
+            
+            this->whip.whipLvl = std::min(this->whip.whipLvl + 1, gWhipMaxLevel);
+
+            if (this->whip.whipLvl >= 2)
+            {
+                this->whip.whipDmg = 3;;
+            }
         }
-        if (this->whip.whipDmg < 3)
-        {
-            this->whip.whipDmg++;
-        }
-        
     }
     else if (itemType == ItemType::SMALL_HEART)
     {
@@ -876,14 +876,13 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
 Whip::Whip()
 {
     whipState = 0;
-    whipFrames = 6;
-    whipDmg = 1;
+    whipDmg = 2;
     whipLvl = 1;
 }
 
 std::vector<sf::FloatRect> Whip::getBounds() const
-{
-    if(this->animationManager->getCurrentFrameIndex() == 2 || this->animationManager->getCurrentFrameIndex() == 3){
+{ 
+    if(this->isStretched()){
         return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
     }
 
@@ -917,6 +916,14 @@ void Whip::onCollision(Entity &other, Game &game)
         }
     }
 }
+
+bool Whip::isStretched() const{
+    if(this->whipLvl < 3){
+        return this->animationManager->getCurrentFrameIndex() == 2;
+    } else {
+        return this->animationManager->getCurrentFrameIndex() >= 8;
+    }
+} 
 
 void Whip::hello() const {
     std::cout << "Soy Whip" << std::endl;
@@ -1082,6 +1089,7 @@ bool Player::loadSpritesAndAnimations()
     whipAnimationManager->addAnimation(whipLvl1StandingJumping, this->whip.lvl1Frames, false);
     whipAnimationManager->addAnimation(noAnimation, this->whip.noAttackFrames, false);
     whipAnimationManager->addAnimation(whipLvl2StandingJumping, this->whip.lvl2Frames, false);
+    whipAnimationManager->addAnimation(whipLvl3StandingJumping, this->whip.lvl3Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C1StandingJumping, this->whip.lvl3c1Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C2StandingJumping, this->whip.lvl3c2Frames, false);
     whipAnimationManager->addAnimation(whipLvl3C3StandingJumping, this->whip.lvl3c3Frames, false);

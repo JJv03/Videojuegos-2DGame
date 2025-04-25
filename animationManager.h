@@ -34,6 +34,7 @@ enum animationID{
     //Whip
     whipLvl1StandingJumping,
     whipLvl2StandingJumping,
+    whipLvl3StandingJumping,
     whipLvl3C1StandingJumping,
     whipLvl3C2StandingJumping,
     whipLvl3C3StandingJumping,
