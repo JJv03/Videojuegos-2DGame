@@ -471,12 +471,12 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         loadingClock.restart();
     }
     if (isRosarioBlinking) {
-        std::cout << "Blinking" << std::endl;
+        //std::cout << "Blinking" << std::endl;
         float elapsed = rosarioBlinkClock.getElapsedTime().asSeconds();
         
         if (elapsed < rosarioBlinkDuration) {
             if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0) {
-                sf::RectangleShape whiteScreen(camera.getView(window.getSize()).getSize());
+                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow*32.f,tilemaps[currentLevel].m_tilesPerColumn*32.f});
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();

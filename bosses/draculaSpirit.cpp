@@ -59,7 +59,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             if (player.gPlayerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
-                //maxLife = life;
+                maxLife = life;
                 this->currentState = DraculeSpiritState::IDLE;
                 break;
             }
