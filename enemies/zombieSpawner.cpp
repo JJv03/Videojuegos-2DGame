@@ -169,3 +169,19 @@ void ZombieSpawner::draw(sf::RenderWindow &window)
         window.draw(zoneShape);
     }
 }
+
+// Reset zombies to initial state
+void ZombieSpawner::resetPosition()
+{
+    for (auto &zombie : zombies)
+    {
+        zombie->isActive = false;
+        zombie->resetPosition();
+    }
+}
+
+void ZombieSpawner::resetSpawnState()
+{
+    zombieSpawnTimers = 0.0f;
+    spawnerActive = false;
+}

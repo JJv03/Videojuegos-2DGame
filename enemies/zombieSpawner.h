@@ -45,4 +45,10 @@ public:
 
     // Render zombies and debug info
     void draw(sf::RenderWindow &window);
+
+    // Reset zopmbies to initial state
+    void resetPosition();
+
+    // Reset de spawn process
+    void resetSpawnState();
 };

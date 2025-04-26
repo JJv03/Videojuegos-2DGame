@@ -36,7 +36,7 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
     {
         for (const auto &hitbox : hitboxes)
         {
-            if (playerActivationZone.findIntersection(hitbox).has_value() && isInBossFight)
+            if (playerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
                 maxLife = life;
@@ -298,7 +298,7 @@ void PhantomBat::onCollision(Entity &other, Game &game)
 // Render phantomBat and debug info (spawn zone)
 void PhantomBat::draw(sf::RenderWindow &window)
 {
-    if (sprite)
+    if (sprite && isActive)
     {
         Boss::draw(window);
     }

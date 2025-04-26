@@ -166,7 +166,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
 
     case 3:
         break;
-    
+
     case 5:
         break;
 
@@ -231,11 +231,8 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
     {
         if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
         {
-            for (auto &zombie : zombieSpawner.zombies)
-            {
-                zombie->isActive = false;
-                zombie->resetPosition();
-            }
+            zombieSpawner.resetPosition();
+            zombieSpawner.resetSpawnState();
         }
     }
     for (auto &leopard : leopard)
@@ -252,6 +249,7 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             bat->isActive = false;
             bat->resetPosition();
+            bat->resetSpawnState();
         }
     }
     for (auto &fishman : fishman)
@@ -264,6 +262,7 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
             {
                 fishman->getProjectile().get()->reset();
             }
+            fishman->resetSpawnState();
         }
     }
 }

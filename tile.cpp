@@ -251,6 +251,9 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game){
     if (dynamic_cast<Whip*>(&other)) {
         this->onCollision_Whip(game);
     }
+    else if (dynamic_cast<SubWeapon*>(&other) && this->type == MiscTileType::CANDELABRUM) {
+        this->onCollision_Whip(game);
+    }
     else if (dynamic_cast<Player*>(&other)) {
         if (isCollidable()) {
             this->onCollision_Player(other, game);

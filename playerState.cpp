@@ -130,10 +130,10 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
             player.setState(state<AttackIdle>());
         }
 
-        if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
+        if(keyPressed->scancode == controls.useSubWeapon ){
             bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
                                     && player.delayBetweenShotsCounter >= player.delayBetweenShots);
-            if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
+            if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive && player.hasToPressAgain){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
                 player.hasToPressAgain = false;
@@ -415,6 +415,7 @@ void PlayerAutoWalkState::update(Player& player, float deltaTime, bool windowHas
                 player.setState(state<StairWalk>());
 
             } else {
+                
                 player.setState(state<Idle>());
             }
         }
@@ -815,7 +816,8 @@ void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
         }
-    }
+    }   
+    
 }
 
 void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHasFocus)
@@ -1491,6 +1493,7 @@ void PlayerAttackStairState::init(Player& player)
     player.whip.animationManager->playAnimation(whipLevelAnimation(player.whip.whipLvl));
 
     player.hasToPressAgain = false;
+    
     player.isAttacking = true;
     player.isOnStairs = true;
 
@@ -1499,6 +1502,14 @@ void PlayerAttackStairState::init(Player& player)
 
 void PlayerAttackStairState::handleInput(Player& player, sf::Event event)
 {
+    auto controls = configManager.getControls();
+    if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
+    {
+        if (keyReleased->scancode == controls.attack)
+        {
+            player.hasToPressAgain = true;
+        }
+    }
 }
 
 void PlayerAttackStairState::update(Player& player, float deltaTime, bool windowHasFocus)

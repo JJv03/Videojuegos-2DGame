@@ -385,13 +385,20 @@ void FishMan::draw(sf::RenderWindow &window)
         window.draw(zoneShape);
     }
 }
- 
+
+void FishMan::resetSpawnState()
+{
+    fishManToSpawn = false;
+    fishManSpawnTimers = 0.0f;
+    spawnerActive = false;
+}
+
 // Update animation frame and flip sprite based on direction
 void FishMan::updateAnimation(float deltaTime)
 {
-    
 
-    if(isActive){
+    if (isActive)
+    {
         switch (currentState)
         {
         case State::JUMPING:
@@ -410,14 +417,16 @@ void FishMan::updateAnimation(float deltaTime)
             currentAnimation = idleFishman;
             break;
         }
-    } else {
+    }
+    else
+    {
         currentAnimation = noAnimation;
     }
 
-    if(!animationManager->isPlaying(currentAnimation))
+    if (!animationManager->isPlaying(currentAnimation))
     {
         animationManager->playAnimation(currentAnimation);
-    } 
+    }
 
     animationManager->update(deltaTime);
 
