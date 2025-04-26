@@ -1,13 +1,15 @@
 #pragma once
 
 #include "boss.h"
+#include "../enemies/createProjectile.h"
+
 
 class DraculaSpirit : public Boss
 {
 private:
     // Movement and combat constants
     const sf::Vector2f DRACULASPIRIT_SPEED = {0.0f, 0.0f};
-    const float DRACULASPIRIT_LIFE = 48.0f;
+    const float DRACULASPIRIT_LIFE = 8.0f;
     const float DRACULASPIRIT_SCORE = 0.0f;
     const float DRACULASPIRIT_DAMAGE = 4.0f;
 
@@ -34,7 +36,7 @@ private:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(246, 148), sf::Vector2(48, 48)), 0.1f}
     };
     std::vector<AnimationManager::Frame> fireDraculaSpiritFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(295, 148), sf::Vector2(48, 80)), 0.1f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(295, 148), sf::Vector2(48, 80)), 0.5f}
     };
 
 public:
@@ -67,6 +69,24 @@ public:
     float directionFlying = 1;
     bool flyDone = false;
 
+    // Time wait next fire
+    bool hasFired = false;
+    float fireNextCounter = 0.f;
+    float fireNextTimer = 5.0f;
+
+    // Projectile
+    std::shared_ptr<Projectile> projectile;
+    bool hasFiredDuringPause = {false};
+    bool hasProjectile{false};
+
+    std::shared_ptr<Projectile> projectile2;
+    bool hasFiredDuringPause2 = {false};
+    bool hasProjectile2{false};
+
+    std::shared_ptr<Projectile> projectile3;
+    bool hasFiredDuringPause3 = {false};
+    bool hasProjectile3{false};
+
     DraculeSpiritState currentState = DraculeSpiritState::ASLEEP;
 
     DraculaSpirit() = default;
@@ -84,5 +104,8 @@ public:
     // Update animation frame
     void updateAnimation(float deltaTime);
 
+    std::shared_ptr<Projectile> getProjectile() const { return projectile; }
+    std::shared_ptr<Projectile> getProjectile2() const { return projectile2; }
+    std::shared_ptr<Projectile> getProjectile3() const { return projectile3; }
     void hello() const override;
 };

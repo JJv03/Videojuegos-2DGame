@@ -187,6 +187,18 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
     {
         if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage && draculaSpirit->isActive)
         {
+            if (draculaSpirit->getProjectile())
+            {
+                allBosses.push_back(draculaSpirit->getProjectile().get());
+            }
+            if (draculaSpirit->getProjectile2())
+            {
+                allBosses.push_back(draculaSpirit->getProjectile2().get());
+            }
+            if (draculaSpirit->getProjectile3())
+            {
+                allBosses.push_back(draculaSpirit->getProjectile3().get());
+            }
             allBosses.push_back(draculaSpirit);
         }
     }
