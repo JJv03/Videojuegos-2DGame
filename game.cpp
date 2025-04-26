@@ -625,7 +625,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             //redBorderPosition.y -= 2.f;
             guiDoubleShotSprite = getItemSprite(ItemType::DOUBLE_SHOT);
             guiDoubleShotSprite->setPosition(redBorderPosition);
-            if(player.timeDoubleShotActiveCounter > 8.0f || player.timeDoubleShotActiveCounter <= 3.0f) {
+            if(player.timeDoubleShotActiveCounter <= 3.0f) {
                     if(static_cast<int>(player.timeDoubleShotActiveCounter * 5) % 2 == 0) {
                         window.draw(*guiDoubleShotSprite);
                     }

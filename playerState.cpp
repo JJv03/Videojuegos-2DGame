@@ -1878,6 +1878,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
     
            if (player.subWeapon.type == ItemType::AXE) {
             player.subWeapon.verticalSpeed = -350.f; 
+            player.delayBetweenShots = 2.5f;
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
@@ -1923,6 +1924,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
            if (player.subWeapon2.type == ItemType::AXE) {
             player.subWeapon2.verticalSpeed = -350.f; 
             player.subWeapon2.horizontalSpeed = 100.f;
+            player.delayBetweenShots = 2.5f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
         } else if (player.subWeapon2.type == ItemType::DAGGER) {
@@ -2068,6 +2070,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
            if (player.subWeapon.type == ItemType::AXE) {
             player.subWeapon.verticalSpeed = -350.f; 
             player.subWeapon.horizontalSpeed = 100.f;
+            player.delayBetweenShots = 2.5f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
         } else if (player.subWeapon.type == ItemType::DAGGER) {
@@ -2111,6 +2114,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
     
            if (player.subWeapon2.type == ItemType::AXE) {
             player.subWeapon2.verticalSpeed = -350.f; 
+            player.delayBetweenShots = 2.5f;
             player.subWeapon2.horizontalSpeed = 100.f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
