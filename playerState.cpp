@@ -1919,6 +1919,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             player.isStopWatchActive = true;
             player.stopWatchTimeCounter = 0.0f;
             player.stopWatchTime = 2.0f;
+            playSound("stopwatch");
         }  
             player.weaponIsActive = true;
             player.oneHasBeenUsed = true;
@@ -1964,6 +1965,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             player.isStopWatchActive = true;
             player.stopWatchTimeCounter = 0.0f;
             player.stopWatchTime = 2.0f;
+            playSound("stopwatch");
         }  
             player.weaponIsActive2 = true;
             player.oneHasBeenUsed = true;
@@ -2110,6 +2112,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             player.isStopWatchActive = true;
             player.stopWatchTimeCounter = 0.0f;
             player.stopWatchTime = 2.0f;
+            playSound("stopwatch");
         }  
             player.weaponIsActive = true;
             player.oneHasBeenUsed = true;
@@ -2155,6 +2158,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
             player.isStopWatchActive = true;
             player.stopWatchTimeCounter = 0.0f;
             player.stopWatchTime = 2.0f;
+            playSound("stopwatch");
         }  
             player.weaponIsActive2 = true;
             player.oneHasBeenUsed = true;
