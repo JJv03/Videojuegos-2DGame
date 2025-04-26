@@ -11,7 +11,7 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
     speed = BAT_SPEED;
     life = BAT_LIFE;
     score = BAT_SCORE;
-    damage = BAT_DAMAGE; 
+    damage = BAT_DAMAGE;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -213,16 +213,26 @@ void Bat::draw(sf::RenderWindow &window)
     }
 }
 
+void Bat::resetSpawnState()
+{
+    batToSpawn = false;
+    batSpawnTimers = 0.0f;
+    spawnerActive = false;
+}
+
 // Update animation frame and flip sprite based on direction
 void Bat::updateAnimation(float deltaTime)
 {
-    if(isActive){
+    if (isActive)
+    {
         currentAnimation = flyBat;
-    } else {
+    }
+    else
+    {
         currentAnimation = noAnimation;
     }
 
-    if(!animationManager->isPlaying(currentAnimation))
+    if (!animationManager->isPlaying(currentAnimation))
     {
         animationManager->playAnimation(currentAnimation);
     }

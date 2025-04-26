@@ -29,8 +29,6 @@ Game::Game() : configManager(configManager::getInstance())
     simonImage.createMaskFromColor(gColorKeyGreen);
 
     gTextures["simon"] = sf::Texture(simonImage, false);
-
-
 }
 
 // Initializes a new game from the beggining
@@ -82,7 +80,6 @@ void Game::loadGUI()
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
     font.setSmooth(false);
-    
 
     float margin = gGUI_size_x * gGUI_MarginFactor;
 
@@ -391,7 +388,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
-    if(player.activateRosario){
+    if (player.activateRosario)
+    {
         enemyManager->restartEnemies(currentLevel, currentStage);
         isRosarioBlinking = true;
         rosarioBlinkClock.restart();
@@ -440,17 +438,21 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
 
     // For killing bosses (destroying)
-    if(gKilledBoss){
-        if(currentLevel == 1){
+    if (gKilledBoss)
+    {
+        if (currentLevel == 1)
+        {
             bossManager->killBoss(phantomBatID);
         }
-        if(currentLevel == 7 && currentBossPhase == 1){
+        if (currentLevel == 7 && currentBossPhase == 1)
+        {
             currentBossPhase++;
             bossManager->killBoss(draculaID);
         }
-        if(currentLevel == 7 && currentBossPhase == 2){
+        if (currentLevel == 7 && currentBossPhase == 2)
+        {
             bossManager->killBoss(draculaSpiritID);
-            
+
             // WINNING ?
         }
         gKilledBoss = false;
@@ -471,17 +473,23 @@ void Game::resetEndLevelScoreAnimation()
     m_endScoreHeartAccumulator = 0.f;
 }
 
-void Game::endLevelScoreAnimation(const float deltaTime) {
-    if (time > 0) {
+void Game::endLevelScoreAnimation(const float deltaTime)
+{
+    if (time > 0)
+    {
         m_endScoreTimeAccumulator += deltaTime;
-        while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0) {
+        while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0)
+        {
             time -= 1;
             player.score += 10;
             m_endScoreTimeAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
         }
-    } else if (player.hearts > 0) {
+    }
+    else if (player.hearts > 0)
+    {
         m_endScoreHeartAccumulator += deltaTime;
-        while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0) {
+        while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0)
+        {
             player.hearts -= 1;
             player.score += 100;
             m_endScoreHeartAccumulator -= (1.f / gHEARTS_PER_SECOND);
@@ -499,19 +507,24 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         restartLoadingClock = false;
         loadingClock.restart();
     }
-    if (isRosarioBlinking) {
-        //std::cout << "Blinking" << std::endl;
+    if (isRosarioBlinking)
+    {
+        // std::cout << "Blinking" << std::endl;
         float elapsed = rosarioBlinkClock.getElapsedTime().asSeconds();
-        
-        if (elapsed < rosarioBlinkDuration) {
-            if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0) {
-                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow*32.f,tilemaps[currentLevel].m_tilesPerColumn*32.f});
+
+        if (elapsed < rosarioBlinkDuration)
+        {
+            if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0)
+            {
+                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * 32.f, tilemaps[currentLevel].m_tilesPerColumn * 32.f});
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();
                 sf::sleep(sf::milliseconds(50));
             }
-        } else {
+        }
+        else
+        {
             isRosarioBlinking = false;
         }
     }
@@ -537,7 +550,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
                 player.acceptsInput = true;
             }
         }
-
 
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
@@ -620,22 +632,25 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             window.draw(*guiSubWeaponSprite);
         }
 
-        if(player.isDoubleShotActive){
+        if (player.isDoubleShotActive)
+        {
             redBorderPosition.x += 75.f;
-            //redBorderPosition.y -= 2.f;
+            // redBorderPosition.y -= 2.f;
             guiDoubleShotSprite = getItemSprite(ItemType::DOUBLE_SHOT);
             guiDoubleShotSprite->setPosition(redBorderPosition);
-            if(player.timeDoubleShotActiveCounter <= 3.0f) {
-                    if(static_cast<int>(player.timeDoubleShotActiveCounter * 5) % 2 == 0) {
-                        window.draw(*guiDoubleShotSprite);
-                    }
-                } else {
-                    // Dibujo normal si no está en el rango de parpadeo
+            if (player.timeDoubleShotActiveCounter <= 3.0f)
+            {
+                if (static_cast<int>(player.timeDoubleShotActiveCounter * 5) % 2 == 0)
+                {
                     window.draw(*guiDoubleShotSprite);
                 }
+            }
+            else
+            {
+                // Dibujo normal si no está en el rango de parpadeo
+                window.draw(*guiDoubleShotSprite);
+            }
         }
-
-
 
         // Draw the heart counter icon
         guiHeartSprite->setPosition(sf::Vector2f(gGUI_heartCounter_position_x, gGUI_heartCounter_position_y) + virtualWorldOffset);
@@ -782,10 +797,11 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
 
     checkDoorTileCollisions();
 
-    if(tilemaps[currentStage].bossPosition != BossPos::NO_BOSS){
-        if (!isInBossFight && 
-            ((tilemaps[currentStage].bossPosition == BossPos::BOSS_RIGHT && hasReachedEndStage) || 
-            (tilemaps[currentStage].bossPosition == BossPos::BOSS_LEFT && hasReachedStartStage)))    
+    if (tilemaps[currentStage].bossPosition != BossPos::NO_BOSS)
+    {
+        if (!isInBossFight &&
+            ((tilemaps[currentStage].bossPosition == BossPos::BOSS_RIGHT && hasReachedEndStage) ||
+             (tilemaps[currentStage].bossPosition == BossPos::BOSS_LEFT && hasReachedStartStage)))
         {
             isInBossFight = true;
             currentBossPhase = 1;
@@ -1113,7 +1129,7 @@ void Game::checkPlayerCollisions()
                 tilemaps.loadLevel(currentLevel);
                 enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
                 bossManager->loadBossesFromLevel(currentLevel, tilemaps);
-                
+
                 resetEndLevelScoreAnimation();
             }
             else
@@ -1306,12 +1322,7 @@ void Game::restartStage()
 
     setLevelMusic(currentLevel);
 
-    particleSystem.clear();
-
     tilemaps.restartMiscTiles();
-
-    enemyManager->restartEnemies(currentLevel, currentStage);
-    bossManager->restartBosses(currentLevel, currentStage);
 
     time = 300;
     updateGUITime();
@@ -1331,6 +1342,11 @@ void Game::restartStage()
     player.visible = true;
 
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
+
+    enemyManager->restartEnemies(currentLevel, currentStage);
+    bossManager->restartBosses(currentLevel, currentStage);
+
+    particleSystem.clear();
 }
 
 void Game::restartLevel()

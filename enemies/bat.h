@@ -59,5 +59,8 @@ public:
     // Update animation frame
     void updateAnimation(float deltaTime);
 
+    // Reset de spawn process
+    void resetSpawnState();
+
     void hello() const override;
 };
