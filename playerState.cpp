@@ -344,9 +344,6 @@ void PlayerWalkState::update(Player& player, float deltaTime, bool windowHasFocu
     }
     player.animationManager->update(deltaTime);
 
-    
-    
-    
 }
 
 void PlayerWalkState::draw(Player& player, sf::RenderWindow &window)

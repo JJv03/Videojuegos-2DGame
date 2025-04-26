@@ -254,7 +254,7 @@ void Game::handleInput(sf::Event event)
 {
     if (!isLoading)
     {
-        if (!withOutLives)
+        if (!withOutLives || !gTriggerEndLvlScoreAnimation)
         {
             player.handleInput(event);
         }
@@ -306,7 +306,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 {
     // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
     // std::cout << player.sprite->getPosition().x << ", " << player.sprite->getPosition().y << std::endl;
-    player.update(deltaTime, viewPosition, windowHasFocus);
+    if (!gTriggerEndLvlScoreAnimation) {
+        player.update(deltaTime, viewPosition, windowHasFocus);
+    }
+    else {
+        player.update(0.f, viewPosition, windowHasFocus);
+    }
 
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
     bossManager->update(deltaTime, currentLevel, currentStage, currentBossPhase, tilemaps[currentStage].getMapBounds());
@@ -516,7 +521,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         {
             if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0)
             {
-                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * 32.f, tilemaps[currentLevel].m_tilesPerColumn * 32.f});
+                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * gTileSize,
+                                                tilemaps[currentLevel].m_tilesPerColumn * gTileSize});
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();
@@ -636,7 +642,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         {
             redBorderPosition.x += 75.f;
             // redBorderPosition.y -= 2.f;
-            guiDoubleShotSprite = getItemSprite(ItemType::DOUBLE_SHOT);
+            guiDoubleShotSprite = getItemSprite(ItemType::DOUBLE_SHOT_GUI);
             guiDoubleShotSprite->setPosition(redBorderPosition);
             if (player.timeDoubleShotActiveCounter <= 3.0f)
             {

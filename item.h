@@ -37,7 +37,9 @@ enum class ItemType {
     PORK_CHOP,
 
     DOUBLE_SHOT,
+    DOUBLE_SHOT_GUI,    // For the GUI
     TRIPLE_SHOT,
+    TRIPLE_SHOT_GUI,    // For the GUI
 
     FLASHING_MONEY_BAG,
     CROWN,

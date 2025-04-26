@@ -986,7 +986,6 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
-    
     if (dynamic_cast<Enemy *>(&other) && this->type == ItemType::DAGGER)
     {
         game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
@@ -1010,28 +1009,22 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         }
     }
     else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
-        {
-            
-            if(tile->isBreakable && !tile->isDestroyed && tile->type==MiscTileType::CANDELABRUM){
-                if(this->type == ItemType::DAGGER){
-                    if(!this->intersected){
-                        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-                        playSound("whip_hit");
-                    }
-            
-                    this->intersected = true;
-                }
-                else{
+    {
+        if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
+            if(this->type == ItemType::DAGGER || this->type == ItemType::BOOMERANG || this->type == ItemType::AXE){
+                if(!this->intersected){
                     game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                     playSound("whip_hit");
                 }
-                
-                
+        
+                this->intersected = true;
             }
-            
-        }
-    
- 
+            else{
+                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                playSound("whip_hit");
+            }
+        }   
+    }
 }
 
 bool SubWeapon::onCollision_SolidTile(Entity &solidTile) {

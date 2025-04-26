@@ -137,6 +137,14 @@ public:
 // Function that loads the textures of the miscellaneous tiles
 bool loadMiscTextures();
 
+// Returns 'true' if the tile is a soft-block kind of tile. It just so happens that these
+// tiles are also the ones that the player can't collide with.
+// E.g: Candelabrum, Firepit
+bool isSoftBlock(MiscTileType type);
+
+// Returns 'true' if the player can collide with the 'type' tile
+bool isCollidable(MiscTileType type);
+
 // Returns the animation frames of a miscellaneous tile based on its type
 const std::vector<AnimationManager::Frame>& getMiscAnimationFrames(MiscTileType type);
 

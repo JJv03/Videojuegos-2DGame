@@ -146,7 +146,9 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::PORK_CHOP] = sf::IntRect({1, 35}, {16, 16});
 
     item_To_TextureRect[ItemType::DOUBLE_SHOT] = sf::IntRect({120, 18}, {16, 16});
+    item_To_TextureRect[ItemType::DOUBLE_SHOT_GUI] = sf::IntRect({129, 1}, {16, 16});
     item_To_TextureRect[ItemType::TRIPLE_SHOT] = sf::IntRect({137, 18}, {16, 16});
+    item_To_TextureRect[ItemType::TRIPLE_SHOT_GUI] = sf::IntRect({154, 18}, {16, 16});
 
     item_To_TextureRect[ItemType::FLASHING_MONEY_BAG] = item_To_TextureRect[ItemType::RED_MONEY_BAG];
     item_To_TextureRect[ItemType::CROWN] = sf::IntRect({69, 35}, {16, 16});

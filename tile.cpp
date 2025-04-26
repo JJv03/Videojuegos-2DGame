@@ -165,6 +165,24 @@ bool MiscellaneousTile::hasAnimation(MiscTileType type) const {
 }
 
 
+bool MiscellaneousTile::isCollidable() const {
+    return ::isCollidable(this->type);
+}
+
+bool isSoftBlock(MiscTileType type) {
+    if (type == MiscTileType::CANDELABRUM || type == MiscTileType::FIREPIT) {
+        return true;
+    }
+    return false;
+}
+
+bool isCollidable(MiscTileType type) {
+    if (type != MiscTileType::CANDELABRUM && type != MiscTileType::FIREPIT) {
+        return true;
+    }
+    return false;
+}
+
 const std::vector<AnimationManager::Frame>& getMiscAnimationFrames(MiscTileType type) {
     using Frame = AnimationManager::Frame;
 
@@ -235,13 +253,6 @@ std::shared_ptr<MiscellaneousTile> getMiscTile(const MiscTileType type, const sf
     return tile;
 }
 
-bool MiscellaneousTile::isCollidable() const {
-    if (this->type != MiscTileType::CANDELABRUM && this->type != MiscTileType::FIREPIT) {
-        return true;
-    }
-    return false;
-}
-
 void MiscellaneousTile::onCollision(Entity& other, Game& game){
     if (this->isDestroyed) return;  // The tile is destroyed --> "doesn't exist" anymore
 
@@ -255,7 +266,7 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game){
         this->onCollision_Whip(game);
     }
     else if (dynamic_cast<Player*>(&other)) {
-        if (isCollidable()) {
+        if (this->isCollidable()) {
             this->onCollision_Player(other, game);
         }
     }
@@ -266,7 +277,7 @@ void MiscellaneousTile::onCollision_Whip(Game& game){
         this->isDestroyed = true;
         game.createDropItem(this->dropType, this->sprite->getPosition());
         
-        if (isCollidable()) {
+        if (this->isCollidable()) {
             game.particleSystem.spawnBreakBlockParticle(this->sprite->getPosition());
         } else {
             game.particleSystem.spawnFireParticle(this->sprite->getPosition());
@@ -292,7 +303,6 @@ void MiscellaneousTile::onCollision_Player(Entity& other, Game& game) {
 void MiscellaneousTile::hello() const {
     std::cout << "Soy MiscellaneousTile" << std::endl;
 }
-
 
 // -------------------------- STAIR TILE --------------------------
 
