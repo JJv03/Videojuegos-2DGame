@@ -164,7 +164,13 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
         }
         break;
 
-    case 2:
+    case 3:
+        break;
+    
+    case 5:
+        break;
+
+    case 7:
         break;
 
     default:
