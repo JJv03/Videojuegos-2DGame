@@ -85,7 +85,7 @@ Dracula *createDracula(const sf::Vector2f &position, const size_t &level, const 
 
     return new Dracula(maskSprite, maskHitboxes, 
                         draculaSprite, draculaHitboxes, 
-                        level, stage);
+                        level, stage, bodyPosition);
 }
 
 // Creates DraculaSpirit boss

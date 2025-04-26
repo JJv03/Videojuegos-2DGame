@@ -181,6 +181,7 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         if (dracula->level == currentLevel && dracula->stage == currentStage && dracula->isActive)
         {
             allBosses.push_back(dracula);
+            allBosses.push_back(dracula->draculaBody);
         }
     }
     if (draculaSpirit)
@@ -232,6 +233,14 @@ void BossManager::restartBosses(int currentLevel, int currentStage)
         {
             phantomBat->isActive = false;
             phantomBat->resetPosition();
+        }
+    }
+    if(dracula)
+    {
+        if (dracula->level == currentLevel && dracula->stage == currentStage)
+        {
+            dracula->isActive = false;
+            dracula->resetPosition();
         }
     }
 }

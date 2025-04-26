@@ -320,6 +320,30 @@ void Player::onCollision(Entity &other, Game &game)
             }
         }
     }
+    else if (DraculaBody *boss = dynamic_cast<DraculaBody *>(&other))
+    {   
+        if(!this->isInvulnerable && !this->isDead){
+            this->health = std::max(this->health - boss->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isInvulnerable = true;
+
+                if(this->isOnStairs){
+                    this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
+    }
     else if (Projectile *projectile = dynamic_cast<Projectile *>(&other))
     {   
         // Change when projectile has animationManager and can have hitbox = 0
