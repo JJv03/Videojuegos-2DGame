@@ -220,6 +220,7 @@ void MenuGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
 
     // Defines menu options
     std::string textos[4] = {"STORY MODE", "LEVEL SELECT", "CONFIG", "EXIT"};
@@ -657,10 +658,13 @@ void PauseGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
+
     if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    fontinputs.setSmooth(false);
 
     sf::Text text(font, "PAUSED GAME", 20);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -984,6 +988,7 @@ void ConfigGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
 
     sf::Text text(font, "CONFIGURATION", 35);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -1205,11 +1210,13 @@ void ControlsConfGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
     
     if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    fontinputs.setSmooth(false);
 
     sf::Text text(font, "Controls", 35);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -1647,6 +1654,7 @@ void VolumeConfGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
 
     sf::Text text(font, "SOUND", 35);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -1953,10 +1961,13 @@ void GameplayConfGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
+
     if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    fontinputs.setSmooth(false);
 
     sf::Text text(font, "GAMEPLAY", 35);
     text.setFillColor(sf::Color(122, 71, 22));
@@ -2384,6 +2395,7 @@ void InitAnimationGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
     sf::Text text(font, "Press Enter to skip...", 9);
     text.setFillColor(sf::Color(255, 255, 255, 125));
 
@@ -3150,6 +3162,7 @@ void levelSelectorGS::init(){
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
+    font.setSmooth(false);
 
     // Defines menu options
     // std::string textos[7] = {"LVL 1 - ENTRANCE", "LVL 2 - MAIN HALL", "LVL 3 - OUTER TOWER",
