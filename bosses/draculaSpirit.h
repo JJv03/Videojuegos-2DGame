@@ -71,6 +71,8 @@ public:
     float directionFlying = 1;
     bool flyDone = false;
 
+    float fireCounter = 0.f;
+    float fireTimer = 1.0f;
     // Time wait next fire
     bool hasFired = false;
     float fireNextCounter = 0.f;
