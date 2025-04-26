@@ -61,6 +61,16 @@ enum animationID{
     draculaIdle,
     draculaAttack,
 
+    // DraculaSpirit
+    draculaSpiritIdle,
+    draculaSpiritReady,
+    draculaSpiritSteady,
+    draculaSpiritGo,
+    draculaSpiritFlying,
+    draculaSpiritLand,
+    draculaSpiritFire,
+    
+
     // Secondary weapon
     daggerThrowing,
     axeThrowing,
