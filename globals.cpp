@@ -109,7 +109,7 @@ bool gKilledBoss = false;
 // ============ GAME VARIABLES ============
 SoundManager gameSoundManager;
 bool goBack = false;
-
+bool triggerEndLvlScoreAnimation = false;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;

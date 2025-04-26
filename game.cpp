@@ -513,8 +513,6 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         // camera.updateView(*player.sprite, tileMap.getMapBounds(), 100.f);
         tilemaps[currentStage].drawScene(window, camera);
 
-        particleSystem.draw(window);
-
         // DEBUG: Draw player and whip hitbox
         if (gDrawHitboxes)
         {
@@ -646,6 +644,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         // collisionGrid.drawCells(window, virtualCoordOfUpperLeftCornerOfGame);
     }
+
+    particleSystem.draw(window);
 }
 
 void Game::drawHealthBars(sf::RenderWindow &window, int playerHealth, int bossHealth, sf::Vector2f virtualWorldset)
