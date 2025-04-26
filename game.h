@@ -148,9 +148,11 @@ private:
     float rosarioBlinkDuration = 1.0f; 
     float rosarioBlinkInterval = 0.1f;
 
-    // ----- All refered to the end level score -----
-    float m_endScoreTimeAccumulator = 0.f;
-    float m_endScoreHeartAccumulator = 0.f;
+    // ----- All refered to the end level score animation -----
+    bool m_playedVictoryMusic = false;      // To only play the victory music once
+    float m_endLvlAnimationCoundown = gEND_LVL_ANIMATION_COUNDOWN;
+    float m_endLvlAnimation_TimeScoreAccumulator = 0.f;     // To keep track of the speed at which Time is being deducted
+    float m_endLvlAnimation_HeartScoreAccumulator = 0.f;    // To keep track of the speed at which Hearts are being deducted
 
     // Function that resets the variables that are used for the end level score animation
     void resetEndLevelScoreAnimation();

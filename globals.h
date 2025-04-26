@@ -114,9 +114,13 @@ extern bool gKilledBoss;
 extern SoundManager gameSoundManager;
 extern bool goBack;     // Flag to go back from game
 
-extern bool gTriggerEndLvlScoreAnimation;   // Flag to trigger the end level score animation
-extern const float gTIME_POINTS_PER_SECOND; // Speed at which the time points are consumed
-extern const float gHEARTS_PER_SECOND;      // Speed at which the hearts are consumed
+extern const float gEND_LVL_ANIMATION_COUNDOWN;    // Time until the end level animation begins to play
+extern bool gTriggerEndLvlScoreAnimation;   // Flag to TRIGGER the end level score animation
+extern bool gPlayEndLvlScoreAnimation;      // Flag to PLAY the end level score animation
+extern const int gTIME_POINTS_PER_SECOND; // Speed at which the time points are consumed
+extern const float gTIME_POINTS_SFX_FRECUENCY;     // After "gTIME_POINTS_SFX_FRECUENCY" seconds, the SFX is played
+extern const int gHEARTS_PER_SECOND;      // Speed at which the hearts are consumed
+extern const float gHEARTS_SFX_FRECUENCY;   // After "gHEARTS_SFX_FRECUENCY" hearts consumed, the SFX is played
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

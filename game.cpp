@@ -254,7 +254,7 @@ void Game::handleInput(sf::Event event)
 {
     if (!isLoading)
     {
-        if (!withOutLives || !gTriggerEndLvlScoreAnimation)
+        if (!withOutLives || !gPlayEndLvlScoreAnimation)
         {
             player.handleInput(event);
         }
@@ -304,9 +304,22 @@ void Game::handleInput(sf::Event event)
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
-    // std::cout << player.getBounds().position.x << ", " << player.getBounds().position.y << std::endl;
-    // std::cout << player.sprite->getPosition().x << ", " << player.sprite->getPosition().y << std::endl;
-    if (!gTriggerEndLvlScoreAnimation) {
+    if (gTriggerEndLvlScoreAnimation && !gPlayEndLvlScoreAnimation) {     // Prepare for end level score animation
+
+        if (!m_playedVictoryMusic) {
+            gameSoundManager.stopAllMusic();
+            auto audio = configManager.getAudio();
+            gameSoundManager.playMusic("victoryBoss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
+            m_playedVictoryMusic = true;
+        }
+        
+        m_endLvlAnimationCoundown -= deltaTime;
+        if (m_endLvlAnimationCoundown <= 0.f) {
+            gPlayEndLvlScoreAnimation = true;
+        }
+    }
+
+    if (!gPlayEndLvlScoreAnimation) {
         player.update(deltaTime, viewPosition, windowHasFocus);
     }
     else {
@@ -327,7 +340,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         timeAccumulator += deltaTime;
 
     // Reduce time
-    if (gTriggerEndLvlScoreAnimation)
+    if (gPlayEndLvlScoreAnimation)
     {
         endLevelScoreAnimation(deltaTime);
     }
@@ -473,33 +486,77 @@ void Game::updateGUITime()
 
 void Game::resetEndLevelScoreAnimation()
 {
+    m_playedVictoryMusic = false;
+    m_endLvlAnimationCoundown = gEND_LVL_ANIMATION_COUNDOWN;
     gTriggerEndLvlScoreAnimation = false;
-    m_endScoreTimeAccumulator = 0.f;
-    m_endScoreHeartAccumulator = 0.f;
+    gPlayEndLvlScoreAnimation = false;
+    m_endLvlAnimation_TimeScoreAccumulator = 0.f;
+    m_endLvlAnimation_HeartScoreAccumulator = 0.f;
 }
 
 void Game::endLevelScoreAnimation(const float deltaTime)
 {
+    static float countdownToPlayTimeTally = gTIME_POINTS_SFX_FRECUENCY;
+    static float countdownToPlayHeartTally = gHEARTS_SFX_FRECUENCY;
+    static bool playTimeTallyToggle = true;
+    
+    bool timeSoundPlayedOnce = false;
+    bool heartSoundPlayedOnce = false;
+
     if (time > 0)
     {
-        m_endScoreTimeAccumulator += deltaTime;
-        while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0)
+        m_endLvlAnimation_TimeScoreAccumulator += deltaTime;
+        while (m_endLvlAnimation_TimeScoreAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0)
         {
-            time -= 1;
+            time--;
             player.score += 10;
-            m_endScoreTimeAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
+            m_endLvlAnimation_TimeScoreAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
+        }
+        
+        countdownToPlayTimeTally -= deltaTime;
+        if (countdownToPlayTimeTally <= 0.f) {
+            countdownToPlayTimeTally = gTIME_POINTS_SFX_FRECUENCY;
+
+            if (playTimeTallyToggle) {      // Only play the sound once every 2 times
+                auto audio = configManager.getAudio();
+                gameSoundManager.playSound("time_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+                timeSoundPlayedOnce = true;
+            }
+
+            playTimeTallyToggle = !playTimeTallyToggle;
+        }
+
+        // If "time_tally" was never played and we are about to finish, we play it once
+        if (time == 0 && !timeSoundPlayedOnce) {
+            auto audio = configManager.getAudio();
+            gameSoundManager.playSound("time_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
     }
     else if (player.hearts > 0)
     {
-        m_endScoreHeartAccumulator += deltaTime;
-        while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0)
+        m_endLvlAnimation_HeartScoreAccumulator += deltaTime;
+        while (m_endLvlAnimation_HeartScoreAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0)
         {
-            player.hearts -= 1;
+            player.hearts--;
             player.score += 100;
-            m_endScoreHeartAccumulator -= (1.f / gHEARTS_PER_SECOND);
+            countdownToPlayHeartTally--;
+            m_endLvlAnimation_HeartScoreAccumulator -= (1.f / gHEARTS_PER_SECOND);
+
+            if (countdownToPlayHeartTally <= 0.f) {
+                auto audio = configManager.getAudio();
+                gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+                countdownToPlayHeartTally = gHEARTS_SFX_FRECUENCY;
+                heartSoundPlayedOnce = true;
+            }
+        }
+
+
+        if (player.hearts == 0 && !heartSoundPlayedOnce) {
+            auto audio = configManager.getAudio();
+            gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
     }
+
     updateGUITime();
 }
 
@@ -526,7 +583,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();
-                sf::sleep(sf::milliseconds(50));
+                sf::sleep(sf::milliseconds(10));
             }
         }
         else

@@ -110,9 +110,13 @@ bool gKilledBoss = false;
 SoundManager gameSoundManager;
 bool goBack = false;
 
+const float gEND_LVL_ANIMATION_COUNDOWN = 4.0f;
 bool gTriggerEndLvlScoreAnimation = false;
-const float gTIME_POINTS_PER_SECOND = 30.f;
-const float gHEARTS_PER_SECOND = 10.f;
+bool gPlayEndLvlScoreAnimation = false;
+const int gTIME_POINTS_PER_SECOND = 50;
+const float gTIME_POINTS_SFX_FRECUENCY = 0.0575f;
+const int gHEARTS_PER_SECOND = 5;
+const float gHEARTS_SFX_FRECUENCY = 1.f;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
