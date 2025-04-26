@@ -76,6 +76,14 @@ void Item::onCollision(Entity& other, Game& game) {
         onCollision_SolidTile(other);
     } else if (dynamic_cast<Player*>(&other)){
         this->m_lifeTime = 0.f;
+
+        int score = getItemScore(this->m_type);
+        if (score == 0)
+            return; // No score for this item
+
+        sf::Vector2f offset(sprite->getGlobalBounds().size.x, 0.0f);
+        sf::Vector2f scorePosition = this->getPosition() + offset;
+        game.particleSystem.spawnPointsParticle(scorePosition, score);
     }
 }
 

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include "animationManager.h"
 
 
@@ -13,12 +14,15 @@ public:
     virtual bool isAlive() const = 0;
 };
 
+// =================================================================================================
+// ===================================== BREAK BLOCK PARTICLE ======================================
+// =================================================================================================
 
 class BreakBlockParticle : public Particle {
 public:
     BreakBlockParticle(const sf::Texture& texture, sf::Vector2f position);
 
-    void update(float dt) override;
+    void update(float deltaTime) override;
     void draw(sf::RenderTarget& target) const override;
     bool isAlive() const override;
 
@@ -35,11 +39,15 @@ private:
 };
 
 
+// =================================================================================================
+// ===================================== HIT PARTICLE ==============================================
+// =================================================================================================
+
 class HitParticle : public Particle {
 public:
     HitParticle(const sf::Texture& texture, sf::Vector2f position);
 
-    void update(float dt) override;
+    void update(float deltaTime) override;
     void draw(sf::RenderTarget& target) const override;
     bool isAlive() const override;
 
@@ -49,12 +57,16 @@ private:
     std::unique_ptr<sf::Sprite> m_sprite;
 };
 
+
+// =================================================================================================
+// ===================================== FIRE PARTICLE =============================================
+// =================================================================================================
 
 class FireParticle : public Particle {
 public:
     FireParticle(const sf::Texture& texture, sf::Vector2f position);
 
-    void update(float dt) override;
+    void update(float deltaTime) override;
     void draw(sf::RenderTarget& target) const override;
     bool isAlive() const override;
 
@@ -67,11 +79,15 @@ private:
 };
 
 
+// =================================================================================================
+// ================================== BIG FIRE PARTICLE ============================================
+// =================================================================================================
+
 class BigFireParticle : public Particle {
 public:
     BigFireParticle(const sf::Texture& texture, sf::Vector2f position);
 
-    void update(float dt) override;
+    void update(float deltaTime) override;
     void draw(sf::RenderTarget& target) const override;
     bool isAlive() const override;
 
@@ -81,4 +97,32 @@ private:
     std::unique_ptr<sf::Sprite> m_sprite;
     std::unique_ptr<AnimationManager> m_animationManager{nullptr};
     AnimationManager::Animation m_animation;
+};
+
+
+// =================================================================================================
+// ===================================== POINTS PARTICLE ===========================================
+// =================================================================================================
+
+extern std::unordered_map<std::string, sf::IntRect> pointsTextRect;
+
+
+class PointsParticle : public Particle {
+public:
+    PointsParticle(const sf::Texture& texture, sf::Vector2f position, int points);
+
+    void update(float deltaTime) override;
+    void draw(sf::RenderTarget& target) const override;
+    bool isAlive() const override;
+
+private:
+    float m_lifetime;
+    bool m_alive;
+    std::vector<std::unique_ptr<sf::Sprite>> m_sprites;
+
+    // Returns the first two digits of a number as a string
+    std::string getFirstTwoDigits(int digit);
+
+    // Returns 'true' if the digits for the index 'index' are "00"
+    bool isDoubleZeroDigits(int digit, int index, const std::vector<int>& digits);
 };

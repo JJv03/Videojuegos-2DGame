@@ -18,6 +18,9 @@ const float FIRE_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
 // Big fire constants
 const float BIG_FIRE_PARTICLE_LIFETIME = 0.9f; // Particle lifetime in seconds
 
+// Points constants
+const float POINTS_PARTICLE_LIFETIME = 0.5f; // Particle lifetime in seconds
+
 
 // =================================================================================================
 // ===================================== BREAK BLOCK PARTICLE ======================================
@@ -52,13 +55,13 @@ BreakBlockParticle::BreakBlockParticle(const sf::Texture& texture, sf::Vector2f 
     }
 }
 
-void BreakBlockParticle::update(float dt) {
+void BreakBlockParticle::update(float deltaTime) {
     for (auto& d : m_debris) {
-        d.velocity.y += m_gravity * dt;
-        d.sprite.move(d.velocity * dt);
+        d.velocity.y += m_gravity * deltaTime;
+        d.sprite.move(d.velocity * deltaTime);
     }
 
-    m_lifetime -= dt;
+    m_lifetime -= deltaTime;
     if (m_lifetime <= 0.f) {
         m_alive = false;
     }
@@ -87,8 +90,8 @@ HitParticle::HitParticle(const sf::Texture& texture, sf::Vector2f position)
     m_sprite->setPosition(position);
 }
 
-void HitParticle::update(float dt) {
-    m_lifetime -= dt;
+void HitParticle::update(float deltaTime) {
+    m_lifetime -= deltaTime;
     if (m_lifetime <= 0.f) {
         m_alive = false;
     }
@@ -185,5 +188,107 @@ void BigFireParticle::draw(sf::RenderTarget& target) const {
 }
 
 bool BigFireParticle::isAlive() const {
+    return m_alive;
+}
+
+
+// =================================================================================================
+// ===================================== POINTS PARTICLE ===========================================
+// =================================================================================================
+
+// 14900, 127 time ==> 16170  ==> 10pts por segundo ==> 4s~
+// 16170, 72 cora ==> 23370 ==> 100pts por cora && 10 cora / segundo
+
+std::unordered_map<std::string, sf::IntRect> pointsTextRect = {
+    {"10", sf::IntRect({1, 69}, {8, 8})},
+    {"20", sf::IntRect({10, 69}, {8, 8})},
+    {"40", sf::IntRect({19, 69}, {8, 8})},
+    {"70", sf::IntRect({28, 69}, {8, 8})},
+    {"0", sf::IntRect({37, 69}, {8, 8})},
+    {"00", sf::IntRect({46, 69}, {8, 8})}
+};
+
+std::string PointsParticle::getFirstTwoDigits(int digit) {
+    // Handle the first two digits as special cases: 10, 20, 40, 70
+    if (digit == 1) return "10";
+    else if (digit == 2) return "20";
+    else if (digit == 4) return "40";
+    else if (digit == 7) return "70";
+    return "";
+}
+
+bool PointsParticle::isDoubleZeroDigits(int digit, int index, const std::vector<int>& digits) {
+    // If the digit is '0'  AND  not the last one  AND  the following digit is a '0'
+    if (digit == 0 && index >= 1 && digits[index - 1] == 0) return true;
+    return false;
+}
+
+PointsParticle::PointsParticle(const sf::Texture& texture, sf::Vector2f position, int points)
+    : m_lifetime(POINTS_PARTICLE_LIFETIME), m_alive(true) {
+
+    // First, we need to convert the points to a vector of digits
+    std::vector<int> digits;
+    if (points == 0) {
+        digits.push_back(0);
+    } else {
+        while (points > 0) {
+            digits.push_back(points % 10);
+            points /= 10;
+        }
+    }
+
+    for (auto a : digits) {
+        std::cout << a << " ";
+    }
+
+    // Second, we fill the vector of sprites for each digit
+    int xOffset = 0;                // x position for the current sprite
+    bool firstTwoDigits = true;     // To track the first two digits
+    for (int i = digits.size() - 1; i >= 0; --i) {      // Backwards to get the correct order
+        int digit = digits[i];
+        sf::IntRect texRect;
+        
+        if (firstTwoDigits) {   // First two digits are treated as a special case
+            std::string firstTwoDigitsStr = getFirstTwoDigits(digit);
+            if (firstTwoDigitsStr.empty())
+                throw std::invalid_argument("Texture for digits \"" + std::to_string(digit) + "\" not found.");
+            
+            i -= 1;     // Skip the next digit because we are treating two digits as one
+            firstTwoDigits = false;
+            texRect = pointsTextRect[firstTwoDigitsStr];         
+        }
+        else {    // Rest of the digits are zeros
+            if (isDoubleZeroDigits(digit, i, digits)) {
+                texRect = pointsTextRect["00"];
+                i -= 1;     // Skip the next digit
+            }
+            else {
+                texRect = pointsTextRect[std::to_string(digit)];
+            }
+        }
+
+        m_sprites.push_back(std::make_unique<sf::Sprite>(texture));
+        m_sprites.back()->setTextureRect(texRect);
+        m_sprites.back()->setPosition(sf::Vector2f{position.x + xOffset, position.y});
+
+        xOffset += texRect.size.x;
+    }
+}
+
+void PointsParticle::update(float deltaTime) {
+    m_lifetime -= deltaTime;
+
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+}
+
+void PointsParticle::draw(sf::RenderTarget& target) const {
+    for (const auto& sprite : m_sprites) {
+        target.draw(*sprite);
+    }
+}
+
+bool PointsParticle::isAlive() const {
     return m_alive;
 }

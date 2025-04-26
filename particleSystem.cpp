@@ -45,3 +45,7 @@ void ParticleSystem::spawnBigFireParticle(sf::Vector2f position, bool addOffset)
     }
     spawn<BigFireParticle>(gTextures.at("boss"), position);
 }
+
+void ParticleSystem::spawnPointsParticle(sf::Vector2f position, int points) {
+    spawn<PointsParticle>(gTextures.at("miscTile_1"), position, points);
+}
