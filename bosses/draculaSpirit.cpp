@@ -196,7 +196,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 
                 // Mueve el sprite
                 auto mode = configManager.getDifficulty();
-                if(!mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
+                if(mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
                     this->speed.x = -this->speed.x;
                     alreadyChanged=true;
                 }
@@ -220,7 +220,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
-                if(sprite->getPosition().y > 152.0f) {
+                if(sprite->getPosition().y > 153.0f) {
                     sprite->move(sf::Vector2f(0.f, 1.5f));
                     
                     this->currentState = DraculeSpiritState::LANDING;
@@ -238,7 +238,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, 0.f));
                     auto mode = configManager.getDifficulty();
                     
-                    if(!mode.hard_mode && !hasFired && chanceFlying==0 && !firstTimeDetected){
+                    if(mode.hard_mode && !hasFired && chanceFlying==0 && !firstTimeDetected){
                         hasFired = true;               
                 
                         // Create and store the projectile using the generic creator
