@@ -519,10 +519,10 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
 
     }
     if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
-        if (keyReleased->scancode == controls.down){
+        /*if (keyReleased->scancode == controls.down){
             player.isDucking = false;
             player.setState(state<Idle>());
-        }       
+        } */      
         if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
