@@ -52,7 +52,7 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
 // Update draculaSpirit logic: handle spawning, movement, and deactivation
 void DraculaSpirit::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds){
     // SPAWN LOGIC
-    if (!isActive && phase == 2)
+    if (!isActive )//&& phase == 2)
     {
         for (const auto &hitbox : hitboxes)
         {
@@ -77,7 +77,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
         position = sprite->getGlobalBounds().position;
         sf::Vector2f map = mapDims.position;
         sf::Vector2f size = mapDims.size;
-        float distance = playerPos.x - draculaSpiritPos.x;
+        //float distance = playerPos.x - draculaSpiritPos.x;
         if (playerPos.x < draculaSpiritPos.x) {
             sprite->setScale(sf::Vector2f(1.f, 1.f)); // Negative X scale flips the sprite
             facingRight = -1;
@@ -96,6 +96,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
         }
 
         int chance = rand() % 5;
+        int chanceFlying = rand() % 2;
+        int chanceDodging = rand() % 5;
         switch(currentState){
             case DraculeSpiritState::ASLEEP:
                 //std::cout << "sleep" << std::endl;
@@ -110,6 +112,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     animationManager->playAnimation(draculaSpiritIdle);
                 }
                 this->flyDone = false;
+                alreadyChanged=false;
+                alreadyFlying = false;
                 if (waitingIdleCounter >= waitingIdle)
                 {
                     if (chance == 0 && !hasFired )
@@ -163,7 +167,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 if (waitingInSteadyCounter >= waitingInSteady)
                 {
                     this->currentState = DraculeSpiritState::GO;
-                    this->speed.y = -350.f * deltaTime; 
+                    this->speed.y = -450.f * deltaTime; 
                     this->speed.x = 80.f * deltaTime; 
                     
                     waitingInSteadyCounter = 0.f;
@@ -188,12 +192,18 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 {
                 
                 // Velocidad de caída (puedes ajustar estos valores)
-                this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
+                
                 
                 // Mueve el sprite
-
-                if( map.x + size.x >= position.x + this->directionFlying * this->speed.x &&
-                    map.x  <= position.x + this->directionFlying * this->speed.x){
+                auto mode = configManager.getDifficulty();
+                if(!mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
+                    this->speed.x = -this->speed.x;
+                    alreadyChanged=true;
+                }
+                alreadyFlying = true;
+                this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
+                if( map.x + size.x -62.f >= position.x + this->directionFlying * this->speed.x &&
+                    map.x + 10.f  <= position.x + this->directionFlying * this->speed.x){
                         sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                 }
                 else{
@@ -205,12 +215,14 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 if (this->directionFlying != this->facingRight && !this->flyDone)
                 {
                     this->flyDone = true;
+                    firstTimeDetected = false;
                     this->currentState = DraculeSpiritState::FLYING;
                 }
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
                 if(sprite->getPosition().y > 152.0f) {
                     sprite->move(sf::Vector2f(0.f, 1.5f));
+                    
                     this->currentState = DraculeSpiritState::LANDING;
                 }
                 }
@@ -224,11 +236,54 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         animationManager->playAnimation(draculaSpiritFlying);
                     }
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, 0.f));
-
+                    auto mode = configManager.getDifficulty();
+                    
+                    if(!mode.hard_mode && !hasFired && chanceFlying==0 && !firstTimeDetected){
+                        hasFired = true;               
+                
+                        // Create and store the projectile using the generic creator
+                        projectile = createProjectile(
+                            {   sprite->getPosition().x + (facingRight * 5.0f),
+                                sprite->getPosition().y - 27.0f},
+                            {-30.f, 100.0f},
+                            ProjectileType::FISHMAN,
+                            1.f);
+        
+                        projectile->setActive(true);
+        
+                        hasProjectile = true;
+        
+                        projectile2 = createProjectile(
+                            {   sprite->getPosition().x + (facingRight * 5.0f),
+                                sprite->getPosition().y - 27.0f},
+                            {10.f, 100.0f},
+                            ProjectileType::FISHMAN,
+                            1.f);
+        
+                        projectile2->setActive(true);
+        
+                        hasProjectile2 = true;
+        
+        
+                        projectile3 = createProjectile(
+                            {   sprite->getPosition().x + (facingRight * 5.0f),
+                                sprite->getPosition().y - 27.0f},
+                            {50.f, 100.0f},
+                            ProjectileType::FISHMAN,
+                            1.f);
+        
+                        projectile3->setActive(true);
+        
+                        hasProjectile3 = true;
+                        sprite->move({0.f,16.f});
+                    }
                 }
                 else{
                     this->waitingInFlyCounter = 0.f;
                     this->currentState = DraculeSpiritState::GO;
+                }
+                if(!firstTimeDetected){
+                    firstTimeDetected = true;
                 }
                 
                 
@@ -293,6 +348,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
     
                     hasProjectile3 = true;
                     sprite->move({0.f,16.f});
+                    
                     this->currentState = DraculeSpiritState::IDLE;
                 }
                 

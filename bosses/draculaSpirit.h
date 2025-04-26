@@ -91,6 +91,13 @@ public:
     bool hasFiredDuringPause3 = {false};
     bool hasProjectile3{false};
 
+
+    // Projectile IA
+    bool firstTimeDetected = false;
+
+    //Dodging IA
+    bool alreadyChanged = false;
+    bool alreadyFlying = false;
     DraculeSpiritState currentState = DraculeSpiritState::ASLEEP;
 
     DraculaSpirit() = default;
