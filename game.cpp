@@ -81,7 +81,7 @@ void Game::loadGUI()
         std::cout << "No se ha encontrado la fuente" << std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
-    //font.setSmooth(false);
+    font.setSmooth(false);
     
 
     float margin = gGUI_size_x * gGUI_MarginFactor;
