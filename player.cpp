@@ -984,17 +984,27 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
     return std::vector<sf::FloatRect>();
 }
 
+
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
-    if (dynamic_cast<Enemy *>(&other) && this->type == ItemType::DAGGER)
+    
+    if (dynamic_cast<Enemy *>(&other))
     {
         game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+        playSound("whip_hit");
         //std::cout << "SubWeapon colision" << std::endl;
-        if(!this->intersected){
-            playSound("whip_hit");
+        if(this->type == ItemType::DAGGER){
+            this->intersected = true;
         }
-
-        this->intersected = true;
+        
+    }
+    else if (dynamic_cast<Boss *>(&other))
+    {
+        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+        playSound("strong_enemy_hit");
+        if(this->type == ItemType::DAGGER){
+            this->intersected = true;
+        }
     }
     else if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
     {
@@ -1025,6 +1035,8 @@ void SubWeapon::onCollision(Entity &other, Game &game)
             }
         }   
     }
+    
+ 
 }
 
 bool SubWeapon::onCollision_SolidTile(Entity &solidTile) {
