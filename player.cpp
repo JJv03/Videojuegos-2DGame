@@ -1021,7 +1021,7 @@ void SubWeapon::onCollision(Entity &other, Game &game)
     else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
     {
         if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
-            if(this->type == ItemType::DAGGER || this->type == ItemType::BOOMERANG || this->type == ItemType::AXE){
+            if(this->type == ItemType::DAGGER){
                 if(!this->intersected){
                     game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                     playSound("whip_hit");
@@ -1029,7 +1029,7 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         
                 this->intersected = true;
             }
-            else{
+            else if(this->type != ItemType::FIRE_BOMB){
                 game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                 playSound("whip_hit");
             }
