@@ -26,7 +26,8 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
     waitingInFlyCounter = 0.f;
 
     hasFired = true;
-    sprite->move({0.f,-2.f});
+    std::cout << position.y << std::endl;
+    sprite->move({0.f,-4.f});
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
