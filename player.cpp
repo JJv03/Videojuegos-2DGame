@@ -730,6 +730,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 this->subWeapon.intersected = true;
             } else {
                 this->stopWatchTimeCounter += deltaTime;
+                
             }
 
             
@@ -1021,18 +1022,15 @@ void SubWeapon::onCollision(Entity &other, Game &game)
     else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
     {
         if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
-            if(this->type == ItemType::DAGGER){
-                if(!this->intersected){
-                    game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-                    playSound("whip_hit");
-                }
-        
-                this->intersected = true;
-            }
-            else if(this->type != ItemType::FIRE_BOMB){
+            if(this->type != ItemType::FIRE_BOMB){
                 game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                 playSound("whip_hit");
+                if(this->type == ItemType::DAGGER){
+                    this->intersected = true;
+                }
             }
+            
+            
         }   
     }
     
