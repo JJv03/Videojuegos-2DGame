@@ -132,8 +132,7 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
             bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive && 
-                                    player.delayBetweenShotsCounter >= player.delayBetweenShots);
+                                    && player.delayBetweenShotsCounter >= player.delayBetweenShots);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -290,7 +289,7 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
             bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive);
+                && player.delayBetweenShotsCounter >= player.delayBetweenShots);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -503,7 +502,7 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
             bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                                    && player.timeDoubleShotActiveCounter < player.timeDoubleShotActive );
+                && player.delayBetweenShotsCounter >= player.delayBetweenShots);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -742,7 +741,7 @@ void PlayerDuckState::handleInput(Player& player, sf::Event event)
         if (keyReleased->scancode == controls.down){
             player.isDucking = false;
             player.setState(state<Idle>());
-        }       
+        }    
         if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
@@ -1381,8 +1380,7 @@ void PlayerAttackDuckState::handleInput(Player& player, sf::Event event)
         if (KeyReleased->scancode == controls.down)
         {
             player.isDucking = false;
-            player.whip.animationManager->playAnimation(noAnimation);
-            player.setState(state<Idle>());
+            
         }
     }
 }
@@ -1445,11 +1443,18 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        player.currentAnimation = duckSimon;
         player.sprite->setColor(sf::Color::White);
         player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(noAnimation);
-        player.setState(state<Duck>());
+        if(player.isDucking){
+            player.currentAnimation = duckSimon;
+            player.setState(state<Duck>());
+        }
+        else{
+            player.currentAnimation = idleSimon;
+            player.setState(state<Idle>());
+        }
+        
     }
 
 }
@@ -1861,6 +1866,7 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
     
     if (!player.oneHasBeenUsed)
     {
+        player.delayBetweenShots = 1.5f;
         if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive) {
             player.subWeapon.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
             sf::Vector2f spawnPos = player.sprite->getPosition();

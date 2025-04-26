@@ -107,20 +107,16 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
 
     if (!this->weaponIsActive2)
     {
-        delayBetweenShotsCounter += deltaTime;
+        this->delayBetweenShotsCounter += deltaTime;
     }
     else{
-        delayBetweenShotsCounter = 0.f;
+        this->delayBetweenShotsCounter = 0.f;
     }
     
-    if(this->isDoubleShotActive && this->timeDoubleShotActiveCounter < this->timeDoubleShotActive){
+    if(this->isDoubleShotActive){
         this->timeDoubleShotActiveCounter += deltaTime;
+    }
 
-    }
-    else{
-        this->isDoubleShotActive = false;
-        this->timeDoubleShotActiveCounter = 0.f;
-    }
     // If player is near stair, collisions will make it true
     this->isNearStair = false;
     this->stairStart = new StairTile();
@@ -541,6 +537,12 @@ void Player::onCollision_Item(Entity &entityItem)
     {
         playSound("other_item_pick");
         this->subWeaponType = itemType;
+        if (this->subWeaponType!= ItemType::STOPWATCH)
+        {
+            this->isDoubleShotActive = false;
+            this->timeDoubleShotActiveCounter = 0.f;
+        }
+        
     }
     else if (itemType == ItemType::MORNING_STAR)
     {
