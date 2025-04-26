@@ -582,7 +582,7 @@ void Player::onCollision_Item(Entity &entityItem)
 
             if (this->whip.whipLvl >= 2)
             {
-                this->whip.whipDmg = 3;;
+                this->whip.whipDmg = 3;
             }
         }
     }
