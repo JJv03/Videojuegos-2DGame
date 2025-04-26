@@ -61,7 +61,7 @@ Dracula *createDracula(const sf::Vector2f &position, const size_t &level, const 
 }
 
 // Creates DraculaSpirit boss
-DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
 {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect DRACULA_SPRITE_REGION = {{1, 148}, {48, 64}};
@@ -84,5 +84,5 @@ DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &l
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
 
-    return new DraculaSpirit(draculaSpiritSprite, hitboxes, position, level, stage);
+    return new DraculaSpirit(draculaSpiritSprite, hitboxes, position, level, stage, mapDims);
 }

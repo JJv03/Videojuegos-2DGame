@@ -5,7 +5,8 @@
 
 // Constructor: Initialize draculaSpirit with sprite, hitboxes, position, and game level/stage
 DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
-                             const int &level, const int &stage) : Boss(_sprite, _hitboxes), level(level), stage(stage)
+                             const int &level, const int &stage, const sf::FloatRect &mapDims) : Boss(_sprite, _hitboxes), level(level), stage(stage),
+                             position(position),mapDims(mapDims)
 {
     speed = DRACULASPIRIT_SPEED;
     life = DRACULASPIRIT_LIFE;
@@ -25,6 +26,7 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
     waitingInFlyCounter = 0.f;
 
     hasFired = true;
+    sprite->move({0.f,-2.f});
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
@@ -54,6 +56,7 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
             if (player.gPlayerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
+                //maxLife = life;
                 this->currentState = DraculeSpiritState::IDLE;
                 break;
             }
@@ -68,6 +71,9 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
         // Facing logic of draculaSpirit looking at the player
         sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
         sf::Vector2f draculaSpiritPos(sprite->getGlobalBounds().position.x + sprite->getGlobalBounds().size.x / 2, sprite->getGlobalBounds().position.y + sprite->getGlobalBounds().size.y / 2);
+        position = sprite->getGlobalBounds().position;
+        sf::Vector2f map = mapDims.position;
+        sf::Vector2f size = mapDims.size;
         float distance = playerPos.x - draculaSpiritPos.x;
         if (playerPos.x < draculaSpiritPos.x) {
             sprite->setScale(sf::Vector2f(1.f, 1.f)); // Negative X scale flips the sprite
@@ -89,23 +95,26 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
         int chance = rand() % 5;
         switch(currentState){
             case DraculeSpiritState::ASLEEP:
+                std::cout << "sleep" << std::endl;
                 if(!animationManager->isPlaying(noAnimation)){
                     animationManager->playAnimation(noAnimation);
                 }
                 break;
 
             case DraculeSpiritState::IDLE:
+                std::cout << "idle" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritIdle)){
                     animationManager->playAnimation(draculaSpiritIdle);
                 }
                 this->flyDone = false;
-                if (distance < 70 || waitingIdleCounter >= waitingIdle)
+                if (waitingIdleCounter >= waitingIdle)
                 {
                     if (chance == 0 && !hasFired )
                     {
                         this->currentState = DraculeSpiritState::FIRE;
                     }
                     else{
+                        waitingInReadyCounter = 0.f;
                         this->currentState = DraculeSpiritState::READY;
                     }   
                     
@@ -119,50 +128,54 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
                 break;
 
             case DraculeSpiritState::READY:
+                std::cout << "ready" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritReady)){
                     animationManager->playAnimation(draculaSpiritReady);
                 }
-                if (distance < 100)
-                {
-                    waitingInReadyCounter += deltaTime;
-                    if (waitingInReadyCounter >= waitingInReady)
+                if (waitingInReadyCounter >= waitingInReady)
                     {
+                        waitingInSteadyCounter = 0.f;
                         this->currentState = DraculeSpiritState::STEADY;
                         waitingInReadyCounter = 0.f;
                     }
-                }
-                else
+                    else{
+                        waitingInReadyCounter += deltaTime;
+                    }
+                /*else
                 {
                     this->currentState = DraculeSpiritState::IDLE;
                     waitingInReadyCounter = 0.f;
-                }
+                }*/
                 
                 break;
 
             case DraculeSpiritState::STEADY:
+                std::cout << "steady" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritSteady)){
                     animationManager->playAnimation(draculaSpiritSteady);
                 }
-                if (distance < 100)
+                
+                if (waitingInSteadyCounter >= waitingInSteady)
                 {
-                    waitingInSteadyCounter += deltaTime;
-                    if (waitingInSteadyCounter >= waitingInSteady)
-                    {
-                        this->currentState = DraculeSpiritState::GO;
-                        this->speed.y = -450.f * deltaTime; 
-                        this->speed.x = 80.f * deltaTime; 
-                        waitingInSteadyCounter = 0.f;
-                        this->directionFlying = facingRight;
-                    }
+                    this->currentState = DraculeSpiritState::GO;
+                    this->speed.y = -350.f * deltaTime; 
+                    this->speed.x = 80.f * deltaTime; 
+                    waitingInSteadyCounter = 0.f;
+                    this->directionFlying = facingRight;
                 }
-                else
+                else{
+                    waitingInSteadyCounter += deltaTime;
+                }
+                /*else
                 {
                     this->currentState = DraculeSpiritState::READY;
                     waitingInSteadyCounter = 0.f;
-                }
+                }*/
                 break;
 
             case DraculeSpiritState::GO:
+            
+                std::cout << "go" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritGo)){
                     animationManager->playAnimation(draculaSpiritGo);
                 }
@@ -173,8 +186,8 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
                 
                 // Mueve el sprite
 
-                if( mapBounds.position.x + 250 >= sprite->getPosition().x + this->directionFlying * this->speed.x &&
-                    mapBounds.position.x + 32 <= sprite->getPosition().x + this->directionFlying * this->speed.x){
+                if( map.x + size.x >= position.x + this->directionFlying * this->speed.x &&
+                    map.x  <= position.x + this->directionFlying * this->speed.x){
                         sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                 }
                 else{
@@ -191,13 +204,14 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
                 if(sprite->getPosition().y > 152.0f) {
-                    sprite->move(sf::Vector2f(0.f, 1.0f));
+                    sprite->move(sf::Vector2f(0.f, 1.5f));
                     this->currentState = DraculeSpiritState::LANDING;
                 }
                 }
                 break;
 
             case DraculeSpiritState::FLYING:
+                    std::cout << "fkly" << std::endl;
                 if(this->waitingInFlyCounter < waitingInFly){
                     this->waitingInFlyCounter += deltaTime;
                     if(!animationManager->isPlaying(draculaSpiritFlying)){
@@ -217,6 +231,7 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
                 break;
 
             case DraculeSpiritState::LANDING:
+                std::cout << "land" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritLand)){
                     animationManager->playAnimation(draculaSpiritLand);
                 }
@@ -224,6 +239,7 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
                 break;
 
             case DraculeSpiritState::FIRE:
+                std::cout << "fire" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritFire)){
                     animationManager->playAnimation(draculaSpiritFire);
                 }
@@ -272,20 +288,18 @@ void DraculaSpirit::update(float deltaTime, const Player &player, const sf::Floa
         }
         sf::FloatRect spriteBounds = sprite->getGlobalBounds();
         hitboxes[0] = spriteBounds;
-        sf::FloatRect deactivationZone = mapBounds;
-        deactivationZone.size.x = 250.f;
-        deactivationZone.size.y = 170.f;
+        
         if (projectile && projectile->getActive())
         {
-            projectile->update(deltaTime, deactivationZone);
+            projectile->update(deltaTime, mapDims);
         }
         if (projectile2 && projectile2->getActive())
         {
-            projectile2->update(deltaTime, deactivationZone);
+            projectile2->update(deltaTime, mapDims);
         }
         if (projectile3 && projectile3->getActive())
         {
-            projectile3->update(deltaTime, deactivationZone);
+            projectile3->update(deltaTime, mapDims);
         }
         updateAnimation(deltaTime);
     }
@@ -298,10 +312,14 @@ void DraculaSpirit::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
+        if (!whip->collisionedEntities.contains(this) && applyDamage((whip->whipDmg), game.player))
         {
             // DROP
-            std::cout << "daño" << life << std::endl;
+            game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+            //dead = true;
+            gKilledBoss = true;
+            game.particleSystem.spawnBigFireParticle(sprite->getPosition(), false);
+            
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -311,6 +329,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game)
             // DROP
         }
     }
+    currentBossLife = life;
 }
 
 // Render draculaSpirit

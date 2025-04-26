@@ -149,7 +149,7 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
                     dracula = createDracula(bossData.position, level, currentStage);
                     break;
                 case 102: // Dracula Spirit
-                    draculaSpirit = createDraculaSpirit(bossData.position, level, currentStage);
+                    draculaSpirit = createDraculaSpirit(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
                     break;
                 default:
                     std::cerr << "Unknown boss type: " << bossData.type << std::endl;
