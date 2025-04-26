@@ -100,7 +100,7 @@ public:
     void draw(sf::RenderWindow &window) override;
 
     // Update draculaSpirit logic (spawn, movement, etc.)
-    void update(float deltaTime, const Player &player, const sf::FloatRect &mapBounds);
+    void update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game) override;

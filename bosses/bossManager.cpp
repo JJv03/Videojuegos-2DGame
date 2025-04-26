@@ -51,7 +51,7 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
     {
         if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage)
         {
-            draculaSpirit->update(deltaTime, *playerPtr, mapBounds);
+            draculaSpirit->update(deltaTime, phase, *playerPtr, mapBounds);
         }
     }
 }

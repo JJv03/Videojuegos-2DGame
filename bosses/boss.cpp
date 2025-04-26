@@ -73,7 +73,7 @@ void Boss::draw(sf::RenderWindow &window)
 
     if (gDrawHitboxes) // Only draw hitboxes in debug mode
     {
-        for (const auto &hitbox : hitboxes)
+        for (const auto &hitbox : this->getBounds())
         {
             sf::RectangleShape hitboxShape({hitbox.size.x, hitbox.size.y});
             hitboxShape.setPosition({hitbox.position.x, hitbox.position.y});

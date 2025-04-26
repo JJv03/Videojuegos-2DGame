@@ -50,9 +50,9 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
 }
 
 // Update draculaSpirit logic: handle spawning, movement, and deactivation
-void DraculaSpirit::update(float deltaTime, const Player &player, const sf::FloatRect &mapBounds){
+void DraculaSpirit::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds){
     // SPAWN LOGIC
-    if (!isActive)
+    if (!isActive && phase == 2)
     {
         for (const auto &hitbox : hitboxes)
         {

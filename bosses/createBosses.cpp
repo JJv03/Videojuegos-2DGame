@@ -36,28 +36,56 @@ PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, 
 // Creates Dracula boss
 Dracula *createDracula(const sf::Vector2f &position, const size_t &level, const size_t &stage)
 {
+    // -------- MASK (main sprite) --------
     // Sprite sheet coordinates and dimensions
-    const sf::IntRect DRACULA_SPRITE_REGION = {{325, 74}, {24, 59}};
-    const float HITBOX_WIDTH = 23.f;
-    const float HITBOX_HEIGHT = 58.f;
+    const sf::IntRect MASK_SPRITE_REGION = {{307, 74}, {8, 16}};
+    const float MASK_HITBOX_WIDTH = 8.f;
+    const float MASK_HITBOX_HEIGHT = 16.f;
+
+    // Configure sprite
+    auto maskSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+    maskSprite->setTextureRect(MASK_SPRITE_REGION);
+    maskSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect maskBounds = maskSprite->getLocalBounds();
+    maskSprite->setOrigin({maskBounds.size.x / 2.f, maskBounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> maskHitboxes = {
+        sf::FloatRect(
+            {position.x - (MASK_HITBOX_WIDTH / 2.f), position.y - MASK_HITBOX_HEIGHT},
+            {MASK_HITBOX_WIDTH, MASK_HITBOX_HEIGHT}),
+    };
+
+    // -------- BODY (secondary sprite) --------
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect DRACULA_SPRITE_REGION = {{249, 74}, {24, 48}};
+    const float DRACULA_HITBOX_WIDTH = 24.f;
+    const float DRACULA_HITBOX_HEIGHT = 48.f;
+
+    sf::Vector2f bodyPosition = sf::Vector2f({position.x + 2.f, position.y + 43.f});
 
     // Configure sprite
     auto draculaSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+
     draculaSprite->setTextureRect(DRACULA_SPRITE_REGION);
-    draculaSprite->setPosition(position);
+    draculaSprite->setPosition(bodyPosition);
 
     // Center sprite origin
-    sf::FloatRect bounds = draculaSprite->getLocalBounds();
-    draculaSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+    sf::FloatRect draculaBounds = draculaSprite->getLocalBounds();
+    draculaSprite->setOrigin({draculaBounds.size.x / 2.f, draculaBounds.size.y});
 
     // Create collision hitbox
-    std::vector<sf::FloatRect> hitboxes = {
+    std::vector<sf::FloatRect> draculaHitboxes = {
         sf::FloatRect(
-            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
-            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+            {bodyPosition.x - (DRACULA_HITBOX_WIDTH / 2.f), bodyPosition.y - DRACULA_HITBOX_HEIGHT},
+            {DRACULA_HITBOX_WIDTH, DRACULA_HITBOX_HEIGHT}),
     };
 
-    return new Dracula(draculaSprite, hitboxes, position, level, stage);
+    return new Dracula(maskSprite, maskHitboxes, 
+                        draculaSprite, draculaHitboxes, 
+                        level, stage);
 }
 
 // Creates DraculaSpirit boss
