@@ -77,6 +77,10 @@ void Item::onCollision(Entity& other, Game& game) {
     } else if (dynamic_cast<Player*>(&other)){
         this->m_lifeTime = 0.f;
 
+        if (this->m_type == ItemType::MAGIC_CRYSTAL) {
+            gTriggerEndLvlScoreAnimation = true;
+        }
+
         int score = getItemScore(this->m_type);
         if (score == 0)
             return; // No score for this item

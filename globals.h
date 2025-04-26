@@ -114,6 +114,9 @@ extern bool gKilledBoss;
 extern SoundManager gameSoundManager;
 extern bool goBack;     // Flag to go back from game
 
+extern bool gTriggerEndLvlScoreAnimation;   // Flag to trigger the end level score animation
+extern const float gTIME_POINTS_PER_SECOND; // Speed at which the time points are consumed
+extern const float gHEARTS_PER_SECOND;      // Speed at which the hearts are consumed
 
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;

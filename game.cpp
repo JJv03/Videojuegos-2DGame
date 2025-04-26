@@ -325,7 +325,13 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         timeAccumulator += deltaTime;
 
     // Reduce time every second
-    if (timeAccumulator >= 1.0f)
+    if (gTriggerEndLvlScoreAnimation) {
+        if (time > 0) {
+            time -= static_cast<int>(timeAccumulator);
+            updateGUITime();
+        }
+    }
+    else if (timeAccumulator >= 1.0f)
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
@@ -338,7 +344,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
     if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
     {
-
         std::cout << "Falling " << std::endl;
         std::cout << viewPosition.y << ", " << gGameVisibleWorld_size_y << ", " << player.sprite->getPosition().y << std::endl;
         player.setState(std::make_unique<PlayerDeadState>());
@@ -358,6 +363,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     gSprites.push_back(heart);
 
     // Update score
+    endLevelScoreAnimation(deltaTime);
+
     std::stringstream scoreStream;
     scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
     texts[0].setString(scoreStream.str());
@@ -459,6 +466,33 @@ void Game::updateGUITime()
     std::stringstream timeStream;
     timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
     texts[1].setString(timeStream.str());
+}
+
+void Game::resetEndLevelScoreAnimation()
+{
+    gTriggerEndLvlScoreAnimation = false;
+    m_endScoreTimeAccumulator = 0.f;
+    m_endScoreHeartAccumulator = 0.f;
+}
+
+void Game::endLevelScoreAnimation(const float deltaTime) {
+    if (gTriggerEndLvlScoreAnimation) {
+        if (time > 0) {
+            m_endScoreTimeAccumulator += deltaTime;
+            while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0) {
+                time -= 1;
+                player.score += 10;
+                m_endScoreTimeAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
+            }
+        } else if (player.hearts > 0) {
+            m_endScoreHeartAccumulator += deltaTime;
+            while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0) {
+                player.hearts -= 1;
+                player.score += 100;
+                m_endScoreHeartAccumulator -= (1.f / gHEARTS_PER_SECOND);
+            }
+        }
+    }
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)
@@ -1084,6 +1118,8 @@ void Game::checkPlayerCollisions()
                 tilemaps.loadLevel(currentLevel);
                 enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
                 bossManager->loadBossesFromLevel(currentLevel, tilemaps);
+                
+                resetEndLevelScoreAnimation();
             }
             else
             {
@@ -1131,6 +1167,7 @@ void Game::activateDoorTile(int doorId)
         tilemaps.loadLevel(currentLevel);
         enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
         bossManager->loadBossesFromLevel(currentLevel, tilemaps);
+        resetEndLevelScoreAnimation();
     }
     else
     {

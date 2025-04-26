@@ -146,5 +146,15 @@ private:
     sf::Clock rosarioBlinkClock;
     bool isRosarioBlinking = false; 
     float rosarioBlinkDuration = 1.0f; 
-    float rosarioBlinkInterval = 0.1f; 
+    float rosarioBlinkInterval = 0.1f;
+
+    // ----- All refered to the end level score -----
+    float m_endScoreTimeAccumulator = 0.f;
+    float m_endScoreHeartAccumulator = 0.f;
+
+    // Function that resets the variables that are used for the end level score animation
+    void resetEndLevelScoreAnimation();
+
+    // Animation that plays at the end of the level
+    void endLevelScoreAnimation(const float deltaTime);
 };
