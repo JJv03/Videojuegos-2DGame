@@ -816,21 +816,6 @@ void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
         }
-        if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                && player.delayBetweenShotsCounter >= player.delayBetweenShots);
-            if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
-            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
-                player.isAttacking = true;
-                player.hasToPressAgain = false;
-                player.hearts -= 1;
-                player.setState(state<AttackJumpSecondary>());
-                if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
-                    player.hearts -= 4;
-                }
-            }
-            
-        }
     }   
     
 }
