@@ -153,6 +153,9 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
+        if (keyReleased->scancode == controls.useSubWeapon) {
+            player.hasToPressAgain = true;
+        }
         if(keyReleased->scancode == controls.up){
             player.isPressingUp = false;
         }
