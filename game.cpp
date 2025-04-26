@@ -626,7 +626,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             sf::RectangleShape black(sf::Vector2f(400, 400));
             black.setFillColor(sf::Color::Black);
             black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
-            // window.draw(black);
+            window.draw(black);
 
             deadScreenTexts[0].setPosition(sf::Vector2f(center.x - 35, center.y - 10));
             window.draw(deadScreenTexts[0]);
