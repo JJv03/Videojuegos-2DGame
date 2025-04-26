@@ -94,6 +94,7 @@ void Player::handleInput(sf::Event event)
 void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
     getActiveState()->update(*this, deltaTime, windowHasFocus);
+    //getActiveState()->hello();
     updateActivationZones(viewPosition);
     updateActiveSubWeapons(deltaTime, viewPosition);
     updateActiveSubWeapons2(deltaTime, viewPosition);
@@ -1008,6 +1009,27 @@ void SubWeapon::onCollision(Entity &other, Game &game)
             this->intersectedBomb = true;
         }
     }
+    else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
+        {
+            
+            if(tile->isBreakable && !tile->isDestroyed && tile->type==MiscTileType::CANDELABRUM){
+                if(this->type == ItemType::DAGGER){
+                    if(!this->intersected){
+                        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                        playSound("whip_hit");
+                    }
+            
+                    this->intersected = true;
+                }
+                else{
+                    game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                    playSound("whip_hit");
+                }
+                
+                
+            }
+            
+        }
     
  
 }
