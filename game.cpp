@@ -324,12 +324,10 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     if (!withOutLives)
         timeAccumulator += deltaTime;
 
-    // Reduce time every second
-    if (gTriggerEndLvlScoreAnimation) {
-        if (time > 0) {
-            time -= static_cast<int>(timeAccumulator);
-            updateGUITime();
-        }
+    // Reduce time
+    if (gTriggerEndLvlScoreAnimation)
+    {
+        endLevelScoreAnimation(deltaTime);
     }
     else if (timeAccumulator >= 1.0f)
     {
@@ -362,9 +360,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
     gSprites.push_back(heart);
 
-    // Update score
-    endLevelScoreAnimation(deltaTime);
-
+    // Update text's score
     std::stringstream scoreStream;
     scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
     texts[0].setString(scoreStream.str());
@@ -476,23 +472,22 @@ void Game::resetEndLevelScoreAnimation()
 }
 
 void Game::endLevelScoreAnimation(const float deltaTime) {
-    if (gTriggerEndLvlScoreAnimation) {
-        if (time > 0) {
-            m_endScoreTimeAccumulator += deltaTime;
-            while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0) {
-                time -= 1;
-                player.score += 10;
-                m_endScoreTimeAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
-            }
-        } else if (player.hearts > 0) {
-            m_endScoreHeartAccumulator += deltaTime;
-            while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0) {
-                player.hearts -= 1;
-                player.score += 100;
-                m_endScoreHeartAccumulator -= (1.f / gHEARTS_PER_SECOND);
-            }
+    if (time > 0) {
+        m_endScoreTimeAccumulator += deltaTime;
+        while (m_endScoreTimeAccumulator >= (1.f / gTIME_POINTS_PER_SECOND) && time > 0) {
+            time -= 1;
+            player.score += 10;
+            m_endScoreTimeAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
+        }
+    } else if (player.hearts > 0) {
+        m_endScoreHeartAccumulator += deltaTime;
+        while (m_endScoreHeartAccumulator >= (1.f / gHEARTS_PER_SECOND) && player.hearts > 0) {
+            player.hearts -= 1;
+            player.score += 100;
+            m_endScoreHeartAccumulator -= (1.f / gHEARTS_PER_SECOND);
         }
     }
+    updateGUITime();
 }
 
 // Renders the game (player, tilemap, enemies, objects, etc)

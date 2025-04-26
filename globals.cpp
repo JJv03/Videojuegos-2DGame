@@ -115,5 +115,5 @@ const float gTIME_POINTS_PER_SECOND = 30.f;
 const float gHEARTS_PER_SECOND = 10.f;
 
 // ============ DEBUG =============
-const bool gDrawHitboxes = false;
+const bool gDrawHitboxes = true;
 const bool gSkipAnims = true;
