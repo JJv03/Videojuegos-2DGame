@@ -73,12 +73,11 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
 
         // Facing logic of draculaSpirit looking at the player
         sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
-        sf::Vector2f draculaSpiritPos(sprite->getGlobalBounds().position.x + sprite->getGlobalBounds().size.x / 2, sprite->getGlobalBounds().position.y + sprite->getGlobalBounds().size.y / 2);
         position = sprite->getGlobalBounds().position;
         sf::Vector2f map = mapDims.position;
         sf::Vector2f size = mapDims.size;
         //float distance = playerPos.x - draculaSpiritPos.x;
-        if (playerPos.x < draculaSpiritPos.x) {
+        if (playerPos.x < position.x) {
             sprite->setScale(sf::Vector2f(1.f, 1.f)); // Negative X scale flips the sprite
             facingRight = -1;
         } 
@@ -220,7 +219,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
-                if(sprite->getPosition().y > 153.0f) {
+                if(sprite->getPosition().y >= 151.0f) {
                     //sprite->move(sf::Vector2f(0.f, 1.0f));
                     
                     this->currentState = DraculeSpiritState::LANDING;

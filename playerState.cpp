@@ -316,6 +316,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         if (keyReleased->scancode == controls.attack) {
             player.hasToPressAgain = true;
         }
+        if (keyReleased->scancode == controls.useSubWeapon) {
+            player.hasToPressAgain = true;
+        }
     }
 }
 
@@ -524,6 +527,9 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
             player.setState(state<Idle>());
         } */      
         if (keyReleased->scancode == controls.attack) {
+            player.hasToPressAgain = true;
+        }
+        if (keyReleased->scancode == controls.useSubWeapon) {
             player.hasToPressAgain = true;
         }
     } 
