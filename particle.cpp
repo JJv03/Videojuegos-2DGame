@@ -237,10 +237,6 @@ PointsParticle::PointsParticle(const sf::Texture& texture, sf::Vector2f position
         }
     }
 
-    for (auto a : digits) {
-        std::cout << a << " ";
-    }
-
     // Second, we fill the vector of sprites for each digit
     int xOffset = 0;                // x position for the current sprite
     bool firstTwoDigits = true;     // To track the first two digits

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <optional>
 #include <sstream>
+#include <thread>
+#include <chrono>
 #include "game.h"
 #include "globals.h"
 #include "utils.h"
@@ -70,6 +72,9 @@ void Game::init()
 
     // Load GUI
     loadGUI();
+
+    startStage(currentStage);
+    player.setState(std::make_unique<PlayerIdleState>());
 }
 
 void Game::loadGUI()
@@ -146,9 +151,6 @@ void Game::loadGUI()
     texts.push_back(enemyText);
     texts.push_back(hearts);
     texts.push_back(lives);
-
-    startStage(currentStage);
-    player.setState(std::make_unique<PlayerIdleState>());
 
     // GUI subweapon
     guiSubWeaponSprite = getItemSprite(ItemType::NONE);
@@ -338,22 +340,24 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
     bossManager->update(deltaTime, currentLevel, currentStage, currentBossPhase, tilemaps[currentStage].getMapBounds());
 
+        
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateMiscTiles(deltaTime);
 
     particleSystem.update(deltaTime);
+
 
     static float timeAccumulator = 0.0f;
 
     if (!withOutLives)
         timeAccumulator += deltaTime;
 
-    // Reduce time
-    if (gPlayEndLvlScoreAnimation)
+
+    if (gPlayEndLvlScoreAnimation)      // Time reduction management for end level score animation
     {
         endLevelScoreAnimation(deltaTime);
     }
-    else if (timeAccumulator >= 1.0f)
+    else if (timeAccumulator >= 1.0f)   // Default time reduction flow
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
@@ -364,6 +368,32 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         timeAccumulator = 0.0f;
         updateGUITime();
     }
+
+
+    if (gGoToNextLevel)
+    {
+        int aux_CurrentLevel = static_cast<int>(currentLevel);
+        switch(aux_CurrentLevel)
+        {
+            case 1:
+                currentLevel = 7;
+                currentStage = 1;
+                break;
+            case 7:
+                std::cout << "Animation of the end of the game" << std::endl;
+                break;
+            default:
+                std::cout << "No more levels" << std::endl;
+                break;
+        }
+        resetEndLevelScoreAnimation();
+        gGoToNextLevel = false;
+        tilemaps.loadLevel(currentLevel);
+        restartLevel();
+        startStage(currentStage);
+    }
+
+
     if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
     {
         std::cout << "Falling " << std::endl;
@@ -415,6 +445,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
         gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
+
     if (player.activateRosario)
     {
         enemyManager->restartEnemies(currentLevel, currentStage);
@@ -422,6 +453,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         rosarioBlinkClock.restart();
         player.activateRosario = false;
     }
+    
     if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
     {
         player.lives -= 1;
@@ -569,6 +601,10 @@ void Game::endLevelScoreAnimation(const float deltaTime)
             gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
     }
+    else {      // All hearts and time points have been consumed
+        std::this_thread::sleep_for(std::chrono::milliseconds(550));       // Duration of the last played sound
+        gGoToNextLevel = true;
+    }
 
     updateGUITime();
 }
@@ -576,12 +612,12 @@ void Game::endLevelScoreAnimation(const float deltaTime)
 // Renders the game (player, tilemap, enemies, objects, etc)
 void Game::draw(sf::RenderWindow &window, Camera &camera)
 {
-
     if (restartLoadingClock)
     {
         restartLoadingClock = false;
         loadingClock.restart();
     }
+
     if (isRosarioBlinking)
     {
         // std::cout << "Blinking" << std::endl;
@@ -1209,6 +1245,7 @@ void Game::checkPlayerCollisions()
                 bossManager->loadBossesFromLevel(currentLevel, tilemaps);
 
                 resetEndLevelScoreAnimation();
+                gGoToNextLevel = false;
             }
             else
             {
@@ -1256,7 +1293,9 @@ void Game::activateDoorTile(int doorId)
         tilemaps.loadLevel(currentLevel);
         enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
         bossManager->loadBossesFromLevel(currentLevel, tilemaps);
+        
         resetEndLevelScoreAnimation();
+        gGoToNextLevel = false;
     }
     else
     {

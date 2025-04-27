@@ -27,8 +27,8 @@ const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
-int gStartingLevel = 1;
-int gStartingStage = 4;
+int gStartingLevel = 7;
+int gStartingStage = 2;
 
 const float gTileSize = 32.f;
 
@@ -110,6 +110,8 @@ const int gTIME_POINTS_PER_SECOND = 50;
 const float gTIME_POINTS_SFX_FRECUENCY = 0.0575f;
 const int gHEARTS_PER_SECOND = 5;
 const float gHEARTS_SFX_FRECUENCY = 1.f;
+
+bool gGoToNextLevel = false;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
