@@ -257,7 +257,7 @@ void Game::handleInput(sf::Event event)
 {
     if (!isLoading)
     {
-        if (!withOutLives || !gPlayEndLvlScoreAnimation)
+        if (!withOutLives && !gPlayEndLvlScoreAnimation)
         {
             if(player.acceptsInput) player.handleInput(event);
         }
@@ -522,7 +522,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         {
             bossManager->killBoss(draculaSpiritID);
 
-            // WINNING ?
         }
         gKilledBoss = false;
     }
@@ -931,9 +930,11 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
             currentBossPhase = 1;
 
             // Starting boss music (DIFFENT FOR DRACULA)
-            gameSoundManager.stopAllMusic();
-            auto audio = configManager.getAudio();
-            gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
+            if(currentLevel != 7){
+                gameSoundManager.stopAllMusic();
+                auto audio = configManager.getAudio();
+                gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
+            }
 
             // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
         }
