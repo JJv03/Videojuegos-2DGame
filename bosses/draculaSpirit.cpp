@@ -221,7 +221,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
                 if(sprite->getPosition().y > 153.0f) {
-                    sprite->move(sf::Vector2f(0.f, 1.5f));
+                    //sprite->move(sf::Vector2f(0.f, 1.0f));
                     
                     this->currentState = DraculeSpiritState::LANDING;
                 }
@@ -317,7 +317,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     projectile = createProjectile(
                         {   sprite->getPosition().x + (facingRight * 5.0f),
                             sprite->getPosition().y - 27.0f},
-                        {80.f * facingRight, -10.0f},
+                        {80.f * facingRight, -20.0f},
                         ProjectileType::FISHMAN,
                         1.f);
     
@@ -340,7 +340,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     projectile3 = createProjectile(
                         {   sprite->getPosition().x + (facingRight * 5.0f),
                             sprite->getPosition().y - 27.0f},
-                        {80.f * facingRight, 30.0f},
+                        {80.f * facingRight, 40.0f},
                         ProjectileType::FISHMAN,
                         1.f);
     
