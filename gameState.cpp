@@ -838,12 +838,15 @@ void PauseGS::handleInput(sf::Event event){
             if (position == 4 && col == 0){
                 std::cout << "Road back to config menu" << std::endl;
                 gameSoundManager.stopAllMusic();
+                // Reset of the game for story mode
+                gStartingLevel = 1;
+                gStartingStage = 1;
                 stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
             }
 
             if (position == 4 && col == 1){
 
-                std::cout << "Road back to config menu after saving" << std::endl;
+                std::cout << "Road back to game menu after saving" << std::endl;
                 stateMachine->removeState();
             }
         }
@@ -1269,7 +1272,7 @@ void ControlsConfGS::init(){
     textBounds = text3.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
@@ -1282,7 +1285,7 @@ void ControlsConfGS::init(){
     textBounds = text4.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text4.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text4);
@@ -1692,7 +1695,7 @@ void VolumeConfGS::init(){
     textBounds = text2.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
@@ -1705,7 +1708,7 @@ void VolumeConfGS::init(){
     textBounds = text3.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);
@@ -2005,7 +2008,7 @@ void GameplayConfGS::init(){
     textBounds = text2.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x - 35.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text2.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text2);
@@ -2018,7 +2021,7 @@ void GameplayConfGS::init(){
     textBounds = text3.getLocalBounds();
 
     xPos = (gWindowWidth / 2.f) - textBounds.size.x + 175.f;
-    yPos = 315.f; // 120.f + 3 * 65.f;
+    yPos = 330.f; // 120.f + 3 * 65.f;
 
     text3.setPosition(sf::Vector2f(xPos, yPos));
     configs.push_back(text3);

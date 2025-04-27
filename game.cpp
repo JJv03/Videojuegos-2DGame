@@ -287,6 +287,9 @@ void Game::handleInput(sf::Event event)
                         break;
                     case 1:
                         std::cout << "Going back to the menu" << std::endl;
+                        // Reset of the game for story mode
+                        gStartingLevel = 1;
+                        gStartingStage = 1;
                         withOutLives = false;
                         position = 0;
                         goBack = true;

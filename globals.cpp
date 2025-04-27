@@ -113,4 +113,4 @@ const float gHEARTS_SFX_FRECUENCY = 1.f;
 
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
-const bool gSkipAnims = true;
+const bool gSkipAnims = false;
