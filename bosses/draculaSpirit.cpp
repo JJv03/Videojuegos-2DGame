@@ -407,6 +407,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game)
         }
     }
     currentBossLife = life;
+    if(life <= 0.f) currentState = DraculeSpiritState::ASLEEP;
 }
 
 // Render draculaSpirit
