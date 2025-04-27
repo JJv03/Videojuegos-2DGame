@@ -40,6 +40,7 @@ void Game::init()
     currentStage = gStartingStage;
     withOutLives = false;
     isInBossFight = false;
+    goBack = false;
 
     // Music and sounds
     loadMusic();
@@ -316,7 +317,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         {
             gameSoundManager.stopAllMusic();
             auto audio = configManager.getAudio();
-            gameSoundManager.playMusic("victoryBoss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
+            if(currentLevel == 7){
+                gameSoundManager.playMusic("victoryDracula", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
+            }
+            else{
+                gameSoundManager.playMusic("victoryBoss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
+            }
             m_playedVictoryMusic = true;
         }
 
@@ -381,7 +387,10 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
                 break;
             case 7:
                 std::cout << "Animation of the end of the game" << std::endl;
-                break;
+                goBack = true;
+                gStartingLevel = 1;
+                gStartingStage = 1;
+                return;
             default:
                 std::cout << "No more levels" << std::endl;
                 break;
@@ -389,7 +398,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         resetEndLevelScoreAnimation();
         gGoToNextLevel = false;
         tilemaps.loadLevel(currentLevel);
-        //restartLevel();
+        time = 300;
+        updateGUITime();
         startStage(currentStage);
     }
 
@@ -1399,8 +1409,7 @@ int Game::startStage(int stage, int fromStairs)
     else
     {
         auto audio = configManager.getAudio();
-        float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
-        gameSoundManager.playMusic("gameOver", volume, false);
+        gameSoundManager.playMusic("gameOver", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
     }
 
     std::cout << "Current stage: " << currentStage << std::endl;
