@@ -336,9 +336,21 @@ void FishMan::moveToSpawnPosition(const sf::FloatRect &playerActivationZone, con
     float minX = playerActivationZone.position.x + 20.0f;
     float maxX = playerActivationZone.position.x + playerActivationZone.size.x - 20.0f;
 
+    // Define a "safe" distance from the player
+    const float safeDistance = 30.0f;
+
     // Random number generator
     std::uniform_real_distribution<float> xDist(minX, maxX);
-    float randomX = xDist(rng);
+    float randomX;
+
+    // Get player center position
+    float playerCenterX = playerBounds.position.x + playerBounds.size.x / 2.0f;
+
+    // Generate random x ensuring it's not too close to player
+    do
+    {
+        randomX = xDist(rng);
+    } while (std::abs(randomX - playerCenterX) < safeDistance);
 
     // Save original position
     sf::Vector2f oldPosition = sprite->getPosition();
