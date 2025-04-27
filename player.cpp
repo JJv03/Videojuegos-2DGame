@@ -373,7 +373,7 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (DoorTile* doorTile = dynamic_cast<DoorTile*>(&other))
     {
-        if(!this->isDead){
+        if(!this->isDead && (this->isOnGround || this->isOnStairs)){
             game.activateDoorTile(doorTile->doorId);
         }
     }
@@ -931,7 +931,7 @@ std::vector<sf::FloatRect> Whip::getBounds() const
 }
 
 void Whip::onCollision(Entity &other, Game &game)
-{   
+{
     if (!this->collisionedEntities.contains(&other)) {
         if (dynamic_cast<Enemy *>(&other))
         {
@@ -945,11 +945,13 @@ void Whip::onCollision(Entity &other, Game &game)
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
-        else if (dynamic_cast<Projectile *>(&other))
+        else if (Projectile* projectile = dynamic_cast<Projectile *>(&other))
         {
-            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-            gameSoundManager.stopSound("whip_use");
-            playSound("whip_hit");
+            if(projectile->getActive()){
+                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                gameSoundManager.stopSound("whip_use");
+                playSound("whip_hit");
+            }
         }
         else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other))
         {
