@@ -31,7 +31,7 @@ Bat::Bat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitbo
 
 // Update bat logic: handle spawning, movement, and deactivation
 void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                 const float playerDir, const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds)
+                 const float playerDir, const sf::FloatRect &playerBounds, const PlayerPosition playerPos, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC: activate bat when player enters spawn zone
     bool playerInZone = spawnZone.findIntersection(playerActivationZone).has_value();
@@ -47,7 +47,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
 
     if (playerInZone && !isActive && !spawnerActive)
     {
-        batSpawnTimers = 3.0f; // Delay before spawning
+        batSpawnTimers = 1.75f; // Delay before spawning
 
         batToSpawn = true;
     }
@@ -60,9 +60,20 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
         if (batSpawnTimers <= 0.0f)
         {
             bool spawnFromRight = true;
-            if (playerDir > 0.f)
+
+            switch (playerPos)
             {
+            case PlayerPosition::LEFT:
+                spawnFromRight = true;
+                break;
+
+            case PlayerPosition::RIGHT:
                 spawnFromRight = false;
+                break;
+
+            case PlayerPosition::CENTER:
+                spawnFromRight = (playerDir > 0.f) ? false : true;
+                break;
             }
 
             movePositionToBorder(playerActivationZone, playerBounds, spawnFromRight);

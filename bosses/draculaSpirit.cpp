@@ -219,7 +219,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
-                if(sprite->getPosition().y >= 151.0f) {
+                if(sprite->getPosition().y >= 153.0f) {
                     //sprite->move(sf::Vector2f(0.f, 1.0f));
                     
                     this->currentState = DraculeSpiritState::LANDING;
