@@ -389,7 +389,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         resetEndLevelScoreAnimation();
         gGoToNextLevel = false;
         tilemaps.loadLevel(currentLevel);
-        restartLevel();
+        //restartLevel();
         startStage(currentStage);
     }
 

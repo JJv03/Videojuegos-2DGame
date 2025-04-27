@@ -1,17 +1,21 @@
 ancho,alto
-posXInicial,posYInicial
-numeros,que,representan,el,mapa,...
-numeros,que,representan,el,mapa,...
-numeros,que,representan,el,mapa,...
+posXInicial_Simon,posYInicial_Simon
+<n_ancho>_numeros_que_representan_el_mapa_...
+<n_ancho>_numeros_que_representan_el_mapa_...
+<n_ancho>_numeros_que_representan_el_mapa_...
 ... (<n_alto> filas así)
 doors
-id,tipo_puerta,pos_ancho,pos_alto
-id,tipo_puerta,pos_ancho,pos_alto
-[SI SON ESCALERAS]id,tipo_puerta,pos_ancho,pos_alto,posAparicion_ancho,posAparicion_alto
+<id>,<tipo_puerta>,<pos_ancho>,<pos_alto>
+<id>,<tipo_puerta>,<pos_ancho>,<pos_alto>
+[SI SON ESCALERAS]<id>,<tipo_puerta>,<pos_ancho>,<pos_alto>,<posAparicion_ancho>,<posAparicion_alto>
 ...
 miscellaneous
-tipo_tile_miscellaneous,pos_ancho,pos_alto
-tipo_tile_miscellaneous,pos_ancho,pos_alto
-tipo_tile_miscellaneous,pos_ancho,pos_alto
+<tipo_tile_miscellaneousTile>,<pos_ancho>,<pos_alto>,<tile_is_breakable>,<dropped_item>
 ...
-
+end_miscellaneous
+stair
+<tipo_escalera>,<pos_ancho>,<pos_altura>
+end_stair
+enemies
+<tipo_enemigo>,<pos_ancho>,<pos_altura>,<tamaño_spawner_ancho>,<tamaño_spawner_alto>
+end_enemies
