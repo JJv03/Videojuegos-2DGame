@@ -1824,6 +1824,9 @@ void PlayerDeadState::draw(Player& player, sf::RenderWindow &window)
 void PlayerDeadState::end(Player& player)
 {
     player.isInvulnerable = false;
+    player.weaponIsActive2 = false;
+    player.isDoubleShotActive = false;
+    player.timeDoubleShotActiveCounter = 0.0f;
     player.startInvulnerable = false;
     player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
