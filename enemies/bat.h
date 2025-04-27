@@ -13,7 +13,7 @@ private:
 
     // Oscillation (up-down movement) settings
     const float OSCILLATION_SPEED = 2.5f;
-    const float OSCILLATION_AMPLITUDE = 0.5f;
+    const float OSCILLATION_AMPLITUDE = 45.0f;
 
     // Spawner variables
     sf::FloatRect spawnZone;

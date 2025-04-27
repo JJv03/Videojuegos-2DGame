@@ -121,7 +121,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
 
             spawnTime += deltaTime;
             // Oscillation effect (up-down movement)
-            float verticalOscillation = cos(spawnTime * OSCILLATION_SPEED) * OSCILLATION_AMPLITUDE;
+            float verticalOscillation = cos(spawnTime * OSCILLATION_SPEED) * OSCILLATION_AMPLITUDE * deltaTime;
             sprite->move({0.f, verticalOscillation});
             for (auto &hitbox : hitboxes)
             {
