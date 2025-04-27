@@ -1,6 +1,7 @@
 #pragma once
 
 #include "boss.h"
+#include "../enemies/projectile.h"
 
 class DraculaBody : public EntitySprite {
 public:
@@ -45,12 +46,23 @@ private:
 
     const float MASK_MAX_HEIGHT = 117.f;
 
-    const float APPEAR_TIME = 2.f;
+    const float APPEAR_TIME = 0.5f;
     float appearTimeCounter;
-    const float DISAPPEAR_TIME = 2.f;
+    const float DISAPPEAR_TIME = 0.5f;
     float disappearTimeCounter;
 
+    float WAIT_IDLE_TIME = 0.5f;
+    float idleTimeCounter;
+    const float WAIT_ATTACK_TIME = 0.5f;
+    float attackTimeCounter;
 
+    const float AWAY_TIME = 1.f;
+    float awayTimeCounter;
+
+    bool facingRight;
+    bool isPlayerRight;
+    bool adjustHead;
+ 
     std::vector<AnimationManager::Frame> noAnimationFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f}
     };
@@ -79,6 +91,8 @@ public:
     DraculaState currentState = DraculaState::ASLEEP;
     DraculaBody* draculaBody;
     sf::Vector2f draculaBodyPosition;
+
+    std::array<std::shared_ptr<Projectile>, 3> projectiles;
 
     Dracula() = default;
     Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatRect> &_maskHitboxes,
@@ -118,6 +132,11 @@ public:
     bool appearBody(float deltaTime);
     
     bool disappearBody(float deltaTime);
+       
+    void moveTo(float position);
 
     void hello() const override;
 };
+
+float randomIdleTime();
+float randomPosition();

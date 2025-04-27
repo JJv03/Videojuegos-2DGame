@@ -462,12 +462,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         {
             bossManager->killBoss(phantomBatID);
         }
-        if (currentLevel == 7 && currentBossPhase == 1)
+        else if (currentLevel == 7 && currentBossPhase == 1)
         {
             currentBossPhase++;
             bossManager->killBoss(draculaID);
         }
-        if (currentLevel == 7 && currentBossPhase == 2)
+        else if (currentLevel == 7 && currentBossPhase == 2)
         {
             bossManager->killBoss(draculaSpiritID);
 

@@ -210,18 +210,21 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
 void BossManager::killBoss(bossID boss){
     if (phantomBat != nullptr && boss == phantomBatID)
     {
-        delete phantomBat;
-        phantomBat = nullptr;
+        //delete phantomBat;
+        //phantomBat = nullptr;
+        phantomBat->isActive = false;
     }
     if (dracula != nullptr && boss == draculaID)
     {
-        delete dracula;
-        dracula = nullptr;
+        //delete dracula;
+        //dracula = nullptr;
+        dracula->isActive = false;
     }
     if (draculaSpirit != nullptr && boss == draculaSpiritID)
     {
-        delete draculaSpirit;
-        draculaSpirit = nullptr;
+        //delete draculaSpirit;
+        //draculaSpirit = nullptr;
+        dracula->isActive = false;
     }
 }
 
@@ -241,6 +244,14 @@ void BossManager::restartBosses(int currentLevel, int currentStage)
         {
             dracula->isActive = false;
             dracula->resetPosition();
+        }
+    }
+    if(draculaSpirit)
+    {
+        if (draculaSpirit->level == currentLevel && draculaSpirit->stage == currentStage)
+        {
+            draculaSpirit->isActive = false;
+            draculaSpirit->resetPosition();
         }
     }
 }
