@@ -7,7 +7,7 @@ posXInicial_Simon,posYInicial_Simon
 doors
 <id>,<tipo_puerta>,<pos_ancho>,<pos_alto>
 <id>,<tipo_puerta>,<pos_ancho>,<pos_alto>
-[SI SON ESCALERAS]id,tipo_puerta,pos_ancho,pos_alto,posAparicion_ancho,posAparicion_alto
+[SI SON ESCALERAS]<id>,<tipo_puerta>,<pos_ancho>,<pos_alto>,<posAparicion_ancho>,<posAparicion_alto>
 ...
 miscellaneous
 <tipo_tile_miscellaneousTile>,<pos_ancho>,<pos_alto>,<tile_is_breakable>,<dropped_item>
