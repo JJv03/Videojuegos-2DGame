@@ -122,6 +122,8 @@ extern const float gTIME_POINTS_SFX_FRECUENCY;     // After "gTIME_POINTS_SFX_FR
 extern const int gHEARTS_PER_SECOND;      // Speed at which the hearts are consumed
 extern const float gHEARTS_SFX_FRECUENCY;   // After "gHEARTS_SFX_FRECUENCY" hearts consumed, the SFX is played
 
+extern bool gGoToNextLevel; // Flag to notify that the player has to go to the next level
+
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;
 extern const bool gSkipAnims;

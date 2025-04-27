@@ -111,6 +111,8 @@ const float gTIME_POINTS_SFX_FRECUENCY = 0.0575f;
 const int gHEARTS_PER_SECOND = 5;
 const float gHEARTS_SFX_FRECUENCY = 1.f;
 
+bool gGoToNextLevel = false;
+
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
 const bool gSkipAnims = false;
