@@ -12,6 +12,7 @@ private:
     const float DRACULASPIRIT_LIFE = 48.0f;
     const float DRACULASPIRIT_SCORE = 0.0f;
     const float DRACULASPIRIT_DAMAGE = 4.0f;
+    bool reproduced = false;
 
 
     std::vector<AnimationManager::Frame> noAnimationFrames{

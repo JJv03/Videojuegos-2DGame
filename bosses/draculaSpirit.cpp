@@ -24,6 +24,7 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
     waitingInSteadyCounter = 0.f;
 
     waitingInFlyCounter = 0.f;
+    reproduced = false;
 
     hasFired = true;
 
@@ -52,7 +53,7 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
 // Update draculaSpirit logic: handle spawning, movement, and deactivation
 void DraculaSpirit::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds){
     // SPAWN LOGIC
-    if (!isActive && phase == 2)
+    if (!isActive && phase == 2 && !reproduced)
     {
         for (const auto &hitbox : hitboxes)
         {
@@ -60,6 +61,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             {
                 isActive = true;
                 maxLife = life;
+                reproduced = true;
                 this->currentState = DraculeSpiritState::IDLE;
                 gameSoundManager.stopAllMusic();
                 auto audio = configManager.getAudio();
