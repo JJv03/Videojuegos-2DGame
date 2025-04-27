@@ -716,6 +716,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                     this->subWeapon.sprite->getPosition().x -10  <= viewPosition.x  ) && !this->subWeapon.changedDirection) { 
                 this->subWeapon.changedDirection = true;
                 this->subWeapon.horizontalSpeed = -this->subWeapon.horizontalSpeed;
+                this->subWeapon.collisionedEntities.clear();
             }
             this->subWeapon.sprite->move((this->subWeapon.direction == RIGHT) ? sf::Vector2f(this->subWeapon.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon.horizontalSpeed*deltaTime, 0.f)); 
             if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(boomerangThrowing)){
@@ -726,11 +727,8 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
             // Hanlde boomerang colision with player
             if (isIntersecting(this->subWeapon.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && this->subWeapon.changedDirection) {
                 //std::cout << "Boomerang colision with player" << std::endl;
-                this->subWeapon.intersected = true;
-                
+                this->subWeapon.intersected = true;   
             }
-            
-            
         }
         else if (this->subWeapon.type == ItemType::STOPWATCH){
             if (this->stopWatchTimeCounter >= this->stopWatchTime) {
@@ -738,11 +736,8 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 this->stopWatchTimeCounter = 0.0f; // Reset the counter
                 this->subWeapon.intersected = true;
             } else {
-                this->stopWatchTimeCounter += deltaTime;
-                
+                this->stopWatchTimeCounter += deltaTime;   
             }
-
-            
         }
         else if(this->subWeapon.type == ItemType::DAGGER)
         { // Dagger
