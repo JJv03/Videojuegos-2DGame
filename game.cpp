@@ -256,7 +256,7 @@ void Game::handleInput(sf::Event event)
     {
         if (!withOutLives || !gPlayEndLvlScoreAnimation)
         {
-            player.handleInput(event);
+            if(player.acceptsInput) player.handleInput(event);
         }
         else
         {
@@ -328,6 +328,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     }
     else
     {
+        player.acceptsInput = false;
         player.update(0.f, viewPosition, windowHasFocus);
     }
 
@@ -1328,6 +1329,8 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
 
 int Game::startStage(int stage, int fromStairs)
 {
+    player.acceptsInput = true;
+
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
@@ -1408,6 +1411,8 @@ void Game::restartStage()
     player.subWeapon.intersected = true;
     player.hearts = 5;
 
+    player.acceptsInput = true;
+
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
@@ -1448,6 +1453,8 @@ void Game::restartLevel()
     player.hearts = 5;
     player.score = 0;
     player.lives = 3;
+
+    player.acceptsInput = true;
 
     hasReachedEndStage = false;
     hasReachedStartStage = false;

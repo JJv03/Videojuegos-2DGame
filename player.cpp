@@ -640,6 +640,7 @@ void Player::onCollision_Item(Entity &entityItem)
     // }
     else if (itemType == ItemType::MAGIC_CRYSTAL) {
         playSound("other_item_pick");
+        this->health = this->maxHealth;
         return;
     }
     else if (itemType == ItemType::ONEUP)
