@@ -59,6 +59,11 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
     isPlayerRight = false;
     adjustHead = false;
 
+    timesPlayerHasNotSwitchedSides = 0;
+
+    attacksThisTime = 0;
+    attacksLastTime = 0;
+
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
@@ -95,6 +100,7 @@ void Dracula::update(float deltaTime, const int phase, const Player &player, con
     // SPAWN LOGIC
     if (!isActive && phase == 1)
     {
+        life = DRACULA_LIFE;
         maxLife = life;
         isActive = true;
     }
@@ -102,138 +108,400 @@ void Dracula::update(float deltaTime, const int phase, const Player &player, con
     // MOVEMENT LOGIC
     if (isActive)
     {
+        auto mode = configManager.getDifficulty();
+        if(mode.hard_mode){
+            updateHardMode(deltaTime, player, mapBounds);
+        } else {
+            updateNormalMode(deltaTime, player, mapBounds);
+        }
+    }
 
-        // MAQUINA DE ESTADOS DEL BOSS
-        // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
-        switch(currentState){
-            case DraculaState::ASLEEP:
-                asleepTimeCounter += deltaTime;
+    currentBossLife = life;
+}
 
-                if(asleepTimeCounter >= ASLEEP_TIME){
-                    currentState = DraculaState::MASK_APPEAR;
+// Update dracula logic: handle spawning, movement, and deactivation
+void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::FloatRect &mapBounds)
+{
+    switch(currentState){
+        case DraculaState::ASLEEP:
+            asleepTimeCounter += deltaTime;
+
+            if(asleepTimeCounter >= ASLEEP_TIME){
+                currentState = DraculaState::MASK_APPEAR;
+            }
+            break;
+
+        case DraculaState::MASK_APPEAR:
+
+            maskWaitTimeCounter += deltaTime;
+
+            if(maskWaitTimeCounter >= WAIT_MASK_TIME){
+                maskWaitTimeCounter = 0.f;
+                currentState = DraculaState::MASK_ELEVATE;
+            }
+            break;
+
+        case DraculaState::MASK_ELEVATE:
+            if(sprite->getPosition().y > MASK_MAX_HEIGHT){
+                if(sprite->getPosition().y - MASK_MAX_HEIGHT < 1.f){
+                    float elevation = sprite->getPosition().y - MASK_MAX_HEIGHT;
+                    sprite->move({0.f, -elevation});
+                    draculaBody->sprite->move({0.f, -elevation});
+                } else {
+                    float elevation = MASK_ELEVATE_SPEED * deltaTime;
+                    sprite->move({0.f, -elevation});
+                    draculaBody->sprite->move({0.f, -elevation});
                 }
-                break;
-
-            case DraculaState::MASK_APPEAR:
-
+            } else { // Mask in position
                 maskWaitTimeCounter += deltaTime;
 
                 if(maskWaitTimeCounter >= WAIT_MASK_TIME){
-                    maskWaitTimeCounter = 0.f;
-                    currentState = DraculaState::MASK_ELEVATE;
+                    appearTimeCounter = 0.f;
+                    currentState = DraculaState::BODY_APPEAR;
                 }
-                break;
+            }
+            
+            break;
 
-            case DraculaState::MASK_ELEVATE:
-                if(sprite->getPosition().y > MASK_MAX_HEIGHT){
-                    if(sprite->getPosition().y - MASK_MAX_HEIGHT < 1.f){
-                        float elevation = sprite->getPosition().y - MASK_MAX_HEIGHT;
-                        sprite->move({0.f, -elevation});
-                        draculaBody->sprite->move({0.f, -elevation});
-                    } else {
-                        float elevation = MASK_ELEVATE_SPEED * deltaTime;
-                        sprite->move({0.f, -elevation});
-                        draculaBody->sprite->move({0.f, -elevation});
-                    }
-                } else { // Mask in position
-                    maskWaitTimeCounter += deltaTime;
+        case DraculaState::BODY_APPEAR:
+            if(appearBody(deltaTime)){
+                idleTimeCounter = 0.f;
+                WAIT_IDLE_TIME = randomIdleTime();
+                currentState = DraculaState::BATTLE_IDLE;
+            }
+            break;
 
-                    if(maskWaitTimeCounter >= WAIT_MASK_TIME){
-                        appearTimeCounter = 0.f;
-                        currentState = DraculaState::BODY_APPEAR;
-                    }
+        case DraculaState::BATTLE_IDLE:
+            idleTimeCounter += deltaTime;
+
+            if(idleTimeCounter >= WAIT_IDLE_TIME){
+                attackTimeCounter = 0.f;
+                generateProjectiles(player.isJumping);
+                currentState = DraculaState::BATTLE_ATTACK;
+            }
+            break;
+
+
+        case DraculaState::BATTLE_ATTACK:
+            attackTimeCounter += deltaTime;
+
+            if(attackTimeCounter >= WAIT_ATTACK_TIME){
+                disappearTimeCounter = 0.f;
+                currentState = DraculaState::BATTLE_DISAPPEAR_ATTACK;
+            }
+            break;
+
+        case DraculaState::BATTLE_DISAPPEAR_ATTACK:
+            if(disappear(deltaTime)){
+                awayTimeCounter = 0.f;
+                currentState = DraculaState::BATTLE_AWAY;
+            }
+            break;
+
+        case DraculaState::BATTLE_AWAY:
+            awayTimeCounter += deltaTime;
+
+            if(awayTimeCounter >= AWAY_TIME){
+                appearTimeCounter = 0.f;
+                moveTo(randomPosition(player.getBounds()[0].position.x));
+                isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
+                adjustHead = true;
+                currentState = DraculaState::BATTLE_APPEAR;
+            }
+            break;
+
+        case DraculaState::BATTLE_APPEAR:
+            if(appear(deltaTime)){
+                idleTimeCounter = 0.f;
+                WAIT_IDLE_TIME = randomIdleTime();
+                currentState = DraculaState::BATTLE_IDLE;
+            }
+            break;
+
+        case DraculaState::DEAD_MASK_OFF:
+            if(!isDead){
+                isDead = true;
+                maskVerticalSpeed = -MASK_VERTICAL_SPEED;
+                isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
+            }
+
+            if(deadMaskAnimation(deltaTime, mapBounds)){
+                currentState = DraculaState::DEAD_WAIT;
+            }
+            break;
+        
+        case DraculaState::DEAD_WAIT:
+            deadTimeCounter += deltaTime;
+
+            if(deadTimeCounter >= DEAD_TIME){
+                deadTimeCounter = 0.f;
+                gKilledBoss = true;
+            }
+        default:
+            break;
+    }
+
+    updateProjectiles(deltaTime, mapBounds);
+    updateAnimation(deltaTime);
+}
+
+// Update dracula logic: handle spawning, movement, and deactivation
+void Dracula::updateHardMode(float deltaTime, const Player &player, const sf::FloatRect &mapBounds)
+{
+    switch(currentState){
+        case DraculaState::ASLEEP:
+            asleepTimeCounter += deltaTime;
+
+            if(asleepTimeCounter >= ASLEEP_TIME){
+                currentState = DraculaState::MASK_APPEAR;
+            }
+            break;
+
+        case DraculaState::MASK_APPEAR:
+
+            maskWaitTimeCounter += deltaTime;
+
+            if(maskWaitTimeCounter >= WAIT_MASK_TIME){
+                maskWaitTimeCounter = 0.f;
+                currentState = DraculaState::MASK_ELEVATE;
+            }
+            break;
+
+        case DraculaState::MASK_ELEVATE:
+            if(sprite->getPosition().y > MASK_MAX_HEIGHT){
+                if(sprite->getPosition().y - MASK_MAX_HEIGHT < 1.f){
+                    float elevation = sprite->getPosition().y - MASK_MAX_HEIGHT;
+                    sprite->move({0.f, -elevation});
+                    draculaBody->sprite->move({0.f, -elevation});
+                } else {
+                    float elevation = MASK_ELEVATE_SPEED * deltaTime;
+                    sprite->move({0.f, -elevation});
+                    draculaBody->sprite->move({0.f, -elevation});
                 }
-                
-                break;
+            } else { // Mask in position
+                maskWaitTimeCounter += deltaTime;
 
-            case DraculaState::BODY_APPEAR:
-                if(appearBody(deltaTime)){
-                    idleTimeCounter = 0.f;
-                    WAIT_IDLE_TIME = randomIdleTime();
-                    currentState = DraculaState::BATTLE_IDLE;
+                if(maskWaitTimeCounter >= WAIT_MASK_TIME){
+                    appearTimeCounter = 0.f;
+                    currentState = DraculaState::BODY_APPEAR;
                 }
-                break;
+            }
+            
+            break;
 
-            case DraculaState::BATTLE_IDLE:
-                idleTimeCounter += deltaTime;
+        case DraculaState::BODY_APPEAR:
+            if(appearBody(deltaTime)){
+                idleTimeCounter = 0.f;
+                WAIT_IDLE_TIME = randomIdleTime();
+                currentState = DraculaState::BATTLE_IDLE;
+            }
+            break;
 
-                if(idleTimeCounter >= WAIT_IDLE_TIME){
+        case DraculaState::BATTLE_IDLE:
+            idleTimeCounter += deltaTime;
+
+            if(idleTimeCounter >= WAIT_IDLE_TIME){
+                bool attack = shouldAttack(player);
+                if(attack){ // Whether to attack or not
+                    attacksThisTime++;
                     attackTimeCounter = 0.f;
                     generateProjectiles(player.isJumping);
                     currentState = DraculaState::BATTLE_ATTACK;
-                }
-                break;
-
- 
-            case DraculaState::BATTLE_ATTACK:
-                attackTimeCounter += deltaTime;
-
-                if(attackTimeCounter >= WAIT_ATTACK_TIME){
+                } else {
+                    attacksLastTime = attacksThisTime; // Reset attack counter
+                    attacksThisTime = 0;
                     disappearTimeCounter = 0.f;
-                    currentState = DraculaState::BATTLE_DISAPPEAR;
+                    currentState = DraculaState::BATTLE_DISAPPEAR_IDLE;
                 }
-                break;
+            }
+            break;
 
-            case DraculaState::BATTLE_DISAPPEAR:
-                if(disappear(deltaTime)){
-                    awayTimeCounter = 0.f;
-                    currentState = DraculaState::BATTLE_AWAY;
-                }
-                break;
 
-            case DraculaState::BATTLE_AWAY:
-                awayTimeCounter += deltaTime;
-
-                if(awayTimeCounter >= AWAY_TIME){
-                    appearTimeCounter = 0.f;
-                    moveTo(randomPosition(player.getBounds()[0].position.x));
-                    isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
-                    adjustHead = true;
-                    currentState = DraculaState::BATTLE_APPEAR;
-                }
-                break;
-
-            case DraculaState::BATTLE_APPEAR:
-                if(appear(deltaTime)){
+        case DraculaState::BATTLE_ATTACK:
+            attackTimeCounter += deltaTime;
+            if(attackTimeCounter >= WAIT_ATTACK_TIME){
+                bool startAttack = shouldStartAnotherAttack(player);
+                if(startAttack){
                     idleTimeCounter = 0.f;
-                    WAIT_IDLE_TIME = randomIdleTime();
                     currentState = DraculaState::BATTLE_IDLE;
+                } else {
+                    attacksLastTime = attacksThisTime;
+                    attacksThisTime = 0;
+                    disappearTimeCounter = 0.f;
+                    currentState = DraculaState::BATTLE_DISAPPEAR_ATTACK;
                 }
-                break;
+            }
+            break;
+    
 
-            case DraculaState::DEAD_MASK_OFF:
-                if(!isDead){
-                    isDead = true;
-                    maskVerticalSpeed = -MASK_VERTICAL_SPEED;
-                    isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
+        case DraculaState::BATTLE_DISAPPEAR_IDLE:
+            if(disappear(deltaTime)){
+                awayTimeCounter = 0.f;
+                currentState = DraculaState::BATTLE_AWAY;
+            }
+            break;
+
+        case DraculaState::BATTLE_DISAPPEAR_ATTACK:
+            if(disappear(deltaTime)){
+                awayTimeCounter = 0.f;
+                currentState = DraculaState::BATTLE_AWAY;
+            }
+            break;
+
+
+        case DraculaState::BATTLE_AWAY:
+            awayTimeCounter += deltaTime;
+
+            if(awayTimeCounter >= AWAY_TIME){
+                appearTimeCounter = 0.f;
+                moveDraculaHardMode(player);
+                bool wasPlayerRight = isPlayerRight;
+                isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
+
+                if(isPlayerRight == wasPlayerRight){
+                    timesPlayerHasNotSwitchedSides++;
+                } else {
+                    timesPlayerHasNotSwitchedSides = 0;
                 }
 
-                if(deadMaskAnimation(deltaTime, mapBounds)){
-                    currentState = DraculaState::DEAD_WAIT;
-                }
-                break;
-            
-            case DraculaState::DEAD_WAIT:
-                deadTimeCounter += deltaTime;
+                adjustHead = true;
+                currentState = DraculaState::BATTLE_APPEAR;
+            }
+            break;
 
-                if(deadTimeCounter >= DEAD_TIME){
-                    deadTimeCounter = 0.f;
-                    gKilledBoss = true;
-                }
-            default:
-                break;
+        case DraculaState::BATTLE_APPEAR:
+            if(appear(deltaTime)){
+                idleTimeCounter = 0.f;
+                WAIT_IDLE_TIME = randomIdleTime();
+                currentState = DraculaState::BATTLE_IDLE;
+            }
+            break;
+
+        case DraculaState::DEAD_MASK_OFF:
+            if(!isDead){
+                isDead = true;
+                maskVerticalSpeed = -MASK_VERTICAL_SPEED;
+                isPlayerRight = sprite->getGlobalBounds().position.x <= player.getBounds()[0].position.x;
+            }
+
+            if(deadMaskAnimation(deltaTime, mapBounds)){
+                currentState = DraculaState::DEAD_WAIT;
+            }
+            break;
+        
+        case DraculaState::DEAD_WAIT:
+            deadTimeCounter += deltaTime;
+
+            if(deadTimeCounter >= DEAD_TIME){
+                deadTimeCounter = 0.f;
+                gKilledBoss = true;
+            }
+        default:
+            break;
+    }
+
+    updateProjectiles(deltaTime, mapBounds);
+    updateAnimation(deltaTime);
+}
+
+void Dracula::moveDraculaHardMode(const Player& player){
+    bool switchSide = shouldSwitchSide();
+
+    if(switchSide){
+        if(isPlayerRight){
+            moveTo(randomPositionRight(player.getBounds()[0].position.x));
+        } else {
+            moveTo(randomPositionLeft(player.getBounds()[0].position.x));
         }
-
-        updateProjectiles(deltaTime, mapBounds);
-        updateAnimation(deltaTime);
+    } else {
+        moveTo(randomPosition(player.getBounds()[0].position.x));
     }
 }
+
+bool Dracula::shouldSwitchSide() {
+    if (timesPlayerHasNotSwitchedSides < MAX_TIMES_SWITCH_SIDE) {
+        return false;
+    }
+
+    int overLimit = timesPlayerHasNotSwitchedSides - MAX_TIMES_SWITCH_SIDE;
+
+    // Initial probability when timesPlayerHasNotSwitchedSides = MAX_TIMES_SWITCH_SIDE is 0.5 (50%)
+    // and every extra time over MAX_TIMES_SWITCH_SIDE increases % by half (50%, 75%, 87.5%, 93.75%, ...)
+    float probability = 1.0f - (0.5f / std::pow(2, overLimit));
+
+    std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+    return dis(rng) < probability;
+}
+
+bool Dracula::shouldAttack(const Player& player) {
+    if (attacksLastTime == 0 && attacksThisTime == 0) { // No-attack can't happen twice in a row
+        std::cout << "ShouldAttack: No-attack can't happen twice in a row" << std::endl;
+        return true;
+    }
+
+    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
+        std::cout << "ShouldAttack: Double-attack can't happen twice in a row" << std::endl;
+        return false;
+    }
+
+    if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen
+        std::cout << "ShouldAttack: Triple-or-more-attack can't happen twice in a row" << std::endl;
+        return false;
+    }
+
+    if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) < DISTANCE_TOO_CLOSE){    // If too close, maybe attack
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        std::cout << "ShouldAttack: Too close" << std::endl;
+        return !(dis(rng) < PROB_MID);
+    }
+
+    if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) > DISTANCE_TOO_FAR){      // If too far, attack
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        std::cout << "ShouldAttack: Too far" << std::endl;
+        return dis(rng) < PROB_HIGH;
+    }
+
+    if (attacksThisTime == 0){
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        std::cout << "ShouldAttack: Didn't attack this time" << std::endl;
+        return dis(rng) < PROB_HIGH;
+    }
+
+    if (attacksThisTime == 1){
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        std::cout << "ShouldAttack: Already attacked this time" << std::endl;
+        return dis(rng) < PROB_LOW;
+    }
+    
+    return true;
+}
+
+bool Dracula::shouldStartAnotherAttack(const Player& player) {
+    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
+        std::cout << "shouldStartAnotherAttack: Double-attack can't happen twice in a row" << std::endl;
+        return false;
+    }
+
+    if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen
+        std::cout << "shouldStartAnotherAttack: Triple-or-more-attack can't happen" << std::endl;
+        return false;
+    }
+
+    if(player.isInvulnerable || player.isBeingHurt){
+        std::cout << "shouldStartAnotherAttack: Invulnerable or hurt" << std::endl;
+        return false;
+    }
+
+    std::cout << "shouldStartAnotherAttack: Yes" << std::endl;
+    return true;
+}
+
 
 void Dracula::generateProjectiles(bool isPlayerJumping){
     float verticalSpeed;
 
     if(isPlayerJumping) verticalSpeed = -20.f;
-                   else verticalSpeed = -10.f;
+                   else verticalSpeed = -10.f; 
 
     if(isPlayerRight){
         for(auto& projectile : projectiles){
@@ -280,16 +548,16 @@ void Dracula::onCollision(Entity &other, Game &game)
     {
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
+            sprite->setColor(sf::Color::White);
             currentState = DraculaState::DEAD_MASK_OFF;
-            // DROP (la fase uno creo que no da nada)
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
+            sprite->setColor(sf::Color::White);
             currentState = DraculaState::DEAD_MASK_OFF;
-            // DROP (la fase uno creo que no da nada)
         }
     }
 }
@@ -337,7 +605,6 @@ void Dracula::resetPosition()
     Boss::resetPosition();
 
     life = DRACULA_LIFE;
-    draculaBody->sprite->setPosition(draculaBody->position);
 
     asleepTimeCounter = 0.f;
     maskWaitTimeCounter = 0.f;
@@ -348,19 +615,27 @@ void Dracula::resetPosition()
     awayTimeCounter = 0.f;
     deadTimeCounter = 0.f;
 
-    sprite->setColor(sf::Color::White);
-    sprite->setScale({1.f, 1.f});
-    draculaBody->sprite->setColor(sf::Color::White);
-    draculaBody->sprite->setScale({1.f, 1.f});
+    if(sprite){
+        sprite->setColor(sf::Color::White);
+        sprite->setScale({1.f, 1.f});
+    }
 
+    if (draculaBody && draculaBody->sprite) {
+        draculaBody->sprite->setPosition(draculaBody->position);
+        draculaBody->sprite->setColor(sf::Color::White);
+        draculaBody->sprite->setScale({1.f, 1.f});
+    }
+    
     isPlayerRight = false;
     facingRight = false;
     adjustHead = false;
 
+    timesPlayerHasNotSwitchedSides = 0;
+
     currentState = DraculaState::ASLEEP;
 
-    for(auto& p :projectiles){
-        p->reset();
+    for(auto& p : projectiles){
+        if(p) p->reset();
     }
 
     applyMaskBodyAnimation(noAnimation);
@@ -401,7 +676,11 @@ void Dracula::updateAnimation(float deltaTime)
             applyMaskBodyAnimation(draculaAttack);
             break;
 
-        case DraculaState::BATTLE_DISAPPEAR:
+        case DraculaState::BATTLE_DISAPPEAR_IDLE:
+            applyMaskBodyAnimation(draculaIdle);
+            break;
+
+        case DraculaState::BATTLE_DISAPPEAR_ATTACK:
             applyMaskBodyAnimation(draculaAttack);
             break;
 
@@ -593,7 +872,7 @@ float randomIdleTime(){
 }
 
 float randomPosition(float playerPos, float margin){
-    std::uniform_real_distribution<float> dis(36.f, 220.f);
+    std::uniform_real_distribution<float> dis(32.f, 224.f);
 
     float pos;
     do {
@@ -604,23 +883,13 @@ float randomPosition(float playerPos, float margin){
 }
 
 float randomPositionLeft(float playerPos, float margin){
-    std::uniform_real_distribution<float> dis(36.f, 100.f);
+    std::uniform_real_distribution<float> dis(8.f, 16.f);
 
-    float pos;
-    do {
-        pos = dis(rng);
-    } while (std::abs(pos - playerPos) <= margin);
-
-    return pos;
+    return dis(rng);
 }
 
 float randomPositionRight(float playerPos, float margin){
-    std::uniform_real_distribution<float> dis(156.f, 220.f);
+    std::uniform_real_distribution<float> dis(240.f, 248.f);
 
-    float pos;
-    do {
-        pos = dis(rng);
-    } while (std::abs(pos - playerPos) <= margin);
-
-    return pos;
+    return dis(rng);
 }
