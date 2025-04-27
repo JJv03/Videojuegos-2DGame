@@ -182,6 +182,12 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         {
             allBosses.push_back(dracula);
             allBosses.push_back(dracula->draculaBody);
+            for(auto& projectile : dracula->projectiles){
+                if (projectile)
+                {
+                    allBosses.push_back(projectile.get());
+                }
+            }
         }
     }
     if (draculaSpirit)
@@ -218,13 +224,21 @@ void BossManager::killBoss(bossID boss){
     {
         //delete dracula;
         //dracula = nullptr;
+        float deadPosition = dracula->draculaBody->sprite->getGlobalBounds().position.x;
         dracula->isActive = false;
+        for(auto& p : dracula->projectiles){
+            if(p) p->setActive(false);
+        }
+        if(draculaSpirit) draculaSpirit->sprite->move({dracula->draculaBody->sprite->getGlobalBounds().position.x - draculaSpirit->sprite->getPosition().x, 0.f});
     }
     if (draculaSpirit != nullptr && boss == draculaSpiritID)
     {
         //delete draculaSpirit;
         //draculaSpirit = nullptr;
-        dracula->isActive = false;
+        draculaSpirit->isActive = false;
+        if(draculaSpirit->projectile) draculaSpirit->projectile->setActive(false);
+        if(draculaSpirit->projectile2) draculaSpirit->projectile2->setActive(false);
+        if(draculaSpirit->projectile3) draculaSpirit->projectile3->setActive(false);
     }
 }
 

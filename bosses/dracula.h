@@ -33,10 +33,12 @@ class Dracula : public Boss
 private:
     // Movement and combat constants
     const sf::Vector2f DRACULA_SPEED = {0.0f, 0.0f};
-    const sf::Vector2f MASK_ELEVATE_SPEED = {0.0f, 30.0f};
+    const float MASK_ELEVATE_SPEED = 30.0f;
     const float DRACULA_LIFE = 24.0f;
     const float DRACULA_SCORE = 0.0f;
     const float DRACULA_DAMAGE = 4.0f;
+    const float PROJECTILE_SPEED = 120.f;
+    const float PROJECTILE_DAMAGE = 4.f;
 
     const float ASLEEP_TIME = 2.f;
     float asleepTimeCounter;
@@ -53,11 +55,18 @@ private:
 
     float WAIT_IDLE_TIME = 0.5f;
     float idleTimeCounter;
-    const float WAIT_ATTACK_TIME = 0.5f;
+    const float WAIT_ATTACK_TIME = 0.75f;
     float attackTimeCounter;
 
-    const float AWAY_TIME = 1.f;
+    const float AWAY_TIME = 1.5f;
     float awayTimeCounter;
+
+    const float DEAD_TIME = 2.f;
+    float deadTimeCounter;
+
+    const float MASK_HORIZONTAL_SPEED = 2.f;
+    const float MASK_VERTICAL_SPEED = 410.f;
+    float maskVerticalSpeed; // For dead animation
 
     bool facingRight;
     bool isPlayerRight;
@@ -74,6 +83,8 @@ public:
     int level; // Current game level
     int stage; // Current stage within level
 
+    bool isDead;
+
     enum class DraculaState
     {
         ASLEEP,
@@ -85,7 +96,8 @@ public:
         BATTLE_ATTACK,
         BATTLE_DISAPPEAR,
         BATTLE_AWAY,
-        DEAD_MASK_OFF   
+        DEAD_MASK_OFF,
+        DEAD_WAIT   
     };
 
     DraculaState currentState = DraculaState::ASLEEP;
@@ -111,6 +123,10 @@ public:
     // Reset boss
     void resetPosition();
 
+    void generateProjectiles(bool isPlayerJumping);
+
+    void updateProjectiles(float deltaTime, const sf::FloatRect& mapBounds);
+
     // Handle collisions
     void onCollision(Entity &other, Game &game) override;
 
@@ -121,7 +137,7 @@ public:
     void applyMaskBodyAnimation(animationID id);
 
     // Apply flying mask animation
-    void deadMaskAnimation();
+    bool deadMaskAnimation(float deltaTime, const sf::FloatRect &mapBounds);
 
     std::vector<sf::FloatRect> getBounds() const override;
 
@@ -139,4 +155,6 @@ public:
 };
 
 float randomIdleTime();
-float randomPosition();
+float randomPosition(float playerPos, float margin = 32.f);
+float randomPositionRight(float playerPos, float margin = 32.f);
+float randomPositionLeft(float playerPos, float margin = 32.f);

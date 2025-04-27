@@ -80,15 +80,12 @@ public:
 
     // Projectile
     std::shared_ptr<Projectile> projectile;
-    bool hasFiredDuringPause = {false};
     bool hasProjectile{false};
 
     std::shared_ptr<Projectile> projectile2;
-    bool hasFiredDuringPause2 = {false};
     bool hasProjectile2{false};
 
     std::shared_ptr<Projectile> projectile3;
-    bool hasFiredDuringPause3 = {false};
     bool hasProjectile3{false};
 
 
