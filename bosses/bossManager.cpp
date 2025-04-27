@@ -229,7 +229,7 @@ void BossManager::killBoss(bossID boss){
         for(auto& p : dracula->projectiles){
             if(p) p->setActive(false);
         }
-        if(draculaSpirit) draculaSpirit->sprite->move({dracula->draculaBody->sprite->getGlobalBounds().position.x - draculaSpirit->sprite->getPosition().x, 0.f});
+        if(draculaSpirit) draculaSpirit->sprite->move({deadPosition - draculaSpirit->sprite->getPosition().x, 0.f});
     }
     if (draculaSpirit != nullptr && boss == draculaSpiritID)
     {

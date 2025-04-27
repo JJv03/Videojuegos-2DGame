@@ -64,13 +64,29 @@ private:
     const float DEAD_TIME = 2.f;
     float deadTimeCounter;
 
-    const float MASK_HORIZONTAL_SPEED = 2.f;
+    const float MASK_HORIZONTAL_SPEED = 125.f;
     const float MASK_VERTICAL_SPEED = 410.f;
     float maskVerticalSpeed; // For dead animation
 
     bool facingRight;
     bool isPlayerRight;
     bool adjustHead;
+
+
+    // ----- HARD MODE -----
+    int timesPlayerHasNotSwitchedSides;
+    const int MAX_TIMES_SWITCH_SIDE = 2;
+
+    int attacksThisTime;
+    int attacksLastTime;
+
+    const float PROB_HIGH = 0.9f;
+    const float PROB_MID = 0.5f;
+    const float PROB_LOW = 0.2f;
+
+    const float DISTANCE_TOO_CLOSE = 48.f;
+    const float DISTANCE_TOO_FAR = 112.f;
+
  
     std::vector<AnimationManager::Frame> noAnimationFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f}
@@ -78,6 +94,7 @@ private:
     std::vector<AnimationManager::Frame> maskDraculaFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(307, 74), sf::Vector2(8, 16)), 0.1f}
     };
+    
 
 public:
     int level; // Current game level
@@ -94,7 +111,8 @@ public:
         BATTLE_IDLE,
         BATTLE_APPEAR,
         BATTLE_ATTACK,
-        BATTLE_DISAPPEAR,
+        BATTLE_DISAPPEAR_IDLE,
+        BATTLE_DISAPPEAR_ATTACK,
         BATTLE_AWAY,
         DEAD_MASK_OFF,
         DEAD_WAIT   
@@ -119,6 +137,18 @@ public:
 
     // Update dracula logic (spawn, movement, etc.)
     void update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds);
+
+    void updateNormalMode(float deltaTime, const Player &player, const sf::FloatRect &mapBounds);
+
+    void updateHardMode(float deltaTime, const Player &player, const sf::FloatRect &mapBounds);
+
+    void moveDraculaHardMode(const Player& player);
+
+    bool shouldSwitchSide();
+
+    bool shouldAttack(const Player& player);
+
+    bool shouldStartAnotherAttack(const Player& player);
 
     // Reset boss
     void resetPosition();
