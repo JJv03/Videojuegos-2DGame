@@ -136,7 +136,7 @@ void GameGS::init(){
 void GameGS::handleInput(sf::Event event){
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
         if (keyPressed->scancode == KEY_ESC)
-        {    
+        {
             stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
             return;
         }
@@ -532,12 +532,6 @@ void walkingAnimGS::init(){
 }
 
 void walkingAnimGS::handleInput(sf::Event event){
-    // if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-    //     if (keyPressed->scancode == KEY_ESC)
-    //     {    
-    //         stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
-    //     }
-    // }
 }
 
 void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
@@ -587,17 +581,27 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
 }
 
 void walkingAnimGS::draw(sf::RenderWindow& window, Camera& camera){
-    // std::cout<<"Print"<<std::endl;
-    // std::cout<<menuSprites.size()<<std::endl;
-    // std::cout<<menuTextures.size()<<std::endl;
-    // std::cout<<options.size()<<std::endl;
-    for (const auto& sprite : walkingAnimSprites) {
-        window.draw(sprite);
+    if (restartLoadingClock)
+    {
+        restartLoadingClock = false;
+        loadingClock.restart();
     }
 
-    window.draw(*simon);
-    window.draw(*bat1);
-    window.draw(*bat2);
+    if (loadingClock.getElapsedTime().asSeconds() < gLoadingTime)
+    {
+        sf::RectangleShape blackScreen(camera.getView(window.getSize()).getSize());
+        blackScreen.setFillColor(sf::Color::Black);
+        window.draw(blackScreen);
+    }
+    else{
+        for (const auto& sprite : walkingAnimSprites) {
+            window.draw(sprite);
+        }
+
+        window.draw(*simon);
+        window.draw(*bat1);
+        window.draw(*bat2);
+    }
 }
  
 void walkingAnimGS::pause(){
@@ -2851,7 +2855,7 @@ void InitAnimationGS::handleInput(sf::Event event){
 void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     timer += deltaTime;
 
-    // --- Warning blink ---
+    // Warning blink
     float alphaMin = 25.f;
     float alphaMax = 125.f;
     float amplitude = (alphaMax - alphaMin) / 2.f;

@@ -88,6 +88,9 @@ private:
     std::shared_ptr<sf::Sprite> bat2;
     AnimationManager *simonManager{nullptr};
     std::shared_ptr<sf::Sprite> simon;
+
+    bool restartLoadingClock = false;
+    sf::Clock loadingClock;
 public:
     explicit walkingAnimGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~walkingAnimGS() override;
