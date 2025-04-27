@@ -168,7 +168,7 @@ void FishMan::update(float deltaTime, const sf::FloatRect &playerActivationZone,
                 }
             }
 
-            if (!hasFiredDuringPause && pauseTimer <= ATTACK_PAUSE_TIME / 2.0f && isOnGround)
+            if (!hasFiredDuringPause && pauseTimer <= ATTACK_PAUSE_TIME / 1.3f && isOnGround)
             {
                 fireProjectile();
                 hasFiredDuringPause = true;
@@ -213,7 +213,7 @@ void FishMan::fireProjectile()
     // Adjust position to be in front of the fishman based on direction
     sf::Vector2f projectilePos = {
         fishmanPos.x + (directionX * 5.0f),
-        fishmanPos.y - 27.0f};
+        fishmanPos.y - 23.0f};
 
     // Create and store the projectile using the generic creator
     projectile = createProjectile(
