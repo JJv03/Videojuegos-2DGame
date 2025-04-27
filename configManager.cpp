@@ -95,7 +95,17 @@ configManager& configManager::getInstance() {
 }
 
 configManager::configManager() {
+    defRight = sf::Keyboard::Scancode::Right;
+    defLeft = sf::Keyboard::Scancode::Left;
+    defDown = sf::Keyboard::Scancode::Down;
+    defUp = sf::Keyboard::Scancode::Up;
+    defJump = sf::Keyboard::Scancode::X;
+    defAttack = sf::Keyboard::Scancode::Z;
+    defEnter = sf::Keyboard::Scancode::Enter;
+    defEscape = sf::Keyboard::Scancode::Escape;
+    defUseSubWeapon = sf::Keyboard::Scancode::C;
     loadConfiguration("config.json");
+    saveConfiguration("config.json");
 }
 
 int validateVolume(int value) {
@@ -111,29 +121,81 @@ void configManager::loadConfiguration(const std::string& file) {
         std::cerr << "Error opening configuration file." << std::endl;
         return;
     }
-    inputFile >> originalConfig;
-
-    audio.master_volume = validateVolume(originalConfig["audio"]["master_volume"]);
-    audio.music_volume = validateVolume(originalConfig["audio"]["music_volume"]);
-    audio.sound_volume = validateVolume(originalConfig["audio"]["sound_volume"]);
     
-    video.window_mode = originalConfig["video"]["window_mode"];
-    
-    controls.right = stringToScancode(originalConfig["controls"]["right"]);
-    controls.left = stringToScancode(originalConfig["controls"]["left"]);
-    controls.down = stringToScancode(originalConfig["controls"]["down"]);
-    controls.up = stringToScancode(originalConfig["controls"]["up"]);
-    controls.jump = stringToScancode(originalConfig["controls"]["jump"]);
-    controls.attack = stringToScancode(originalConfig["controls"]["attack"]);
-    controls.enter = stringToScancode(originalConfig["controls"]["enter"]);
-    controls.escape = stringToScancode(originalConfig["controls"]["escape"]);
-    controls.useSubWeapon = stringToScancode(originalConfig["controls"]["useSubWeapon"]);
+    try {
+        inputFile >> originalConfig;
 
-    cheats.enabled = originalConfig["cheats"]["enabled"];
-    difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
+        // Audio
+        if (originalConfig.contains("audio")) {
+            const auto& audioConfig = originalConfig["audio"];
+            audio.master_volume = audioConfig.contains("master_volume") && audioConfig["master_volume"].is_number_integer()
+                                    ? validateVolume(audioConfig["master_volume"])
+                                    : 50;
+            audio.music_volume = audioConfig.contains("music_volume") && audioConfig["music_volume"].is_number_integer()
+                                    ? validateVolume(audioConfig["music_volume"])
+                                    : 50;
+            audio.sound_volume = audioConfig.contains("sound_volume") && audioConfig["sound_volume"].is_number_integer()
+                                    ? validateVolume(audioConfig["sound_volume"])
+                                    : 50;
+        } else {
+            audio.master_volume = audio.music_volume = audio.sound_volume = 50;
+        }
 
-    //std::cout << "Configuration successfully loaded. Contents:\n";
-    //std::cout << originalConfig << std::endl;
+        // Video
+        if (originalConfig.contains("video") && originalConfig["video"].contains("window_mode") && originalConfig["video"]["window_mode"].is_boolean()) {
+            video.window_mode = originalConfig["video"]["window_mode"];
+        } else {
+            video.window_mode = false; // Default to windowed mode
+        }
+
+        // Controls
+        if (originalConfig.contains("controls")) {
+            const auto& controlsConfig = originalConfig["controls"];
+            
+            auto getControl = [&](const std::string& key, sf::Keyboard::Scancode defaultKey) {
+                if (controlsConfig.contains(key) && controlsConfig[key].is_string()) {
+                    sf::Keyboard::Scancode sc = stringToScancode(controlsConfig[key]);
+                    return (sc != sf::Keyboard::Scancode::Unknown) ? sc : defaultKey;
+                }
+                return defaultKey;
+            };
+        
+            controls.right = getControl("right", defRight);
+            controls.left = getControl("left", defLeft);
+            controls.down = getControl("down", defDown);
+            controls.up = getControl("up", defUp);
+            controls.jump = getControl("jump", defJump);
+            controls.attack = getControl("attack", defAttack);
+            controls.enter = getControl("enter", defEnter);
+            controls.escape = getControl("escape", defEscape);
+            controls.useSubWeapon = getControl("useSubWeapon", defUseSubWeapon);
+        } else {
+            controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
+        }
+
+        // Cheats
+        if (originalConfig.contains("cheats") && originalConfig["cheats"].contains("enabled") && originalConfig["cheats"]["enabled"].is_boolean()) {
+            cheats.enabled = originalConfig["cheats"]["enabled"];
+        } else {
+            cheats.enabled = false;
+        }
+
+        // Difficulty
+        if (originalConfig.contains("difficulty") && originalConfig["difficulty"].contains("hard_mode") && originalConfig["difficulty"]["hard_mode"].is_boolean()) {
+            difficulty.hard_mode = originalConfig["difficulty"]["hard_mode"];
+        } else {
+            difficulty.hard_mode = false;
+        }
+        std::cout << originalConfig << std::endl;
+    }
+    catch (const std::exception& e) {
+        audio.master_volume = audio.music_volume = audio.sound_volume = 50;
+        video.window_mode = false;
+        controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
+        cheats.enabled = false;
+        difficulty.hard_mode = false;
+        std::cout << originalConfig << std::endl;
+    }
 }
 
 void configManager::saveConfiguration(const std::string& file) {

@@ -75,5 +75,7 @@ private:
     static const std::unordered_map<std::string, sf::Keyboard::Scancode> stringToScancodeMap;
     static const std::unordered_map<sf::Keyboard::Scancode, std::string> scancodeToStringMap;
 
+    sf::Keyboard::Scancode defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon;
+
     json originalConfig;
 };
