@@ -547,12 +547,13 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
 
     // Simon things
     sf::Vector2f posSimon = simon->getPosition();
-    if (posSimon.x <= 186){
+    const float simonSpeed = 60.0f; // pixels per second
+    
+    if (posSimon.x <= 186) {
         simon->setPosition(sf::Vector2f(186, posSimon.y));
         simonManager->playAnimation(idleSimon);
-    }
-    else{
-        simon->setPosition(sf::Vector2f(posSimon.x - 1, posSimon.y));
+    } else {
+        simon->setPosition(sf::Vector2f(posSimon.x - simonSpeed * deltaTime, posSimon.y));
     }
     simonManager->update(deltaTime);
 
@@ -569,7 +570,9 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
     batManager1->update(deltaTime);
 
     sf::Vector2f posBat2 = bat2->getPosition();
-    bat2->setPosition(sf::Vector2f(posBat2.x + 0.3, posBat2.y - 0.3));
+    const float bat2SpeedX = 18.0f; // pixels per second (0.3 * 60fps)
+    const float bat2SpeedY = -18.0f; // pixels per second (-0.3 * 60fps)
+    bat2->setPosition(sf::Vector2f(posBat2.x + bat2SpeedX * deltaTime, posBat2.y + bat2SpeedY * deltaTime));
     batManager2->update(deltaTime);
 
     // Cloud things
@@ -577,7 +580,8 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
     walkingAnimSprites.pop_back();
 
     sf::Vector2f posCloud = cloud.getPosition();
-    cloud.setPosition(sf::Vector2f(posCloud.x - 0.25, posCloud.y));
+    const float cloudSpeedX = -15.0f; // pixels per second (-0.25 * 60fps)
+    cloud.setPosition(sf::Vector2f(posCloud.x + cloudSpeedX * deltaTime, posCloud.y));
 
     walkingAnimSprites.push_back(cloud);
 }
@@ -2847,14 +2851,15 @@ void InitAnimationGS::handleInput(sf::Event event){
 void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
     timer += deltaTime;
 
+    // --- Warning blink ---
     float alphaMin = 25.f;
     float alphaMax = 125.f;
     float amplitude = (alphaMax - alphaMin) / 2.f;
     float midpoint = (alphaMax + alphaMin) / 2.f;
-    float speed = 2.f; // velocidad del parpadeo
+    float speed = 2.f; // blink speed
 
-    float oscillation = std::sin(timer * speed); // varía entre -1 y 1
-    float alpha = midpoint + amplitude * oscillation; // varía entre 25 y 125
+    float oscillation = std::sin(timer * speed); // between -1 and 1
+    float alpha = midpoint + amplitude * oscillation; // between 25 and 125
 
     alpha = std::clamp(alpha, 25.f, 125.f);
     warning[0].setFillColor(sf::Color(255, 255, 255, alpha));
@@ -2865,6 +2870,13 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
         resetMovingSprites();
     }
 
+    const float moveSpeed = 60.f;        // 1px per frame 60fps -> 60px per second
+    const float moveHalfSpeed = 30.f;     // 0.5px per frame 60fps -> 30px per second
+    const float fumeSpeed = 60.f;
+    const float whipSpeed = 60.f;
+    const float belmontReturnSpeed = 60.f;
+    const float draculaRetreatSpeed = 60.f;
+
     switch (slide){
         case 1:{
             // Move Dracula
@@ -2872,16 +2884,15 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
             sf::Vector2f pos = dracula.getPosition();
 
             if (pos.x < 0.f) {
-                pos.x += 1.f;
+                pos.x += moveSpeed * deltaTime;
                 if (pos.x > 0.f) pos.x = 0.f;
                 dracula.setPosition(pos);
             }
 
-            // Move fume
+            // Move Fume
             sf::Sprite& fume = initAnimationSprites[13];
             pos = fume.getPosition();
-
-            pos.x -= 1.f;
+            pos.x -= fumeSpeed * deltaTime;
             fume.setPosition(pos);
             break;
         }
@@ -2891,7 +2902,7 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
             sf::Sprite& belmont = initAnimationSprites[15];
             sf::Vector2f pos = belmont.getPosition();
 
-            pos.x -= 1.f;
+            pos.x -= moveSpeed * deltaTime;
             belmont.setPosition(pos);
             break;
         }
@@ -2902,7 +2913,7 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
             sf::Vector2f pos = hand.getPosition();
 
             if (pos.y > 242.f) {
-                pos.y -= 0.5f;
+                pos.y -= moveHalfSpeed * deltaTime;
                 if (pos.y < 242.f) pos.y = 242.f;
                 hand.setPosition(pos);
             }
@@ -2910,39 +2921,37 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
         }
 
         case 4:{
+            // Move Fume
             sf::Sprite& fume = initAnimationSprites[13];
             sf::Vector2f pos = fume.getPosition();
-
-            pos.x -= 1.f;
+            pos.x -= fumeSpeed * deltaTime;
             fume.setPosition(pos);
-            
+
+            // Move Whip
             sf::Sprite& whip = initAnimationSprites[17];
             pos = whip.getPosition();
-            float max = (gWindowWidth - pos.x) / 2;
+            float max = (gWindowWidth - pos.x) / 2.0f;
 
-            if(pos.x < max){
-                pos.x += 1.f;
+            if (pos.x < max) {
+                pos.x += whipSpeed * deltaTime;
                 if (pos.x > max) pos.x = max;
                 whip.setPosition(pos);
             }
-            
             break;
         }
         
         case 5:{
-            // Move fume
+            // Move Fume
             sf::Sprite& fume = initAnimationSprites[13];
             sf::Vector2f pos = fume.getPosition();
-
-            pos.x -= 1.f;
+            pos.x -= fumeSpeed * deltaTime;
             fume.setPosition(pos);
 
             // Move Belmont
             sf::Sprite& belmont = initAnimationSprites[15];
             pos = belmont.getPosition();
-
-            if(pos.x < 165.f){
-                pos.x += 1.f;
+            if (pos.x < 165.f) {
+                pos.x += belmontReturnSpeed * deltaTime;
                 if (pos.x > 165.f) pos.x = 165.f;
                 belmont.setPosition(pos);
             }
@@ -2950,19 +2959,18 @@ void InitAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, 
             // Move Dracula
             sf::Sprite& dracula = initAnimationSprites[10];
             pos = dracula.getPosition();
-
             if (pos.x > 400.f) {
-                pos.x -= 1.f;
+                pos.x -= draculaRetreatSpeed * deltaTime;
                 if (pos.x < 400.f) pos.x = 400.f;
                 dracula.setPosition(pos);
             }
-        
+
+            // Fading out music
             if (fadingOutMusic && currentMusicVolume > 0.f) {
                 currentMusicVolume -= fadeOutSpeed * deltaTime;
                 if (currentMusicVolume < 0.f) currentMusicVolume = 0.f;
                 initAnimSounds.adjustAllMusicVolumes(currentMusicVolume);
             }
-        
             break;
         }
 

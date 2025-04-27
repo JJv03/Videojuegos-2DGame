@@ -8,6 +8,7 @@
 #include "item.h"
 #include "tile.h"
 #include "collisionGrid.h"
+#include "configManager.h"
 #include <set>
 
 class PlayerState;
@@ -180,6 +181,7 @@ public:
     PlayerDirection dir;
 
     bool acceptsInput;
+    configManager &configManager;
 
     bool isOnStairs;
     bool isAttacking;
