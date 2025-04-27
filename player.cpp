@@ -7,7 +7,7 @@
 #include "enemies/projectile.h"
 #include <cmath>
 
-Player::Player()
+Player::Player():configManager(configManager::getInstance())
 {
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
@@ -124,40 +124,49 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->stairStart = new StairTile();
 
     if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip){
-        if (this->isInvulnerable && !this->isInvisible)
-        {
-            this->blinkTimer += deltaTime;
-            if (this->blinkTimer >= this->blinkInterval) {
-                this->visible = !this->visible; // Toggle visibility
-                this->blinkTimer = 0.0f; // Reset the timer
-                this->sprite->setColor(this->visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+        
+        if(configManager.getCheats().enabled){
+            this->sprite->setColor(sf::Color(255, 255, 255, 128));
+            this->isInvulnerable=true;
+        }
+        else{
+            if (this->isInvulnerable && !this->isInvisible)
+            {
+                this->blinkTimer += deltaTime;
+                if (this->blinkTimer >= this->blinkInterval) {
+                    this->visible = !this->visible; // Toggle visibility
+                    this->blinkTimer = 0.0f; // Reset the timer
+                    this->sprite->setColor(this->visible ? sf::Color::White : sf::Color(255, 255, 255, 128));
+                }
+                
+                if (this->invulnerableTimeCounter >= this->invulnerableTime) {
+                    this->isInvulnerable = false;
+                    this->startInvulnerable = false;
+                    this->visible = true; // Ensure the player is visible after invulnerability ends
+                    this->invulnerableTimeCounter = 0.0f; // Reset the counter
+                    this->sprite->setColor(sf::Color::White);
+                } else {
+                    this->invulnerableTimeCounter += deltaTime;
+                }
             }
-            
-            if (this->invulnerableTimeCounter >= this->invulnerableTime) {
-                this->isInvulnerable = false;
-                this->startInvulnerable = false;
-                this->visible = true; // Ensure the player is visible after invulnerability ends
-                this->invulnerableTimeCounter = 0.0f; // Reset the counter
-                this->sprite->setColor(sf::Color::White);
-            } else {
-                this->invulnerableTimeCounter += deltaTime;
+            else if (this->isInvisible)
+            {
+                if (this->invisibilityTimeCounter >= this->invisibilityTime) {
+                    playSound("invisibility_off");
+                    this->isInvulnerable = false;
+                    this->startInvulnerable = false;
+                    this->isInvisible = false;
+                    this->visible = true; // Ensure the player is visible after invulnerability ends
+                    this->invisibilityTimeCounter = 0.0f; // Reset the counter
+                    this->sprite->setColor(sf::Color::White);
+                } else {
+                    this->sprite->setColor(sf::Color(255, 255, 255, 128));
+                    this->invisibilityTimeCounter += deltaTime;
+                }
             }
         }
-        else if (this->isInvisible)
-        {
-            if (this->invisibilityTimeCounter >= this->invisibilityTime) {
-                playSound("invisibility_off");
-                this->isInvulnerable = false;
-                this->startInvulnerable = false;
-                this->isInvisible = false;
-                this->visible = true; // Ensure the player is visible after invulnerability ends
-                this->invisibilityTimeCounter = 0.0f; // Reset the counter
-                this->sprite->setColor(sf::Color::White);
-            } else {
-                this->sprite->setColor(sf::Color(255, 255, 255, 128));
-                this->invisibilityTimeCounter += deltaTime;
-            }
-        }
+        
+        
         
     }
 
