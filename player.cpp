@@ -689,9 +689,8 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 this->subWeapon.verticalSpeed += gPlayerGravity * deltaTime;
                 this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
                 // Check if it collides, if so, explode
-                
                 this->subWeapon.isExploding = false;
-
+                this->subWeapon.collisionedEntities.clear();
             }
             
             else
@@ -811,7 +810,7 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
                 // Check if it collides, if so, explode
                 
                 this->subWeapon2.isExploding = false;
-
+                this->subWeapon.collisionedEntities.clear();
             }
             
             else
@@ -836,6 +835,7 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
                     this->subWeapon2.sprite->getPosition().x -10  <= viewPosition.x  ) && !this->subWeapon2.changedDirection) { 
                 this->subWeapon2.changedDirection = true;
                 this->subWeapon2.horizontalSpeed = -this->subWeapon2.horizontalSpeed;
+                this->subWeapon.collisionedEntities.clear();
             }
             this->subWeapon2.sprite->move((this->subWeapon2.direction == RIGHT) ? sf::Vector2f(this->subWeapon2.horizontalSpeed*deltaTime, 0.f) : sf::Vector2f(-this->subWeapon2.horizontalSpeed*deltaTime, 0.f)); 
             if (this->subWeapon2.animationManager && !this->subWeapon2.animationManager->isPlaying(boomerangThrowing)){
