@@ -547,12 +547,13 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
 
     // Simon things
     sf::Vector2f posSimon = simon->getPosition();
-    if (posSimon.x <= 186){
+    const float simonSpeed = 60.0f; // píxeles por segundo (puedes ajustar)
+    
+    if (posSimon.x <= 186) {
         simon->setPosition(sf::Vector2f(186, posSimon.y));
         simonManager->playAnimation(idleSimon);
-    }
-    else{
-        simon->setPosition(sf::Vector2f(posSimon.x - 1, posSimon.y));
+    } else {
+        simon->setPosition(sf::Vector2f(posSimon.x - simonSpeed * deltaTime, posSimon.y));
     }
     simonManager->update(deltaTime);
 
@@ -569,7 +570,9 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
     batManager1->update(deltaTime);
 
     sf::Vector2f posBat2 = bat2->getPosition();
-    bat2->setPosition(sf::Vector2f(posBat2.x + 0.3, posBat2.y - 0.3));
+    const float bat2SpeedX = 18.0f; // pixels per second (0.3 * 60fps)
+    const float bat2SpeedY = -18.0f; // pixels per second (-0.3 * 60fps)
+    bat2->setPosition(sf::Vector2f(posBat2.x + bat2SpeedX * deltaTime, posBat2.y + bat2SpeedY * deltaTime));
     batManager2->update(deltaTime);
 
     // Cloud things
@@ -577,7 +580,8 @@ void walkingAnimGS::update(float deltaTime, const sf::Vector2f& viewPosition, bo
     walkingAnimSprites.pop_back();
 
     sf::Vector2f posCloud = cloud.getPosition();
-    cloud.setPosition(sf::Vector2f(posCloud.x - 0.25, posCloud.y));
+    const float cloudSpeedX = -15.0f; // pixels per second (-0.25 * 60fps)
+    cloud.setPosition(sf::Vector2f(posCloud.x + cloudSpeedX * deltaTime, posCloud.y));
 
     walkingAnimSprites.push_back(cloud);
 }

@@ -190,7 +190,7 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect 
     bool isClose = distance < 65;
     if(isOn && !triedAI && isClose && (gIsWhipBeingUsed || gIsSubWeaponBeingUsed)){
         triedAI = true;     // To prevent permatrying
-        int chance = rand() % 2;
+        int chance = rand() % 3;
         if(chance == 0){ // Meter factor cercanía del jugador
             // std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
             enhancedActivated = true;
