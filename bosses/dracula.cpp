@@ -774,8 +774,8 @@ bool Dracula::deadMaskAnimation(float deltaTime, const sf::FloatRect &mapBounds)
     if (mapBounds.findIntersection(sprite->getGlobalBounds()).has_value())
     { 
         maskVerticalSpeed += gPlayerGravity * deltaTime * 2.5f;
-        if(isPlayerRight) sprite->move({-MASK_HORIZONTAL_SPEED, maskVerticalSpeed * deltaTime});
-        else sprite->move({MASK_HORIZONTAL_SPEED, maskVerticalSpeed * deltaTime});
+        if(isPlayerRight) sprite->move({-MASK_HORIZONTAL_SPEED * deltaTime, maskVerticalSpeed * deltaTime});
+        else sprite->move({MASK_HORIZONTAL_SPEED * deltaTime, maskVerticalSpeed * deltaTime});
         return false;    
     } else { // Mask exits screen
         return true;

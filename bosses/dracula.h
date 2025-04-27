@@ -64,7 +64,7 @@ private:
     const float DEAD_TIME = 2.f;
     float deadTimeCounter;
 
-    const float MASK_HORIZONTAL_SPEED = 2.f;
+    const float MASK_HORIZONTAL_SPEED = 125.f;
     const float MASK_VERTICAL_SPEED = 410.f;
     float maskVerticalSpeed; // For dead animation
 
