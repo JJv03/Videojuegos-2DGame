@@ -382,25 +382,36 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         switch(aux_CurrentLevel)
         {
             case 1:
-                currentLevel = 7;
+                gStartingLevel = 7;
+                currentLevel = gStartingLevel;
                 currentStage = 1;
+                gStartingStage = currentStage;
                 break;
             case 7:
                 std::cout << "Animation of the end of the game" << std::endl;
                 goBack = true;
                 gStartingLevel = 1;
+                currentLevel = gStartingLevel;
                 gStartingStage = 1;
-                return;
+                currentStage = gStartingStage;
+                break;
             default:
                 std::cout << "No more levels" << std::endl;
                 break;
         }
+
+        // Reset variables, flags and entities to start next level
         resetEndLevelScoreAnimation();
         gGoToNextLevel = false;
-        tilemaps.loadLevel(currentLevel);
         time = 300;
         updateGUITime();
+        
+        tilemaps.loadLevel(currentLevel);
+        enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+        bossManager->loadBossesFromLevel(currentLevel, tilemaps);
         startStage(currentStage);
+
+        if (aux_CurrentLevel == 7 && gStartingLevel == 1) return;
     }
 
 

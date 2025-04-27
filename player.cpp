@@ -677,6 +677,8 @@ void Player::hello() const {
 }
 
 void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition) {
+    //static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
+
     if (!this->weaponIsActive)
     {
         return;
@@ -700,7 +702,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 this->subWeapon.sprite->move(sf::Vector2f(0.f, this->subWeapon.verticalSpeed * deltaTime));
                 // Check if it collides, if so, explode
                 this->subWeapon.isExploding = false;
-                this->subWeapon.collisionedEntities.clear();
+                //this->subWeapon.collisionedEntities.clear();
             }
             
             else
@@ -709,10 +711,15 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(fireBombThrowing)) {
                     this->subWeapon.animationManager->playAnimation(fireBombThrowing);
                 }
+                // if (!hasExplodedOnce){
+                //     this->subWeapon.collisionedEntities.clear();
+                //     hasExplodedOnce = true;
+                // }
                 this->subWeapon.animationManager->update(deltaTime);
                 if (this->subWeapon.animationManager->isAnimationFinished()){
                     //std::cout << "Fire bomb finished exploding" << std::endl;
                     this->subWeapon.isExploding = true;
+                    // hasExplodedOnce = false;
                 }
                 
             }
@@ -797,6 +804,8 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
 }
 
 void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPosition) {
+    //static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
+
     if (!this->weaponIsActive2)
     {
         return;
@@ -820,7 +829,6 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
                 // Check if it collides, if so, explode
                 
                 this->subWeapon2.isExploding = false;
-                this->subWeapon.collisionedEntities.clear();
             }
             
             else
@@ -830,9 +838,14 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
                     this->subWeapon2.animationManager->playAnimation(fireBombThrowing);
                 }
                 this->subWeapon2.animationManager->update(deltaTime);
+                // if (!hasExplodedOnce){
+                //     this->subWeapon.collisionedEntities.clear();
+                //     hasExplodedOnce = true;
+                // }
                 if (this->subWeapon2.animationManager->isAnimationFinished()){
                     //std::cout << "Fire bomb finished exploding" << std::endl;
                     this->subWeapon2.isExploding = true;
+                    //hasExplodedOnce = false;
                 }
                 
             }
@@ -950,7 +963,7 @@ void Whip::onCollision(Entity &other, Game &game)
         }
         else if (dynamic_cast<Boss *>(&other))
         {
-            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            //game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
@@ -1017,7 +1030,7 @@ void SubWeapon::onCollision(Entity &other, Game &game)
         }
         else if (dynamic_cast<Boss *>(&other))
         {
-            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            //game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             playSound("strong_enemy_hit");
             if(this->type == ItemType::DAGGER){
                 this->intersected = true;
