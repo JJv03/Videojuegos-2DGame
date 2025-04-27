@@ -304,25 +304,30 @@ void Game::handleInput(sf::Event event)
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
-    if (gTriggerEndLvlScoreAnimation && !gPlayEndLvlScoreAnimation) {     // Prepare for end level score animation
+    if (gTriggerEndLvlScoreAnimation && !gPlayEndLvlScoreAnimation)
+    { // Prepare for end level score animation
 
-        if (!m_playedVictoryMusic) {
+        if (!m_playedVictoryMusic)
+        {
             gameSoundManager.stopAllMusic();
             auto audio = configManager.getAudio();
             gameSoundManager.playMusic("victoryBoss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
             m_playedVictoryMusic = true;
         }
-        
+
         m_endLvlAnimationCoundown -= deltaTime;
-        if (m_endLvlAnimationCoundown <= 0.f) {
+        if (m_endLvlAnimationCoundown <= 0.f)
+        {
             gPlayEndLvlScoreAnimation = true;
         }
     }
 
-    if (!gPlayEndLvlScoreAnimation) {
+    if (!gPlayEndLvlScoreAnimation)
+    {
         player.update(deltaTime, viewPosition, windowHasFocus);
     }
-    else {
+    else
+    {
         player.update(0.f, viewPosition, windowHasFocus);
     }
 
@@ -499,7 +504,7 @@ void Game::endLevelScoreAnimation(const float deltaTime)
     static float countdownToPlayTimeTally = gTIME_POINTS_SFX_FRECUENCY;
     static float countdownToPlayHeartTally = gHEARTS_SFX_FRECUENCY;
     static bool playTimeTallyToggle = true;
-    
+
     bool timeSoundPlayedOnce = false;
     bool heartSoundPlayedOnce = false;
 
@@ -512,12 +517,14 @@ void Game::endLevelScoreAnimation(const float deltaTime)
             player.score += 10;
             m_endLvlAnimation_TimeScoreAccumulator -= (1.f / gTIME_POINTS_PER_SECOND);
         }
-        
+
         countdownToPlayTimeTally -= deltaTime;
-        if (countdownToPlayTimeTally <= 0.f) {
+        if (countdownToPlayTimeTally <= 0.f)
+        {
             countdownToPlayTimeTally = gTIME_POINTS_SFX_FRECUENCY;
 
-            if (playTimeTallyToggle) {      // Only play the sound once every 2 times
+            if (playTimeTallyToggle)
+            { // Only play the sound once every 2 times
                 auto audio = configManager.getAudio();
                 gameSoundManager.playSound("time_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
                 timeSoundPlayedOnce = true;
@@ -527,7 +534,8 @@ void Game::endLevelScoreAnimation(const float deltaTime)
         }
 
         // If "time_tally" was never played and we are about to finish, we play it once
-        if (time == 0 && !timeSoundPlayedOnce) {
+        if (time == 0 && !timeSoundPlayedOnce)
+        {
             auto audio = configManager.getAudio();
             gameSoundManager.playSound("time_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
@@ -542,7 +550,8 @@ void Game::endLevelScoreAnimation(const float deltaTime)
             countdownToPlayHeartTally--;
             m_endLvlAnimation_HeartScoreAccumulator -= (1.f / gHEARTS_PER_SECOND);
 
-            if (countdownToPlayHeartTally <= 0.f) {
+            if (countdownToPlayHeartTally <= 0.f)
+            {
                 auto audio = configManager.getAudio();
                 gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
                 countdownToPlayHeartTally = gHEARTS_SFX_FRECUENCY;
@@ -550,8 +559,8 @@ void Game::endLevelScoreAnimation(const float deltaTime)
             }
         }
 
-
-        if (player.hearts == 0 && !heartSoundPlayedOnce) {
+        if (player.hearts == 0 && !heartSoundPlayedOnce)
+        {
             auto audio = configManager.getAudio();
             gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
@@ -579,7 +588,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0)
             {
                 sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * gTileSize,
-                                                tilemaps[currentLevel].m_tilesPerColumn * gTileSize});
+                                                            tilemaps[currentLevel].m_tilesPerColumn * gTileSize});
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();
@@ -866,6 +875,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
             ((tilemaps[currentStage].bossPosition == BossPos::BOSS_RIGHT && hasReachedEndStage) ||
              (tilemaps[currentStage].bossPosition == BossPos::BOSS_LEFT && hasReachedStartStage)))
         {
+            enemyManager->restartEnemies(currentLevel, currentStage);
+
             isInBossFight = true;
             currentBossPhase = 1;
 

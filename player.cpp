@@ -80,10 +80,11 @@ Player::Player()
     // Doube Shot
     weaponIsActive2 = false;
     isDoubleShotActive = false;
+    timeDoubleShotActiveCounter = 0.0f;
     delayBetweenShots = 1.5f; // 0.5 segs
     delayBetweenShotsCounter = 0.0f;
     timeDoubleShotActive = 10.0f; // 5 segs
-    timeDoubleShotActiveCounter = 0.0f;
+    
 }
 
 void Player::handleInput(sf::Event event)
@@ -561,12 +562,20 @@ void Player::onCollision_Item(Entity &entityItem)
     if (isSubweaponItem(itemType))
     {
         playSound("other_item_pick");
-        this->subWeaponType = itemType;
-        if (this->subWeaponType!= ItemType::STOPWATCH)
+        if (this->subWeaponType== ItemType::NONE )
         {
-            this->isDoubleShotActive = false;
-            this->timeDoubleShotActiveCounter = 0.f;
+            this->subWeaponType = itemType;
         }
+        else{
+            this->subWeaponType = itemType;
+            if (this->subWeaponType!= ItemType::STOPWATCH )
+            {
+                this->isDoubleShotActive = false;
+                this->timeDoubleShotActiveCounter = 0.f;
+            }
+        }
+        
+        
         
     }
     else if (itemType == ItemType::MORNING_STAR)
