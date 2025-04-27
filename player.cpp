@@ -988,53 +988,52 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 
 void SubWeapon::onCollision(Entity &other, Game &game)
 {
-    
-    if (dynamic_cast<Enemy *>(&other))
-    {
-        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-        playSound("whip_hit");
-        //std::cout << "SubWeapon colision" << std::endl;
-        if(this->type == ItemType::DAGGER){
-            this->intersected = true;
-        }
-        
-    }
-    else if (dynamic_cast<Boss *>(&other))
-    {
-        game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-        playSound("strong_enemy_hit");
-        if(this->type == ItemType::DAGGER){
-            this->intersected = true;
-        }
-    }
-    else if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
-    {
-        //std::cout << "SubWeapon colision solid" << std::endl;
-        if (this->onCollision_SolidTile(other))
+    if (!this->collisionedEntities.contains(&other)) {  
+        if (dynamic_cast<Enemy *>(&other))
         {
-            if(!this->intersectedBomb){
-                playSound("firebomb");
+            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            playSound("whip_hit");
+            //std::cout << "SubWeapon colision" << std::endl;
+            if(this->type == ItemType::DAGGER){
+                this->intersected = true;
             }
+            
+        }
+        else if (dynamic_cast<Boss *>(&other))
+        {
+            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            playSound("strong_enemy_hit");
+            if(this->type == ItemType::DAGGER){
+                this->intersected = true;
+            }
+        }
+        else if (dynamic_cast<SolidTile *>(&other) && this->type == ItemType::FIRE_BOMB && !this->intersectedBomb)
+        {
+            //std::cout << "SubWeapon colision solid" << std::endl;
+            if (this->onCollision_SolidTile(other))
+            {
+                if(!this->intersectedBomb){
+                    playSound("firebomb");
+                }
 
-            this->intersectedBomb = true;
+                this->intersectedBomb = true;
+            }
+        }
+        else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
+        {
+            if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
+                if(this->type != ItemType::FIRE_BOMB){
+                    game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                    playSound("whip_hit");
+                    if(this->type == ItemType::DAGGER){
+                        this->intersected = true;
+                    }
+                }
+                
+                
+            }   
         }
     }
-    else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
-    {
-        if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
-            if(this->type != ItemType::FIRE_BOMB){
-                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-                playSound("whip_hit");
-                if(this->type == ItemType::DAGGER){
-                    this->intersected = true;
-                }
-            }
-            
-            
-        }   
-    }
-    
- 
 }
 
 bool SubWeapon::onCollision_SolidTile(Entity &solidTile) {
