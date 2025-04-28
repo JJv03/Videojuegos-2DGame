@@ -452,7 +452,7 @@ bool Dracula::shouldAttack(const Player& player) {
     if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) < DISTANCE_TOO_CLOSE){    // If too close, maybe attack
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
         std::cout << "ShouldAttack: Too close" << std::endl;
-        return !(dis(rng) < PROB_MID);
+        return dis(rng) < PROB_MID;
     }
 
     if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) > DISTANCE_TOO_FAR){      // If too far, attack
