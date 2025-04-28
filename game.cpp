@@ -287,6 +287,9 @@ void Game::handleInput(sf::Event event)
                         gameSoundManager.stopAllMusic();
                         setLevelMusic(currentLevel);
                         player.acceptsInput = true;
+                        currentBossPhase = 0;
+                        enemyManager->restartEnemies(currentLevel, currentStage);
+                        bossManager->restartBosses(currentLevel, currentStage);
                         break;
                     case 1:
                         std::cout << "Going back to the menu" << std::endl;
@@ -296,6 +299,9 @@ void Game::handleInput(sf::Event event)
                         withOutLives = false;
                         position = 0;
                         goBack = true;
+                        currentBossPhase = 0;
+                        enemyManager->restartEnemies(currentLevel, currentStage);
+                        bossManager->restartBosses(currentLevel, currentStage);
                         // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
                         break;
                     }

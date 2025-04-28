@@ -632,11 +632,14 @@ void Dracula::resetPosition()
 
     timesPlayerHasNotSwitchedSides = 0;
 
-    currentState = DraculaState::ASLEEP;
-
+    attacksThisTime = 0;
+    attacksLastTime = 0;
+    
     for(auto& p : projectiles){
         if(p) p->reset();
     }
+
+    currentState = DraculaState::ASLEEP;
 
     applyMaskBodyAnimation(noAnimation);
 }
