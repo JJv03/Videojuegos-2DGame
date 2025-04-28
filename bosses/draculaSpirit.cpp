@@ -53,7 +53,7 @@ DraculaSpirit::DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
 // Update draculaSpirit logic: handle spawning, movement, and deactivation
 void DraculaSpirit::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds){
     // SPAWN LOGIC
-    if (!isActive && phase == 2 && !reproduced)
+    if (!isActive && phase == 2)
     {
         for (const auto &hitbox : hitboxes)
         {
@@ -61,12 +61,15 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             {
                 isActive = true;
                 maxLife = life;
-                reproduced = true;
-                this->currentState = DraculeSpiritState::IDLE;
-                gameSoundManager.stopAllMusic();
-                auto audio = configManager.getAudio();
-                gameSoundManager.playMusicSequence("dracula2.1", "dracula2.2", true, gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
-                break;
+                if(!reproduced){
+                    reproduced = true;
+                    this->currentState = DraculeSpiritState::IDLE;
+                    gameSoundManager.stopAllMusic();
+                    auto audio = configManager.getAudio();
+                    gameSoundManager.playMusicSequence("dracula2.1", "dracula2.2", true, gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+                
+                }
+                 break;
             }
         }
     }
@@ -211,10 +214,27 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                 }
                 else{
-                    this->speed.x = 0.f;
+                    if (this->speed.x == 0.f)
+                    {
+                        if (this->directionFlying == 1)
+                        {
+                            this->directionFlying = -1;
+                        }
+                        else{
+                            this->directionFlying = 1;
+                        }
+                        
+                        this->speed.x = 80.f * deltaTime; 
+                    }
+                    else{
+                        this->speed.x = 0.f;
+                    }
                     
+                    
+                
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
-                    this->directionFlying = !this->directionFlying;
+
+                    //this->directionFlying ?
                 }
                 
 
@@ -423,17 +443,17 @@ void DraculaSpirit::draw(sf::RenderWindow &window)
     {
         Boss::draw(window);
     }
-    if (projectile && projectile->getActive())
+    if (projectile && projectile->getActive() && isActive )
     {
         //std::cout << "P1 " << projectile->sprite->getPosition().x  << "  " << projectile->sprite->getPosition().y << std::endl;
         projectile->draw(window);
     }
-    if (projectile2 && projectile2->getActive())
+    if (projectile2 && projectile2->getActive() && isActive)
     {
         //std::cout << "P2 " << projectile2->sprite->getPosition().x  << "  " << projectile2->sprite->getPosition().y << std::endl;
         projectile2->draw(window);
     }
-    if (projectile3 && projectile3->getActive())
+    if (projectile3 && projectile3->getActive() && isActive)
     {
         //std::cout << "P3 " << projectile3->sprite->getPosition().x  << "  " << projectile3->sprite->getPosition().y << std::endl;
         projectile3->draw(window);
