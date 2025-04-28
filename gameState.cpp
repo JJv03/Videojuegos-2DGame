@@ -134,11 +134,13 @@ void GameGS::init(){
 }
 
 void GameGS::handleInput(sf::Event event){
-    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_ESC)
-        {
-            stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
-            return;
+    if(!gPlayEndLvlScoreAnimation){
+        if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == KEY_ESC)
+            {
+                stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
+                return;
+            }
         }
     }
 

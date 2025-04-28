@@ -263,51 +263,53 @@ void Game::handleInput(sf::Event event)
         }
         else
         {
-            auto controls = configManager.getControls();
-            if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>())
-            {
-                if (keyPressed->scancode == controls.down && position < 1)
+            if(withOutLives){
+                auto controls = configManager.getControls();
+                if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>())
                 {
-                    position++;
-                }
-
-                if (keyPressed->scancode == controls.up && position > 0)
-                {
-                    position--;
-                }
-
-                if (keyPressed->scancode == controls.enter)
-                {
-                    switch (position)
+                    if (keyPressed->scancode == controls.down && position < 1)
                     {
-                    case 0:
-                        std::cout << "Let's play again" << std::endl;
-                        withOutLives = false;
-                        position = 0;
-                        gameSoundManager.stopAllMusic();
-                        setLevelMusic(currentLevel);
-                        player.acceptsInput = true;
-                        currentBossPhase = 0;
-                        enemyManager->restartEnemies(currentLevel, currentStage);
-                        bossManager->restartBosses(currentLevel, currentStage);
-                        break;
-                    case 1:
-                        std::cout << "Going back to the menu" << std::endl;
-                        // Reset of the game for story mode
-                        gStartingLevel = 1;
-                        gStartingStage = 1;
-                        withOutLives = false;
-                        position = 0;
-                        goBack = true;
-                        currentBossPhase = 0;
-                        enemyManager->restartEnemies(currentLevel, currentStage);
-                        bossManager->restartBosses(currentLevel, currentStage);
-                        // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
-                        break;
+                        position++;
                     }
-                }
 
-                std::cout << "Position:" << position << withOutLives << std::endl;
+                    if (keyPressed->scancode == controls.up && position > 0)
+                    {
+                        position--;
+                    }
+
+                    if (keyPressed->scancode == controls.enter)
+                    {
+                        switch (position)
+                        {
+                        case 0:
+                            std::cout << "Let's play again" << std::endl;
+                            withOutLives = false;
+                            position = 0;
+                            gameSoundManager.stopAllMusic();
+                            setLevelMusic(currentLevel);
+                            player.acceptsInput = true;
+                            currentBossPhase = 0;
+                            enemyManager->restartEnemies(currentLevel, currentStage);
+                            bossManager->restartBosses(currentLevel, currentStage);
+                            break;
+                        case 1:
+                            std::cout << "Going back to the menu" << std::endl;
+                            // Reset of the game for story mode
+                            gStartingLevel = 1;
+                            gStartingStage = 1;
+                            withOutLives = false;
+                            position = 0;
+                            goBack = true;
+                            currentBossPhase = 0;
+                            enemyManager->restartEnemies(currentLevel, currentStage);
+                            bossManager->restartBosses(currentLevel, currentStage);
+                            // stateMachine->replaceState(std::make_unique<levelSelectorGS>(stateMachine));
+                            break;
+                        }
+                    }
+
+                    std::cout << "Position:" << position << withOutLives << std::endl;
+                }
             }
         }
     }
