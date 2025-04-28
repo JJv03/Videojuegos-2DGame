@@ -72,6 +72,12 @@ public:
     // Updates in-game GUI time with <time> attribute
     void updateGUITime();
 
+    // Prepares level variables to start a level
+    void prepareVariablesForLevel();
+
+    // Loads the level in the tilemap and the enemies
+    void loadLevelAndEnemies();
+
     // Renders the game
     void draw(sf::RenderWindow &window, Camera &camera);
 

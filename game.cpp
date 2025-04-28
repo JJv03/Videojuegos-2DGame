@@ -47,6 +47,7 @@ void Game::init()
     loadSounds();
 
     tilemaps.loadLevel(currentLevel);
+    prepareVariablesForLevel();
 
     // Simon ----------------------------------------------------------------
     // Load item textures
@@ -408,16 +409,11 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
                 break;
         }
 
-        // Reset variables, flags and entities to start next level
-        resetEndLevelScoreAnimation();
-        gGoToNextLevel = false;
+        // Reset variables, flags and loads entities and the map to start next level
+        prepareVariablesForLevel();
         time = 300;
         updateGUITime();
-        
-        tilemaps.loadLevel(currentLevel);
-        enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
-        bossManager->loadBossesFromLevel(currentLevel, tilemaps);
-        startStage(currentStage);
+        loadLevelAndEnemies();
 
         if (aux_CurrentLevel == 7 && gStartingLevel == 1) return;
     }
@@ -544,6 +540,18 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         }
         gKilledBoss = false;
     }
+}
+
+void Game::prepareVariablesForLevel() {
+    resetEndLevelScoreAnimation();
+    gGoToNextLevel = false;
+}
+
+void Game::loadLevelAndEnemies() {
+    tilemaps.loadLevel(currentLevel);
+    enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+    bossManager->loadBossesFromLevel(currentLevel, tilemaps);
+    startStage(currentStage);
 }
 
 void Game::updateGUITime()
