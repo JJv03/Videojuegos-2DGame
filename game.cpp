@@ -798,10 +798,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         // PLAYER and ENTITIES =====================================
 
-        player.draw(window);
-
         enemyManager->draw(window, currentLevel, currentStage);
         bossManager->draw(window, currentLevel, currentStage);
+        
+        player.draw(window);
 
         if (withOutLives)
         {
