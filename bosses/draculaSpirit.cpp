@@ -209,27 +209,13 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 alreadyFlying = true;
                 this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
-                if( map.x + size.x -62.f >= position.x + this->directionFlying * this->speed.x &&
-                    map.x + 10.f  <= position.x + this->directionFlying * this->speed.x){
+                if( map.x + size.x -62.f > position.x + this->directionFlying * this->speed.x &&
+                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x){
                         sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                 }
                 else{
-                    if (this->speed.x == 0.f)
-                    {
-                        if (this->directionFlying == 1)
-                        {
-                            this->directionFlying = -1;
-                        }
-                        else{
-                            this->directionFlying = 1;
-                        }
-                        
-                        this->speed.x = 80.f * deltaTime; 
-                    }
-                    else{
-                        this->speed.x = 0.f;
-                    }
-                    
+
+                    this->speed.x=0.f;
                     
                 
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
@@ -247,7 +233,6 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
                 if(sprite->getPosition().y >= 155.0f) {
-                    sprite->move(sf::Vector2f(0.f, 1.0f));
                     
                     this->currentState = DraculeSpiritState::LANDING;
                 }
