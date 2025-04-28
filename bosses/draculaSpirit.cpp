@@ -99,9 +99,9 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             }
         }
 
-        int chance = rand() % 5;
+        int chance = rand() % 3;
         int chanceFlying = rand() % 2;
-        int chanceDodging = rand() % 5;
+        int chanceDodging = rand() % 3;
         switch(currentState){
             case DraculeSpiritState::ASLEEP:
                 //std::cout << "sleep" << std::endl;
@@ -212,7 +212,9 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 else{
                     this->speed.x = 0.f;
+                    
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
+                    this->directionFlying = !this->directionFlying;
                 }
                 
 
@@ -224,8 +226,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
-                if(sprite->getPosition().y >= 153.0f) {
-                    //sprite->move(sf::Vector2f(0.f, 1.0f));
+                if(sprite->getPosition().y >= 155.0f) {
+                    sprite->move(sf::Vector2f(0.f, 1.0f));
                     
                     this->currentState = DraculeSpiritState::LANDING;
                 }
