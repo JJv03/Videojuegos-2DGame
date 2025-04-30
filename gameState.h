@@ -343,6 +343,9 @@ private:
 
     bool startCredits = false;
     bool musicStarted = false;
+
+    float waitElapsedTime = 0.f;
+    const float waitDuration = 2.f;
 public:
     explicit CreditsAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~CreditsAnimationGS() override;

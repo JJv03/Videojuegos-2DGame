@@ -41,6 +41,7 @@ void Game::init()
     withOutLives = false;
     isInBossFight = false;
     goBack = false;
+    goToEndAnimation = false;
 
     // Music and sounds
     loadMusic();
@@ -398,7 +399,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
                 break;
             case 7:
                 std::cout << "Animation of the end of the game" << std::endl;
-                goBack = true;
+                goToEndAnimation = true;
                 gStartingLevel = 1;
                 currentLevel = gStartingLevel;
                 gStartingStage = 1;

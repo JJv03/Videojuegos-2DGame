@@ -155,6 +155,12 @@ void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool wind
         stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
         goBack = false;
     }
+
+    if(goToEndAnimation){
+        gameSoundManager.stopAllMusic();
+        stateMachine->replaceState(std::make_unique<CreditsAnimationGS>(stateMachine));
+        goToEndAnimation = false;
+    }
 }
 
 void GameGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -3398,6 +3404,7 @@ void CreditsAnimationGS::init(){
     startCredits = false;
     castleSoundTimer = 0.f;
     musicStarted = false;
+    waitElapsedTime = 0.f;
 
     // CASTLE
     sf::Image base;
@@ -3528,7 +3535,6 @@ void CreditsAnimationGS::init(){
     creditsAnimSounds.loadMusic("creditsAnimMusic", "./assets/music/12Voyager.mp3");
     creditsAnimSounds.loadSound("explosion1", "./assets/sounds/31.wav");
     creditsAnimSounds.loadSound("explosion2", "./assets/sounds/32.wav");
-    // creditsAnimSounds.playMusic("creditsAnimMusic", creditsAnimSounds.realVolume(audio.master_volume, audio.music_volume));
 }
 
 void CreditsAnimationGS::handleInput(sf::Event event){
@@ -3582,6 +3588,13 @@ void CreditsAnimationGS::update(float deltaTime, const sf::Vector2f& viewPositio
             creditsManager->playAnimation(creditsMovement);
             creditsAnimSounds.playMusic("creditsAnimMusic", creditsAnimSounds.realVolume(audio.master_volume, audio.sound_volume), false);
             musicStarted = true;
+        }
+    }
+
+    if(musicStarted && creditsAnimSounds.musicHasFinished("creditsAnimMusic")){
+        waitElapsedTime += deltaTime;
+        if(waitDuration >= waitDuration){
+            stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
         }
     }
 }

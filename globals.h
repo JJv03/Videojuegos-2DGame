@@ -113,6 +113,7 @@ extern bool gKilledBoss;
 // ============ GAME VARIABLES ============
 extern SoundManager gameSoundManager;
 extern bool goBack;     // Flag to go back from game
+extern bool goToEndAnimation;
 
 extern const float gEND_LVL_ANIMATION_COUNDOWN;    // Time until the end level animation begins to play
 extern bool gTriggerEndLvlScoreAnimation;   // Flag to TRIGGER the end level score animation
