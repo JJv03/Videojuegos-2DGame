@@ -3469,52 +3469,52 @@ void CreditsAnimationGS::init(){
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 1), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 1), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 1), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 1), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 1), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 74), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 74), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 74), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 74), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 74), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 147), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 147), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 147), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 147), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 147), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 220), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 220), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 220), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 220), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 220), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 293), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 293), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 293), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 293), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 293), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 366), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 366), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 366), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 366), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 366), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 439), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 439), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 439), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 439), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 439), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 512), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 512), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 512), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 512), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 512), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 585), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 585), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 585), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 585), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 585), sf::Vector2i(128, 72)), 4.9f},
 
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 658), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 658), sf::Vector2i(128, 72)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 658), sf::Vector2i(128, 72)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 658), sf::Vector2i(128, 72)), 0.1f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 658), sf::Vector2i(128, 72)), 4.9f}
     };
 
     creditsManager = new AnimationManager(*cred);
