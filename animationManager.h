@@ -84,6 +84,9 @@ enum animationID{
 
     // Zoomed bat loop
     zoomedBat,
+
+    // Credits animation
+    creditsMovement,
 };
 
 

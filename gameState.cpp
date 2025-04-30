@@ -3393,6 +3393,12 @@ void CreditsAnimationGS::init(){
     this->m_viewSize.x = gMenuGS_size_x;
     this->m_viewSize.y = gMenuGS_size_y;
 
+    castleElapsedTime = 0.f;
+    startCastleMovement = false;
+    startCredits = false;
+    castleSoundTimer = 0.f;
+    musicStarted = false;
+
     // CASTLE
     sf::Image base;
     if (!base.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
@@ -3424,6 +3430,18 @@ void CreditsAnimationGS::init(){
     back.setPosition(sf::Vector2f(xPosition, yPosition));
 
     creditsAnimationSprites.push_back(back);
+
+    sf::Sprite front(creditsAnimationTextures["base"]);
+    front.setTextureRect(sf::IntRect(sf::Vector2i(262, 483), sf::Vector2i(256, 240)));
+    
+    front.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    xPosition = (gWindowWidth - scaledWidth) / 2;
+    yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    front.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    creditsAnimationSprites.push_back(front);
     
     sf::Sprite castle(creditsAnimationTextures["base"]);
     castle.setTextureRect(sf::IntRect(sf::Vector2i(262, 728), sf::Vector2i(56, 64)));
@@ -3434,13 +3452,82 @@ void CreditsAnimationGS::init(){
 
     creditsAnimationSprites.push_back(castle);
 
+    castleStartPosition = castle.getPosition();
+    castleEndPosition = castleStartPosition + sf::Vector2f(0.f, 100.f);
+    
+    auto cred = std::make_shared<sf::Sprite>(creditsAnimationTextures["base"]);
+
+    cred->setTextureRect(sf::IntRect(sf::Vector2i(523, 731), sf::Vector2i(128, 72)));
+
+    cred->setScale(sf::Vector2f(scaleFactor+0.1, scaleFactor));
+
+    cred->setPosition(sf::Vector2f(13, 80));
+
+    credits = cred;
+
+    std::vector<AnimationManager::Frame> creditsFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 1), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 1), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 1), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 1), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 74), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 74), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 74), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 74), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 147), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 147), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 147), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 147), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 220), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 220), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 220), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 220), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 293), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 293), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 293), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 293), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 366), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 366), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 366), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 366), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 439), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 439), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 439), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 439), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 512), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 512), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 512), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 512), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 585), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 585), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 585), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 585), sf::Vector2i(128, 72)), 0.1f},
+
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(523, 658), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(652, 658), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(781, 658), sf::Vector2i(128, 72)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2i(910, 658), sf::Vector2i(128, 72)), 0.1f}
+    };
+
+    creditsManager = new AnimationManager(*cred);
+    
+    creditsManager->addAnimation(creditsMovement, creditsFrames, false);
+
     // ======================================================
     //                      SOUND AND MUSIC 
     // ======================================================
-    
-    auto audio = configManager.getAudio();
 
     creditsAnimSounds.loadMusic("creditsAnimMusic", "./assets/music/12Voyager.mp3");
+    creditsAnimSounds.loadSound("explosion1", "./assets/sounds/31.wav");
+    creditsAnimSounds.loadSound("explosion2", "./assets/sounds/32.wav");
     // creditsAnimSounds.playMusic("creditsAnimMusic", creditsAnimSounds.realVolume(audio.master_volume, audio.music_volume));
 }
 
@@ -3455,6 +3542,48 @@ void CreditsAnimationGS::handleInput(sf::Event event){
 }
 
 void CreditsAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
+    creditsManager->update(deltaTime);
+
+    castleElapsedTime += deltaTime;
+
+    auto audio = configManager.getAudio();
+    if (castleElapsedTime >= 2.f && !startCastleMovement) {
+        startCastleMovement = true;
+        creditsAnimSounds.playSound("explosion2", creditsAnimSounds.realVolume(audio.master_volume, audio.sound_volume));
+        castleSoundTimer = 0.f;
+    }
+
+    if (startCastleMovement) {
+        float moveTime = castleElapsedTime - 2.f;
+
+        // Movimiento vertical
+        float progress = std::min(moveTime / castleMoveDuration, 1.f);
+        sf::Vector2f newPos = castleStartPosition + (castleEndPosition - castleStartPosition) * progress;
+
+        // Temblor horizontal
+        float shakeAmplitude = 1.5f; // Pixel range for shaking
+        float shake = std::sin(castleElapsedTime * 20.f) * shakeAmplitude;
+
+        newPos.x += shake;
+
+        creditsAnimationSprites[2].setPosition(newPos); // Index 2 = castle sprite
+    }
+
+    castleSoundTimer += deltaTime;
+
+    if (castleSoundTimer >= 1.f && startCastleMovement && !startCredits) {
+        creditsAnimSounds.playSound("explosion2", creditsAnimSounds.realVolume(audio.master_volume, audio.sound_volume));
+        castleSoundTimer = 0.f;
+    }
+
+    if(castleElapsedTime >= castleMoveDuration + 2){
+        if (!startCredits) startCredits = true;
+        if(castleElapsedTime >= castleMoveDuration + 4 && !musicStarted){
+            creditsManager->playAnimation(creditsMovement);
+            creditsAnimSounds.playMusic("creditsAnimMusic", creditsAnimSounds.realVolume(audio.master_volume, audio.sound_volume), false);
+            musicStarted = true;
+        }
+    }
 }
 
 void CreditsAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
@@ -3462,16 +3591,19 @@ void CreditsAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
     window.draw(creditsAnimationSprites[0]);
 
     // Castle
-    window.draw(creditsAnimationSprites[1]);
+    window.draw(creditsAnimationSprites[2]);
 
     // Black rectangle to hide castle
-    sf::RectangleShape black(sf::Vector2f(74, 46));
-    black.setFillColor(sf::Color::Black);
-    black.setPosition(sf::Vector2f(261, 163));
-    window.draw(black);
+    // sf::RectangleShape black(sf::Vector2f(74, 46));
+    // black.setFillColor(sf::Color::Black);
+    // black.setPosition(sf::Vector2f(261, 163));
+    // window.draw(black);
+
+    // Front
+    window.draw(creditsAnimationSprites[1]);
 
     // Credits
-
+    window.draw(*credits);
 }
 
 void CreditsAnimationGS::pause(){

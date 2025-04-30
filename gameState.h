@@ -330,8 +330,19 @@ class CreditsAnimationGS : public GameState{
 private:
     SoundManager creditsAnimSounds;
     configManager &configManager;
-    float timer = 0.0f;
-    float timerInterval = 9.0f;
+    AnimationManager *creditsManager{nullptr};
+    std::shared_ptr<sf::Sprite> credits;
+
+    float castleElapsedTime = 0.f;
+    const float castleMoveDuration = 8.f;
+    bool startCastleMovement = false;
+    sf::Vector2f castleStartPosition;
+    sf::Vector2f castleEndPosition;
+
+    float castleSoundTimer = 0.f;
+
+    bool startCredits = false;
+    bool musicStarted = false;
 public:
     explicit CreditsAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~CreditsAnimationGS() override;
