@@ -35,7 +35,8 @@ void Castlevania::run(){
         states.addState(std::make_unique<GameGS>(&states));
     }
     else{
-        states.addState(std::make_unique<InitMenuGS>(&states));
+        // states.addState(std::make_unique<InitMenuGS>(&states));
+        states.addState(std::make_unique<CreditsAnimationGS>(&states));
     }
 
     //states.addState(std::make_unique<InitMenuGS>(&states));

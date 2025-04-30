@@ -3381,3 +3381,111 @@ void levelSelectorGS::close(){
 }
 
 levelSelectorGS::~levelSelectorGS() {}
+
+// ======================================================
+//                      CREDITS ANIMATION STATE 
+// ======================================================
+std::unordered_map<std::string, sf::Texture> creditsAnimationTextures;
+std::vector<sf::Sprite> creditsAnimationSprites;
+
+void CreditsAnimationGS::init(){
+    if(debug) std::cout << "ESTADO: Init animation" << std::endl;
+    this->m_viewSize.x = gMenuGS_size_x;
+    this->m_viewSize.y = gMenuGS_size_y;
+
+    // CASTLE
+    sf::Image base;
+    if (!base.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
+    {
+        std::cerr << "Error loading heart image" << std::endl;
+    }
+    base.createMaskFromColor(gColorKeyGrey);
+    base.createMaskFromColor(gColorKeyGreen);
+
+    creditsAnimationTextures["base"] = sf::Texture(base, false);
+
+    sf::Sprite back(creditsAnimationTextures["base"]);
+    back.setTextureRect(sf::IntRect(sf::Vector2i(262, 242), sf::Vector2i(256, 240)));
+
+    sf::FloatRect spriteBounds = back.getLocalBounds();
+    float spriteWidth = spriteBounds.size.x;
+    float spriteHeight = spriteBounds.size.y;
+
+    float scaleFactor = gWindowHeight / spriteHeight;
+
+    back.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    float scaledWidth = spriteWidth * scaleFactor;
+    float scaledHeight = spriteHeight * scaleFactor;
+
+    float xPosition = (gWindowWidth - scaledWidth) / 2;
+    float yPosition = (gWindowHeight - scaledHeight) / 2;
+
+    back.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    creditsAnimationSprites.push_back(back);
+    
+    sf::Sprite castle(creditsAnimationTextures["base"]);
+    castle.setTextureRect(sf::IntRect(sf::Vector2i(262, 728), sf::Vector2i(56, 64)));
+
+    castle.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+
+    castle.setPosition(sf::Vector2f(261, 82));
+
+    creditsAnimationSprites.push_back(castle);
+
+    // ======================================================
+    //                      SOUND AND MUSIC 
+    // ======================================================
+    
+    auto audio = configManager.getAudio();
+
+    creditsAnimSounds.loadMusic("creditsAnimMusic", "./assets/music/12Voyager.mp3");
+    // creditsAnimSounds.playMusic("creditsAnimMusic", creditsAnimSounds.realVolume(audio.master_volume, audio.music_volume));
+}
+
+void CreditsAnimationGS::handleInput(sf::Event event){
+    // auto controls = configManager.getControls();
+    // if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+    //     if(keyPressed->scancode == controls.enter){
+    //         stateMachine->replaceState(std::make_unique<walkingAnimGS>(stateMachine));
+    //         std::cout << "Skipping animation, going to game first anim" << std::endl;
+    //     }
+    // }
+}
+
+void CreditsAnimationGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus){
+}
+
+void CreditsAnimationGS::draw(sf::RenderWindow& window, Camera& camera){
+    // Back
+    window.draw(creditsAnimationSprites[0]);
+
+    // Castle
+    window.draw(creditsAnimationSprites[1]);
+
+    // Black rectangle to hide castle
+    sf::RectangleShape black(sf::Vector2f(74, 46));
+    black.setFillColor(sf::Color::Black);
+    black.setPosition(sf::Vector2f(261, 163));
+    window.draw(black);
+
+    // Credits
+
+}
+
+void CreditsAnimationGS::pause(){
+    if(debug) std::cout << "ESTADO: Init animation PAUSADO" << std::endl;
+}
+
+void CreditsAnimationGS::resume(){
+    if(debug) std::cout << "ESTADO: Init animation REANUDADO" << std::endl;
+}
+
+void CreditsAnimationGS::close(){
+    if(debug) std::cout << "ESTADO: Init animation CERRADO" << std::endl;
+    creditsAnimationSprites.clear();
+    creditsAnimationTextures.clear();
+}
+
+CreditsAnimationGS::~CreditsAnimationGS() {}

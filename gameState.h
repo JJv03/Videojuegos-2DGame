@@ -325,3 +325,21 @@ public:
     void resume() override;
     void close() override;
 };
+
+class CreditsAnimationGS : public GameState{
+private:
+    SoundManager creditsAnimSounds;
+    configManager &configManager;
+    float timer = 0.0f;
+    float timerInterval = 9.0f;
+public:
+    explicit CreditsAnimationGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
+    ~CreditsAnimationGS() override;
+    void init() override;
+    void handleInput(sf::Event event) override;
+    void update(float deltaTime, const sf::Vector2f& viewPosition, bool windowHasFocus) override;
+    void draw(sf::RenderWindow& window, Camera& camera) override;
+    void pause() override;
+    void resume() override;
+    void close() override;
+};
