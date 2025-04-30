@@ -66,6 +66,12 @@ void TilemapManager::loadLevel(int level) {
         tilemaps.push_back(TileMap());
         tilemaps[0].load(5, 1);
 
+        tilemaps.push_back(TileMap());
+        tilemaps[1].load(5, 2);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[2].load(5, 3);
+
         doors.clear();
         break;
 
