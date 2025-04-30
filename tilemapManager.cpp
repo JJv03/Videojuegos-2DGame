@@ -62,6 +62,10 @@ void TilemapManager::loadLevel(int level) {
        
     case 5:
         tilemaps.clear();
+        
+        tilemaps.push_back(TileMap());
+        tilemaps[0].load(5, 1);
+
         doors.clear();
         break;
 
