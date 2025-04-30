@@ -161,6 +161,7 @@ private:
 
         // Initial position
         outFile << 48 << "," << 64 << std::endl;
+        outFile << 0 << std::endl;
 
         // Solid/background tiles
         for (int i = 0; i < MAP_HEIGHT; ++i) {
