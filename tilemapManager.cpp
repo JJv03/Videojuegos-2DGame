@@ -72,6 +72,15 @@ void TilemapManager::loadLevel(int level) {
         tilemaps.push_back(TileMap());
         tilemaps[2].load(5, 3);
 
+        tilemaps.push_back(TileMap());
+        tilemaps[3].load(5, 4);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[4].load(5, 5);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[5].load(5, 6); // Boss
+
         doors.clear();
         break;
 

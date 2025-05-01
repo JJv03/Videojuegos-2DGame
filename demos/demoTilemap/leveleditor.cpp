@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-const int MAP_WIDTH = 16;
+const int MAP_WIDTH = 32;
 const int MAP_HEIGHT = 6;
 const int TILESET_WIDTH = 6;
 const int TILESET_HEIGHT = 9;
@@ -177,8 +177,8 @@ private:
         // Other tiles
         outFile << "doors" << std::endl;
         outFile << "end_doors" << std::endl;
-        outFile << "breakable" << std::endl;
-        outFile << "end_breakable" << std::endl;
+        outFile << "miscellaneous" << std::endl;
+        outFile << "end_miscellaneous" << std::endl;
         outFile << "stair" << std::endl;
         outFile << "end_stair" << std::endl;
         outFile << "enemies" << std::endl;
@@ -198,6 +198,7 @@ private:
         std::string line;
         std::getline(inFile, line);  // Skips the first line (map's dimensions)
         std::getline(inFile, line);  // Skips the second line (initial position)
+        std::getline(inFile, line);  // Skips the third line (boss position)
 
         for (int i = 0; i < MAP_HEIGHT; ++i) {
             if (!std::getline(inFile, line)) break;
