@@ -87,6 +87,10 @@ enum animationID{
 
     // Credits animation
     creditsMovement,
+
+    // Inter level anim
+    liBat,
+    biBat,
 };
 
 

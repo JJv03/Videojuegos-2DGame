@@ -31,6 +31,16 @@ Game::Game() : configManager(configManager::getInstance())
     simonImage.createMaskFromColor(gColorKeyGreen);
 
     gTextures["simon"] = sf::Texture(simonImage, false);
+
+    sf::Image mapBat;
+    if (!mapBat.loadFromFile("./assets/sprites/intro_ending/cutscenesCredits.png"))
+    {
+        std::cerr << "Error cargando la imagen de Simon" << std::endl;
+    }
+    mapBat.createMaskFromColor(gColorKeyGrey);
+    mapBat.createMaskFromColor(gColorKeyGreen);
+
+    gTextures["mapBat"] = sf::Texture(mapBat, false);
 }
 
 // Initializes a new game from the beggining
@@ -42,6 +52,7 @@ void Game::init()
     isInBossFight = false;
     goBack = false;
     goToEndAnimation = false;
+    showInter = false;
 
     // Music and sounds
     loadMusic();
@@ -72,6 +83,100 @@ void Game::init()
     {
         throw std::runtime_error("Failed to load item textures.");
     }
+
+    // ----- TRANSITION BETWEEN LEVELS -----
+
+    // Animated sprites
+
+    // LITTLE BAT
+    auto lBat = std::make_shared<sf::Sprite>(gTextures["mapBat"]);
+
+    lBat->setTextureRect(sf::IntRect(sf::Vector2i(271, 953), sf::Vector2i(16, 16)));
+
+    lBat->setScale(sf::Vector2f(1 ,1));
+
+    lBat->setPosition(sf::Vector2f(0, 0));
+
+    littleBat = lBat;
+
+    std::vector<AnimationManager::Frame> littleFlyFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(271, 953), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(288, 953), sf::Vector2(16, 16)), 0.1f}
+    };
+    
+    littleBatManager = new AnimationManager(*littleBat);
+    
+    littleBatManager->addAnimation(liBat, littleFlyFrames, true);
+
+    littleBatManager->playAnimation(liBat);
+
+    // BIG BAT
+    auto bBat = std::make_shared<sf::Sprite>(gTextures["mapBat"]);
+
+    bBat->setTextureRect(sf::IntRect(sf::Vector2i(305, 953), sf::Vector2i(16, 16)));
+
+    bBat->setScale(sf::Vector2f(1, 1));
+
+    bBat->setPosition(sf::Vector2f(0, 0));
+
+    bigBat = bBat;
+
+    std::vector<AnimationManager::Frame> bigFlyFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(305, 953), sf::Vector2(16, 16)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(322, 953), sf::Vector2(16, 16)), 0.1f}
+    };
+    
+    bigBatManager = new AnimationManager(*bigBat);
+    
+    bigBatManager->addAnimation(biBat, bigFlyFrames, true);
+
+    bigBatManager->playAnimation(biBat);
+
+    // SIMON
+    auto simonS = std::make_shared<sf::Sprite>(gTextures["simon"]);
+
+    simonS->setTextureRect(sf::IntRect(sf::Vector2i(29, 21), sf::Vector2i(16, 32)));
+
+    simonS->setScale(sf::Vector2f(-1, 1));
+
+    simonS->setPosition(sf::Vector2f(500, 150));
+
+    simon = simonS;
+    
+    simonManager = new AnimationManager(*simon);
+
+    std::vector<AnimationManager::Frame> walkFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(29, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 31)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
+    };
+    
+    simonManager->addAnimation(walkSimon, walkFrames, true);
+
+    simonManager->playAnimation(walkSimon);
+
+    // CUBE
+    auto box = std::make_shared<sf::Sprite>(gTextures["mapBat"]);
+
+    box->setTextureRect(sf::IntRect(sf::Vector2i(263, 962), sf::Vector2i(6, 7)));
+
+    box->setScale(sf::Vector2f(1, 1));
+
+    box->setPosition(sf::Vector2f(0, 0));
+
+    cube = box;
+
+    // MAP
+    auto mapa = std::make_shared<sf::Sprite>(gTextures["mapBat"]);
+
+    mapa->setTextureRect(sf::IntRect(sf::Vector2i(262, 808), sf::Vector2i(384, 144)));
+
+    mapa->setScale(sf::Vector2f(1, 1));
+
+    mapa->setPosition(sf::Vector2f(750, 30));
+
+    map = mapa;
 
     // Load GUI
     loadGUI();
@@ -382,7 +487,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             player.setState(std::make_unique<PlayerDeadState>());
         }
         timeAccumulator = 0.0f;
-        updateGUITime();
+        if (!showInter) updateGUITime();
     }
 
 
@@ -414,136 +519,216 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         prepareVariablesForLevel();
         time = 300;
         updateGUITime();
-        loadLevelAndEnemies();
 
         if (aux_CurrentLevel == 7 && gStartingLevel == 1) return;
     }
 
-
-    if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
-    {
-        std::cout << "Falling " << std::endl;
-        std::cout << viewPosition.y << ", " << gGameVisibleWorld_size_y << ", " << player.sprite->getPosition().y << std::endl;
-        player.setState(std::make_unique<PlayerDeadState>());
+    if(showInter && !goToEndAnimation){
+        interAnimation(deltaTime);
     }
-
-    sf::Sprite heart = gSprites.back();
-    gSprites.pop_back();
-    float heartX = 0;
-    float heartY = 0;
-    if (position <= 1)
-    {
-        heartX = deadScreenTexts[position + 1].getPosition().x - 15.f;
-        heartY = deadScreenTexts[position + 1].getPosition().y - 3.f;
-    }
-    heart.setPosition(sf::Vector2f(heartX, heartY));
-
-    gSprites.push_back(heart);
-
-    // Update text's score
-    std::stringstream scoreStream;
-    scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
-    texts[0].setString(scoreStream.str());
-
-    // Update hearts
-    std::stringstream heartsStream;
-    heartsStream << "-" << std::setw(2) << std::setfill('0') << player.hearts; // Format with zeroes
-    texts[5].setString(heartsStream.str());
-
-    // Update lives
-    std::stringstream livesStream;
-    livesStream << "P-" << std::setw(2) << std::setfill('0') << player.lives; // Format with zeroes
-    texts[6].setString(livesStream.str());
-
-    // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
-    checkCollisions(viewPosition);
-    // checkCollisions();
-
-    // Update the subweapon sprite item
-    guiSubWeaponSprite = getItemSprite(player.subWeaponType);
-
-    if (player.deathRestart)
-    {
-        player.deathRestart = false;
-        revivingClock.restart();
-        gameSoundManager.stopAllMusic();
-        auto audio = configManager.getAudio();
-
-        gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
-    }
-
-    if (player.activateRosario)
-    {
-        enemyManager->restartEnemies(currentLevel, currentStage);
-        isRosarioBlinking = true;
-        rosarioBlinkClock.restart();
-        player.activateRosario = false;
-    }
-    
-    if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
-    {
-        player.lives -= 1;
-        std::cout << "Player lives: " << player.lives << std::endl;
-        player.health = player.maxHealth;
-        player.setState(std::make_unique<PlayerIdleState>());
-        restartLoadingClock = true;
-
-        if (player.lives >= 0)
+    else{
+        if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
         {
-            restartStage();
+            std::cout << "Falling " << std::endl;
+            std::cout << viewPosition.y << ", " << gGameVisibleWorld_size_y << ", " << player.sprite->getPosition().y << std::endl;
+            player.setState(std::make_unique<PlayerDeadState>());
         }
-        else
+
+        sf::Sprite heart = gSprites.back();
+        gSprites.pop_back();
+        float heartX = 0;
+        float heartY = 0;
+        if (position <= 1)
         {
-            withOutLives = true;
-            player.acceptsInput = false;
-            // LOGIC TO SHOW DEAD SCREEN
-            // Black rectangle with 2 options and a heart as selector
-            // -> RestartLevel (Continue)
-            // -> Go back to Menu (End)
-            restartLevel();
+            heartX = deadScreenTexts[position + 1].getPosition().x - 15.f;
+            heartY = deadScreenTexts[position + 1].getPosition().y - 3.f;
         }
-    }
+        heart.setPosition(sf::Vector2f(heartX, heartY));
 
-    if (beginStageEntrance)
-    {
+        gSprites.push_back(heart);
 
-        if (player.isOnStairs)
+        // Update text's score
+        std::stringstream scoreStream;
+        scoreStream << "SCORE-" << std::setw(6) << std::setfill('0') << player.score; // Format with zeroes
+        texts[0].setString(scoreStream.str());
+
+        // Update hearts
+        std::stringstream heartsStream;
+        heartsStream << "-" << std::setw(2) << std::setfill('0') << player.hearts; // Format with zeroes
+        texts[5].setString(heartsStream.str());
+
+        // Update lives
+        std::stringstream livesStream;
+        livesStream << "P-" << std::setw(2) << std::setfill('0') << player.lives; // Format with zeroes
+        texts[6].setString(livesStream.str());
+
+        // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
+        checkCollisions(viewPosition);
+        // checkCollisions();
+
+        // Update the subweapon sprite item
+        guiSubWeaponSprite = getItemSprite(player.subWeaponType);
+
+        if (player.deathRestart)
         {
-            if (player.stairStepDistance == 0.f)
-            { // Wait until full step is moved
-                beginStageEntrance = false;
-                player.setState(std::make_unique<PlayerStairWalkState>());
+            player.deathRestart = false;
+            revivingClock.restart();
+            gameSoundManager.stopAllMusic();
+            auto audio = configManager.getAudio();
+
+            gameSoundManager.playMusic("deadMusic", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
+        }
+
+        if (player.activateRosario)
+        {
+            enemyManager->restartEnemies(currentLevel, currentStage);
+            isRosarioBlinking = true;
+            rosarioBlinkClock.restart();
+            player.activateRosario = false;
+        }
+        
+        if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
+        {
+            player.lives -= 1;
+            std::cout << "Player lives: " << player.lives << std::endl;
+            player.health = player.maxHealth;
+            player.setState(std::make_unique<PlayerIdleState>());
+            restartLoadingClock = true;
+
+            if (player.lives >= 0)
+            {
+                restartStage();
+            }
+            else
+            {
+                withOutLives = true;
+                player.acceptsInput = false;
+                // LOGIC TO SHOW DEAD SCREEN
+                // Black rectangle with 2 options and a heart as selector
+                // -> RestartLevel (Continue)
+                // -> Go back to Menu (End)
+                restartLevel();
             }
         }
-        else
+
+        if (beginStageEntrance)
         {
-            beginStageEntrance = false;
-            player.setState(std::make_unique<PlayerIdleState>());
+
+            if (player.isOnStairs)
+            {
+                if (player.stairStepDistance == 0.f)
+                { // Wait until full step is moved
+                    beginStageEntrance = false;
+                    player.setState(std::make_unique<PlayerStairWalkState>());
+                }
+            }
+            else
+            {
+                beginStageEntrance = false;
+                player.setState(std::make_unique<PlayerIdleState>());
+            }
+        }
+
+        // For killing bosses (destroying)
+        if (gKilledBoss)
+        {
+            if (currentLevel == 1)
+            {
+                bossManager->killBoss(phantomBatID);
+            }
+            else if (currentLevel == 7 && currentBossPhase == 1)
+            {
+                currentBossPhase++;
+                bossManager->killBoss(draculaID);
+            }
+            else if (currentLevel == 7 && currentBossPhase == 2)
+            {
+                bossManager->killBoss(draculaSpiritID);
+
+            }
+            gKilledBoss = false;
         }
     }
+}
 
-    // For killing bosses (destroying)
-    if (gKilledBoss)
-    {
-        if (currentLevel == 1)
-        {
-            bossManager->killBoss(phantomBatID);
+void Game::interAnimation(float deltaTime){
+    float destiny = 0;
+    sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
+    if(currentLevel == 7){
+        pos = tilemaps[5].getMapBoundsBossFight();
+    }
+    // First map entering
+    if(entering){
+        switch(3){
+            case 3:
+                destiny = pos.position.x + 10;
+                break;
+            case 5:
+                destiny = pos.position.x - 130;
+                break;
+            case 7:
+                destiny = pos.position.x - 130;
+                break;
         }
-        else if (currentLevel == 7 && currentBossPhase == 1)
-        {
-            currentBossPhase++;
-            bossManager->killBoss(draculaID);
-        }
-        else if (currentLevel == 7 && currentBossPhase == 2)
-        {
-            bossManager->killBoss(draculaSpiritID);
 
+        sf::Vector2f posMap = map->getPosition();
+        const float mapSpeed = 80.0f; // pixels per second
+        // std::cout << posMap.x << std::endl;
+        if (posMap.x <= destiny) {
+            map->setPosition(sf::Vector2f(destiny, posMap.y));
+            entering = false; // Has reached to the x position
+        } 
+        else {
+            map->setPosition(sf::Vector2f(posMap.x - mapSpeed * deltaTime, posMap.y));
         }
-        gKilledBoss = false;
+    }
+    else{   // Show moving animated Simon, animated and placed Bat (big and little), animated and placed box
+        switch(3){
+            case 3:
+                cube->setPosition(sf::Vector2f(pos.position.x + 86, pos.position.y + 103));
+                littleBat->setPosition(sf::Vector2f(pos.position.x + 160, pos.position.y + 85));
+                littleBatManager->update(deltaTime);
+                break;
+            case 5:
+                cube->setPosition(sf::Vector2f(pos.position.x + 151, pos.position.y + 106));
+                littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 62));
+                littleBatManager->update(deltaTime);
+                break;
+            case 7:
+                cube->setPosition(sf::Vector2f(pos.position.x + 124, pos.position.y + 62));
+                bigBat->setPosition(sf::Vector2f(pos.position.x + 38, pos.position.y + 40));
+                bigBatManager->update(deltaTime);
+                break;
+        }
+        // Simon movement
+        sf::Vector2f posSimon = simon->getPosition();
+        // std::cout << posSimon.x << std::endl;
+        const float simonSpeed = 60.0f; // pixels per second
+        destiny = pos.position.x + 250;
+        if (posSimon.x >= destiny) {
+            simon->setPosition(sf::Vector2f(destiny, posSimon.y));
+            showInter = false;
+            loadLevelAndEnemies();
+        }
+        else {
+            simon->setPosition(sf::Vector2f(posSimon.x + simonSpeed * deltaTime, posSimon.y));
+        }
+        simonManager->update(deltaTime);
     }
 }
 
 void Game::prepareVariablesForLevel() {
+    if(gGoToNextLevel){
+        sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
+        if(currentLevel == 7){
+            pos = tilemaps[5].getMapBoundsBossFight();
+            std::cout << pos.position.x << " " << pos.position.y << std::endl;
+        }
+        showInter = true;
+        entering = true;
+        map->setPosition(sf::Vector2f(pos.position.x + 256, 30));
+        simon->setPosition(sf::Vector2f(pos.position.x, 150));
+    }
     resetEndLevelScoreAnimation();
     gGoToNextLevel = false;
 }
@@ -832,6 +1017,22 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
             window.draw(gSprites[0]);
         }
+
+        // MAP transition
+        if(showInter){
+            sf::View view = window.getView();
+            sf::Vector2f center = view.getCenter();
+            sf::RectangleShape black(sf::Vector2f(400, 400));
+            black.setFillColor(sf::Color::Black);
+            black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
+            window.draw(black);
+            window.draw(*map);
+            window.draw(*cube);
+            window.draw(*littleBat);
+            window.draw(*bigBat);
+            window.draw(*simon);
+        }
+
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
         // window.draw(FloatRectToRectShape(player.gPlayerDeactivationZone));
 

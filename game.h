@@ -150,8 +150,8 @@ private:
 
     // Blinking screen when rosary is used
     sf::Clock rosarioBlinkClock;
-    bool isRosarioBlinking = false; 
-    float rosarioBlinkDuration = 1.0f; 
+    bool isRosarioBlinking = false;
+    float rosarioBlinkDuration = 1.0f;
     float rosarioBlinkInterval = 0.1f;
 
     // ----- All refered to the end level score animation -----
@@ -165,4 +165,16 @@ private:
 
     // Animation that plays at the end of the level
     void endLevelScoreAnimation(const float deltaTime);
+
+    AnimationManager *littleBatManager{nullptr};
+    std::shared_ptr<sf::Sprite> littleBat;
+    AnimationManager *bigBatManager{nullptr};
+    std::shared_ptr<sf::Sprite> bigBat;
+    AnimationManager *simonManager{nullptr};
+    std::shared_ptr<sf::Sprite> simon;
+    std::shared_ptr<sf::Sprite> map;
+    std::shared_ptr<sf::Sprite> cube;
+    bool showInter = false;
+    bool entering = false;
+    void interAnimation(float deltaTime);
 };
