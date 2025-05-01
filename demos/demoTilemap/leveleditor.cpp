@@ -4,10 +4,10 @@
 #include <iostream>
 #include <sstream>
 
-const int MAP_WIDTH = 32;
+const int MAP_WIDTH = 24;
 const int MAP_HEIGHT = 6;
 const int TILESET_WIDTH = 6;
-const int TILESET_HEIGHT = 9;
+const int TILESET_HEIGHT = 8;
 
 const int TILE_SIZE = 32;
 const int MARGIN = 4;
@@ -19,7 +19,7 @@ const int ALTURA_BOTON_GUARDAR = 400;
 class Game {
 public:
     Game() : window(sf::VideoMode({TILE_SIZE * MAP_WIDTH + TILE_SIZE * TILESET_WIDTH + 300, TILE_SIZE * MAP_HEIGHT + TILE_SIZE * TILESET_HEIGHT + 100}), "Tilemap Game", sf::Style::Default) {
-        if (!tilesetTexture.loadFromFile("../../assets/tilesets/tileset_5.png")) {
+        if (!tilesetTexture.loadFromFile("../../assets/tilesets/tileset_3.png")) {
             std::cerr << "Error loading tileset!" << std::endl;
             exit(-1);
         }
