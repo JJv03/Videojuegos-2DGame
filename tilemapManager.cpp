@@ -38,7 +38,6 @@ void TilemapManager::loadLevel(int level) {
         doors[3] = {3, 4, DoorTile::Type::STAIRS};        // Door 3
         doors[4] = {4, 3, DoorTile::Type::STAIRS};        // Door 4
         doors[5] = {3, 5, DoorTile::Type::DOOR};          // Door 5
-        doors[6] = {5, 100, DoorTile::Type::DOOR};        // Door 6
 
         break;
     
@@ -72,7 +71,23 @@ void TilemapManager::loadLevel(int level) {
         tilemaps.push_back(TileMap());
         tilemaps[2].load(5, 3);
 
+        tilemaps.push_back(TileMap());
+        tilemaps[3].load(5, 4);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[4].load(5, 5);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[5].load(5, 6); // Boss
+
+        // ------------------------
         doors.clear();
+
+        doors[1] = {1, 2, DoorTile::Type::STAIRS};        // Door 1
+        doors[2] = {2, 3, DoorTile::Type::DOOR};          // Door 2
+        doors[3] = {3, 4, DoorTile::Type::STAIRS};        // Door 3
+        doors[4] = {4, 5, DoorTile::Type::DOOR};          // Door 5
+        doors[5] = {5, 6, DoorTile::Type::STAIRS};        // Door 6
         break;
 
         
