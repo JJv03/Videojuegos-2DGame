@@ -8,6 +8,7 @@
 
 enum bossID{
     phantomBatID,
+    deathID,
     draculaID,
     draculaSpiritID,
 };
@@ -19,6 +20,7 @@ private:
     PhantomBat *phantomBat = nullptr;
     Dracula *dracula = nullptr;
     DraculaSpirit *draculaSpirit = nullptr;
+    Death *death = nullptr;
 
     // Reference to player
     Player *playerPtr;

@@ -16,4 +16,5 @@ stair
 4,952,128
 end_stair
 enemies
+103,210.f,0.f
 end_enemies

@@ -129,4 +129,4 @@ const bool gSkipAnims = true;
 
 
 // ============ SKINS =============
-const bool gCustomSkins = false;
+const bool gCustomSkins = true;
