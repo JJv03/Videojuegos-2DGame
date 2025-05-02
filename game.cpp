@@ -497,8 +497,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         switch(aux_CurrentLevel)
         {
             case 1:
-                // gStartingLevel = 3;
-                gStartingLevel = 5;
+                gStartingLevel = 3;
                 currentLevel = gStartingLevel;
                 currentStage = 1;
                 gStartingStage = currentStage;
@@ -670,11 +669,11 @@ void Game::interAnimation(float deltaTime){
     if(currentLevel == 3){
         pos = tilemaps[5].getMapBoundsBossFight();
     }
-    if(currentLevel == 5){ // CHANGE
+    if(currentLevel == 5){
         pos = tilemaps[5].getMapBoundsBossFight();
     }
-    if(currentLevel == 7){ // CHANGE
-        pos = tilemaps[5].getMapBoundsBossFight();
+    if(currentLevel == 7){
+        pos = tilemaps[6].getMapBoundsBossFight();
     }
     // First map entering
     if(entering){
@@ -749,11 +748,11 @@ void Game::prepareVariablesForLevel() {
         if(currentLevel == 3){
             pos = tilemaps[5].getMapBoundsBossFight();
         }
-        if(currentLevel == 5){ // CHANGE
+        if(currentLevel == 5){
             pos = tilemaps[5].getMapBoundsBossFight();
         }
-        if(currentLevel == 7){ // CHANGE
-            pos = tilemaps[5].getMapBoundsBossFight();
+        if(currentLevel == 7){
+            pos = tilemaps[6].getMapBoundsBossFight();
         }
         timerSteps = 0;
         player.acceptsInput = false;
