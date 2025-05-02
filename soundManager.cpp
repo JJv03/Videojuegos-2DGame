@@ -121,6 +121,14 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         std::cerr << "Music " << secondId << " not found.\n";
         return;
     }
+    if (musicTracks[firstId].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
+    if (musicTracks[secondId].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
 
     std::thread([this, firstId, secondId, secondSongLoop, volume]() {
         if (isShuttingDown) return;

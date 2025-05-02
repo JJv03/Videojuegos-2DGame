@@ -497,6 +497,19 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         switch(aux_CurrentLevel)
         {
             case 1:
+                // gStartingLevel = 3;
+                gStartingLevel = 5;
+                currentLevel = gStartingLevel;
+                currentStage = 1;
+                gStartingStage = currentStage;
+                break;
+            case 3:
+                gStartingLevel = 5;
+                currentLevel = gStartingLevel;
+                currentStage = 1;
+                gStartingStage = currentStage;
+                break;
+            case 5:
                 gStartingLevel = 7;
                 currentLevel = gStartingLevel;
                 currentStage = 1;
@@ -654,12 +667,18 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 void Game::interAnimation(float deltaTime){
     float destiny = 0;
     sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
-    if(currentLevel == 7){
+    if(currentLevel == 3){
+        pos = tilemaps[5].getMapBoundsBossFight();
+    }
+    if(currentLevel == 5){ // CHANGE
+        pos = tilemaps[5].getMapBoundsBossFight();
+    }
+    if(currentLevel == 7){ // CHANGE
         pos = tilemaps[5].getMapBoundsBossFight();
     }
     // First map entering
     if(entering){
-        switch(3){
+        switch(currentLevel){
             case 3:
                 destiny = pos.position.x + 10;
                 break;
@@ -683,15 +702,15 @@ void Game::interAnimation(float deltaTime){
         }
     }
     else{   // Show moving animated Simon, animated and placed Bat (big and little), animated and placed box
-        switch(3){
+        switch(currentLevel){
             case 3:
-                cube->setPosition(sf::Vector2f(pos.position.x + 86, pos.position.y + 103));
-                littleBat->setPosition(sf::Vector2f(pos.position.x + 160, pos.position.y + 85));
+                cube->setPosition(sf::Vector2f(pos.position.x + 87, pos.position.y + 102));
+                littleBat->setPosition(sf::Vector2f(pos.position.x + 172, pos.position.y + 83));
                 littleBatManager->update(deltaTime);
                 break;
             case 5:
                 cube->setPosition(sf::Vector2f(pos.position.x + 151, pos.position.y + 106));
-                littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 62));
+                littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 63));
                 littleBatManager->update(deltaTime);
                 break;
             case 7:
@@ -708,9 +727,16 @@ void Game::interAnimation(float deltaTime){
         if (posSimon.x >= destiny) {
             simon->setPosition(sf::Vector2f(destiny, posSimon.y));
             showInter = false;
+            player.acceptsInput = true;
             loadLevelAndEnemies();
         }
         else {
+            timerSteps += deltaTime;
+            if(timerSteps >= stepsInterval){
+                timerSteps = 0;
+                auto audio = configManager.getAudio();
+                gameSoundManager.playSound("between_lvl_steps", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+            }
             simon->setPosition(sf::Vector2f(posSimon.x + simonSpeed * deltaTime, posSimon.y));
         }
         simonManager->update(deltaTime);
@@ -720,14 +746,22 @@ void Game::interAnimation(float deltaTime){
 void Game::prepareVariablesForLevel() {
     if(gGoToNextLevel){
         sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
-        if(currentLevel == 7){
+        if(currentLevel == 3){
             pos = tilemaps[5].getMapBoundsBossFight();
-            std::cout << pos.position.x << " " << pos.position.y << std::endl;
         }
+        if(currentLevel == 5){ // CHANGE
+            pos = tilemaps[5].getMapBoundsBossFight();
+        }
+        if(currentLevel == 7){ // CHANGE
+            pos = tilemaps[5].getMapBoundsBossFight();
+        }
+        timerSteps = 0;
+        player.acceptsInput = false;
+        isInBossFight = false;
         showInter = true;
         entering = true;
         map->setPosition(sf::Vector2f(pos.position.x + 256, 30));
-        simon->setPosition(sf::Vector2f(pos.position.x, 150));
+        simon->setPosition(sf::Vector2f(pos.position.x - 10, 150));
     }
     resetEndLevelScoreAnimation();
     gGoToNextLevel = false;

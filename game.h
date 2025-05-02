@@ -176,5 +176,7 @@ private:
     std::shared_ptr<sf::Sprite> cube;
     bool showInter = false;
     bool entering = false;
+    float timerSteps = 0.f;
+    const float stepsInterval = 0.25f;
     void interAnimation(float deltaTime);
 };
