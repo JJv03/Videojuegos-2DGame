@@ -43,15 +43,37 @@ void TilemapManager::loadLevel(int level) {
     
     case 2:
         tilemaps.clear();
-        doors.clear();
+        doors.clear();        
         break;
 
     
     case 3:
         tilemaps.clear();
-        doors.clear();        
-        break;
 
+        tilemaps.push_back(TileMap());
+        tilemaps[0].load(3, 1);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[1].load(3, 2);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[2].load(3, 3);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[3].load(3, 4);
+
+        tilemaps.push_back(TileMap());
+        tilemaps[4].load(3, 5); // Boss
+
+        // ------------------------
+        doors.clear();
+
+        doors[1] = {1, 2, DoorTile::Type::STAIRS};      // Door 1
+        doors[2] = {2, 3, DoorTile::Type::DOOR};        // Door 2
+        doors[3] = {3, 4, DoorTile::Type::STAIRS};      // Door 3
+        doors[4] = {4, 5, DoorTile::Type::DOOR};        // Door 4
+
+        break;
         
     case 4:
         tilemaps.clear();

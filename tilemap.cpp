@@ -113,7 +113,24 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
     case 3:
         switch (id)
         {
-
+        case 5:
+        case 9:
+        case 10:
+        case 15:
+            return collisionTypes.at(BOTTOM_HALF_COLLISION);
+        case 30:
+        case 36:
+        case 45:
+        case 47:
+            return collisionTypes.at(TOP_HALF_COLLISION);
+        case 16:
+            return collisionTypes.at(FULL_COLLISION);
+        case 29:
+        case 41:
+            return collisionTypes.at(TOP_RIGHT_COLLISION);
+        case 33:
+        case 35:    
+            return collisionTypes.at(TOP_LEFT_COLLISION);
         default:
             return collisionTypes.at(NO_COLLISION);
         }

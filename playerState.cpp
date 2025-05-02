@@ -893,7 +893,8 @@ void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHa
     player.animationManager->update(deltaTime);
 
     if(player.isNearStair && 
-        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f)){
+        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f) &&
+        (abs((player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y) - (player.stairStart->hitboxes[0].position.y + player.stairStart->hitboxes[0].size.y)) < 1.f)){
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
@@ -1022,7 +1023,8 @@ void PlayerStairWalkState::update(Player& player, float deltaTime, bool windowHa
     }
 
     if(player.isNearStair && 
-        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.01f)){
+        (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f) &&
+        (abs((player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y) - (player.stairStart->hitboxes[0].position.y + player.stairStart->hitboxes[0].size.y)) < 5.f)){
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
