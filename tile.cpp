@@ -112,14 +112,14 @@ bool loadMiscTextures()
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
     ////////////////////////////////////////////////////////////////////////////
-    miscType_to_TextureRects[MiscTileType::WALL_1SQUARE] = sf::IntRect({18, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_1SQUARE] = "miscTile_2";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_1SQUARE] = sf::IntRect({18, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_1SQUARE] = "miscTile_2";
 
-    miscType_to_TextureRects[MiscTileType::WALL_4SQUARES] = sf::IntRect({162, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_4SQUARES] = "miscTile_2";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_4SQUARES] = sf::IntRect({162, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_4SQUARES] = "miscTile_2";
 
-    miscType_to_TextureRects[MiscTileType::WALL_3SQUARES] = sf::IntRect({146, 326}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_3SQUARES] = "miscTile_2";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_3SQUARES] = sf::IntRect({146, 326}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_3SQUARES] = "miscTile_2";
 
     miscType_to_TextureRects[MiscTileType::DROP_TRIGGER] = sf::IntRect({120, 56}, {1, 1});
     miscType_to_TextureAtlasKey[MiscTileType::DROP_TRIGGER] = "miscTile_2";
@@ -140,14 +140,34 @@ bool loadMiscTextures()
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
     ////////////////////////////////////////////////////////////////////////////
-    miscType_to_TextureRects[MiscTileType::WALL_1SQUARE_BROKE] = sf::IntRect({18, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_1SQUARE_BROKE] = "miscTile_3";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = sf::IntRect({18, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = "miscTile_3";
 
-    miscType_to_TextureRects[MiscTileType::WALL_4SQUARES_BROKE] = sf::IntRect({162, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_4SQUARES_BROKE] = "miscTile_3";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = sf::IntRect({162, 342}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = "miscTile_3";
 
-    miscType_to_TextureRects[MiscTileType::WALL_3SQUARES_BROKE] = sf::IntRect({146, 326}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::WALL_3SQUARES_BROKE] = "miscTile_3";
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = sf::IntRect({146, 326}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = "miscTile_3";
+
+
+    //////////////////////////////////////
+    // Load the fourth texture to the atlas
+    //////////////////////////////////////
+    sf::Image tilesetLvl3Image;
+    if (!tilesetLvl3Image.loadFromFile("./assets/tilesets/tileset_3.png")) return false;
+    tilesetLvl3Image.createMaskFromColor(gColorKeyGrey);
+    sf::Texture tex4;
+    if (!tex4.loadFromImage(tilesetLvl3Image)) return false;
+    tex4.setSmooth(false);
+    gTextures["miscTile_4"] = std::move(tex4);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Load the texture rectangles for each miscellaneous tile of that texture atlas
+    ////////////////////////////////////////////////////////////////////////////
+    miscType_to_TextureRects[MiscTileType::LVL3_WALL_1SQUARE] = sf::IntRect({2, 182}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL3_WALL_1SQUARE] = "miscTile_4";
+
+
 
     return true;
 }

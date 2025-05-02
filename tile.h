@@ -67,14 +67,19 @@ public:
 enum class MiscTileType {
     FIREPIT = 0,
     CANDELABRUM = 1,
-    WALL_1SQUARE = 2,
-    WALL_4SQUARES = 3,
-    WALL_3SQUARES = 4,
     DROP_TRIGGER = 5,       // Zone in which a player collision triggers an item drop
     
-    WALL_1SQUARE_BROKE = 6,     // Slight modification that has a crack
-    WALL_4SQUARES_BROKE = 7,    // Slight modification that has a crack
-    WALL_3SQUARES_BROKE = 8,    // Slight modification that has a crack
+    // Level 1
+    LVL1_WALL_1SQUARE = 2,
+    LVL1_WALL_4SQUARES = 3,
+    LVL1_WALL_3SQUARES = 4,
+    
+    LVL1_WALL_1SQUARE_BROKE = 6,     // Slight modification that has a crack
+    LVL1_WALL_4SQUARES_BROKE = 7,    // Slight modification that has a crack
+    LVL1_WALL_3SQUARES_BROKE = 8,    // Slight modification that has a crack
+
+    // Level 3
+    LVL3_WALL_1SQUARE = 9,
 };
 
 // Hash function for the miscellaneous tile type

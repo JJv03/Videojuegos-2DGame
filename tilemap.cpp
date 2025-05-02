@@ -204,12 +204,13 @@ sf::FloatRect TileMap::getHitboxForMiscTile(const int id) const
         return collisionTypes.at(LEFT_HALF_COLLISION);
     case 1: // Candelabrum
         return collisionTypes.at(THIN_TOP_LEFT_COLLISION);
-    case 2: // Wall 1 square
-    case 3: // Wall 4 square
-    case 4: // Wall 3 square
-    case 6: // Wall 1 square cracked
-    case 7: // Wall 4 square cracked
-    case 8: // Wall 3 square cracked
+    case 2: // Lvl 1 - Wall 1 square
+    case 3: // Lvl 1 - Wall 4 square
+    case 4: // Lvl 1 - Wall 3 square
+    case 6: // Lvl 1 - Wall 1 square cracked
+    case 7: // Lvl 1 - Wall 4 square cracked
+    case 8: // Lvl 1 - Wall 3 square cracked
+    case 9: // Lvl 3 - Wall 1 square
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
     case 5: // Wall DROP_TRIGGER
         return collisionTypes.at(FULL_COLLISION);

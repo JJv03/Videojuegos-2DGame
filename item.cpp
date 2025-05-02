@@ -470,6 +470,26 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             type = ItemType::MAGIC_CRYSTAL;
             break;
 
+        case DropType::FIRE_BOMB:
+            type = ItemType::FIRE_BOMB;
+            break;
+        
+        case DropType::AXE:
+            type = ItemType::AXE;
+            break;
+        
+        case DropType::BOOMERANG:
+            type = ItemType::BOOMERANG;
+            break;
+        
+        case DropType::STOPWATCH:
+            type = ItemType::STOPWATCH;
+            break;
+
+        case DropType::DAGGER:
+            type = ItemType::DAGGER;
+            break;
+
         default:
             std::cerr << "[ERROR] Unknown drop type: " << static_cast<int>(dropType) << std::endl;
             return nullptr;
