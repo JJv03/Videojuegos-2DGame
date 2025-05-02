@@ -3277,7 +3277,9 @@ void levelSelectorGS::handleInput(sf::Event event){
                             stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                             break;
                         case 1: // Lvl 3
-                            showPopUp = true;
+                            gStartingLevel = 3;
+                            gStartingStage = 1;
+                            stateMachine->replaceState(std::make_unique<GameGS>(stateMachine));
                             break;
                         case 2: // Lvl 5
                             // showPopUp = true;
