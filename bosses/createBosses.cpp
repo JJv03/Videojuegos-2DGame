@@ -114,3 +114,35 @@ DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &l
 
     return new DraculaSpirit(draculaSpiritSprite, hitboxes, position, level, stage, mapDims);
 }
+
+// Creates the phantomBat boss
+Death *createDeath(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
+{
+    // Sprite sheet coordinates and dimensions
+    sf::IntRect DEATH_SPRITE_REGION;
+    if(gCustomSkins){
+        DEATH_SPRITE_REGION = {{97, 74}, {40, 48}}; // Ibon
+    }
+    else{
+        DEATH_SPRITE_REGION = {{138, 74}, {40, 48}}; // Death
+    }
+
+    // Configure sprite
+    auto deathSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+    deathSprite->setTextureRect(DEATH_SPRITE_REGION);
+    deathSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = deathSprite->getLocalBounds();
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        // Wings opened
+        sf::FloatRect(
+            {position.x, position.y},
+            {40.f, 48.f}
+        )
+    };
+
+    return new Death(deathSprite, hitboxes, position, level, stage, mapDims);
+}

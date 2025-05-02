@@ -85,7 +85,7 @@ void Castlevania::run(){
         // Convertir a coordenadas del mundo usando la vista actual
         sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-        //std::cout << "Mouse View X: " << worldPos.x << ", Y: " << worldPos.y << std::endl;
+        std::cout << "Mouse View X: " << worldPos.x << ", Y: " << worldPos.y << std::endl;
         
         sf::View view = currentState->getView(window, camera);
         window.setView(view);
