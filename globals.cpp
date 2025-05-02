@@ -117,3 +117,6 @@ bool gGoToNextLevel = false;
 // ============ DEBUG =============
 const bool gDrawHitboxes = true;
 const bool gSkipAnims = true;
+
+// ============ SKINS =============
+const bool gCustomSkins = false;
