@@ -38,7 +38,7 @@ Dracula *createDracula(const sf::Vector2f &position, const size_t &level, const 
 {
     // -------- MASK (main sprite) --------
     // Sprite sheet coordinates and dimensions
-    const sf::IntRect MASK_SPRITE_REGION = {{307, 74}, {8, 16}};
+    const sf::IntRect MASK_SPRITE_REGION = {{307, 91}, {8, 16}};
     const float MASK_HITBOX_WIDTH = 8.f;
     const float MASK_HITBOX_HEIGHT = 16.f;
 

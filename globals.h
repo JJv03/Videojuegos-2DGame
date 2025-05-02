@@ -128,3 +128,6 @@ extern bool gGoToNextLevel; // Flag to notify that the player has to go to the n
 // ============ DEBUG =============
 extern const bool gDrawHitboxes;
 extern const bool gSkipAnims;
+
+// ============ SKINS =============
+extern const bool gCustomSkins;

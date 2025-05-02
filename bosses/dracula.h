@@ -94,6 +94,9 @@ private:
     std::vector<AnimationManager::Frame> maskDraculaFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(307, 74), sf::Vector2(8, 16)), 0.1f}
     };
+    std::vector<AnimationManager::Frame> customMaskDraculaFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(307, 91), sf::Vector2(8, 16)), 0.1f}
+    };
     
 
 public:

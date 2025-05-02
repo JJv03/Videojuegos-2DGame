@@ -71,7 +71,12 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
     }
 
     animationManager->addAnimation(noAnimation, this->noAnimationFrames);
-    animationManager->addAnimation(draculaMask, this->maskDraculaFrames);
+    
+    if(gCustomSkins){
+        animationManager->addAnimation(draculaMask, this->customMaskDraculaFrames);
+    } else {
+        animationManager->addAnimation(draculaMask, this->maskDraculaFrames);
+    }
 
     this->animationManager = animationManager;
     currentAnimation = noAnimation;
@@ -565,13 +570,13 @@ void Dracula::onCollision(Entity &other, Game &game)
 // Render dracula and debug info
 void Dracula::draw(sf::RenderWindow &window)
 {
-    if (sprite && isActive)
-    {
-        Boss::draw(window);
-    }
     if(draculaBody && draculaBody->sprite && isActive)
     {
         drawBody(window);
+    }
+    if (sprite && isActive)
+    {
+        Boss::draw(window);
     }
     for(auto& projectile : projectiles){
         if (projectile && projectile->sprite && projectile->getActive())
