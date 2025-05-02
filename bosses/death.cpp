@@ -43,7 +43,26 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
         sf::Vector2f size = mapDims.size;
         // std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
 
-        // NO SEGÚN SPEED SINO POSICIÓN DE SIMON
+        timer += deltaTime;
+        if(starting){
+            if (timer >= sleepInterval) {
+                timer = 0.0f;
+                starting = false;
+                goal = sf::Vector2f(210, 46);
+                // std::cout << "Map pos: " << map.x << " " << map.y << std::endl;
+                // std::cout << "Map size: " << size.x << " " << size.y << std::endl;
+                // std::cout << "Goal tras dormir: " << goal.x << " " << goal.y << std::endl;
+                getLinelSpeed(moveInterval);
+            }
+        }
+        else{
+            if (timer >= moveInterval) {
+                timer = 0;
+                speed = sf::Vector2f(0, 0);
+            }
+        }
+
+        // POSICIÓN DE SIMON PARA SABER DIRECCIÓN EN LA QUE MIRAR
         if (speed.x != 0)
         {
             sprite->move({speed.x * deltaTime, 0.f});
@@ -74,6 +93,43 @@ void Death::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &play
         }
     }
     // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). Attack with all scythe
+}
+
+void Death::getLinelSpeed(float timeToMove){
+    float deltaX = goal.x - position.x;
+    float deltaY = goal.y - position.y;
+
+    speed = sf::Vector2f(deltaX / timeToMove, -deltaY / timeToMove);
+    // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
+}
+
+void Death::getDoubleSpeed() {
+    float t = doubleMoveTimer / moveInterval;
+    if (t > 1.f) t = 1.f;
+
+    // horizontal component: constant velocity
+    float totalDx   = goal.x - startPosition.x;
+    float xVel      = totalDx / moveInterval;
+
+    // “linear” vertical component
+    float totalDy   = goal.y - startPosition.y;
+    float yVelLin   = totalDy / moveInterval;
+
+    // Parabolic arch: 
+    // f(t) = -4*H*(t-0.5)^2 + H => Extra vertical part
+    // f'(t) = d/dt = -8*H*(t - 0.5)
+    float arcDeriv = -8.f * arcHeight * (t - 0.5f);
+    float yVelArc  = arcDeriv / moveInterval;
+
+    float yVel = yVelLin + yVelArc;
+
+    speed = sf::Vector2f(xVel, -yVel);
+    // std::cout << "Double speed: " << speed.x << " " << speed.y << std::endl;
+}
+
+void Death::selectObjective(){
+    startPosition = position;
+    //goal
 }
 
 void Death::onCollision(Entity &other, Game &game)

@@ -132,9 +132,6 @@ Death *createDeath(const sf::Vector2f &position, const size_t &level, const size
     deathSprite->setTextureRect(DEATH_SPRITE_REGION);
     deathSprite->setPosition(position);
 
-    // Center sprite origin
-    sf::FloatRect bounds = deathSprite->getLocalBounds();
-
     // Create collision hitbox
     std::vector<sf::FloatRect> hitboxes = {
         // Wings opened

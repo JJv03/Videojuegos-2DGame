@@ -7,13 +7,22 @@ class Death : public Boss
 private:
     // Movement and combat constants
     const sf::Vector2f DEATH_SPEED = {0.0f, 0.0f};   // By default static
-    const float DEATH_LIFE = 24.0f;
-    const float DEATH_SCORE = 3000.0f;
-    const float DEATH_DAMAGE = 2.0f;
+    const float DEATH_LIFE = 48.0f;
+    const float DEATH_SCORE = 7000.0f;
+    const float DEATH_DAMAGE = 4.0f;
 
     bool dead = false;
 
+    bool starting = true;
+    float timer = 0.f;
+    const float sleepInterval = 2.f;
+
     sf::Vector2f goal = sf::Vector2f(0, 0);
+    sf::Vector2f startPosition;
+    float arcHeight = 25.f;
+
+    float doubleMoveTimer = 0.f;
+    const float moveInterval = 1.5f;
 
     bool enhancedActivated = false;
     float enhancedTimer = 0.f;
@@ -53,7 +62,7 @@ public:
     // Reset phantomBat to initial state
     void resetPosition() override;
 
-    void objectivePlayer(const sf::FloatRect &playerBounds);
+    void selectObjective();
 
     void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
 
