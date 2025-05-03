@@ -56,6 +56,12 @@ enum animationID{
     sleepPhantomBat,
     flyPhantomBat,
     deathPhantomBat,
+
+    // MummyMan
+    mummyIdle,
+    mummyWalk,
+    mummyAttack,
+
     // Dracula
     draculaMask,
     draculaIdle,

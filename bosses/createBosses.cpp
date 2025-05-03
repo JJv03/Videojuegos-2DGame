@@ -143,3 +143,28 @@ Death *createDeath(const sf::Vector2f &position, const size_t &level, const size
 
     return new Death(deathSprite, hitboxes, position, level, stage, mapDims);
 }
+
+// Creates the phantomBat boss
+MummyMan *createMummyMan(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
+{
+    // Sprite sheet coordinates and dimensions
+    sf::IntRect DEATH_SPRITE_REGION;
+    
+    DEATH_SPRITE_REGION = {{274, 19}, {16, 40}}; // Mummy Left
+
+    // Configure sprite
+    auto mummySprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+    mummySprite->setTextureRect(DEATH_SPRITE_REGION);
+    mummySprite->setPosition(position);
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        // Wings opened
+        sf::FloatRect(
+            {position.x, position.y},
+            {40.f, 48.f}
+        )
+    };
+
+    return new MummyMan(mummySprite, hitboxes, position, level, stage, mapDims);
+}
