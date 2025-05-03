@@ -20,6 +20,7 @@ MummyMan::MummyMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRec
         std::cerr << "Error: Failed to initialize Fishman AnimationManager!" << std::endl;
     }
 
+    animationManager->addAnimation(noAnimation, this->noAnimationFrames);
     animationManager->addAnimation(mummyIdle, this->idleMummyFrames);
     animationManager->addAnimation(mummyWalk, this->walkMummyFrames);
     animationManager->addAnimation(mummyAttack, this->attackkMummyFrames,false);
@@ -57,8 +58,10 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         }
     }
 
-    int chance = rand() % 4;
-    int speedP = (rand()%10)+1;
+    int chance = rand() % 2;
+    //int speedP = (rand()%10)+1;
+    int speedP = 10;
+    int waitingTime = rand() % 4;
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {   
@@ -91,10 +94,10 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
             case MummyState::WALK:
                     currentAnimation = mummyWalk;
                     sprite->move(sf::Vector2f(facingRight * deltaTime * speed.x, 0.f));
-                    if (chance == 0 || attackWaitingCounter >= attackWaitingTime)
+                    if (chance == 0 && attackWaitingCounter >= attackWaitingTime)
                     {
                         this->currentState = MummyState::ATTACK;
-                        attackWaitingCounter = 0.f;
+                        
                     }
                     else{
                         attackWaitingCounter +=deltaTime;
@@ -107,6 +110,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                     if (animationManager->isAnimationFinished())
                     {
                         speed.x = MUMMY_SPEED.x * (speedP/10.f);
+                        attackWaitingCounter = 0.f;
                         this->currentState = MummyState::WALK;
                     }
                     
@@ -119,6 +123,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                         counterStarting = 0.f;
                         started = true;
                         firstTime = true;
+                        attackWaitingCounter = 0.f;
                     }
                     else{
                         counterStarting +=deltaTime;
@@ -132,6 +137,8 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
     }
     sf::FloatRect spriteBounds = sprite->getGlobalBounds();
     hitboxes[0] = spriteBounds;
+    
+    
     updateAnimation(deltaTime);
 }
 
@@ -140,7 +147,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
 
 void MummyMan::onCollision(Entity &other, Game &game)
 {
-    if (!isActive || !sprite)
+    if (!isActive || !sprite || currentState ==MummyState::IDLE)
         return;
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))

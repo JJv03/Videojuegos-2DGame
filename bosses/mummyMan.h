@@ -22,6 +22,10 @@ private:
 
     bool triedAI = false;
 
+    std::vector<AnimationManager::Frame> noAnimationFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f}
+    };
+
     std::vector<AnimationManager::Frame> idleMummyFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(274, 19), sf::Vector2(16, 40)), 0.1f}
     };
@@ -32,9 +36,9 @@ private:
     };
 
     std::vector<AnimationManager::Frame> attackkMummyFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 20), sf::Vector2(16, 39)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(342, 19), sf::Vector2(16, 40)), 0.15f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(359, 20), sf::Vector2(16, 39)), 0.15f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(325, 20), sf::Vector2(16, 39)), 0.65f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(342, 19), sf::Vector2(16, 40)), 0.65f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(359, 20), sf::Vector2(16, 39)), 0.65f}
     };
 
 public:
