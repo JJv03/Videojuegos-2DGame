@@ -1,6 +1,7 @@
 #pragma once
 
 #include "boss.h"
+#include "createScythe.h"
 
 class Death : public Boss
 {
@@ -38,6 +39,8 @@ private:
     const float enhancedInterval = 1.5f;
     const float enhancedSpeed = 0.5f;
     bool triedAI = false;
+
+    std::array<std::shared_ptr<Scythe>, 3> scythes;
 
 public:
     int level; // Current game level
