@@ -13,6 +13,17 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     damage = DEATH_DAMAGE;
 
     gKilledBoss = false;
+    goingDown = true;
+    attacking = false;
+    moving = false;
+
+    up = true;
+    right = false;
+    dead = false;
+
+    starting = true;
+    timer = 0.f;
+    doubleMoveTimer = 0.f;
 }
 
 // Update Death logic: handle spawning, movement, and deactivation
@@ -39,8 +50,8 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
         // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
         position = sprite->getGlobalBounds().position;
         // std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
-        sf::Vector2f map = mapDims.position;
-        sf::Vector2f size = mapDims.size;
+        // sf::Vector2f map = mapDims.position;
+        // sf::Vector2f size = mapDims.size;
         // std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
 
         timer += deltaTime;
@@ -48,6 +59,7 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             if (timer >= sleepInterval) {
                 timer = 0.0f;
                 starting = false;
+                goingDown = true;
                 goal = sf::Vector2f(210, 46);
                 // std::cout << "Map pos: " << map.x << " " << map.y << std::endl;
                 // std::cout << "Map size: " << size.x << " " << size.y << std::endl;
@@ -56,9 +68,47 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             }
         }
         else{
-            if (timer >= moveInterval) {
-                timer = 0;
-                speed = sf::Vector2f(0, 0);
+            if(goingDown){
+                std::cout << "Abajo" << std::endl;
+                if (timer >= moveInterval) {    // Arrived to the goal
+                    timer = 0;
+                    speed = sf::Vector2f(0, 0);
+                    goingDown = false;
+                    attacking = true;
+                }
+            }
+            else{
+                if(attacking){
+                    // ATTACK LOGIC
+                    std::cout << "Attack" << std::endl;
+                    if (timer >= attackInterval) {    // Attack timer
+                        timer = 0;
+                        attacking = false;
+                        moving = true;
+                        selectObjective();
+                    }
+                }
+                else{
+                    if(moving){
+                        std::cout << "Moving" << std::endl;
+                        if (timer >= moveInterval) {    // Move timer
+                            timer = 0;
+                            moving = false;
+                            speed = sf::Vector2f(0, 0);
+                        }
+                        else{
+                            getDoubleSpeed();
+                            doubleMoveTimer += deltaTime;
+                        }
+                    }
+                    else{
+                        std::cout << "Waiting" << std::endl;
+                        if(timer >= waitInterval){
+                            timer = 0;
+                            attacking = true;
+                        }
+                    }
+                }
             }
         }
 
@@ -115,10 +165,10 @@ void Death::getDoubleSpeed() {
     float totalDy   = goal.y - startPosition.y;
     float yVelLin   = totalDy / moveInterval;
 
-    // Parabolic arch: 
-    // f(t) = -4*H*(t-0.5)^2 + H => Extra vertical part
-    // f'(t) = d/dt = -8*H*(t - 0.5)
-    float arcDeriv = -8.f * arcHeight * (t - 0.5f);
+    // Parabolic arch (inverted U): 
+    // f(t) = 4*H*(t-0.5)^2 - H => Extra vertical part
+    // f'(t) = d/dt = 8*H*(t - 0.5)
+    float arcDeriv = 8.f * arcHeight * (t - 0.5f);
     float yVelArc  = arcDeriv / moveInterval;
 
     float yVel = yVelLin + yVelArc;
@@ -128,8 +178,23 @@ void Death::getDoubleSpeed() {
 }
 
 void Death::selectObjective(){
+    doubleMoveTimer = 0.f;
     startPosition = position;
-    //goal
+    if(up){
+        goal = sf::Vector2f(25, 105);
+        up = false;
+        right = false;
+    }
+    else{
+        if(right){
+            goal = sf::Vector2f(25, 105);
+            right = false;
+        }
+        else{
+            goal = sf::Vector2f(198, 105);
+            right = true;
+        }
+    }
 }
 
 void Death::onCollision(Entity &other, Game &game)

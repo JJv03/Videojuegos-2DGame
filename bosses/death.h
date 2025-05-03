@@ -19,10 +19,19 @@ private:
 
     sf::Vector2f goal = sf::Vector2f(0, 0);
     sf::Vector2f startPosition;
-    float arcHeight = 25.f;
+    float arcHeight = 35.f;
 
     float doubleMoveTimer = 0.f;
-    const float moveInterval = 1.5f;
+    const float moveInterval = 2.5f;
+    const float waitInterval = 2.f;
+    const float attackInterval = 1.5f;
+
+    bool goingDown = true;
+    bool attacking = false;
+    bool moving = false;
+
+    bool up = true;
+    bool right = false;
 
     bool enhancedActivated = false;
     float enhancedTimer = 0.f;
