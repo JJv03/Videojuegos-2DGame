@@ -35,8 +35,8 @@ void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
         }
     }
 
-    // If the player is outside the activation zone, the enemy is allowed to reactivate in the future.
-    if (!enemyInsideActivationZone)
+    // If the player is outside the deactivation zone, the enemy is allowed to reactivate in the future.
+    if (!enemyInsideDeactivationZone)
     {
         needsPlayerToLeaveZone = false;
     }
