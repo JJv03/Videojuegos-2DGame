@@ -126,6 +126,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip){
         
         if(configManager.getCheats().enabled){
+            this->sprite->setColor(sf::Color(255, 255, 255, 0));
             this->sprite->setColor(sf::Color(255, 255, 255, 128));
             this->isInvulnerable=true;
         }
