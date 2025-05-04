@@ -670,16 +670,17 @@ void Game::interAnimation(float deltaTime){
         pos = tilemaps[5].getMapBoundsBossFight();
     }
     if(currentLevel == 5){
-        pos = tilemaps[5].getMapBoundsBossFight();
+        pos = tilemaps[4].getMapBoundsBossFight();
     }
     if(currentLevel == 7){
         pos = tilemaps[6].getMapBoundsBossFight();
     }
+    // std::cout << pos.position.x << " " << pos.position.y << std::endl;
     // First map entering
     if(entering){
         switch(currentLevel){
             case 3:
-                destiny = pos.position.x + 10;
+                destiny = pos.position.x + 5;
                 break;
             case 5:
                 destiny = pos.position.x - 130;
@@ -749,7 +750,7 @@ void Game::prepareVariablesForLevel() {
             pos = tilemaps[5].getMapBoundsBossFight();
         }
         if(currentLevel == 5){
-            pos = tilemaps[5].getMapBoundsBossFight();
+            pos = tilemaps[4].getMapBoundsBossFight();
         }
         if(currentLevel == 7){
             pos = tilemaps[6].getMapBoundsBossFight();
@@ -759,8 +760,8 @@ void Game::prepareVariablesForLevel() {
         isInBossFight = false;
         showInter = true;
         entering = true;
-        map->setPosition(sf::Vector2f(pos.position.x + 256, 30));
-        simon->setPosition(sf::Vector2f(pos.position.x - 10, 150));
+        map->setPosition(sf::Vector2f(pos.position.x + 256, pos.position.y + 30));
+        simon->setPosition(sf::Vector2f(pos.position.x - 10, pos.position.y + 150));
     }
     resetEndLevelScoreAnimation();
     gGoToNextLevel = false;
