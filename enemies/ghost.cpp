@@ -7,7 +7,7 @@
 Ghost::Ghost(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
     : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
-    speed = {0.0f, 0.0f};
+    speed = GHOST_SPEED;
     life = GHOST_LIFE;
     score = GHOST_SCORE;
     damage = GHOST_DAMAGE;
@@ -17,7 +17,7 @@ Ghost::Ghost(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
 void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
                    const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds)
 {
-    playerPosition = playerPos;
+    playerPosition = {playerPos.x, playerPos.y - 16.0f};
 
     // SPAWN LOGIC
     bool enemyInsideActivationZone = false;
@@ -58,8 +58,32 @@ void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
     if (isActive)
     {
         if (checkMapBoundaries(mapBounds))
-        {
             return;
+
+        // If stunned, decreases time and does not move
+        if (stunTime > 0.0f)
+        {
+            stunTime -= deltaTime;
+            speed = {0.0f, 0.0f};
+        }
+        else
+        {
+            // Movement towards the player with constant speed
+            sf::Vector2f direction = playerPosition - sprite->getPosition();
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+            if (length != 0)
+            {
+                direction /= length;
+                speed = direction * GHOST_SPEED_MAGNITUDE;
+
+                // Applies movement
+                sprite->move(speed * deltaTime);
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position += speed * deltaTime;
+                }
+            }
         }
 
         updateAnimation(deltaTime);
@@ -73,6 +97,8 @@ void Ghost::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
+        stunTime = STUN_DURATION;
+
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
@@ -82,6 +108,8 @@ void Ghost::onCollision(Entity &other, Game &game)
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
+        stunTime = STUN_DURATION;
+
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);

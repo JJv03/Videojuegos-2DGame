@@ -6,7 +6,8 @@ class Ghost : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f GHOST_SPEED = {-45.0f, 0.0f};
+    const sf::Vector2f GHOST_SPEED = {-25.0f, 0.0f};
+    const float GHOST_SPEED_MAGNITUDE = 25.0f;
 
     // Combat stats
     const float GHOST_LIFE = 5.0f;
@@ -15,6 +16,8 @@ private:
 
     // AI
     sf::Vector2f playerPosition;
+    float stunTime = 0.0f;
+    const float STUN_DURATION = 0.25f;
 
 public:
     int level; // Current game level
