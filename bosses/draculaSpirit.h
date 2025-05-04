@@ -79,6 +79,9 @@ public:
     float fireNextCounter = 0.f;
     float fireNextTimer = 5.0f;
 
+    // Init
+    bool hasInitJump = false;
+
     // Projectile
     std::shared_ptr<Projectile> projectile;
     bool hasProjectile{false};

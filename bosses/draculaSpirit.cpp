@@ -209,8 +209,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 }
                 alreadyFlying = true;
                 this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
-                if( map.x + size.x -62.f > position.x + this->directionFlying * this->speed.x &&
-                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x){
+                if( (map.x + size.x -62.f > position.x + this->directionFlying * this->speed.x &&
+                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump){
                         sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                 }
                 else{
@@ -233,6 +233,10 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 
                 // Verifica si ha alcanzado la altura del jugador (o el suelo)
                 if(sprite->getPosition().y >= 155.0f) {
+                    
+                    if(!hasInitJump){
+                        hasInitJump=true;
+                    }
                     
                     this->currentState = DraculeSpiritState::LANDING;
                 }
@@ -402,6 +406,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game)
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             //dead = true;
             gKilledBoss = true;
+            hasInitJump = false;
             game.particleSystem.spawnBigFireParticle(position, false);
             
         }
@@ -414,6 +419,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game)
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             //dead = true;
             gKilledBoss = true;
+            hasInitJump = false;
             game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
