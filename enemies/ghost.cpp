@@ -15,7 +15,7 @@ Ghost::Ghost(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
 
 // Main update loop
 void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                   const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds)
+                   const sf::Vector2f &playerPos, const sf::FloatRect &mapBounds)
 {
     playerPosition = {playerPos.x, playerPos.y - 16.0f};
 
@@ -133,6 +133,8 @@ void Ghost::resetPosition()
 
     speed = GHOST_SPEED;
     life = GHOST_LIFE;
+
+    stunTime = 0.0f;
 
     sprite->setScale({1.0f, 1.0f});
 }

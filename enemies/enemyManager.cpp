@@ -72,7 +72,7 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
         if (ghost->level == currentLevel && ghost->stage == currentStage)
         {
             ghost->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
-                          playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
+                          playerPtr->sprite->getPosition(), mapBounds);
         }
     }
 }
