@@ -5,6 +5,7 @@
 #include "game.h"
 #include "item.h"
 #include "enemies/projectile.h"
+#include "bosses/scythe.h"
 #include <cmath>
 
 Player::Player():configManager(configManager::getInstance())
@@ -361,6 +362,31 @@ void Player::onCollision(Entity &other, Game &game)
         // Change when projectile has animationManager and can have hitbox = 0
         if(projectile->getActive() && !this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - projectile->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isInvulnerable = true;
+
+                if(this->isOnStairs){
+                    this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
+    }
+    else if (Scythe *scythe = dynamic_cast<Scythe *>(&other))
+    {   
+        // Change when scythe has animationManager and can have hitbox = 0
+        if(scythe->getActive() && !this->isInvulnerable && !this->isDead){
+            this->health = std::max(this->health - scythe->damage, 0.f);
 
             if (this->health > 0)
             {
@@ -971,6 +997,14 @@ void Whip::onCollision(Entity &other, Game &game)
         else if (Projectile* projectile = dynamic_cast<Projectile *>(&other))
         {
             if(projectile->getActive()){
+                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                gameSoundManager.stopSound("whip_use");
+                playSound("whip_hit");
+            }
+        }
+        else if (Scythe* scythe = dynamic_cast<Scythe *>(&other))
+        {
+            if(scythe->getActive()){
                 game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
                 gameSoundManager.stopSound("whip_use");
                 playSound("whip_hit");

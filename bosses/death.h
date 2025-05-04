@@ -40,15 +40,15 @@ private:
     const float enhancedSpeed = 0.5f;
     bool triedAI = false;
 
-    // Up to 5 scythes at screen
-    std::array<std::shared_ptr<Scythe>, 5> scythes;
-    bool generated = false;
-
 public:
     int level; // Current game level
     int stage; // Current stage within level
     sf::Vector2f position;
     sf::FloatRect mapDims;
+
+    // Up to 5 scythes at screen
+    std::array<std::shared_ptr<Scythe>, 5> scythes;
+    bool generated = false;
 
     Death() = default;
     Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,

@@ -303,6 +303,12 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         if (death->level == currentLevel && death->stage == currentStage && death->isActive)
         {
             allBosses.push_back(death);
+            for(auto& scythe : death->scythes){
+                if (scythe)
+                {
+                    allBosses.push_back(scythe.get());
+                }
+            }
         }
     }
     if (dracula)
