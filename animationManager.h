@@ -97,6 +97,10 @@ enum animationID{
     // Inter level anim
     liBat,
     biBat,
+
+    // Death scythe
+    scythe,
+    gamePad
 };
 
 

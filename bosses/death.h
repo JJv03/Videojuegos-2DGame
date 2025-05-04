@@ -40,7 +40,8 @@ private:
     const float enhancedSpeed = 0.5f;
     bool triedAI = false;
 
-    std::array<std::shared_ptr<Scythe>, 3> scythes;
+    // Up to 4 scythes at screen
+    std::array<std::shared_ptr<Scythe>, 4> scythes;
 
 public:
     int level; // Current game level
