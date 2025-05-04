@@ -17,7 +17,8 @@ private:
     // AI
     sf::Vector2f playerPosition;
     float stunTime = 0.0f;
-    const float STUN_DURATION = 0.25f;
+    const float STUN_DURATION = 0.15f;
+    const float MIN_PLAYER_DISTANCE_TO_SPAWN = 90.0f;
 
 public:
     int level; // Current game level
