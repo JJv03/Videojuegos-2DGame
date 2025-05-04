@@ -134,3 +134,30 @@ Ghost *createGhost(const sf::Vector2f &position, const size_t &level, const size
 
     return new Ghost(ghostSprite, hitboxes, level, stage);
 }
+
+// Creates a medusa enemy with spawn zone parameters
+Medusa *createMedusaSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect BAT_SPRITE_REGION = {{119, 75}, {16, 16}};
+    const float HITBOX_WIDTH = 15.f;
+    const float HITBOX_HEIGHT = 15.f;
+
+    // Configure sprite
+    auto medusaSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    medusaSprite->setTextureRect(BAT_SPRITE_REGION);
+    medusaSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = medusaSprite->getLocalBounds();
+    medusaSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    return new Medusa(medusaSprite, hitboxes, position, zoneSize, level, stage);
+}

@@ -75,6 +75,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                           playerPtr->sprite->getPosition(), mapBounds);
         }
     }
+    for (auto &medusa : medusa)
+    {
+        if (medusa->level == currentLevel && medusa->stage == currentStage)
+        {
+            medusa->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                           playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), playerPos, mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -115,6 +123,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
             ghost->draw(window);
         }
     }
+    for (auto &medusa : medusa)
+    {
+        if (medusa->level == currentLevel && medusa->stage == currentStage)
+        {
+            medusa->draw(window);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -126,6 +141,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     bat.clear();
     fishman.clear();
     ghost.clear();
+    medusa.clear();
 
     switch (level)
     {
@@ -200,6 +216,14 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                     ghost.push_back(createGhost(enemyData.position, level, currentStage));
                     break;
 
+                case 5: // Medusa
+                    medusa.push_back(createMedusaSpawner(
+                        enemyData.position,
+                        sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
+                                     enemyData.height > 0 ? enemyData.height : 50.f),
+                        level, currentStage));
+                    break;
+
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
                     break;
@@ -269,6 +293,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             allEnemies.push_back(g);
         }
     }
+    for (auto &m : medusa)
+    {
+        if (m->level == currentLevel && m->stage == currentStage && m->isActive)
+        {
+            allEnemies.push_back(m);
+        }
+    }
 
     return allEnemies;
 }
@@ -319,6 +350,15 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             ghost->isActive = false;
             ghost->resetPosition();
+        }
+    }
+    for (auto &medusa : medusa)
+    {
+        if (medusa->level == currentLevel && medusa->stage == currentStage)
+        {
+            medusa->isActive = false;
+            medusa->resetPosition();
+            medusa->resetSpawnState();
         }
     }
 }
