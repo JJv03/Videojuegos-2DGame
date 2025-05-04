@@ -1,11 +1,29 @@
 #include "scythe.h"
+#include "../globals.h"
 #include <iostream>
 
 Scythe::Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-                       const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage)
-    : EntitySprite(_sprite, _hitboxes), velocity(_velocity), damage(_damage)
-{
-}
+                       const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage, const sf::FloatRect &mapDims)
+    : EntitySprite(_sprite, _hitboxes), velocity(_velocity), damage(_damage), mapDims(mapDims){
+        AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+
+        if (!animationManager)
+        {
+            std::cerr << "Error: Failed to initialize Fishman AnimationManager!" << std::endl;
+        }
+
+        animationManager->addAnimation(scythe, this->normalFrames);
+        animationManager->addAnimation(gamePad, this->gamePadFrames);
+
+        this->animationManager = animationManager;
+
+        if(gCustomSkins){
+            currentAnimation = gamePad;
+        }
+        else{
+            currentAnimation = scythe;
+        }
+    }
 
 void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
 {
@@ -14,15 +32,35 @@ void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
         return;
     }
 
-    // Move the projectile
-    sf::Vector2f movement = velocity * deltaTime;
-    sprite->move(movement);
+    timer += deltaTime;
+    if(timer >= timeToMove){
+        velocity = sf::Vector2f(0, 0);
+    }
 
-    // Update hitboxes
-    for (auto &hitbox : hitboxes)
+    if(!animationManager->isPlaying(currentAnimation))
     {
-        hitbox.position.x += movement.x;
-        hitbox.position.y += movement.y;
+        animationManager->playAnimation(currentAnimation);
+    }
+
+    animationManager->update(deltaTime);
+
+    position = sprite->getGlobalBounds().position;
+
+    if (velocity.x != 0)
+    {
+        sprite->move({velocity.x * deltaTime, 0.f});
+        for (auto &hitbox : hitboxes)
+        {
+            hitbox.position.x += velocity.x * deltaTime;
+        }
+    }
+    if (velocity.y != 0)
+    {
+        sprite->move({0.f, -velocity.y * deltaTime});
+        for (auto &hitbox : hitboxes)
+        {
+            hitbox.position.y -= velocity.y * deltaTime;
+        }
     }
 
     // Check if projectile is outside deactivation zone
@@ -63,6 +101,15 @@ void Scythe::onCollision(Entity &other, Game &game)
     {
         isActive = false;
     }
+}
+
+void Scythe::planPosSpeed(const sf::Vector2f goal){
+    timer = 0;
+    float deltaX = goal.x - position.x;
+    float deltaY = goal.y - position.y;
+
+    velocity = sf::Vector2f(deltaX / timeToMove, -deltaY / timeToMove);
+    // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
 }
 
 void Scythe::reset()
