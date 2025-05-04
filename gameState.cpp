@@ -13,7 +13,7 @@
 // constexpr sf::Keyboard::Scancode KEY_DOWN = sf::Keyboard::Scancode::Down;
 // constexpr sf::Keyboard::Scancode KEY_UP = sf::Keyboard::Scancode::Up;
 // constexpr sf::Keyboard::Scancode KEY_ENTER = sf::Keyboard::Scancode::Enter;
-constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
+// constexpr sf::Keyboard::Scancode KEY_ESC = sf::Keyboard::Scancode::Escape;
 // constexpr sf::Keyboard::Scancode KEY_JUMP = sf::Keyboard::Scancode::X;
 // constexpr sf::Keyboard::Scancode KEY_ATTACK = sf::Keyboard::Scancode::Z;
 
@@ -135,9 +135,12 @@ void GameGS::init(){
 
 void GameGS::handleInput(sf::Event event){
     if(!gPlayEndLvlScoreAnimation){
+        auto controls = configManager.getControls();
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-            if (keyPressed->scancode == KEY_ESC)
+            if (keyPressed->scancode == controls.escape)
             {
+                auto audio = configManager.getAudio();
+                gameSoundManager.playSound("pause", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
                 stateMachine->addState(std::make_unique<PauseGS>(stateMachine));
                 return;
             }
@@ -765,8 +768,10 @@ void PauseGS::init(){
 void PauseGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == KEY_ESC)
-        {    
+        if (keyPressed->scancode == controls.escape)
+        {
+            auto audio = configManager.getAudio();
+            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(audio.master_volume, audio.music_volume));
             stateMachine->removeState();
         }
 

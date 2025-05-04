@@ -58,10 +58,12 @@ public:
 
 
 class GameGS : public GameState{
+private:
+    configManager &configManager;
 public:
     Game game;
 
-    explicit GameGS(GameStateMachine* machine) : GameState(machine), game() {}
+    explicit GameGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()), game() {}
     ~GameGS() override;
     void init() override;
     void handleInput(sf::Event event) override;
