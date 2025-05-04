@@ -134,6 +134,13 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             }
         }
 
+        if(playerBounds.position.x < position.x){
+            sprite->setScale(sf::Vector2f(1, 1));
+        }
+        else{
+            sprite->setScale(sf::Vector2f(-1, 1));
+        }
+
         int cont = 0;
         for(auto& scythe : scythes){
             if(scythe && scythe->sprite && scythe->getActive()){
@@ -215,12 +222,31 @@ void Death::generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &
     generated = true;
     int created = 0;
 
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    float minX = mapDims.position.x;
+    float maxX = mapDims.position.x + mapDims.size.x;
+    float minY = mapDims.position.y;
+    float maxY = mapDims.position.y + mapDims.size.y;
+
+    std::uniform_real_distribution<float> distX(minX, maxX);
+    std::uniform_real_distribution<float> distY(minY, maxY);
+
+    const float minDistanceToPlayer = 32.f;
+
     for (int i = 0; i < 5 && created < 2; i++)
     {
         if (!scythes[i] || !scythes[i]->getActive())
         {
-            // Crear la guadaña
-            scythes[i] = createScythe(position, mapDims, DEATH_DAMAGE);
+            sf::Vector2f randomPosition;
+
+            do {
+                randomPosition = { distX(gen), distY(gen) };
+            } while (std::hypot(randomPosition.x - playerPos.x, randomPosition.y - playerPos.y) < minDistanceToPlayer);
+
+            // Create the scythe in a random position
+            scythes[i] = createScythe(randomPosition, mapDims, DEATH_DAMAGE);
             scythes[i]->setActive(true);
 
             created++;
