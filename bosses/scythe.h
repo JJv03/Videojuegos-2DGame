@@ -35,7 +35,7 @@ public:
 
     Scythe() = default;
     Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-               const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage = 2.0f, const sf::FloatRect &mapDims);
+               const sf::Vector2f &position, const sf::FloatRect &mapDims, float _damage = 2.0f);
 
     // Update scythe position and check if it's still in the valid zone
     void update(float deltaTime, const sf::FloatRect &deactivationZone);

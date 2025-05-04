@@ -1,14 +1,14 @@
 #include "createScythe.h"
 
-std::shared_ptr<Scythe> createScythe(const sf::Vector2f &position, const sf::Vector2f &velocity, float damage)
+std::shared_ptr<Scythe> createScythe(const sf::Vector2f &position, const sf::FloatRect &mapDims, float damage)
 {
     sf::IntRect spriteRegion;
-    float hitboxWidth = 8.0f;
-    float hitboxHeight = 8.0f;
+    float hitboxWidth = 16.0f;
+    float hitboxHeight = 16.0f;
 
-    spriteRegion = {{377, 28}, {8, 8}};
-    hitboxWidth = 7.0f;
-    hitboxHeight = 7.0f;
+    spriteRegion = {{179, 74}, {16, 16}};
+    hitboxWidth = 14.0f;
+    hitboxHeight = 14.0f;
 
     // Configure sprite
     auto projectileSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
@@ -19,16 +19,6 @@ std::shared_ptr<Scythe> createScythe(const sf::Vector2f &position, const sf::Vec
     sf::FloatRect bounds = projectileSprite->getLocalBounds();
     projectileSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
 
-    // Rotate sprite based on velocity direction
-    if (velocity.x < 0)
-    {
-        projectileSprite->setScale({1.0f, 1.0f});
-    }
-    else if (velocity.x > 0)
-    {
-        projectileSprite->setScale({-1.0f, 1.0f});
-    }
-
     // Create collision hitbox
     std::vector<sf::FloatRect> hitboxes = {
         sf::FloatRect(
@@ -36,5 +26,5 @@ std::shared_ptr<Scythe> createScythe(const sf::Vector2f &position, const sf::Vec
             {hitboxWidth, hitboxHeight})};
 
     // Create and return projectile with shared_ptr
-    return std::make_shared<Scythe>(projectileSprite, hitboxes, position, velocity, damage);
+    return std::make_shared<Scythe>(projectileSprite, hitboxes, position, mapDims, damage);
 }

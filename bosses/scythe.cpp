@@ -3,8 +3,10 @@
 #include <iostream>
 
 Scythe::Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-                       const sf::Vector2f &position, const sf::Vector2f &_velocity, float _damage, const sf::FloatRect &mapDims)
-    : EntitySprite(_sprite, _hitboxes), velocity(_velocity), damage(_damage), mapDims(mapDims){
+                       const sf::Vector2f &position, const sf::FloatRect &mapDims, float _damage)
+    : EntitySprite(_sprite, _hitboxes), mapDims(mapDims), damage(_damage){
+        velocity = sf::Vector2f(0, 0);
+        
         AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
 
         if (!animationManager)
@@ -23,6 +25,7 @@ Scythe::Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
         else{
             currentAnimation = scythe;
         }
+        animationManager->playAnimation(currentAnimation);
     }
 
 void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
@@ -35,11 +38,6 @@ void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
     timer += deltaTime;
     if(timer >= timeToMove){
         velocity = sf::Vector2f(0, 0);
-    }
-
-    if(!animationManager->isPlaying(currentAnimation))
-    {
-        animationManager->playAnimation(currentAnimation);
     }
 
     animationManager->update(deltaTime);

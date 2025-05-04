@@ -40,8 +40,9 @@ private:
     const float enhancedSpeed = 0.5f;
     bool triedAI = false;
 
-    // Up to 4 scythes at screen
-    std::array<std::shared_ptr<Scythe>, 4> scythes;
+    // Up to 5 scythes at screen
+    std::array<std::shared_ptr<Scythe>, 5> scythes;
+    bool generated = false;
 
 public:
     int level; // Current game level
@@ -78,6 +79,8 @@ public:
     void selectObjective();
 
     void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
+
+    void generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &mapDims);
 
     void hello() const override;
 };

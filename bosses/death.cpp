@@ -81,6 +81,9 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                 if(attacking){
                     // ATTACK LOGIC
                     std::cout << "Attack" << std::endl;
+                    if(!generated){
+                        generateScythes(playerBounds.position, mapDims);
+                    }
                     if (timer >= attackInterval) {    // Attack timer
                         timer = 0;
                         attacking = false;
@@ -127,6 +130,12 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             for (auto &hitbox : hitboxes)
             {
                 hitbox.position.y -= speed.y * deltaTime;
+            }
+        }
+
+        for(auto& scythe : scythes){
+            if(scythe && scythe->sprite && scythe->getActive()){
+                scythe->update(deltaTime, mapBounds);
             }
         }
     }
@@ -197,6 +206,24 @@ void Death::selectObjective(){
     }
 }
 
+void Death::generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &mapDims)
+{
+    generated = true;
+    int created = 0;
+
+    for (int i = 0; i < 5 && created < 3; i++)
+    {
+        if (!scythes[i] || !scythes[i]->getActive())
+        {
+            // Crear la guadaña
+            scythes[i] = createScythe(position, mapDims, DEATH_DAMAGE);
+            scythes[i]->setActive(true);
+
+            created++;
+        }
+    }
+}
+
 void Death::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)
@@ -231,6 +258,14 @@ void Death::draw(sf::RenderWindow &window)
     if (sprite && isActive && isInBossFight)
     {
         Boss::draw(window);
+    }
+
+    for(auto& scythe : scythes){
+        if (scythe && scythe->sprite && scythe->getActive())
+        {
+            //std::cout << "P1 " << projectile->sprite->getPosition().x  << "  " << projectile->sprite->getPosition().y << std::endl;
+            scythe->draw(window);
+        }
     }
 
     if(gDrawHitboxes){
