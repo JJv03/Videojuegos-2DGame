@@ -90,6 +90,18 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                         moving = true;
                         generated = false;
                         selectObjective();
+                        auto mode = configManager.getDifficulty();
+                        if(mode.hard_mode){ // Enhanced AI
+
+                        }
+                        else{
+                            for(auto& scythe : scythes){
+                                if(scythe && scythe->sprite && scythe->getActive()){
+                                    sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
+                                    scythe->planPosSpeed(randomPosition);
+                                }
+                            }
+                        }
                     }
                 }
                 else{
@@ -222,28 +234,11 @@ void Death::generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &
     generated = true;
     int created = 0;
 
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-
-    float minX = mapDims.position.x;
-    float maxX = mapDims.position.x + mapDims.size.x;
-    float minY = mapDims.position.y;
-    float maxY = mapDims.position.y + mapDims.size.y;
-
-    std::uniform_real_distribution<float> distX(minX, maxX);
-    std::uniform_real_distribution<float> distY(minY, maxY);
-
-    const float minDistanceToPlayer = 32.f;
-
     for (int i = 0; i < 5 && created < 2; i++)
     {
         if (!scythes[i] || !scythes[i]->getActive())
         {
-            sf::Vector2f randomPosition;
-
-            do {
-                randomPosition = { distX(gen), distY(gen) };
-            } while (std::hypot(randomPosition.x - playerPos.x, randomPosition.y - playerPos.y) < minDistanceToPlayer);
+            sf::Vector2f randomPosition = getRandomScythesPos(playerPos);
 
             // Create the scythe in a random position
             scythes[i] = createScythe(randomPosition, mapDims, DEATH_DAMAGE);
@@ -252,6 +247,29 @@ void Death::generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &
             created++;
         }
     }
+}
+
+sf::Vector2f Death::getRandomScythesPos(const sf::Vector2f &playerPos){
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    float minX = mapDims.position.x + 9;
+    float maxX = mapDims.position.x + mapDims.size.x - 9;
+    float minY = mapDims.position.y + 9;
+    float maxY = mapDims.position.y + mapDims.size.y - 9;
+
+    std::uniform_real_distribution<float> distX(minX, maxX);
+    std::uniform_real_distribution<float> distY(minY, maxY);
+
+    const float minDistanceToPlayer = 32.f;
+
+    sf::Vector2f randomPosition;
+
+    do {
+        randomPosition = { distX(gen), distY(gen) };
+    } while (std::hypot(randomPosition.x - playerPos.x, randomPosition.y - playerPos.y) < minDistanceToPlayer);
+
+    return randomPosition;
 }
 
 void Death::onCollision(Entity &other, Game &game)

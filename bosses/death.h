@@ -80,6 +80,8 @@ public:
 
     void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
 
+    sf::Vector2f getRandomScythesPos(const sf::Vector2f &playerPos);
+
     void generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &mapDims);
 
     void hello() const override;

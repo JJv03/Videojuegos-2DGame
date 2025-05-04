@@ -44,6 +44,16 @@ void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
 
     position = sprite->getGlobalBounds().position;
 
+    sf::FloatRect futureBounds = sprite->getGlobalBounds();
+    futureBounds.position.x += velocity.x * deltaTime;
+    futureBounds.position.y -= velocity.y * deltaTime;
+
+    if (!mapDims.contains(futureBounds.position) ||
+        !mapDims.contains(sf::Vector2f(futureBounds.position.x + futureBounds.size.x, futureBounds.position.y + futureBounds.size.y)))
+    {
+        velocity = sf::Vector2f(0.f, 0.f);
+    }
+
     if (velocity.x != 0)
     {
         sprite->move({velocity.x * deltaTime, 0.f});
