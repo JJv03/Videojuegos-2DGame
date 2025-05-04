@@ -43,7 +43,7 @@ Leopard *createLeopard(const sf::Vector2f &position, const size_t &level, const 
     // Center sprite origin
     sf::FloatRect bounds = leopardSprite->getLocalBounds();
     leopardSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
-    
+
     // Create collision hitbox
     std::vector<sf::FloatRect> hitboxes = {
         sf::FloatRect(
@@ -106,4 +106,31 @@ FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &
     };
 
     return new FishMan(fishmanSprite, hitboxes, position, zoneSize, level, stage, rngReference);
+}
+
+// Creates a ghost enemy with level-specific settings
+Ghost *createGhost(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect LEOPARD_SPRITE_REGION = {{1, 75}, {16, 16}};
+    const float HITBOX_WIDTH = 15.f;
+    const float HITBOX_HEIGHT = 15.f;
+
+    // Configure sprite
+    auto ghostSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    ghostSprite->setTextureRect(LEOPARD_SPRITE_REGION);
+    ghostSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = ghostSprite->getLocalBounds();
+    ghostSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    return new Ghost(ghostSprite, hitboxes, level, stage);
 }
