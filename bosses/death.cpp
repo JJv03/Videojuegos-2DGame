@@ -88,6 +88,7 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                         timer = 0;
                         attacking = false;
                         moving = true;
+                        generated = false;
                         selectObjective();
                     }
                 }
@@ -133,11 +134,14 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             }
         }
 
+        int cont = 0;
         for(auto& scythe : scythes){
             if(scythe && scythe->sprite && scythe->getActive()){
                 scythe->update(deltaTime, mapBounds);
+                cont ++;
             }
         }
+        std::cout << cont << std::endl;
     }
 }
 
@@ -211,7 +215,7 @@ void Death::generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &
     generated = true;
     int created = 0;
 
-    for (int i = 0; i < 5 && created < 3; i++)
+    for (int i = 0; i < 5 && created < 2; i++)
     {
         if (!scythes[i] || !scythes[i]->getActive())
         {
