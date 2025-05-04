@@ -25,6 +25,7 @@ end_miscellaneous
 stair
 end_stair
 enemies
+5,1046.f,97.f,20.0,20.0
 111,1295.f, 133.15f
 112,1515.f, 133.15f
 end_enemies

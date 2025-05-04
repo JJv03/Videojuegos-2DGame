@@ -233,6 +233,34 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
         break;
 
     case 5: // LEVEL 5
+        for (size_t stageIndex = 0; stageIndex < tilemaps.tilemaps.size(); ++stageIndex)
+        {
+            const TileMap &tilemap = tilemaps.tilemaps[stageIndex];
+            int currentStage = static_cast<int>(stageIndex) + 1;
+
+            // Create enemies from tilemap data
+            for (const auto &enemyData : tilemap.m_enemyData)
+            {
+                if (enemyData.type >= 100)
+                    continue; // Ignore bosses
+
+                switch (enemyData.type)
+                {
+
+                case 5: // Medusa
+                    medusa.push_back(createMedusaSpawner(
+                        enemyData.position,
+                        sf::Vector2f(enemyData.width > 0 ? enemyData.width : 50.f,
+                                     enemyData.height > 0 ? enemyData.height : 50.f),
+                        level, currentStage));
+                    break;
+
+                default:
+                    std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
+                    break;
+                }
+            }
+        }
         break;
 
     case 7: // LEVEL 7
