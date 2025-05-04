@@ -18,7 +18,7 @@ private:
     sf::Vector2f playerPosition;
     float stunTime = 0.0f;
     const float STUN_DURATION = 0.05f;
-    const float MIN_PLAYER_DISTANCE_TO_SPAWN = 90.0f;
+    const float MIN_PLAYER_DISTANCE_TO_SPAWN = 85.0f;
 
 public:
     int level; // Current game level

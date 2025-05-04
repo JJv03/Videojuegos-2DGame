@@ -44,11 +44,14 @@ void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
     // We only activate if the player is in the area, the enemy is not active and the player has previously moved away
     if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
     {
-        float dx = playerPosition.x - sprite->getPosition().x;
-        float dy = playerPosition.y - sprite->getPosition().y;
-        float distance = std::sqrt(dx * dx + dy * dy);
+        const float safeMargin = MIN_PLAYER_DISTANCE_TO_SPAWN;
+        sf::FloatRect safeZone(
+            {sprite->getPosition().x - safeMargin, sprite->getPosition().y - safeMargin},
+            {safeMargin * 2.0f, safeMargin * 2.0f});
 
-        if (distance >= MIN_PLAYER_DISTANCE_TO_SPAWN)
+        sf::Vector2f playerCenter = playerPosition + sf::Vector2f(16.0f, 32.0f);
+
+        if (!safeZone.contains(playerCenter))
         {
             isActive = true;
         }
