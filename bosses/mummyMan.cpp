@@ -13,6 +13,7 @@ MummyMan::MummyMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRec
     damage = MUMMY_DAMAGE;
 
     gKilledBoss = false;
+    //isActive = true;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -61,14 +62,14 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
     int chance = rand() % 2;
     //int speedP = (rand()%10)+1;
     int speedP = 10;
-    int waitingTime = rand() % 4;
+    //int waitingTime = rand() % 4;
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {   
         sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
         position = sprite->getGlobalBounds().position;
-        sf::Vector2f map = mapDims.position;
-        sf::Vector2f size = mapDims.size;
+        //sf::Vector2f map = mapDims.position;
+        //sf::Vector2f size = mapDims.size;
         //float distance = playerPos.x - draculaSpiritPos.x;
         if(started){
             if (playerPos.x < position.x) {
@@ -94,7 +95,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
             case MummyState::WALK:
                     currentAnimation = mummyWalk;
                     sprite->move(sf::Vector2f(facingRight * deltaTime * speed.x, 0.f));
-                    if (chance == 0 && attackWaitingCounter >= attackWaitingTime)
+                    if (chance == 0 && attackWaitingCounter >= attackWaitingTime && !lanzado)//&& (!bandage->getActive() || !bandage) )
                     {
                         this->currentState = MummyState::ATTACK;
                         
@@ -109,6 +110,12 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                     currentAnimation = mummyAttack;
                     if (animationManager->isAnimationFinished())
                     {
+                        position = sprite->getGlobalBounds().position;
+                        position.y = position.y +10;
+                        bandage = createBandage(position,mapDims,MUMMY_DAMAGE);
+                        bandage->setActive(true);
+                        bandage->velocity.x = 60.f*facingRight;
+                        lanzado = true;
                         speed.x = MUMMY_SPEED.x * (speedP/10.f);
                         attackWaitingCounter = 0.f;
                         this->currentState = MummyState::WALK;
@@ -131,12 +138,20 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                     }
         break;
        }
-       
-
+    
+    if(bandage && bandage->sprite && bandage->getActive()){
+        bandage->update(deltaTime,mapBounds);
+    }
+    else{
+        lanzado = false;
+    }
+    
       
     }
+
     sf::FloatRect spriteBounds = sprite->getGlobalBounds();
     hitboxes[0] = spriteBounds;
+    
     
     
     updateAnimation(deltaTime);
@@ -180,6 +195,11 @@ void MummyMan::draw(sf::RenderWindow &window)
     {
         Boss::draw(window);
     }
+    if (bandage && bandage->sprite && bandage->getActive())
+    {
+        bandage->draw(window);
+    }
+    
 }
 
 // Update animation frame and flip sprite based on direction

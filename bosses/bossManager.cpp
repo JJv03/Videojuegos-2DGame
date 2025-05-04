@@ -28,6 +28,7 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 // Update all active bosses in current level/stage
 void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const int phase, const sf::FloatRect &mapBounds)
 {
+    
     if (playerPtr->upgradeWhip)
     {
         return;
@@ -40,13 +41,20 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
                                playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds);
         }
     }
-    if(mummyMan1 && mummyMan2){
+    if(mummyMan1){
         if (mummyMan1->level == currentLevel && mummyMan1->stage == currentStage)
         {
             mummyMan1->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
                                playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds, *playerPtr);
+                               
+        }
+    }
+    if(mummyMan2){
+        if (mummyMan1->level == currentLevel && mummyMan1->stage == currentStage)
+        {
             mummyMan2->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
-            playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds, *playerPtr);
+                                playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds, *playerPtr);
+                                
         }
     }
     if (death)
@@ -196,18 +204,13 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
 
                 if (bossData.type== 111)
                 {
-                    std::cout << "created mummy1" << std::endl;
                     mummyMan1 = createMummyMan(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
-                    std::cout << bossData.position.x << std::endl;
                 }
                 if (bossData.type== 112)
                 {
-                    std::cout << "created mummy2" << std::endl;
                     mummyMan2 = createMummyMan(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
-                    std::cout << bossData.position.x << std::endl;
                 }
 
-                
                 
             }
         }
@@ -289,6 +292,9 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         if (mummyMan1->level == currentLevel && mummyMan1->stage == currentStage && mummyMan1->isActive)
         {
             allBosses.push_back(mummyMan1);
+            if(mummyMan1->bandage){
+                allBosses.push_back(mummyMan1->bandage.get());
+            }
         }
     }
     if (mummyMan2)
@@ -296,6 +302,9 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
         if (mummyMan2->level == currentLevel && mummyMan2->stage == currentStage && mummyMan2->isActive)
         {
             allBosses.push_back(mummyMan2);
+            if(mummyMan2->bandage){
+                allBosses.push_back(mummyMan2->bandage.get());
+            }
         }
     }
     if (death)
@@ -360,12 +369,14 @@ void BossManager::killBoss(bossID boss){
         //delete phantomBat;
         //phantomBat = nullptr;
         mummyMan1->isActive = false;
+        if(mummyMan1->bandage) mummyMan1->bandage->setActive(false);
     }
     if (mummyMan2 != nullptr && boss == mummyMan2ID)
     {
         //delete phantomBat;
         //phantomBat = nullptr;
         mummyMan2->isActive = false;
+        if(mummyMan2->bandage) mummyMan2->bandage->setActive(false);
     }
     if (death != nullptr && boss == deathID)
     {

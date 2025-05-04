@@ -1,6 +1,8 @@
 #pragma once
 
 #include "boss.h"
+#include "createBandage.h"
+
 
 class MummyMan : public Boss
 {
@@ -67,6 +69,11 @@ public:
     // Timer to attack
     float attackWaitingCounter = 0.f;
     float attackWaitingTime = 5.f;
+
+    // Bandage
+    std::shared_ptr<Bandage> bandage;
+    bool lanzado = false;
+    
     MummyMan() = default;
     MummyMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
                const int &level, const int &stage, const sf::FloatRect &mapDims);

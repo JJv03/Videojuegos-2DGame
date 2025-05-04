@@ -62,6 +62,11 @@ enum animationID{
     mummyWalk,
     mummyAttack,
 
+    // Bandage  
+    bandageAttack,
+
+
+
     // Dracula
     draculaMask,
     draculaIdle,
