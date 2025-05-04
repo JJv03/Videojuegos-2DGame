@@ -169,10 +169,14 @@ void MummyMan::onCollision(Entity &other, Game &game)
     {
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
-            game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+            
             dead = true;
             gKilledBoss = true;
-            game.particleSystem.spawnBigFireParticle(position, false);
+            if(isOtherDead){
+                game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+                game.particleSystem.spawnBigFireParticle(position, false);
+            }
+            
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))

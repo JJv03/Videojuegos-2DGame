@@ -46,6 +46,7 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
         {
             mummyMan1->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
                                playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds, *playerPtr);
+            mummyMan1->isOtherDead=mummyMan2->dead;
                                
         }
     }
@@ -54,7 +55,7 @@ void BossManager::update(float deltaTime, const int currentLevel, const int curr
         {
             mummyMan2->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
                                 playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), mapBounds, *playerPtr);
-                                
+            mummyMan2->isOtherDead=mummyMan1->dead;
         }
     }
     if (death)

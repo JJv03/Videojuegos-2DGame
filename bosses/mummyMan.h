@@ -13,7 +13,7 @@ private:
     const float MUMMY_SCORE = 3000.0f;
     const float MUMMY_DAMAGE = 2.0f;
 
-    bool dead = false;
+    
 
     bool starting = true;
     sf::Vector2f goal = sf::Vector2f(0, 0);
@@ -73,6 +73,10 @@ public:
     // Bandage
     std::shared_ptr<Bandage> bandage;
     bool lanzado = false;
+
+    // Fix death of other mummy
+    bool isOtherDead = false;
+    bool dead = false;
     
     MummyMan() = default;
     MummyMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
