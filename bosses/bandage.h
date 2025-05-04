@@ -22,7 +22,7 @@ public:
     // Damage value
     float damage;
 
-
+    float curveTime = 0.0f;
 
     Bandage() = default;
     Bandage(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,

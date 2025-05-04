@@ -115,6 +115,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                         bandage = createBandage(position,mapDims,MUMMY_DAMAGE);
                         bandage->setActive(true);
                         bandage->velocity.x = 60.f*facingRight;
+                        bandage->velocity.y = 85.f;
                         lanzado = true;
                         speed.x = MUMMY_SPEED.x * (speedP/10.f);
                         attackWaitingCounter = 0.f;
@@ -172,6 +173,9 @@ void MummyMan::onCollision(Entity &other, Game &game)
             
             dead = true;
             gKilledBoss = true;
+            if(bandage){
+                bandage->reset();
+            }
             if(isOtherDead){
                 game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
                 game.particleSystem.spawnBigFireParticle(position, false);
@@ -183,10 +187,17 @@ void MummyMan::onCollision(Entity &other, Game &game)
     {
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
-            game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             dead = true;
             gKilledBoss = true;
-            game.particleSystem.spawnBigFireParticle(position, false);
+            if(bandage){
+                bandage->reset();
+            }
+            
+            if(isOtherDead){
+                game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
+                game.particleSystem.spawnBigFireParticle(position, false);
+            }
+            
         }
     }
     currentBossLife = life;

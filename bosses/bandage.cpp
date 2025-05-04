@@ -5,8 +5,8 @@
 Bandage::Bandage(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
                        const sf::Vector2f &position, const sf::FloatRect &mapDims, float _damage)
     : EntitySprite(_sprite, _hitboxes), mapDims(mapDims), damage(_damage){
-        velocity = sf::Vector2f(0, 0);
-        
+        //velocity = sf::Vector2f(0, 0);
+        curveTime = 0.0f;
         AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
 
         if (!animationManager)
@@ -32,9 +32,15 @@ void Bandage::update(float deltaTime, const sf::FloatRect &deactivationZone)
     animationManager->update(deltaTime);
 
     // Move the projectile
+    this->curveTime += deltaTime;
+    if (this->curveTime>0.55f)
+    {
+        velocity.y = velocity.y * -1.f;
+        curveTime = 0.0f;
+    }
+    
     sf::Vector2f movement = velocity * deltaTime;
-    sprite->move(movement);
-
+     sprite->move(movement);
     // Update hitboxes
     for (auto &hitbox : hitboxes)
     {
