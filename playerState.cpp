@@ -1727,6 +1727,7 @@ void PlayerHurtStairState::init(Player& player)
     player.isInvulnerable = true;
     player.isOnStairs = true;
     player.whip.animationManager->playAnimation(noAnimation);
+    this->playSound("hurt");
 }
 
 void PlayerHurtStairState::handleInput(Player& player, sf::Event event)
