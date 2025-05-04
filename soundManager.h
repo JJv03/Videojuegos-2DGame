@@ -107,4 +107,5 @@ private:
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;
     std::unordered_map<std::string, sf::Music> musicTracks;
     std::atomic<bool> isShuttingDown;
+    std::atomic<bool> stopAll;
 };

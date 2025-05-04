@@ -15,6 +15,7 @@ private:
     std::vector<Leopard *> leopard;
     std::vector<Bat *> bat;
     std::vector<FishMan *> fishman;
+    std::vector<Ghost *> ghost;
 
     // Reference to player
     Player *playerPtr;

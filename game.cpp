@@ -93,7 +93,7 @@ void Game::init()
 
     lBat->setTextureRect(sf::IntRect(sf::Vector2i(271, 953), sf::Vector2i(16, 16)));
 
-    lBat->setScale(sf::Vector2f(1 ,1));
+    lBat->setScale(sf::Vector2f(1, 1));
 
     lBat->setPosition(sf::Vector2f(0, 0));
 
@@ -101,11 +101,10 @@ void Game::init()
 
     std::vector<AnimationManager::Frame> littleFlyFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(271, 953), sf::Vector2(16, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(288, 953), sf::Vector2(16, 16)), 0.1f}
-    };
-    
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(288, 953), sf::Vector2(16, 16)), 0.1f}};
+
     littleBatManager = new AnimationManager(*littleBat);
-    
+
     littleBatManager->addAnimation(liBat, littleFlyFrames, true);
 
     littleBatManager->playAnimation(liBat);
@@ -123,11 +122,10 @@ void Game::init()
 
     std::vector<AnimationManager::Frame> bigFlyFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(305, 953), sf::Vector2(16, 16)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(322, 953), sf::Vector2(16, 16)), 0.1f}
-    };
-    
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(322, 953), sf::Vector2(16, 16)), 0.1f}};
+
     bigBatManager = new AnimationManager(*bigBat);
-    
+
     bigBatManager->addAnimation(biBat, bigFlyFrames, true);
 
     bigBatManager->playAnimation(biBat);
@@ -142,7 +140,7 @@ void Game::init()
     simonS->setPosition(sf::Vector2f(500, 150));
 
     simon = simonS;
-    
+
     simonManager = new AnimationManager(*simon);
 
     std::vector<AnimationManager::Frame> walkFrames{
@@ -151,7 +149,7 @@ void Game::init()
         AnimationManager::Frame{sf::IntRect(sf::Vector2(63, 21), sf::Vector2(16, 31)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(46, 21), sf::Vector2(16, 31)), 0.1f},
     };
-    
+
     simonManager->addAnimation(walkSimon, walkFrames, true);
 
     simonManager->playAnimation(walkSimon);
@@ -366,11 +364,13 @@ void Game::handleInput(sf::Event event)
     {
         if (!withOutLives && !gPlayEndLvlScoreAnimation)
         {
-            if(player.acceptsInput) player.handleInput(event);
+            if (player.acceptsInput)
+                player.handleInput(event);
         }
         else
         {
-            if(withOutLives){
+            if (withOutLives)
+            {
                 auto controls = configManager.getControls();
                 if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>())
                 {
@@ -425,6 +425,8 @@ void Game::handleInput(sf::Event event)
 // Updates the game (logic, graphics, etc)
 void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
+    // std::cout << player.sprite->getPosition().x << "," << player.sprite->getPosition().y << std::endl; // no lo quitesis porfa (sirve para posicionar enemigos)
+
     if (gTriggerEndLvlScoreAnimation && !gPlayEndLvlScoreAnimation)
     { // Prepare for end level score animation
 
@@ -432,10 +434,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         {
             gameSoundManager.stopAllMusic();
             auto audio = configManager.getAudio();
-            if(currentLevel == 7){
+            if (currentLevel == 7)
+            {
                 gameSoundManager.playMusic("victoryDracula", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
             }
-            else{
+            else
+            {
                 gameSoundManager.playMusic("victoryBoss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), false);
             }
             m_playedVictoryMusic = true;
@@ -461,24 +465,21 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     enemyManager->update(deltaTime, currentLevel, currentStage, tilemaps[currentStage].getMapBounds());
     bossManager->update(deltaTime, currentLevel, currentStage, currentBossPhase, tilemaps[currentStage].getMapBounds());
 
-        
     tilemaps[currentStage].updateItems(deltaTime);
     tilemaps[currentStage].updateMiscTiles(deltaTime);
 
     particleSystem.update(deltaTime);
-
 
     static float timeAccumulator = 0.0f;
 
     if (!withOutLives)
         timeAccumulator += deltaTime;
 
-
-    if (gPlayEndLvlScoreAnimation)      // Time reduction management for end level score animation
+    if (gPlayEndLvlScoreAnimation) // Time reduction management for end level score animation
     {
         endLevelScoreAnimation(deltaTime);
     }
-    else if (timeAccumulator >= 1.0f)   // Default time reduction flow
+    else if (timeAccumulator >= 1.0f) // Default time reduction flow
     {
         if (time > 0)
             time -= static_cast<int>(timeAccumulator);
@@ -487,44 +488,44 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             player.setState(std::make_unique<PlayerDeadState>());
         }
         timeAccumulator = 0.0f;
-        if (!showInter) updateGUITime();
+        if (!showInter)
+            updateGUITime();
     }
-
 
     if (gGoToNextLevel)
     {
         int aux_CurrentLevel = static_cast<int>(currentLevel);
-        switch(aux_CurrentLevel)
+        switch (aux_CurrentLevel)
         {
-            case 1:
-                gStartingLevel = 3;
-                currentLevel = gStartingLevel;
-                currentStage = 1;
-                gStartingStage = currentStage;
-                break;
-            case 3:
-                gStartingLevel = 5;
-                currentLevel = gStartingLevel;
-                currentStage = 1;
-                gStartingStage = currentStage;
-                break;
-            case 5:
-                gStartingLevel = 7;
-                currentLevel = gStartingLevel;
-                currentStage = 1;
-                gStartingStage = currentStage;
-                break;
-            case 7:
-                std::cout << "Animation of the end of the game" << std::endl;
-                goToEndAnimation = true;
-                gStartingLevel = 1;
-                currentLevel = gStartingLevel;
-                gStartingStage = 1;
-                currentStage = gStartingStage;
-                break;
-            default:
-                std::cout << "No more levels" << std::endl;
-                break;
+        case 1:
+            gStartingLevel = 3;
+            currentLevel = gStartingLevel;
+            currentStage = 1;
+            gStartingStage = currentStage;
+            break;
+        case 3:
+            gStartingLevel = 5;
+            currentLevel = gStartingLevel;
+            currentStage = 1;
+            gStartingStage = currentStage;
+            break;
+        case 5:
+            gStartingLevel = 7;
+            currentLevel = gStartingLevel;
+            currentStage = 1;
+            gStartingStage = currentStage;
+            break;
+        case 7:
+            std::cout << "Animation of the end of the game" << std::endl;
+            goToEndAnimation = true;
+            gStartingLevel = 1;
+            currentLevel = gStartingLevel;
+            gStartingStage = 1;
+            currentStage = gStartingStage;
+            break;
+        default:
+            std::cout << "No more levels" << std::endl;
+            break;
         }
 
         // Reset variables, flags and loads entities and the map to start next level
@@ -532,13 +533,16 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         time = 300;
         updateGUITime();
 
-        if (aux_CurrentLevel == 7 && gStartingLevel == 1) return;
+        if (aux_CurrentLevel == 7 && gStartingLevel == 1)
+            return;
     }
 
-    if(showInter && !goToEndAnimation){
+    if (showInter && !goToEndAnimation)
+    {
         interAnimation(deltaTime);
     }
-    else{
+    else
+    {
         if (viewPosition.y + gGameVisibleWorld_size_y + 50 < player.sprite->getPosition().y && !player.isDead && !player.upgradeWhip)
         {
             std::cout << "Falling " << std::endl;
@@ -598,7 +602,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             rosarioBlinkClock.restart();
             player.activateRosario = false;
         }
-        
+
         if (player.isDead && revivingClock.getElapsedTime().asSeconds() > gRevivingTime)
         {
             player.lives -= 1;
@@ -656,82 +660,95 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             else if (currentLevel == 7 && currentBossPhase == 2)
             {
                 bossManager->killBoss(draculaSpiritID);
-
             }
             gKilledBoss = false;
         }
     }
 }
 
-void Game::interAnimation(float deltaTime){
+void Game::interAnimation(float deltaTime)
+{
     float destiny = 0;
     sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
-    if(currentLevel == 3){
+    if (currentLevel == 3)
+    {
         pos = tilemaps[5].getMapBoundsBossFight();
     }
-    if(currentLevel == 5){
-        pos = tilemaps[5].getMapBoundsBossFight();
+    if (currentLevel == 5)
+    {
+        pos = tilemaps[4].getMapBoundsBossFight();
     }
-    if(currentLevel == 7){
+    if (currentLevel == 7)
+    {
         pos = tilemaps[6].getMapBoundsBossFight();
     }
+    // std::cout << pos.position.x << " " << pos.position.y << std::endl;
     // First map entering
-    if(entering){
-        switch(currentLevel){
-            case 3:
-                destiny = pos.position.x + 10;
-                break;
-            case 5:
-                destiny = pos.position.x - 130;
-                break;
-            case 7:
-                destiny = pos.position.x - 130;
-                break;
+    if (entering)
+    {
+        switch (currentLevel)
+        {
+        case 3:
+            destiny = pos.position.x + 5;
+            break;
+        case 5:
+            destiny = pos.position.x - 130;
+            break;
+        case 7:
+            destiny = pos.position.x - 130;
+            break;
         }
 
         sf::Vector2f posMap = map->getPosition();
         const float mapSpeed = 80.0f; // pixels per second
         // std::cout << posMap.x << std::endl;
-        if (posMap.x <= destiny) {
+        if (posMap.x <= destiny)
+        {
             map->setPosition(sf::Vector2f(destiny, posMap.y));
             entering = false; // Has reached to the x position
-        } 
-        else {
+        }
+        else
+        {
             map->setPosition(sf::Vector2f(posMap.x - mapSpeed * deltaTime, posMap.y));
         }
     }
-    else{   // Show moving animated Simon, animated and placed Bat (big and little), animated and placed box
-        switch(currentLevel){
-            case 3:
-                cube->setPosition(sf::Vector2f(pos.position.x + 87, pos.position.y + 102));
-                littleBat->setPosition(sf::Vector2f(pos.position.x + 172, pos.position.y + 83));
-                littleBatManager->update(deltaTime);
-                break;
-            case 5:
-                cube->setPosition(sf::Vector2f(pos.position.x + 151, pos.position.y + 106));
-                littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 63));
-                littleBatManager->update(deltaTime);
-                break;
-            case 7:
-                cube->setPosition(sf::Vector2f(pos.position.x + 124, pos.position.y + 62));
-                bigBat->setPosition(sf::Vector2f(pos.position.x + 38, pos.position.y + 40));
-                bigBatManager->update(deltaTime);
-                break;
+    else
+    { // Show moving animated Simon, animated and placed Bat (big and little), animated and placed box
+        switch (currentLevel)
+        {
+        case 3:
+            cube->setPosition(sf::Vector2f(pos.position.x + 87, pos.position.y + 102));
+            littleBat->setPosition(sf::Vector2f(pos.position.x + 172, pos.position.y + 83));
+            littleBatManager->update(deltaTime);
+            break;
+        case 5:
+            cube->setPosition(sf::Vector2f(pos.position.x + 151, pos.position.y + 106));
+            littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 63));
+            littleBatManager->update(deltaTime);
+            break;
+        case 7:
+            cube->setPosition(sf::Vector2f(pos.position.x + 124, pos.position.y + 62));
+            bigBat->setPosition(sf::Vector2f(pos.position.x + 38, pos.position.y + 40));
+            bigBatManager->update(deltaTime);
+            break;
         }
         // Simon movement
         sf::Vector2f posSimon = simon->getPosition();
         // std::cout << posSimon.x << std::endl;
         const float simonSpeed = 60.0f; // pixels per second
         destiny = pos.position.x + 250;
-        if (posSimon.x >= destiny) {
+        if (posSimon.x >= destiny)
+        {
             simon->setPosition(sf::Vector2f(destiny, posSimon.y));
             showInter = false;
             player.acceptsInput = true;
             loadLevelAndEnemies();
         }
-        else {
+        else
+        {
             timerSteps += deltaTime;
-            if(timerSteps >= stepsInterval){
+            if (timerSteps >= stepsInterval)
+            {
                 timerSteps = 0;
                 auto audio = configManager.getAudio();
                 gameSoundManager.playSound("between_lvl_steps", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
@@ -742,16 +759,21 @@ void Game::interAnimation(float deltaTime){
     }
 }
 
-void Game::prepareVariablesForLevel() {
-    if(gGoToNextLevel){
+void Game::prepareVariablesForLevel()
+{
+    if (gGoToNextLevel)
+    {
         sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
-        if(currentLevel == 3){
+        if (currentLevel == 3)
+        {
             pos = tilemaps[5].getMapBoundsBossFight();
         }
-        if(currentLevel == 5){
-            pos = tilemaps[5].getMapBoundsBossFight();
+        if (currentLevel == 5)
+        {
+            pos = tilemaps[4].getMapBoundsBossFight();
         }
-        if(currentLevel == 7){
+        if (currentLevel == 7)
+        {
             pos = tilemaps[6].getMapBoundsBossFight();
         }
         timerSteps = 0;
@@ -759,14 +781,15 @@ void Game::prepareVariablesForLevel() {
         isInBossFight = false;
         showInter = true;
         entering = true;
-        map->setPosition(sf::Vector2f(pos.position.x + 256, 30));
-        simon->setPosition(sf::Vector2f(pos.position.x - 10, 150));
+        map->setPosition(sf::Vector2f(pos.position.x + 256, pos.position.y + 30));
+        simon->setPosition(sf::Vector2f(pos.position.x - 10, pos.position.y + 150));
     }
     resetEndLevelScoreAnimation();
     gGoToNextLevel = false;
 }
 
-void Game::loadLevelAndEnemies() {
+void Game::loadLevelAndEnemies()
+{
     tilemaps.loadLevel(currentLevel);
     enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
     bossManager->loadBossesFromLevel(currentLevel, tilemaps);
@@ -856,8 +879,9 @@ void Game::endLevelScoreAnimation(const float deltaTime)
             gameSoundManager.playSound("heart_tally", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         }
     }
-    else {      // All hearts and time points have been consumed
-        std::this_thread::sleep_for(std::chrono::milliseconds(550));       // Duration of the last played sound
+    else
+    {                                                                // All hearts and time points have been consumed
+        std::this_thread::sleep_for(std::chrono::milliseconds(550)); // Duration of the last played sound
         gGoToNextLevel = true;
     }
 
@@ -1027,7 +1051,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         enemyManager->draw(window, currentLevel, currentStage);
         bossManager->draw(window, currentLevel, currentStage);
-        
+
         player.draw(window);
 
         if (withOutLives)
@@ -1052,7 +1076,8 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         }
 
         // MAP transition
-        if(showInter){
+        if (showInter)
+        {
             sf::View view = window.getView();
             sf::Vector2f center = view.getCenter();
             sf::RectangleShape black(sf::Vector2f(400, 400));
@@ -1192,7 +1217,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
             currentBossPhase = 1;
 
             // Starting boss music (DIFFENT FOR DRACULA)
-            if(currentLevel != 7){
+            if (currentLevel != 7)
+            {
                 gameSoundManager.stopAllMusic();
                 auto audio = configManager.getAudio();
                 gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
@@ -1566,7 +1592,7 @@ void Game::activateDoorTile(int doorId)
         tilemaps.loadLevel(currentLevel);
         enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
         bossManager->loadBossesFromLevel(currentLevel, tilemaps);
-        
+
         resetEndLevelScoreAnimation();
         gGoToNextLevel = false;
     }

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <thread>
 
-SoundManager::SoundManager() : isShuttingDown(false) {}
+SoundManager::SoundManager() : isShuttingDown(false), stopAll(false) {}
 
 SoundManager::~SoundManager() {
     isShuttingDown = true;
@@ -110,6 +110,10 @@ void SoundManager::stopAllMusic() {
     for (auto& [id, music] : musicTracks) {
         music.stop();
     }
+    stopAll = true;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    stopAll = false;
 }
 
 void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume) {
@@ -131,17 +135,19 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
     }
 
     std::thread([this, firstId, secondId, secondSongLoop, volume]() {
-        if (isShuttingDown) return;
+        if (isShuttingDown || stopAll) return;
 
         musicTracks[firstId].setVolume(volume);
         musicTracks[firstId].play();
 
-        while (!isShuttingDown && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
+        while (!isShuttingDown && !stopAll && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
 
-        if (isShuttingDown) return;
-
+        if (isShuttingDown || stopAll){
+            std::cout << "Music thread killed" << std::endl;
+            return;
+        }
         musicTracks[secondId].setVolume(volume);
         musicTracks[secondId].setLooping(secondSongLoop);
         musicTracks[secondId].play();

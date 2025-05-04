@@ -81,8 +81,8 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
         }
     }
 
-    // If the player is outside the activation zone, the enemy is allowed to reactivate in the future.
-    if (!enemyInsideActivationZone)
+    // If the player is outside the deactivation zone, the enemy is allowed to reactivate in the future.
+    if (!enemyInsideDeactivationZone)
     {
         needsPlayerToLeaveZone = false;
     }
@@ -153,7 +153,6 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
 
         updateAnimation(deltaTime);
 
-        
         // Right before checkCollisions
         isOnGround = false;
     }
@@ -238,26 +237,33 @@ void Leopard::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void Leopard::updateAnimation(float deltaTime)
 {
-    if(isActive){
-        if (!isOnGround) {
+    if (isActive)
+    {
+        if (!isOnGround)
+        {
             currentAnimation = jumpLeopard;
-        } else if (speed.x != 0){
+        }
+        else if (speed.x != 0)
+        {
             currentAnimation = walkLeopard;
-        } else {
+        }
+        else
+        {
             currentAnimation = idleLeopard;
         }
-    } else {
+    }
+    else
+    {
         currentAnimation = noAnimation;
     }
 
-    if(!animationManager->isPlaying(currentAnimation))
+    if (!animationManager->isPlaying(currentAnimation))
     {
         animationManager->playAnimation(currentAnimation);
     }
 
     animationManager->update(deltaTime);
 
-    
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 

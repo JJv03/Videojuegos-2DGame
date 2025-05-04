@@ -67,6 +67,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getGlobalBounds(), mapBounds);
         }
     }
+    for (auto &ghost : ghost)
+    {
+        if (ghost->level == currentLevel && ghost->stage == currentStage)
+        {
+            ghost->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                          playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -100,6 +108,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
             fishman->draw(window);
         }
     }
+    for (auto &ghost : ghost)
+    {
+        if (ghost->level == currentLevel && ghost->stage == currentStage)
+        {
+            ghost->draw(window);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -110,10 +125,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     leopard.clear();
     bat.clear();
     fishman.clear();
+    ghost.clear();
 
     switch (level)
     {
-    case 1:
+    case 1: // LEVEL 1
 
         for (size_t stageIndex = 0; stageIndex < tilemaps.tilemaps.size(); ++stageIndex)
         {
@@ -164,13 +180,38 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
         }
         break;
 
-    case 3:
+    case 3: // LEVEL 3
+
+        for (size_t stageIndex = 0; stageIndex < tilemaps.tilemaps.size(); ++stageIndex)
+        {
+            const TileMap &tilemap = tilemaps.tilemaps[stageIndex];
+            int currentStage = static_cast<int>(stageIndex) + 1;
+
+            // Create enemies from tilemap data
+            for (const auto &enemyData : tilemap.m_enemyData)
+            {
+                if (enemyData.type >= 100)
+                    continue; // Ignore bosses
+
+                switch (enemyData.type)
+                {
+
+                case 4: // Ghost
+                    ghost.push_back(createGhost(enemyData.position, level, currentStage));
+                    break;
+
+                default:
+                    std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
+                    break;
+                }
+            }
+        }
         break;
 
-    case 5:
+    case 5: // LEVEL 5
         break;
 
-    case 7:
+    case 7: // LEVEL 7
         break;
 
     default:
@@ -221,6 +262,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             allEnemies.push_back(f);
         }
     }
+    for (auto &g : ghost)
+    {
+        if (g->level == currentLevel && g->stage == currentStage && g->isActive)
+        {
+            allEnemies.push_back(g);
+        }
+    }
 
     return allEnemies;
 }
@@ -263,6 +311,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
                 fishman->getProjectile().get()->reset();
             }
             fishman->resetSpawnState();
+        }
+    }
+    for (auto &ghost : ghost)
+    {
+        if (ghost->level == currentLevel && ghost->stage == currentStage)
+        {
+            ghost->isActive = false;
+            ghost->resetPosition();
         }
     }
 }
