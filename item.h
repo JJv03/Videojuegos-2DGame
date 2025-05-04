@@ -74,6 +74,7 @@ enum class DropType {
     BOOMERANG = 17,
     STOPWATCH = 18,
     DAGGER = 19,
+    ONE_UP = 20,
     
     DEBUG = 99,
 };

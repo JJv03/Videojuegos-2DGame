@@ -168,6 +168,24 @@ bool loadMiscTextures()
     miscType_to_TextureAtlasKey[MiscTileType::LVL3_WALL_1SQUARE] = "miscTile_4";
 
 
+    //////////////////////////////////////
+    // Load the fifth texture to the atlas
+    //////////////////////////////////////
+    sf::Image tilesetLvl5Image;
+    if (!tilesetLvl5Image.loadFromFile("./assets/tilesets/tileset_5.png")) return false;
+    tilesetLvl5Image.createMaskFromColor(gColorKeyGrey);
+    sf::Texture tex5;
+    if (!tex5.loadFromImage(tilesetLvl5Image)) return false;
+    tex5.setSmooth(false);
+    gTextures["miscTile_5"] = std::move(tex5);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Load the texture rectangles for each miscellaneous tile of that texture atlas
+    ////////////////////////////////////////////////////////////////////////////
+    miscType_to_TextureRects[MiscTileType::LVL5_WALL_1SQUARE] = sf::IntRect({74, 74}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL5_WALL_1SQUARE] = "miscTile_5";
+
+
 
     return true;
 }
@@ -313,6 +331,8 @@ void MiscellaneousTile::onCollision_Player(Entity& other, Game& game) {
         game.computePlayerTileIntersection(hasCollided, tileBounds);
     }
     else {
+        auto audio = game.configManager.getAudio();
+        gameSoundManager.playSound("secret_treasure", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         game.createDropItem(this->dropType,
                             sf::Vector2f{static_cast<float>(this->dropItem_position.x),
                                          static_cast<float>(this->dropItem_position.y)});

@@ -363,7 +363,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             return nullptr;                 // No item to drop
         
         case DropType::DEBUG:
-            type = ItemType::FIRE_BOMB;
+            type = ItemType::ROSARY;
             break;
         
         case DropType::DEFAULT: {   // Drops whip or an item from 'defaultDrop" pool
@@ -468,6 +468,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
         
         case DropType::MAGIC_CRYSTAL:
             type = ItemType::MAGIC_CRYSTAL;
+            lifeTime = -1.f;    // Item doesn't dispawn
             break;
 
         case DropType::FIRE_BOMB:
@@ -490,13 +491,14 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             type = ItemType::DAGGER;
             break;
 
+        case DropType::ONE_UP:
+            type = ItemType::ONEUP;
+            lifeTime = 10.f;
+            break;
+
         default:
             std::cerr << "[ERROR] Unknown drop type: " << static_cast<int>(dropType) << std::endl;
             return nullptr;
-    }
-
-    if (type == ItemType::MAGIC_CRYSTAL) {
-        lifeTime = -1.f;    // Item doesn't dispawn
     }
 
     std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);

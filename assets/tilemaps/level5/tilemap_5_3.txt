@@ -11,6 +11,9 @@ doors
 3,2,64,-40,64,31
 end_doors
 miscellaneous
+1,32,32,1,16
+1,91,98,1,1
+1,155,32,1,14
 end_miscellaneous
 stair
 1,120,128
