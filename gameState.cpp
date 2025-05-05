@@ -155,13 +155,13 @@ void GameGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool wind
 
     if(goBack){
         gameSoundManager.stopAllMusic();
-        stateMachine->replaceState(std::make_unique<MenuGS>(stateMachine));
+        stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
         goBack = false;
     }
 
     if(goToEndAnimation){
         gameSoundManager.stopAllMusic();
-        stateMachine->replaceState(std::make_unique<CreditsAnimationGS>(stateMachine));
+        stateMachine->replaceAllStates(std::make_unique<CreditsAnimationGS>(stateMachine));
         goToEndAnimation = false;
     }
 }

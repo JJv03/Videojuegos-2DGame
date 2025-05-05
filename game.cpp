@@ -176,6 +176,25 @@ void Game::init()
 
     map = mapa;
 
+    switch (currentLevel)
+    {
+    case 1:
+        time = 300;
+        break;
+    
+    case 3:
+        time = 500;
+        break;
+    
+    case 5:
+        time = 500;
+        break;
+    
+    case 7:
+        time = 700;
+        break;
+    }
+
     // Load GUI
     loadGUI();
 
@@ -201,7 +220,10 @@ void Game::loadGUI()
     scoreText.setPosition(textPositions.back());
 
     // Time
+    std::stringstream timeStream;
+    timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
     sf::Text timeText(font, "TIME   0300", gGUI_text_size);
+    timeText.setString(timeStream.str());
     timeText.setFillColor(gGUI_text_color);
     textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_TimePositionXFactor, margin + gGUI_position_y));
     timeText.setPosition(textPositions.back());
@@ -530,7 +552,6 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
 
         // Reset variables, flags and loads entities and the map to start next level
         prepareVariablesForLevel();
-        time = 300;
         updateGUITime();
 
         if (aux_CurrentLevel == 7 && gStartingLevel == 1)
@@ -767,14 +788,17 @@ void Game::prepareVariablesForLevel()
         sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
         if (currentLevel == 3)
         {
+            time = 500;
             pos = tilemaps[5].getMapBoundsBossFight();
         }
         if (currentLevel == 5)
         {
+            time = 500;
             pos = tilemaps[4].getMapBoundsBossFight();
         }
         if (currentLevel == 7)
         {
+            time = 700;
             pos = tilemaps[6].getMapBoundsBossFight();
         }
         timerSteps = 0;
@@ -1703,6 +1727,25 @@ int Game::startStage(int stage, int fromStairs)
 
     currentStage = stage;
 
+    switch (currentLevel)
+    {
+    case 1:
+        time = 300;
+        break;
+    
+    case 3:
+        time = 500;
+        break;
+    
+    case 5:
+        time = 500;
+        break;
+    
+    case 7:
+        time = 700;
+        break;
+    }
+
     if (!withOutLives)
     {
         setLevelMusic(currentLevel);
@@ -1753,7 +1796,24 @@ void Game::restartStage()
 
     tilemaps.restartMiscTiles();
 
-    time = 300;
+    switch (currentLevel)
+    {
+    case 1:
+        time = 300;
+        break;
+    
+    case 3:
+        time = 500;
+        break;
+    
+    case 5:
+        time = 500;
+        break;
+    
+    case 7:
+        time = 700;
+        break;
+    }
     updateGUITime();
 
     player.dir = PlayerDirection::RIGHT;
@@ -1795,7 +1855,24 @@ void Game::restartLevel()
         }
     }
 
-    time = 300;
+    switch (currentLevel)
+    {
+    case 1:
+        time = 300;
+        break;
+    
+    case 3:
+        time = 500;
+        break;
+    
+    case 5:
+        time = 500;
+        break;
+    
+    case 7:
+        time = 700;
+        break;
+    }
     updateGUITime();
 
     player.dir = PlayerDirection::RIGHT;
