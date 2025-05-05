@@ -21,6 +21,9 @@
     "difficulty": {
         "hard_mode": false
     },
+    "skins": {
+        "activated": false
+    },
     "video": {
         "window_mode": false
     }

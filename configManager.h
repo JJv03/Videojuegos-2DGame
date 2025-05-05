@@ -40,6 +40,10 @@ public:
         bool hard_mode;
     };
 
+    struct Skins{
+        bool activated;
+    };
+
     static configManager& getInstance();
     bool detectChanges();
     void loadConfiguration(const std::string& file);
@@ -52,6 +56,7 @@ public:
     Controls getControls() const;
     Cheats getCheats() const;
     Difficulty getDifficulty() const;
+    Skins getSkins() const;
 
     // Methods to modify the configuration
     void setAudio(const Audio& audio);
@@ -59,6 +64,7 @@ public:
     void setControls(const Controls& controls);
     void setCheats(const Cheats& cheats);
     void setDifficulty(const Difficulty& difficulty);
+    void setSkins(const Skins& skins);
 
     // Métodos de conversión entre sf::Keyboard::Key y string
     static sf::Keyboard::Scancode stringToScancode(const std::string& key);
@@ -71,6 +77,7 @@ private:
     Controls controls;
     Cheats cheats;
     Difficulty difficulty;
+    Skins skins;
 
     static const std::unordered_map<std::string, sf::Keyboard::Scancode> stringToScancodeMap;
     static const std::unordered_map<sf::Keyboard::Scancode, std::string> scancodeToStringMap;

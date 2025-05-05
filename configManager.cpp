@@ -186,6 +186,13 @@ void configManager::loadConfiguration(const std::string& file) {
         } else {
             difficulty.hard_mode = false;
         }
+
+        // Skins
+        if (originalConfig.contains("skins") && originalConfig["skins"].contains("activated") && originalConfig["skins"]["activated"].is_boolean()) {
+            skins.activated = originalConfig["skins"]["activated"];
+        } else {
+            skins.activated = false;
+        }
         std::cout << originalConfig << std::endl;
     }
     catch (const std::exception& e) {
@@ -194,6 +201,7 @@ void configManager::loadConfiguration(const std::string& file) {
         controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
         cheats.enabled = false;
         difficulty.hard_mode = false;
+        skins.activated = false;
         std::cout << originalConfig << std::endl;
     }
 }
@@ -218,6 +226,7 @@ void configManager::saveConfiguration(const std::string& file) {
                         {"useSubWeapon", scancodeToString(controls.useSubWeapon)}};
     j["cheats"] = { {"enabled", cheats.enabled} };
     j["difficulty"] = { {"hard_mode", difficulty.hard_mode} };
+    j["skins"] = { {"activated", skins.activated} };
 
     outputFile << j.dump(4);
 }
@@ -227,12 +236,14 @@ configManager::Video configManager::getVideo() const { return video; }
 configManager::Controls configManager::getControls() const { return controls; }
 configManager::Cheats configManager::getCheats() const { return cheats; }
 configManager::Difficulty configManager::getDifficulty() const { return difficulty; }
+configManager::Skins configManager::getSkins() const { return skins; }
 
 void configManager::setAudio(const Audio& newAudio) { audio = newAudio; }
 void configManager::setVideo(const Video& newVideo) { video = newVideo; }
 void configManager::setControls(const Controls& newControls) { controls = newControls; }
 void configManager::setCheats(const Cheats& newCheats) { cheats = newCheats; }
 void configManager::setDifficulty(const Difficulty& newDifficulty) { difficulty = newDifficulty; }
+void configManager::setSkins(const Skins& newSkins) { skins = newSkins; }
 
 sf::Keyboard::Scancode configManager::stringToScancode(const std::string& key) {
     auto it = stringToScancodeMap.find(key);
