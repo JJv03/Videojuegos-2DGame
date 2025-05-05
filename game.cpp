@@ -692,10 +692,10 @@ void Game::interAnimation(float deltaTime)
             destiny = pos.position.x + 5;
             break;
         case 5:
-            destiny = pos.position.x - 130;
+            destiny = pos.position.x - 127;
             break;
         case 7:
-            destiny = pos.position.x - 130;
+            destiny = pos.position.x - 127;
             break;
         }
 
@@ -722,13 +722,13 @@ void Game::interAnimation(float deltaTime)
             littleBatManager->update(deltaTime);
             break;
         case 5:
-            cube->setPosition(sf::Vector2f(pos.position.x + 151, pos.position.y + 106));
-            littleBat->setPosition(sf::Vector2f(pos.position.x + 130, pos.position.y + 63));
+            cube->setPosition(sf::Vector2f(pos.position.x + 156, pos.position.y + 106));
+            littleBat->setPosition(sf::Vector2f(pos.position.x + 133, pos.position.y + 63));
             littleBatManager->update(deltaTime);
             break;
         case 7:
-            cube->setPosition(sf::Vector2f(pos.position.x + 124, pos.position.y + 62));
-            bigBat->setPosition(sf::Vector2f(pos.position.x + 38, pos.position.y + 40));
+            cube->setPosition(sf::Vector2f(pos.position.x + 127, pos.position.y + 62));
+            bigBat->setPosition(sf::Vector2f(pos.position.x + 41, pos.position.y + 40));
             bigBatManager->update(deltaTime);
             break;
         }
@@ -742,6 +742,7 @@ void Game::interAnimation(float deltaTime)
             simon->setPosition(sf::Vector2f(destiny, posSimon.y));
             showInter = false;
             player.acceptsInput = true;
+            player.setState(std::make_unique<PlayerIdleState>());
             loadLevelAndEnemies();
         }
         else
@@ -1085,10 +1086,21 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             black.setPosition(sf::Vector2f(center.x - 200, center.y - 72));
             window.draw(black);
             window.draw(*map);
-            window.draw(*cube);
-            window.draw(*littleBat);
-            window.draw(*bigBat);
-            window.draw(*simon);
+            if(!entering){
+                window.draw(*cube);
+                switch (currentLevel){
+                    case 3:
+                        window.draw(*littleBat);
+                        break;
+                    case 5:
+                        window.draw(*littleBat);
+                        break;
+                    case 7:
+                        window.draw(*bigBat);
+                        break;
+                }
+                window.draw(*simon);
+            }
         }
 
         // window.draw(FloatRectToRectShape(player.gPlayerActivationZone));
