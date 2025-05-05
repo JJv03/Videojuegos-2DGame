@@ -118,7 +118,13 @@ int validateVolume(int value) {
 void configManager::loadConfiguration(const std::string& file) {
     std::ifstream inputFile(file);
     if (!inputFile) {
-        std::cerr << "Error opening configuration file." << std::endl;
+        std::cerr << "Error opening configuration file, generating default." << std::endl;
+        audio.master_volume = audio.music_volume = audio.sound_volume = 50;
+        video.window_mode = false;
+        controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
+        cheats.enabled = false;
+        difficulty.hard_mode = false;
+        skins.activated = false;
         return;
     }
     

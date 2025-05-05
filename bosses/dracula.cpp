@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "../configManager.h"
 
 static std::random_device rd;       // we only want 1 instance of random_device
 static std::mt19937 rng(rd());
@@ -71,8 +72,10 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
     }
 
     animationManager->addAnimation(noAnimation, this->noAnimationFrames);
-    
-    if(gCustomSkins){
+
+    auto skins = configManager.getSkins();
+
+    if(skins.activated){
         animationManager->addAnimation(draculaMask, this->customMaskDraculaFrames);
     } else {
         animationManager->addAnimation(draculaMask, this->maskDraculaFrames);

@@ -236,7 +236,7 @@ private:
     bool enterPressed;
     SoundManager configGameplayManager;
     configManager &configManager;
-    bool video, difficulty, cheats;
+    bool video, difficulty, cheats, skins;
 public:
     explicit GameplayConfGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~GameplayConfGS() override;

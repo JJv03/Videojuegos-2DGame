@@ -1955,6 +1955,7 @@ void GameplayConfGS::init(){
     video = configManager.getVideo().window_mode;
     difficulty = configManager.getDifficulty().hard_mode;
     cheats = configManager.getCheats().enabled;
+    skins = configManager.getSkins().activated;
 
     if (!gameplayConfigTextures["bg"].loadFromFile("./assets/sprites/menu/menu1.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -2007,15 +2008,15 @@ void GameplayConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[3] = {"SCREEN MODE", "ENHANCED AI", "CHEATS"};
-    for (int i = 0; i < 3; i++) {
+    std::string textos[4] = {"SCREEN MODE", "ENHANCED AI", "CHEATS", "CUSTOM SKINS"};
+    for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
         float xPos = (gWindowWidth - textBounds.size.x) / 2 - 45.f;
-        float yPos = 125.f + i * 55.f;
+        float yPos = 125.f + i * 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
         configs.push_back(text);
@@ -2072,7 +2073,7 @@ void GameplayConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(!enterPressed){
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-            if (keyPressed->scancode == controls.down && position < 3) {    
+            if (keyPressed->scancode == controls.down && position < 4) {    
                 position ++;
             }
 
@@ -2080,11 +2081,11 @@ void GameplayConfGS::handleInput(sf::Event event){
                 position --;
             }
 
-            if (keyPressed->scancode == controls.right && position == 3 && col == 0) {    
+            if (keyPressed->scancode == controls.right && position == 4 && col == 0) {    
                 col = 1;
             }
 
-            if (keyPressed->scancode == controls.left && position == 3 && col == 1) {    
+            if (keyPressed->scancode == controls.left && position == 4 && col == 1) {    
                 col = 0;
             }
 
@@ -2103,14 +2104,18 @@ void GameplayConfGS::handleInput(sf::Event event){
                     cheats = !cheats;
                 }
 
-                if (position == 3 && col == 0){
+                if(position == 3){ // Skins
+                    skins = !skins;
+                }
+
+                if (position == 4 && col == 0){
                     enterPressed = true;
                     std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
                     std::cout << "Road back to config menu" << std::endl;
                     stateMachine->replaceState(std::make_unique<ConfigGS>(stateMachine));
                 }
 
-                if (position == 3 && col == 1){ // Back to configs and save files
+                if (position == 4 && col == 1){ // Back to configs and save files
                     enterPressed = true;
                     configManager::Video newVideo;
                     newVideo.window_mode = video;
@@ -2121,9 +2126,13 @@ void GameplayConfGS::handleInput(sf::Event event){
                     configManager::Cheats newCheats;
                     newCheats.enabled = cheats;
 
+                    configManager::Skins newSkins;
+                    newSkins.activated = skins;
+
                     configManager.setVideo(newVideo);
                     configManager.setDifficulty(newDiff);
                     configManager.setCheats(newCheats);
+                    configManager.setSkins(newSkins);
                     configManager.saveConfiguration("config.json");
 
                     std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait until the sound has finished
@@ -2168,13 +2177,14 @@ void GameplayConfGS::draw(sf::RenderWindow& window, Camera& camera){
         window.draw(text);
     }
 
-    std::string boolTexts[3] = {
+    std::string boolTexts[4] = {
         video ? "FSCRN" : "WINDOW",
         difficulty ? "ON" : "OFF",
-        cheats ? "ON" : "OFF"
+        cheats ? "ON" : "OFF",
+        skins ? "ON" : "OFF"
     };
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         sf::Text statusText(fontinputs, boolTexts[i], 15);
         statusText.setFillColor(sf::Color(255, 140, 0));
 

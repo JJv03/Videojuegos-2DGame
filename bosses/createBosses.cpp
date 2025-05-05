@@ -1,4 +1,5 @@
 #include "createBosses.h"
+#include "../configManager.h"
 
 // Creates the phantomBat boss
 PhantomBat *createPhantomBat(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
@@ -118,9 +119,11 @@ DraculaSpirit *createDraculaSpirit(const sf::Vector2f &position, const size_t &l
 // Creates the phantomBat boss
 Death *createDeath(const sf::Vector2f &position, const size_t &level, const size_t &stage, const sf::FloatRect mapDims)
 {
+    configManager &configManager = configManager::getInstance();
+    auto skins = configManager.getSkins();
     // Sprite sheet coordinates and dimensions
     sf::IntRect DEATH_SPRITE_REGION;
-    if(gCustomSkins){
+    if(skins.activated){
         DEATH_SPRITE_REGION = {{97, 74}, {40, 48}}; // Ibon
     }
     else{

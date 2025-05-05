@@ -2,6 +2,7 @@
 #include "../game.h"
 #include "../globals.h"
 #include <iostream>
+#include "../configManager.h"
 
 Scythe::Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
                        const sf::Vector2f &position, const sf::FloatRect &mapDims, float _damage)
@@ -20,7 +21,10 @@ Scythe::Scythe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
 
         this->animationManager = animationManager;
 
-        if(gCustomSkins){
+        configManager &configManager = configManager::getInstance();
+        auto skins = configManager.getSkins();
+
+        if(skins.activated){
             currentAnimation = gamePad;
         }
         else{
