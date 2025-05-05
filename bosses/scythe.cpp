@@ -1,4 +1,5 @@
 #include "scythe.h"
+#include "../game.h"
 #include "../globals.h"
 #include <iostream>
 
@@ -96,17 +97,19 @@ void Scythe::onCollision(Entity &other, Game &game)
     }
 
     // Handle collision with player
-    if (dynamic_cast<Player *>(&other))
-    {
-        isActive = false;
-    }
+    // if (dynamic_cast<Player *>(&other))
+    // {
+    //     isActive = false;
+    // }
     // Handle collision with weapons
-    else if (dynamic_cast<Whip *>(&other))
+    if (dynamic_cast<Whip *>(&other))
     {
+        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
     else if (dynamic_cast<SubWeapon *>(&other))
     {
+        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
 }

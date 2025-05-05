@@ -34,10 +34,10 @@ private:
     bool up = true;
     bool right = false;
 
-    bool enhancedActivated = false;
-    float enhancedTimer = 0.f;
-    const float enhancedInterval = 1.5f;
-    const float enhancedSpeed = 0.5f;
+    // bool enhancedActivated = false;
+    // float enhancedTimer = 0.f;
+    // const float enhancedInterval = 1.5f;
+    // const float enhancedSpeed = 0.5f;
     bool triedAI = false;
 
 public:

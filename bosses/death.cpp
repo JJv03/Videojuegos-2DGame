@@ -91,8 +91,16 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                         generated = false;
                         selectObjective();
                         auto mode = configManager.getDifficulty();
-                        if(mode.hard_mode){ // Enhanced AI
-
+                        int chance = rand() % 3;
+                        if(mode.hard_mode && chance == 0){ // Enhanced AI
+                            auto audio = configManager.getAudio();
+                            gameSoundManager.playSound("falling_stage2", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                            for(auto& scythe : scythes){
+                                if(scythe && scythe->sprite && scythe->getActive()){
+                                    sf::Vector2f attackPosition = playerBounds.position;
+                                    scythe->planPosSpeed(attackPosition);
+                                }
+                            }
                         }
                         else{
                             for(auto& scythe : scythes){
@@ -170,8 +178,8 @@ void Death::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &play
         int chance = rand() % 3;
         if(chance == 0){ // Meter factor cercanía del jugador
             // std::cout << "Luckyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
-            enhancedActivated = true;
-            enhancedTimer = 0;
+            // enhancedActivated = true;
+            // enhancedTimer = 0;
         }
     }
     // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). Attack with all scythe
@@ -223,7 +231,7 @@ void Death::selectObjective(){
             right = false;
         }
         else{
-            goal = sf::Vector2f(198, 105);
+            goal = sf::Vector2f(190, 105);
             right = true;
         }
     }
@@ -256,7 +264,7 @@ sf::Vector2f Death::getRandomScythesPos(const sf::Vector2f &playerPos){
     float minX = mapDims.position.x + 9;
     float maxX = mapDims.position.x + mapDims.size.x - 9;
     float minY = mapDims.position.y + 9;
-    float maxY = mapDims.position.y + mapDims.size.y - 9;
+    float maxY = mapDims.position.y + mapDims.size.y - 20;
 
     std::uniform_real_distribution<float> distX(minX, maxX);
     std::uniform_real_distribution<float> distY(minY, maxY);
@@ -279,21 +287,29 @@ void Death::onCollision(Entity &other, Game &game)
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
+        game.particleSystem.spawnHitParticle(position);
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             dead = true;
             gKilledBoss = true;
+            for(auto& s : scythes){
+                if(s) s->reset();
+            }
             game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
+        game.particleSystem.spawnHitParticle(position);
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             dead = true;
             gKilledBoss = true;
+            for(auto& s : scythes){
+                if(s) s->reset();
+            }
             game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
@@ -336,6 +352,23 @@ void Death::resetPosition()
 
     currentAnimation = sleepPhantomBat;
     dead = false;
+
+    gKilledBoss = false;
+    goingDown = true;
+    attacking = false;
+    moving = false;
+
+    up = true;
+    right = false;
+    dead = false;
+
+    starting = true;
+    timer = 0.f;
+    doubleMoveTimer = 0.f;
+
+    for(auto& s : scythes){
+        if(s) s->reset();
+    }
 }
 
 void Death::hello() const
