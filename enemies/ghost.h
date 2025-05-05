@@ -6,8 +6,8 @@ class Ghost : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f GHOST_SPEED = {-30.0f, 0.0f};
-    const float GHOST_SPEED_MAGNITUDE = 30.0f;
+    const sf::Vector2f GHOST_SPEED = {-45.0f, 0.0f};
+    const float GHOST_SPEED_MAGNITUDE = 45.0f;
 
     // Combat stats
     const float GHOST_LIFE = 5.0f;
