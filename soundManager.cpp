@@ -85,6 +85,7 @@ void SoundManager::loadMusic(const std::string& id, const std::string& filepath)
 }
 
 void SoundManager::playMusic(const std::string& id, float volume, bool loop) {
+    stopAll = false;
     if (musicTracks.find(id) == musicTracks.end()) {
         std::cerr << "Music " << id << " not found.\n";
         return;
@@ -111,12 +112,10 @@ void SoundManager::stopAllMusic() {
         music.stop();
     }
     stopAll = true;
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-    stopAll = false;
 }
 
 void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume) {
+    stopAll = false;
     if (musicTracks.find(firstId) == musicTracks.end()) {
         std::cerr << "Music " << firstId << " not found.\n";
         return;

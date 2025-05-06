@@ -22,21 +22,21 @@ void Cannon::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
 }
 
 // Handle collisions
-void onCollision(Entity &other, Game &game){
+void Cannon::onCollision(Entity &other, Game &game){
 
 }
 
 // Update animation frame
-void updateAnimation(float deltaTime){
+void Cannon::updateAnimation(float deltaTime){
 
 }
 
 // Update detection area
-void updateVisionField(){
+void Cannon::updateVisionField(){
 
 }
 
 
-void hello() {
+void Cannon::hello() const {
     std::cout << "Soy Cannon" << std::endl;
 }
