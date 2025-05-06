@@ -229,7 +229,29 @@ void Game::loadGUI()
     timeText.setPosition(textPositions.back());
 
     // Stage
+    std::stringstream stageStream;
+    int level = 0;
+    switch (currentLevel)
+    {
+    case 1:
+        level = 1;
+        break;
+    
+    case 3:
+        level = 2;
+        break;
+    
+    case 5:
+        level = 3;
+        break;
+
+    case 7:
+        level = 4;
+        break;
+    }
+    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(level);
     sf::Text stageText(font, "STAGE 01", gGUI_text_size);
+    stageText.setString(stageStream.str());
     stageText.setFillColor(gGUI_text_color);
     textPositions.push_back(sf::Vector2f(gGUI_size_x * gGUI_StagePositionXFactor, margin + gGUI_position_y));
     stageText.setPosition(textPositions.back());
@@ -826,6 +848,29 @@ void Game::updateGUITime()
     std::stringstream timeStream;
     timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
     texts[1].setString(timeStream.str());
+
+    std::stringstream stageStream;
+    int level = 0;
+    switch (currentLevel)
+    {
+    case 1:
+        level = 1;
+        break;
+    
+    case 3:
+        level = 2;
+        break;
+    
+    case 5:
+        level = 3;
+        break;
+
+    case 7:
+        level = 4;
+        break;
+    }
+    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(level);
+    texts[2].setString(stageStream.str());
 }
 
 void Game::resetEndLevelScoreAnimation()
