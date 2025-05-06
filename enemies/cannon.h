@@ -9,9 +9,12 @@ private:
 
     // Combat stats
     const sf::Vector2f CANNON_SPEED = {0.0f, 0.0f};
-    const float CANNON_LIFE = 1.0f;
-    const float CANNON_SCORE = 200.0f;
+    const float CANNON_LIFE = 8.0f;
+    const float CANNON_SCORE = 400.0f;
     const float CANNON_DAMAGE = 2.0f;
+
+    const float PROJECTILE_SPEED = 120.0f;
+    const float PROJECTILE_DAMAGE = 2.0f;
     
     enum class State
     {
@@ -22,9 +25,14 @@ private:
         SECOND_ATTACK,
     };
 
-    const float MIN_WAITING_FIRST_ATTACK_TIME = 1.0f;
+    const float MIN_WAITING_FIRST_ATTACK_TIME = 1.5f;
     const float MAX_WAITING_FIRST_ATTACK_TIME = 4.0f;
+    float WAITING_FIRST_ATTACK_TIME;
     float waitingFirstAttackTimeCounter;
+
+    const float CHARGING_TIME = 0.7f;
+    float chargingTimeCounter;
+
     const float WAITING_SECOND_ATTACK_TIME = 1.0f;
     float waitingSecondAttackTimeCounter;
 
@@ -63,13 +71,15 @@ public:
 
     // Update cannon logic (spawn, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
-                const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds);
+                const sf::Vector2f &playerPos, const sf::FloatRect &mapBounds);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game) override;
 
     // Update animation frame
     void updateAnimation(float deltaTime);
+
+    void generateProjectile(bool secondAttack);
     
     // Update projectile logic
     void updateProjectiles(float deltaTime, const sf::FloatRect& mapBounds);

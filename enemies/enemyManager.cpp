@@ -83,6 +83,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                            playerPtr->sprite->getScale().x, playerPtr->sprite->getGlobalBounds(), playerPos, mapBounds);
         }
     }
+    for (auto &cannon : cannon)
+    {
+        if (cannon->level == currentLevel && cannon->stage == currentStage)
+        {
+            cannon->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -128,6 +136,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
         if (medusa->level == currentLevel && medusa->stage == currentStage)
         {
             medusa->draw(window);
+        }
+    }
+    for (auto &cannon : cannon)
+    {
+        if (cannon->level == currentLevel && cannon->stage == currentStage)
+        {
+            cannon->draw(window);
         }
     }
 }
@@ -223,6 +238,12 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                                      enemyData.height > 0 ? enemyData.height : 50.f),
                         level, currentStage));
                     break;
+
+                case 6: // Cannon
+                    cannon.push_back(createCannon(
+                        enemyData.position, level, currentStage));
+                    break;
+
 
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
@@ -328,6 +349,21 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             allEnemies.push_back(m);
         }
     }
+    for (auto &c : cannon)
+    {
+        if (c->level == currentLevel && c->stage == currentStage && c->isActive)
+        {
+            allEnemies.push_back(c);
+
+            for(auto &p : c->projectiles)
+            {
+                if (p && p->getActive())
+                {
+                    allEnemies.push_back(p.get());
+                }
+            }
+        }
+    }
 
     return allEnemies;
 }
@@ -387,6 +423,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
             medusa->isActive = false;
             medusa->resetPosition();
             medusa->resetSpawnState();
+        }
+    }
+    for (auto &cannon : cannon)
+    {
+        if (cannon->level == currentLevel && cannon->stage == currentStage)
+        {
+            cannon->isActive = false;
+            cannon->resetPosition();
         }
     }
 }

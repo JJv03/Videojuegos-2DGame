@@ -161,3 +161,29 @@ Medusa *createMedusaSpawner(const sf::Vector2f &position, const sf::Vector2f &zo
 
     return new Medusa(medusaSprite, hitboxes, position, zoneSize, level, stage);
 }
+
+
+Cannon *createCannon(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect CANNON_SPRITE_REGION = {{40, 75}, {16, 32}};
+    const float HITBOX_WIDTH = 16.f;
+    const float HITBOX_HEIGHT = 32.f;
+
+    // Configure sprite
+    auto cannonSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    cannonSprite->setTextureRect(CANNON_SPRITE_REGION);
+    cannonSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = cannonSprite->getLocalBounds();
+    cannonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+    return new Cannon(cannonSprite, hitboxes, level, stage);
+}
