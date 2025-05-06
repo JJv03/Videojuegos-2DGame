@@ -134,7 +134,7 @@ void GameGS::init(){
 }
 
 void GameGS::handleInput(sf::Event event){
-    if(!gPlayEndLvlScoreAnimation){
+    if(!gPlayEndLvlScoreAnimation && !showInter){
         auto controls = configManager.getControls();
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
             if (keyPressed->scancode == controls.escape)

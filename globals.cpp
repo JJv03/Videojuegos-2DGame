@@ -103,6 +103,7 @@ bool gKilledBoss = false;
 SoundManager gameSoundManager;
 bool goBack = false;
 bool goToEndAnimation = false;
+bool showInter = false;
 
 const float gEND_LVL_ANIMATION_COUNDOWN = 4.0f;
 bool gTriggerEndLvlScoreAnimation = false;

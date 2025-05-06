@@ -71,6 +71,9 @@ public:
     // Updates in-game GUI time with <time> attribute
     void updateGUITime();
 
+    // Updates in-game GUI stage with <time> attribute
+    void updateGUIStage();
+
     // Prepares level variables to start a level
     void prepareVariablesForLevel();
 
@@ -173,7 +176,6 @@ private:
     std::shared_ptr<sf::Sprite> simon;
     std::shared_ptr<sf::Sprite> map;
     std::shared_ptr<sf::Sprite> cube;
-    bool showInter = false;
     bool entering = false;
     float timerSteps = 0.f;
     const float stepsInterval = 0.25f;

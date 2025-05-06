@@ -230,26 +230,26 @@ void Game::loadGUI()
 
     // Stage
     std::stringstream stageStream;
-    int level = 0;
+    int stage = 0;
     switch (currentLevel)
     {
     case 1:
-        level = 1;
+        stage = 1;
         break;
     
     case 3:
-        level = 2;
+        stage = 6;
         break;
     
     case 5:
-        level = 3;
+        stage = 11;
         break;
 
     case 7:
-        level = 4;
+        stage = 17;
         break;
     }
-    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(level);
+    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(stage);
     sf::Text stageText(font, "STAGE 01", gGUI_text_size);
     stageText.setString(stageStream.str());
     stageText.setFillColor(gGUI_text_color);
@@ -519,6 +519,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     if (!withOutLives)
         timeAccumulator += deltaTime;
 
+    updateGUIStage();
     if (gPlayEndLvlScoreAnimation) // Time reduction management for end level score animation
     {
         endLevelScoreAnimation(deltaTime);
@@ -575,6 +576,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         // Reset variables, flags and loads entities and the map to start next level
         prepareVariablesForLevel();
         updateGUITime();
+        updateGUIStage();
 
         if (aux_CurrentLevel == 7 && gStartingLevel == 1)
             return;
@@ -848,28 +850,30 @@ void Game::updateGUITime()
     std::stringstream timeStream;
     timeStream << "TIME   " << std::setw(4) << std::setfill('0') << std::to_string(time);
     texts[1].setString(timeStream.str());
+}
 
+void Game::updateGUIStage(){
     std::stringstream stageStream;
-    int level = 0;
+    int stage = 0;
     switch (currentLevel)
     {
     case 1:
-        level = 1;
+        stage = currentStage;
         break;
     
     case 3:
-        level = 2;
+        stage = 5 + currentStage;
         break;
     
     case 5:
-        level = 3;
+        stage = 10 + currentStage;
         break;
 
     case 7:
-        level = 4;
+        stage = 16 + currentStage;
         break;
     }
-    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(level);
+    stageStream << "STAGE " << std::setw(2) << std::setfill('0') << std::to_string(stage);
     texts[2].setString(stageStream.str());
 }
 
@@ -1860,6 +1864,7 @@ void Game::restartStage()
         break;
     }
     updateGUITime();
+    updateGUIStage();
 
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
@@ -1919,6 +1924,7 @@ void Game::restartLevel()
         break;
     }
     updateGUITime();
+    updateGUIStage();
 
     player.dir = PlayerDirection::RIGHT;
     player.health = player.maxHealth;
