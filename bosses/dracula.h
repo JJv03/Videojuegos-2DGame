@@ -123,7 +123,6 @@ public:
 
     DraculaState currentState = DraculaState::ASLEEP;
     DraculaBody* draculaBody;
-    sf::Vector2f draculaBodyPosition;
 
     std::array<std::shared_ptr<Projectile>, 3> projectiles;
 

@@ -50,6 +50,8 @@ enum animationID{
     idleFishman,
     walkFishman,
     pauseAttackFishman,
+    idleCannon,
+    chargingCannon,
 
     // Bosses
     // PhantomBat
