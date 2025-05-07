@@ -230,6 +230,7 @@ void AxeMan::resetPosition()
     currentAnimation = axeManMovement;
 
     currentState = State::WALKINGCLOSE;
+    prevState = State::WALKINGCLOSE;
 
     sprite->setScale({1.0f, 1.0f});
 }
