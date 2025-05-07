@@ -99,6 +99,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getPosition(), mapBounds);
         }
     }
+    for (auto &redSkeleton : redSkeleton)
+    {
+        if (redSkeleton->level == currentLevel && redSkeleton->stage == currentStage)
+        {
+            redSkeleton->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -158,6 +166,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
         if (axeman->level == currentLevel && axeman->stage == currentStage)
         {
             axeman->draw(window);
+        }
+    }
+    for (auto &redSkeleton : redSkeleton)
+    {
+        if (redSkeleton->level == currentLevel && redSkeleton->stage == currentStage)
+        {
+            redSkeleton->draw(window);
         }
     }
 }
@@ -299,6 +314,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
 
                 case 7: // AxeMan
                     axeman.push_back(createAxeMan(
+                        enemyData.position, level, currentStage));
+                    break;
+
+                case 8: // AxeMan
+                    redSkeleton.push_back(createRedSkeleton(
                         enemyData.position, level, currentStage));
                     break;
 

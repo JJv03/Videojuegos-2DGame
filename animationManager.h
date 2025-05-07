@@ -52,6 +52,12 @@ enum animationID{
     pauseAttackFishman,
     idleCannon,
     chargingCannon,
+    axeManMovement,
+    axeManAxe,
+    redSkeletonIdle,
+    redSkeletonWalk,
+    redSkeletonSpawn,
+    redSkeletonDead,
 
     // Bosses
     // PhantomBat
@@ -108,10 +114,6 @@ enum animationID{
     // Death scythe
     scythe,
     gamePad,
-
-    // AxeMan
-    axeManMovement,
-    AxeManAxe
 };
 
 

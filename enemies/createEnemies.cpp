@@ -211,3 +211,27 @@ AxeMan *createAxeMan(const sf::Vector2f &position, const size_t &level, const si
     };
     return new AxeMan(axeManSprite, hitboxes, level, stage);
 }
+
+RedSkeleton *createRedSkeleton(const sf::Vector2f &position, const size_t &level, const size_t &stage){
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect RED_SKELETON_SPRITE_REGION = {{157, 122}, {16, 32}};
+    const float HITBOX_WIDTH = 16.f;
+    const float HITBOX_HEIGHT = 32.f;
+
+    // Configure sprite
+    auto redSkeletonSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    redSkeletonSprite->setTextureRect(RED_SKELETON_SPRITE_REGION);
+    redSkeletonSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = redSkeletonSprite->getLocalBounds();
+    redSkeletonSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+    return new RedSkeleton(redSkeletonSprite, hitboxes, level, stage);
+}

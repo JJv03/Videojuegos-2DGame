@@ -19,6 +19,7 @@ private:
     std::vector<Medusa *> medusa;
     std::vector<Cannon *> cannon;
     std::vector<AxeMan *> axeman;
+    std::vector<RedSkeleton *> redSkeleton;
 
     // Reference to player
     Player *playerPtr;
