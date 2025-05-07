@@ -16,6 +16,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     timerWait = 0.f;
     timerAttack = 0.f;
     attackInterval = 0.f;
+    atTheEdge = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -29,7 +30,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     currentAnimation = AxeManMovement;
 
     currentState = State::WALKINGCLOSE;
-    prevState = State::WALKINGCLOSE;
+    State prevState = State::WALKINGCLOSE;
 }
 
 // Main update loop
@@ -106,8 +107,9 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 }
                 
                 timerWalk += deltaTime;
-                if(timerWalk >= walkInterval){
+                if(timerWalk >= walkInterval || atTheEdge){
                     timerWalk = 0.f;
+                    prevState = currentState;
                     currentState = State::WAITINGWALK;
                 }
                 break;
@@ -121,8 +123,9 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 }
                 
                 timerWalk += deltaTime;
-                if(timerWalk >= walkInterval){
+                if(timerWalk >= walkInterval || atTheEdge){
                     timerWalk = 0.f;
+                    prevState = currentState;
                     currentState = State::WAITINGWALK;
                 }
                 break;
@@ -132,11 +135,25 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 timerWait += deltaTime;
                 if(timerWait >= waitInterval){
                     timerWait = 0.f;
-                    if(distance < distanceToPlayer + 8){    // 32/4, 1/4 of a tile
-                        currentState = State::WALKINGAWAY;
+                    if(atTheEdge){
+                        if(prevState == State::WALKINGAWAY){
+                            currentState = State::WALKINGCLOSE;
+                        }
+                        else if(prevState == State::WALKINGCLOSE){
+                            currentState = State::WALKINGAWAY;
+                        }
+                        else{
+                            currentState = State::WAITINGWALK;
+                        }
+                        atTheEdge = false;
                     }
                     else{
-                        currentState = State::WALKINGCLOSE;
+                        if(distance < distanceToPlayer + 8){    // 32/4, 1/4 of a tile
+                            currentState = State::WALKINGAWAY;
+                        }
+                        else{
+                            currentState = State::WALKINGCLOSE;
+                        }
                     }
                 }
                 break;
@@ -162,6 +179,17 @@ void AxeMan::onCollision(Entity &other, Game &game)
 {
     if (!isActive || !sprite)
         return;
+
+    if (dynamic_cast<SolidTile *>(&other))
+    {
+        onCollision_SolidTile(other);
+
+        if (isOnGround && Enemy::checkForLedge(other))
+        {
+            atTheEdge = true;
+            std::cout << "I dont have the high ground" << std::endl;
+        }
+    }
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
@@ -190,6 +218,18 @@ void AxeMan::resetPosition()
 
     speed = AXEMAN_SPEED;
     life = AXEMAN_LIFE;
+    score = AXEMAN_SCORE;
+    damage = AXEMAN_DAMAGE;
+
+    timerWalk = 0.f;
+    timerWait = 0.f;
+    timerAttack = 0.f;
+    attackInterval = 0.f;
+    atTheEdge = false;
+
+    currentAnimation = AxeManMovement;
+
+    currentState = State::WALKINGCLOSE;
 
     sprite->setScale({1.0f, 1.0f});
 }

@@ -37,6 +37,8 @@ private:
     float timerAttack = 0.f;
     float attackInterval = 0.f;
 
+    bool atTheEdge = false;
+
 public:
     int level; // Current game level
     int stage; // Current stage
