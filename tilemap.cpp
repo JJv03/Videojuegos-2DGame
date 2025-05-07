@@ -212,6 +212,9 @@ sf::FloatRect TileMap::getHitboxForMiscTile(const int id) const
     case 8: // Lvl 1 - Wall 3 square cracked
     case 9: // Lvl 3 - Wall 1 square
     case 10: // Lvl 5 - Wall 1 square
+    case 11: // Lvl 3 - Wall 1 square cracked
+    case 12: // Lvl 5 - Wall 1 square cracked
+    case 99: // Invisible wall
         return collisionTypes.at(TOP_LEFT_COLLISION);   // Any 16x16 would do
     case 5: // Wall DROP_TRIGGER
         return collisionTypes.at(FULL_COLLISION);

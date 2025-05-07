@@ -70,7 +70,7 @@ bool loadMiscTextures()
     }
 
     //////////////////////////////////////
-    // Load the first texture to the atlas
+    // Load the lvl1 miscTiles first texture to the atlas
     //////////////////////////////////////
     sf::Image itemsObjectsImage;
     if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
@@ -84,12 +84,6 @@ bool loadMiscTextures()
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
     ////////////////////////////////////////////////////////////////////////////
-    // auto firepitTexture = std::make_shared<sf::Texture>();
-    // if (!firepitTexture->loadFromImage(itemsObjectsImage, false, sf::IntRect({175, 2}, {16, 31})))
-    // {
-    //     std::cout << "Error cargando textura Firepit." << std::endl;
-    //     return false;
-    // }
     miscType_to_TextureRects[MiscTileType::FIREPIT] = sf::IntRect({175, 2}, {16, 31});
     miscType_to_TextureAtlasKey[MiscTileType::FIREPIT] = "miscTile_1";
 
@@ -98,7 +92,7 @@ bool loadMiscTextures()
 
 
     //////////////////////////////////////
-    // Load the second texture to the atlas
+    // Load the lvl1 miscTiles second texture to the atlas
     //////////////////////////////////////
     sf::Image tilesetLvl1Image;
     if (!tilesetLvl1Image.loadFromFile("./assets/tilesets/tileset_1.png")) return false;
@@ -126,32 +120,7 @@ bool loadMiscTextures()
 
 
     //////////////////////////////////////
-    // Load the third texture to the atlas
-    //////////////////////////////////////
-    sf::Image tilesetLvl1Image_for_miscTiles;
-    if (!tilesetLvl1Image_for_miscTiles.loadFromFile("./assets/tilesets/tileset_1-paraMiscTiles.png")) return false;
-    tilesetLvl1Image_for_miscTiles.createMaskFromColor(gColorKeyGrey);
-
-    sf::Texture tex3;
-    if (!tex3.loadFromImage(tilesetLvl1Image_for_miscTiles)) return false;
-    tex3.setSmooth(false);
-    gTextures["miscTile_3"] = std::move(tex3); 
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Load the texture rectangles for each miscellaneous tile of that texture atlas
-    ////////////////////////////////////////////////////////////////////////////
-    miscType_to_TextureRects[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = sf::IntRect({18, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = "miscTile_3";
-
-    miscType_to_TextureRects[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = sf::IntRect({162, 342}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = "miscTile_3";
-
-    miscType_to_TextureRects[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = sf::IntRect({146, 326}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = "miscTile_3";
-
-
-    //////////////////////////////////////
-    // Load the fourth texture to the atlas
+    // Load the lvl3 texture to the atlas
     //////////////////////////////////////
     sf::Image tilesetLvl3Image;
     if (!tilesetLvl3Image.loadFromFile("./assets/tilesets/tileset_3.png")) return false;
@@ -159,17 +128,17 @@ bool loadMiscTextures()
     sf::Texture tex4;
     if (!tex4.loadFromImage(tilesetLvl3Image)) return false;
     tex4.setSmooth(false);
-    gTextures["miscTile_4"] = std::move(tex4);
+    gTextures["miscTile_3"] = std::move(tex4);
 
     ////////////////////////////////////////////////////////////////////////////
     // Load the texture rectangles for each miscellaneous tile of that texture atlas
     ////////////////////////////////////////////////////////////////////////////
     miscType_to_TextureRects[MiscTileType::LVL3_WALL_1SQUARE] = sf::IntRect({2, 182}, {16, 16});
-    miscType_to_TextureAtlasKey[MiscTileType::LVL3_WALL_1SQUARE] = "miscTile_4";
+    miscType_to_TextureAtlasKey[MiscTileType::LVL3_WALL_1SQUARE] = "miscTile_3";
 
 
     //////////////////////////////////////
-    // Load the fifth texture to the atlas
+    // Load the lvl5 texture to the atlas
     //////////////////////////////////////
     sf::Image tilesetLvl5Image;
     if (!tilesetLvl5Image.loadFromFile("./assets/tilesets/tileset_5.png")) return false;
@@ -185,6 +154,39 @@ bool loadMiscTextures()
     miscType_to_TextureRects[MiscTileType::LVL5_WALL_1SQUARE] = sf::IntRect({74, 74}, {16, 16});
     miscType_to_TextureAtlasKey[MiscTileType::LVL5_WALL_1SQUARE] = "miscTile_5";
 
+
+    //////////////////////////////////////
+    // Load the custom textures to the atlas
+    //////////////////////////////////////
+    sf::Image tilesetMiscTilesCustom;
+    if (!tilesetMiscTilesCustom.loadFromFile("./assets/tilesets/miscTiles.png")) return false;
+    tilesetMiscTilesCustom.createMaskFromColor(gColorKeyGreen);
+
+    sf::Texture tex3;
+    if (!tex3.loadFromImage(tilesetMiscTilesCustom)) return false;
+    tex3.setSmooth(false);
+    gTextures["miscTileCustom"] = std::move(tex3); 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Load the texture rectangles for each custom miscellaneous tile of that texture atlas
+    ////////////////////////////////////////////////////////////////////////////
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = sf::IntRect({10, 19}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_1SQUARE_BROKE] = "miscTileCustom";
+
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = sf::IntRect({44, 19}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_4SQUARES_BROKE] = "miscTileCustom";
+
+    miscType_to_TextureRects[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = sf::IntRect({27, 19}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL1_WALL_3SQUARES_BROKE] = "miscTileCustom";
+
+    miscType_to_TextureRects[MiscTileType::LVL3_WALL_1SQUARE_BROKE] = sf::IntRect({74, 19}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL3_WALL_1SQUARE_BROKE] = "miscTileCustom";
+
+    miscType_to_TextureRects[MiscTileType::LVL5_WALL_1SQUARE_BROKE] = sf::IntRect({104, 19}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::LVL5_WALL_1SQUARE_BROKE] = "miscTileCustom";
+
+    miscType_to_TextureRects[MiscTileType::INVISIBLE_WALL] = sf::IntRect({44, 2}, {16, 16});
+    miscType_to_TextureAtlasKey[MiscTileType::INVISIBLE_WALL] = "miscTileCustom";
 
 
     return true;
