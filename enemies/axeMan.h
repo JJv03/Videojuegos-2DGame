@@ -29,10 +29,10 @@ private:
     };
 
     float timerWalk = 0.f;
-    const float walkInterval = 0.5f;
+    const float walkInterval = 0.35f;
 
     float timerWait = 0.f;
-    const float waitInterval = 0.25f;
+    const float waitInterval = 0.15f;
 
     float timerAttack = 0.f;
     float attackInterval = 0.f;
