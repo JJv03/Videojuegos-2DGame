@@ -107,7 +107,11 @@ enum animationID{
 
     // Death scythe
     scythe,
-    gamePad
+    gamePad,
+
+    // AxeMan
+    AxeManMovement,
+    AxeManAxe
 };
 
 

@@ -11,6 +11,17 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     life = AXEMAN_LIFE;
     score = AXEMAN_SCORE;
     damage = AXEMAN_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Cannon AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(AxeManMovement, this->axeMovementFrames);
+
+    this->animationManager = animationManager;
+    currentAnimation = AxeManMovement;
 }
 
 // Main update loop
@@ -18,16 +29,45 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                    const sf::Vector2f &playerPos, const sf::FloatRect &mapBounds)
 {
     // SPAWN LOGIC
-    if (!isActive)
+    bool enemyInsideActivationZone = false;
+    bool enemyInsideDeactivationZone = false;
+
+    if (playerActivationZone.findIntersection(sprite->getGlobalBounds()).has_value())
     {
-        for (const auto &hitbox : hitboxes)
+        enemyInsideActivationZone = true;
+    }
+    if (playerDeactivationZone.findIntersection(sprite->getGlobalBounds()).has_value())
+    {
+        enemyInsideDeactivationZone = true;
+    }
+
+    // If the player is outside the deactivation zone, the enemy is allowed to reactivate in the future.
+    if (!enemyInsideDeactivationZone)
+    {
+        needsPlayerToLeaveZone = false;
+    }
+
+    // We only activate if the player is in the area, the enemy is not active and the player has previously moved away
+    if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
+    {
+        isActive = true;
+    }
+
+    // Deactivates if the enemy is active and has left the deactivation zone
+    if (isActive && !enemyInsideDeactivationZone)
+    {
+        isActive = false;
+        resetPosition();
+    }
+
+    if (isActive)
+    {
+        if (checkMapBoundaries(mapBounds))
         {
-            if (playerActivationZone.findIntersection(hitbox).has_value())
-            {
-                isActive = true;
-                break;
-            }
+            return;
         }
+
+        updateAnimation(deltaTime);
     }
     
 }
@@ -73,7 +113,6 @@ void AxeMan::draw(sf::RenderWindow &window)
 {
     if (sprite && isActive)
     {
-        std::cout << "HOLAAAAAAAAAAAAAA" << std::endl;
         Enemy::draw(window);
     }
 }
@@ -81,10 +120,15 @@ void AxeMan::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void AxeMan::updateAnimation(float deltaTime)
 {
-    
+    if (!isActive || !sprite) return;
+
+    if(!animationManager->isPlaying(currentAnimation)){
+        animationManager->playAnimation(currentAnimation);
+    }
+    animationManager->update(deltaTime);
 }
 
 void AxeMan::hello() const
 {
-    std::cout << "Soy Ghost" << std::endl;
+    std::cout << "Soy AxeMan" << std::endl;
 }

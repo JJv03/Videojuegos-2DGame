@@ -13,6 +13,13 @@ private:
     const float AXEMAN_SCORE = 1400.0f;
     const float AXEMAN_DAMAGE = 4.0f;
 
+    const float distanceToPlayer = 3 * 32; // Num of tiles * tiles dimensions
+
+    std::vector<AnimationManager::Frame> axeMovementFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(240, 122), sf::Vector2(24, 32)), 0.1f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(265, 122), sf::Vector2(24, 32)), 0.1f}
+    };
+
 public:
     int level; // Current game level
     int stage; // Current stage
