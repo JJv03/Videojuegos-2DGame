@@ -12,6 +12,11 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     score = AXEMAN_SCORE;
     damage = AXEMAN_DAMAGE;
 
+    timerWalk = 0.f;
+    timerWait = 0.f;
+    timerAttack = 0.f;
+    attackInterval = 0.f;
+
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
@@ -22,6 +27,9 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
 
     this->animationManager = animationManager;
     currentAnimation = AxeManMovement;
+
+    currentState = State::WALKINGCLOSE;
+    prevState = State::WALKINGCLOSE;
 }
 
 // Main update loop
@@ -61,10 +69,88 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
     }
 
     if (isActive)
-    {
+    {   
+        position = sprite->getGlobalBounds().position;
         if (checkMapBoundaries(mapBounds))
         {
             return;
+        }
+
+        bool isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+
+        if(isPlayerRight){
+            sprite->setScale({-1.f, 1.f});
+        } else {
+            sprite->setScale({1.f, 1.f});
+        }
+
+        float distance = 0.f;
+        if (isPlayerRight){
+            distance = playerPos.x - position.x;
+        }
+        else{
+            distance = position.x - playerPos.x;
+        }
+
+        // Random timer to attack
+
+        // STATE MACHINE
+        switch(currentState){
+            case State::WALKINGCLOSE:
+                // Movement
+                if(isPlayerRight){
+                    speed = sf::Vector2f(AXEMAN_SPEED.x, AXEMAN_SPEED.y);
+                }
+                else{
+                    speed = sf::Vector2f(-AXEMAN_SPEED.x, AXEMAN_SPEED.y);
+                }
+                
+                timerWalk += deltaTime;
+                if(timerWalk >= walkInterval){
+                    timerWalk = 0.f;
+                    currentState = State::WAITINGWALK;
+                }
+                break;
+            case State::WALKINGAWAY:
+                // Movement
+                if(isPlayerRight){
+                    speed = sf::Vector2f(-AXEMAN_SPEED.x, AXEMAN_SPEED.y);
+                }
+                else{
+                    speed = sf::Vector2f(AXEMAN_SPEED.x, AXEMAN_SPEED.y);
+                }
+                
+                timerWalk += deltaTime;
+                if(timerWalk >= walkInterval){
+                    timerWalk = 0.f;
+                    currentState = State::WAITINGWALK;
+                }
+                break;
+            case State::WAITINGWALK:
+                // Wait a bit then walk
+                speed = sf::Vector2f(0, 0);
+                timerWait += deltaTime;
+                if(timerWait >= waitInterval){
+                    timerWait = 0.f;
+                    if(distance < distanceToPlayer + 8){    // 32/4, 1/4 of a tile
+                        currentState = State::WALKINGAWAY;
+                    }
+                    else{
+                        currentState = State::WALKINGCLOSE;
+                    }
+                }
+                break;
+            case State::ATTACK:
+
+                break;
+        }
+        if (speed.x != 0)
+        {
+            sprite->move({speed.x * deltaTime, 0.f});
+            for (auto &hitbox : hitboxes)
+            {
+                hitbox.position.x += speed.x * deltaTime;
+            }
         }
 
         updateAnimation(deltaTime);
