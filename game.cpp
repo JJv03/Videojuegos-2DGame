@@ -439,9 +439,9 @@ void Game::handleInput(sf::Event event)
                             gameSoundManager.stopAllMusic();
                             setLevelMusic(currentLevel);
                             player.acceptsInput = true;
+                            int numStages;
                             currentBossPhase = 0;
-                            int numStages = 0;
-                            switch (static_cast<int>(currentLevel)){
+                            switch (currentLevel){
                                 case 1:
                                     numStages = 5;
                                     break;
@@ -453,6 +453,9 @@ void Game::handleInput(sf::Event event)
                                     break;
                                 case 7:
                                     numStages = 2;
+                                    break;
+                                default:
+                                    numStages = 6;
                                     break;
                             }
                             for(int i = 1; i <= numStages; i++){
