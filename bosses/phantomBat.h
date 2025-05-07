@@ -25,10 +25,7 @@ private:
 
     bool goingToCenter = true;
 
-    bool waiting = true;
     const float waitingInterval = 1.f;
-
-    bool attacking = false;
 
     sf::Vector2f startPosition;
     float arcHeight = 25.f;
@@ -52,6 +49,15 @@ public:
     int stage; // Current stage within level
     sf::Vector2f position;
     sf::FloatRect mapDims;
+
+    enum class State {
+        WAITING,
+        MOVING,
+        ATTACKING,
+        ENHANCED
+    };
+
+    State currentState = State::WAITING;
 
     PhantomBat() = default;
     PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,

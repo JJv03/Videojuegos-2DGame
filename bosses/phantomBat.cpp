@@ -25,6 +25,8 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
 
     this->animationManager = animationManager;
     currentAnimation = sleepPhantomBat;
+
+    currentState = State::WAITING;
 }
 
 // Update phantomBat logic: handle spawning, movement, and deactivation
@@ -92,43 +94,44 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                     }
                 }
 
-                if(enhancedActivated){
-                    enhancedTimer += deltaTime;
-                    getLinelSpeed(enhancedSpeed);
-                    if(enhancedTimer >= enhancedSpeed){
-                        // Return to waiting
-                        enhancedTimer = 0;
-                        timer = 0;
-                        doubleMoveTimer = 0;
-                        attacking = false;
-                        waiting = true;
+                switch (currentState)
+                {
+                    case State::ENHANCED:
+                        enhancedTimer += deltaTime;
+                        getLinelSpeed(enhancedSpeed);
+                        if(enhancedTimer >= enhancedSpeed){
+                            // Return to waiting
+                            enhancedTimer = 0;
+                            timer = 0;
+                            doubleMoveTimer = 0;
+                            speed = sf::Vector2f(0, 0);
+                            enhancedActivated = false;
+                            triedAI = false;
+                            currentState = State::WAITING;
+                        }
+                        break;
+                    
+                    case State::WAITING:
+                        enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         speed = sf::Vector2f(0, 0);
-                        enhancedActivated = false;
-                        triedAI = false;
-                    }
-                }
-                else if (waiting) {
-                    enhancedAI(mode.hard_mode, playerDir, playerBounds);
-                    speed = sf::Vector2f(0, 0);
-                    timer += deltaTime;
-                    if (timer >= waitingInterval) {
-                        // std::cout << "End Waiting" << std::endl;
-                        // Decide moverse hacia el lado opuesto
-                        goal = (position.x + 24 > map.x + size.x / 2)
-                            ? sf::Vector2f(position.x - 50.f, position.y)
-                            : sf::Vector2f(position.x + 50.f, position.y);
-                        // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
-                        getLinelSpeed(moveLeftRight);
-                        waiting = false;
-                        timer = 0.f;
-                    }
-                }
-                else{
-                    if(!attacking){ // moving left or right
+                        timer += deltaTime;
+                        if (timer >= waitingInterval) {
+                            // std::cout << "End Waiting" << std::endl;
+                            // Decide moverse hacia el lado opuesto
+                            goal = (position.x + 24 > map.x + size.x / 2)
+                                ? sf::Vector2f(position.x - 50.f, position.y)
+                                : sf::Vector2f(position.x + 50.f, position.y);
+                            // std::cout << "GOAL: " << goal.x << " " << goal.y << std::endl;
+                            getLinelSpeed(moveLeftRight);
+                            currentState = State::MOVING;
+                            timer = 0.f;
+                        }
+                        break;
+                    
+                    case State::MOVING:
                         enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveLeftRight){
                             // std::cout << "End Moving left / right" << std::endl;
-                            attacking = true;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
                             int chance = rand() % 4;
@@ -140,14 +143,15 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                                 // Random position
                                 randomObjective();
                             }
+                            currentState = State::ATTACKING;
                         }
-                    }
-                    else{   // attacking
+                        break;
+
+                    case State::ATTACKING:
                         enhancedAI(mode.hard_mode, playerDir, playerBounds);
                         if(timer >= moveInterval){
                             // std::cout << "End Ataccking" << std::endl;
-                            attacking = false;
-                            waiting = true;
+                            currentState = State::WAITING;
                             timer = 0.f;
                             speed = sf::Vector2f(0, 0);
                         }
@@ -155,7 +159,9 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                             getDoubleSpeed();
                             doubleMoveTimer += deltaTime;
                         }
-                    }
+                        break;
+
+                
                 }
             }
         }
@@ -202,6 +208,7 @@ void PhantomBat::enhancedAI(bool isOn, const int playerDir, const sf::FloatRect 
             else if(playerDir < 0){   // Right
                 goal = sf::Vector2f(mapDims.position.x + mapDims.size.x - 55, mapDims.position.y + 25);
             }
+            currentState = State::ENHANCED;
         }
     }
     // In case Enhanced AI mode activate add this possible state (it has a prob to happen, not always). If there's a weapon (whip or secundary)
@@ -342,8 +349,7 @@ void PhantomBat::resetPosition()
     timer = 0.f;
     doubleMoveTimer = 0.f;
     goingToCenter = true;
-    waiting = true;
-    attacking = false;
+    currentState = State::WAITING;
 }
 
 void PhantomBat::hello() const
