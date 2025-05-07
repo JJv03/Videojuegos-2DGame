@@ -9,6 +9,7 @@
 #include "ghost.h"
 #include "medusa.h"
 #include "cannon.h"
+#include "axeMan.h"
 
 // Factory functions for creating enemy instances
 Zombie *createZombie(const sf::Vector2f &position);
@@ -18,3 +19,4 @@ FishMan *createFishManSpawner(const sf::Vector2f &position, const sf::Vector2f &
 Ghost *createGhost(const sf::Vector2f &position, const size_t &level, const size_t &stage);
 Medusa *createMedusaSpawner(const sf::Vector2f &position, const sf::Vector2f &zoneSize, const size_t &level, const size_t &stage);
 Cannon *createCannon(const sf::Vector2f &position, const size_t &level, const size_t &stage);
+AxeMan *createAxeMan(const sf::Vector2f &position, const size_t &level, const size_t &stage);

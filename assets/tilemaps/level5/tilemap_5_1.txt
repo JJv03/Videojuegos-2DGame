@@ -26,4 +26,5 @@ stair
 2,120,32
 end_stair
 enemies
+7,80,160
 end_enemies

@@ -91,6 +91,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getPosition(), mapBounds);
         }
     }
+    for (auto &axeman : axeman)
+    {
+        if (axeman->level == currentLevel && axeman->stage == currentStage)
+        {
+            axeman->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -143,6 +151,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
         if (cannon->level == currentLevel && cannon->stage == currentStage)
         {
             cannon->draw(window);
+        }
+    }
+    for (auto &axeman : axeman)
+    {
+        if (axeman->level == currentLevel && axeman->stage == currentStage)
+        {
+            axeman->draw(window);
         }
     }
 }
@@ -276,6 +291,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         level, currentStage));
                     break;
 
+                case 7: // AxeMan
+                    axeman.push_back(createAxeMan(
+                        enemyData.position, level, currentStage));
+                    break;
+
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
                     break;
@@ -364,6 +384,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             }
         }
     }
+    for (auto &ax : axeman)
+    {
+        if (ax->level == currentLevel && ax->stage == currentStage && ax->isActive)
+        {
+            allEnemies.push_back(ax);
+        }
+    }
 
     return allEnemies;
 }
@@ -431,6 +458,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             cannon->isActive = false;
             cannon->resetPosition();
+        }
+    }
+    for (auto &axeman : axeman)
+    {
+        if (axeman->level == currentLevel && axeman->stage == currentStage)
+        {
+            axeman->isActive = false;
+            axeman->resetPosition();
         }
     }
 }

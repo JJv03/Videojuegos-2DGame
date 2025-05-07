@@ -187,3 +187,27 @@ Cannon *createCannon(const sf::Vector2f &position, const size_t &level, const si
     };
     return new Cannon(cannonSprite, hitboxes, level, stage);
 }
+
+AxeMan *createAxeMan(const sf::Vector2f &position, const size_t &level, const size_t &stage){
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect AXEMAN_SPRITE_REGION = {{240, 122}, {24, 32}};
+    const float HITBOX_WIDTH = 22.f;
+    const float HITBOX_HEIGHT = 30.f;
+
+    // Configure sprite
+    auto axeManSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    axeManSprite->setTextureRect(AXEMAN_SPRITE_REGION);
+    axeManSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = axeManSprite->getLocalBounds();
+    axeManSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+    return new AxeMan(axeManSprite, hitboxes, level, stage);
+}
