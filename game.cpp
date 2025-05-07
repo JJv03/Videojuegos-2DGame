@@ -440,8 +440,25 @@ void Game::handleInput(sf::Event event)
                             setLevelMusic(currentLevel);
                             player.acceptsInput = true;
                             currentBossPhase = 0;
-                            enemyManager->restartEnemies(currentLevel, currentStage);
-                            bossManager->restartBosses(currentLevel, currentStage);
+                            int numStages = 0;
+                            switch (static_cast<int>(currentLevel)){
+                                case 1:
+                                    numStages = 5;
+                                    break;
+                                case 3:
+                                    numStages = 5;
+                                    break;
+                                case 5:
+                                    numStages = 6;
+                                    break;
+                                case 7:
+                                    numStages = 2;
+                                    break;
+                            }
+                            for(int i = 1; i <= numStages; i++){
+                                enemyManager->restartEnemies(currentLevel, i);
+                                bossManager->restartBosses(currentLevel, i);
+                            }
                             break;
                         case 1:
                             std::cout << "Going back to the menu" << std::endl;

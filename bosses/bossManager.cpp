@@ -28,7 +28,6 @@ BossManager::BossManager(Player *player) : playerPtr(player), globalRng(std::ran
 // Update all active bosses in current level/stage
 void BossManager::update(float deltaTime, const int currentLevel, const int currentStage, const int phase, const sf::FloatRect &mapBounds)
 {
-    
     if (playerPtr->upgradeWhip)
     {
         return;
