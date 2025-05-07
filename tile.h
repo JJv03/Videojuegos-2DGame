@@ -80,9 +80,11 @@ enum class MiscTileType {
 
     // Level 3
     LVL3_WALL_1SQUARE = 9,
+    LVL3_WALL_1SQUARE_BROKE = 11,   // Slight modification that has a crack
 
     // Level 5
     LVL5_WALL_1SQUARE = 10,
+    LVL5_WALL_1SQUARE_BROKE = 12,   // Slight modification that has a crack
 };
 
 // Hash function for the miscellaneous tile type

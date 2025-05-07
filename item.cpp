@@ -363,7 +363,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             return nullptr;                 // No item to drop
         
         case DropType::DEBUG:
-            type = ItemType::ROSARY;
+            type = ItemType::FIRE_BOMB;
             break;
         
         case DropType::DEFAULT: {   // Drops whip or an item from 'defaultDrop" pool

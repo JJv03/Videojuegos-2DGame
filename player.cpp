@@ -704,7 +704,7 @@ void Player::hello() const {
 }
 
 void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition) {
-    //static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
+    static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
 
     if (!this->weaponIsActive)
     {
@@ -730,23 +730,24 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
                 // Check if it collides, if so, explode
                 this->subWeapon.isExploding = false;
                 //this->subWeapon.collisionedEntities.clear();
+                hasExplodedOnce = false;
             }
             
             else
             {
                 //std::cout << "Fire bomb exploding" << std::endl;
+                if (!hasExplodedOnce){      // Can do damage again after it explodes
+                    this->subWeapon.collisionedEntities.clear();
+                    hasExplodedOnce = true;
+                }
+
                 if (this->subWeapon.animationManager && !this->subWeapon.animationManager->isPlaying(fireBombThrowing)) {
                     this->subWeapon.animationManager->playAnimation(fireBombThrowing);
                 }
-                // if (!hasExplodedOnce){
-                //     this->subWeapon.collisionedEntities.clear();
-                //     hasExplodedOnce = true;
-                // }
                 this->subWeapon.animationManager->update(deltaTime);
                 if (this->subWeapon.animationManager->isAnimationFinished()){
                     //std::cout << "Fire bomb finished exploding" << std::endl;
                     this->subWeapon.isExploding = true;
-                    // hasExplodedOnce = false;
                 }
                 
             }
@@ -831,7 +832,7 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
 }
 
 void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPosition) {
-    //static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
+    static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
 
     if (!this->weaponIsActive2)
     {
@@ -856,23 +857,24 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
                 // Check if it collides, if so, explode
                 
                 this->subWeapon2.isExploding = false;
+                hasExplodedOnce = false;
             }
             
             else
             {
                 //std::cout << "Fire bomb exploding" << std::endl;
+                if (!hasExplodedOnce){      // Can do damage (again) after it explodes
+                    this->subWeapon.collisionedEntities.clear();
+                    hasExplodedOnce = true;
+                }
+
                 if (this->subWeapon2.animationManager && !this->subWeapon2.animationManager->isPlaying(fireBombThrowing)) {
                     this->subWeapon2.animationManager->playAnimation(fireBombThrowing);
                 }
                 this->subWeapon2.animationManager->update(deltaTime);
-                // if (!hasExplodedOnce){
-                //     this->subWeapon.collisionedEntities.clear();
-                //     hasExplodedOnce = true;
-                // }
                 if (this->subWeapon2.animationManager->isAnimationFinished()){
                     //std::cout << "Fire bomb finished exploding" << std::endl;
                     this->subWeapon2.isExploding = true;
-                    //hasExplodedOnce = false;
                 }
                 
             }
