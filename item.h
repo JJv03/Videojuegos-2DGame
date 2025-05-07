@@ -16,6 +16,7 @@ enum class ItemType {
     AXE,
     FIRE_BOMB,  // Holy water
     BOOMERANG,
+    BOOMERANG_GUI,    // For the GUI
     STOPWATCH,
 
 
@@ -47,6 +48,7 @@ enum class ItemType {
     MOAI,
     
     MAGIC_CRYSTAL,
+    MAGIC_CRYSTAL_ACTIVE,
     
     ONEUP,
 };
@@ -95,15 +97,18 @@ class Item : public EntitySprite {
 public:
     ItemType m_type;
     
-    float m_lifeTime;   // Time until the item disappears. 
-                        // If it is 0, the item is removed from the game
-                        // If it is -1, the item NEVER disappears
+    float m_lifeTime;       // Time until the item disappears. 
+                            // If it is 0, the item is removed from the game
+                            // If it is -1, the item NEVER disappears
+    
+    float m_spawnDelay;     // Delay before the item is spawned.
+    
+    Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+         const float _lifeTime = 5.0f, const float _spawnDelay = 0.f);
 
     Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-         const float _lifeTime);
-
-    Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-         std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime);
+         std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime = 5.0f,
+         const float _spawnDelay = 0.f);
 
     void update(const float deltaTime);
 
@@ -146,7 +151,8 @@ ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weigh
 
 // Returns a new item based on the drop type. If the drop type is None, returns nullptr. The item
 // is created with the given position. If 'canDropWhip' is true, the item can be a whip upgrade
-std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip);
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip,
+                                  ItemType subWeaponType);
 
 // Returns the sprite of an item based on the item type
 std::shared_ptr<sf::Sprite> getItemSprite(ItemType type);

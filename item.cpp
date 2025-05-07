@@ -19,13 +19,14 @@ std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-           const float _lifeTime = 5.0f): EntitySprite(_sprite, _hitboxes), m_type(_type),
-           m_lifeTime(_lifeTime) {}
+           const float _lifeTime, const float _spawnDelay): EntitySprite(_sprite, _hitboxes),
+           m_type(_type), m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay) {}
 
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-           std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime = 5.0f):
-           EntitySprite(_sprite, _hitboxes), m_type(_type), m_lifeTime(_lifeTime)
+           std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime,
+           const float _spawnDelay): EntitySprite(_sprite, _hitboxes), m_type(_type),
+           m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay)
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
 
@@ -38,6 +39,14 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 
 
 void Item::update(const float deltaTime) {
+    if (m_spawnDelay > 0.f) {
+        m_spawnDelay -= deltaTime;
+        if (m_spawnDelay <= 0.f) {
+            m_spawnDelay = 0.f;
+        }
+        return; // Skip rest of the logic until spawned
+    }
+
     if (m_lifeTime > 0.f) {       // Item can disappear
         m_lifeTime -= deltaTime;
         if (m_lifeTime < 0.f)     // Prevent negative lifetime because it's not a permanent item
@@ -59,7 +68,7 @@ void Item::update(const float deltaTime) {
 }
 
 void Item::draw(sf::RenderWindow& window) {
-    window.draw(*sprite);
+    if (m_spawnDelay == 0.f) window.draw(*sprite);
 }
 
 ItemType Item::getType() const {
@@ -76,6 +85,8 @@ void Item::onCollision(Entity& other, Game& game) {
         onCollision_SolidTile(other);
     } else if (dynamic_cast<Player*>(&other)){
         this->m_lifeTime = 0.f;
+
+        if (this->m_type == ItemType::MORNING_STAR) std::cout << "MORNING STAR" << std::endl;
 
         if (this->m_type == ItemType::MAGIC_CRYSTAL) {
             gTriggerEndLvlScoreAnimation = true;
@@ -132,6 +143,7 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::AXE] = sf::IntRect({18, 18}, {16, 16});
     item_To_TextureRect[ItemType::FIRE_BOMB] = sf::IntRect({35, 18}, {16, 16});
     item_To_TextureRect[ItemType::BOOMERANG] = sf::IntRect({52, 18}, {16, 16});
+    item_To_TextureRect[ItemType::BOOMERANG_GUI] = sf::IntRect({69, 18}, {16, 16});
     item_To_TextureRect[ItemType::STOPWATCH] = sf::IntRect({103, 18}, {16, 16});
 
     item_To_TextureRect[ItemType::MORNING_STAR] = sf::IntRect({1, 1}, {16, 16});
@@ -155,7 +167,8 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::CHEST] = sf::IntRect({137, 35}, {16, 16});
     item_To_TextureRect[ItemType::MOAI] = sf::IntRect({137, 35}, {16, 16});    
 
-    item_To_TextureRect[ItemType::MAGIC_CRYSTAL] = sf::IntRect({95, 1}, {16, 16});   
+    item_To_TextureRect[ItemType::MAGIC_CRYSTAL] = sf::IntRect({95, 1}, {16, 16});
+    item_To_TextureRect[ItemType::MAGIC_CRYSTAL_ACTIVE] = sf::IntRect({112, 1}, {16, 16});   
 
     item_To_TextureRect[ItemType::ONEUP] = sf::IntRect({52, 35}, {16, 16});
 
@@ -281,7 +294,8 @@ const std::vector<AnimationManager::Frame>& getItemAnimationFrames(ItemType type
             { item_To_TextureRect.at(ItemType::MOAI), gLevelTimeLimit },
         }},
         { ItemType::MAGIC_CRYSTAL, {
-            { item_To_TextureRect.at(ItemType::MAGIC_CRYSTAL), gLevelTimeLimit },
+            { item_To_TextureRect.at(ItemType::MAGIC_CRYSTAL), 0.1f },
+            { item_To_TextureRect.at(ItemType::MAGIC_CRYSTAL_ACTIVE), 0.1f },
         }},
         { ItemType::ONEUP, {
             { item_To_TextureRect.at(ItemType::ONEUP), gLevelTimeLimit },
@@ -312,7 +326,8 @@ ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weigh
 }
 
 
-std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip = true) {
+std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip,
+                                  ItemType subWeaponType) {
     std::uniform_real_distribution<float> uniformZeroToOne(0.f, 1.f);    // [0, 1] range
 
     static const std::vector<std::pair<ItemType, float>> defaultDrops = {
@@ -357,6 +372,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
 
     ItemType type;
     float lifeTime = 5.f;
+    float spawnDelay = 0.f;
 
     switch (dropType) {
         case DropType::NONE:
@@ -469,6 +485,7 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
         case DropType::MAGIC_CRYSTAL:
             type = ItemType::MAGIC_CRYSTAL;
             lifeTime = -1.f;    // Item doesn't dispawn
+            spawnDelay = 2.f;   // Delay before the item is spawned
             break;
 
         case DropType::FIRE_BOMB:
@@ -501,12 +518,16 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             return nullptr;
     }
 
+    // if (subWeaponType == type) {    // Avoid dropping the same item as the one the player has
+    //     type = ItemType::SMALL_HEART;
+    // }
+
     std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);
     sprite->setPosition(position);
     std::vector<sf::FloatRect> hitboxes{ sprite->getGlobalBounds() };
     std::vector<AnimationManager::Frame> animationFrames = getItemAnimationFrames(type);
     
-    return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime);
+    return std::make_shared<Item>(type, sprite, hitboxes, animationFrames, lifeTime, spawnDelay);
 }
 
 

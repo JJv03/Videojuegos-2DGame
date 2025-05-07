@@ -648,7 +648,12 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         // checkCollisions();
 
         // Update the subweapon sprite item
-        guiSubWeaponSprite = getItemSprite(player.subWeaponType);
+        if (player.subWeaponType == ItemType::BOOMERANG) {
+            guiSubWeaponSprite = getItemSprite(ItemType::BOOMERANG_GUI);
+        }
+        else {
+            guiSubWeaponSprite = getItemSprite(player.subWeaponType);
+        }
 
         if (player.deathRestart)
         {
@@ -1712,7 +1717,7 @@ void Game::activateDoorTile(int doorId)
 
 void Game::createDropItem(DropType dropType, sf::Vector2f itemPosition)
 {
-    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel());
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel(), player.subWeaponType);
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));
