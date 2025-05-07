@@ -14,8 +14,6 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
 
     gKilledBoss = false;
     goingDown = true;
-    attacking = false;
-    moving = false;
 
     up = true;
     right = false;
@@ -26,6 +24,8 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     doubleMoveTimer = 0.f;
 
     triedAI = false;
+
+    currentState = State::ATTACKING;
 }
 
 // Update Death logic: handle spawning, movement, and deactivation
@@ -75,41 +75,26 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                     timer = 0;
                     speed = sf::Vector2f(0, 0);
                     goingDown = false;
-                    attacking = true;
                 }
             }
             else{
-                if(attacking){
-                    // ATTACK LOGIC
-                    if(!generated){
-                        // auto audio = configManager.getAudio();
-                        // gameSoundManager.playSound("17", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-                        generateScythes(playerBounds.position, mapDims);
-                    }
-                    if (timer >= attackInterval) {    // Attack timer
-                        timer = 0;
-                        attacking = false;
-                        moving = true;
-                        generated = false;
-                        selectObjective();
-                        auto mode = configManager.getDifficulty();
-                        int chance = rand() % 2;
-                        if(mode.hard_mode && chance == 0 && !triedAI){ // Enhanced AI
-                            if(playerBounds.position.x < 15 || playerBounds.position.x > 225){
-                                std::cout << "ALL OUT ATTACK" << std::endl;
-                                triedAI = true;
-                                auto audio = configManager.getAudio();
-                                gameSoundManager.playSound("falling_stage2", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-                                for(auto& scythe : scythes){
-                                    if(scythe && scythe->sprite && scythe->getActive()){
-                                        sf::Vector2f attackPosition = playerBounds.position;
-                                        scythe->planPosSpeed(attackPosition);
-                                    }
-                                }
-                            }
-                            else{
-                                chance = rand() % 2;
-                                if(chance == 0){
+                switch(currentState){
+                    case State::ATTACKING:
+                        // ATTACK LOGIC
+                        if(!generated){
+                            // auto audio = configManager.getAudio();
+                            // gameSoundManager.playSound("17", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                            generateScythes(playerBounds.position, mapDims);
+                        }
+                        if (timer >= attackInterval) {    // Attack timer
+                            timer = 0;
+                            currentState = State::MOVING;
+                            generated = false;
+                            selectObjective();
+                            auto mode = configManager.getDifficulty();
+                            int chance = rand() % 2;
+                            if(mode.hard_mode && chance == 0 && !triedAI){ // Enhanced AI
+                                if(playerBounds.position.x < 15 || playerBounds.position.x > 225){
                                     std::cout << "ALL OUT ATTACK" << std::endl;
                                     triedAI = true;
                                     auto audio = configManager.getAudio();
@@ -122,45 +107,60 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                                     }
                                 }
                                 else{
-                                    triedAI = false;
-                                    for(auto& scythe : scythes){
-                                        if(scythe && scythe->sprite && scythe->getActive()){
-                                            sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
-                                            scythe->planPosSpeed(randomPosition);
+                                    chance = rand() % 2;
+                                    if(chance == 0){
+                                        std::cout << "ALL OUT ATTACK" << std::endl;
+                                        triedAI = true;
+                                        auto audio = configManager.getAudio();
+                                        gameSoundManager.playSound("falling_stage2", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                                        for(auto& scythe : scythes){
+                                            if(scythe && scythe->sprite && scythe->getActive()){
+                                                sf::Vector2f attackPosition = playerBounds.position;
+                                                scythe->planPosSpeed(attackPosition);
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        triedAI = false;
+                                        for(auto& scythe : scythes){
+                                            if(scythe && scythe->sprite && scythe->getActive()){
+                                                sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
+                                                scythe->planPosSpeed(randomPosition);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        else{
-                            triedAI = false;
-                            for(auto& scythe : scythes){
-                                if(scythe && scythe->sprite && scythe->getActive()){
-                                    sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
-                                    scythe->planPosSpeed(randomPosition);
+                            else{
+                                triedAI = false;
+                                for(auto& scythe : scythes){
+                                    if(scythe && scythe->sprite && scythe->getActive()){
+                                        sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
+                                        scythe->planPosSpeed(randomPosition);
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-                else{
-                    if(moving){
+                        break;
+                    
+                    case State::MOVING:
                         if (timer >= moveInterval) {    // Move timer
                             timer = 0;
-                            moving = false;
+                            currentState = State::WAITING;
                             speed = sf::Vector2f(0, 0);
                         }
                         else{
                             getDoubleSpeed();
                             doubleMoveTimer += deltaTime;
                         }
-                    }
-                    else{
+                        break;
+
+                    case State::WAITING:
                         if(timer >= waitInterval){
                             timer = 0;
-                            attacking = true;
+                            currentState = State::ATTACKING;
                         }
-                    }
+                        break;
                 }
             }
         }
@@ -373,8 +373,7 @@ void Death::resetPosition()
 
     gKilledBoss = false;
     goingDown = true;
-    attacking = false;
-    moving = false;
+    currentState = State::ATTACKING;
 
     up = true;
     right = false;

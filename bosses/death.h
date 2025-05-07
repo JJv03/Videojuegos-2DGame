@@ -28,8 +28,6 @@ private:
     const float attackInterval = 1.5f;
 
     bool goingDown = true;
-    bool attacking = false;
-    bool moving = false;
 
     bool up = true;
     bool right = false;
@@ -45,6 +43,14 @@ public:
     int stage; // Current stage within level
     sf::Vector2f position;
     sf::FloatRect mapDims;
+
+    enum class State {
+        WAITING,
+        MOVING,
+        ATTACKING
+    };
+
+    State currentState = State::WAITING;
 
     // Up to 5 scythes at screen
     std::array<std::shared_ptr<Scythe>, 5> scythes;
