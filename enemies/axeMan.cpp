@@ -30,7 +30,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     currentAnimation = axeManMovement;
 
     currentState = State::WALKINGCLOSE;
-    State prevState = State::WALKINGCLOSE;
+    prevState = State::WALKINGCLOSE;
 }
 
 // Main update loop
