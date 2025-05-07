@@ -21,16 +21,16 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
     {
-        std::cerr << "Error: Failed to initialize Cannon AnimationManager!" << std::endl;
+        std::cerr << "Error: Failed to initialize AxeMan AnimationManager!" << std::endl;
     }
 
-    animationManager->addAnimation(AxeManMovement, this->axeMovementFrames);
+    animationManager->addAnimation(axeManMovement, this->axeMovementFrames);
 
     this->animationManager = animationManager;
-    currentAnimation = AxeManMovement;
+    currentAnimation = axeManMovement;
 
     currentState = State::WALKINGCLOSE;
-    State prevState = State::WALKINGCLOSE;
+    prevState = State::WALKINGCLOSE;
 }
 
 // Main update loop
@@ -227,9 +227,10 @@ void AxeMan::resetPosition()
     attackInterval = 0.f;
     atTheEdge = false;
 
-    currentAnimation = AxeManMovement;
+    currentAnimation = axeManMovement;
 
     currentState = State::WALKINGCLOSE;
+    prevState = State::WALKINGCLOSE;
 
     sprite->setScale({1.0f, 1.0f});
 }

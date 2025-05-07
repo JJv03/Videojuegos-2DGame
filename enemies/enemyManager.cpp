@@ -290,6 +290,12 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                                      enemyData.height > 0 ? enemyData.height : 50.f),
                         level, currentStage));
                     break;
+                
+                    
+                case 6: // Cannon
+                    cannon.push_back(createCannon(
+                        enemyData.position, level, currentStage));
+                    break;
 
                 case 7: // AxeMan
                     axeman.push_back(createAxeMan(

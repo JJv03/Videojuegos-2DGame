@@ -110,7 +110,7 @@ enum animationID{
     gamePad,
 
     // AxeMan
-    AxeManMovement,
+    axeManMovement,
     AxeManAxe
 };
 
