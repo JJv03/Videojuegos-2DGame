@@ -6,7 +6,7 @@ class AxeMan : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f AXEMAN_SPEED = {0.0f, 0.0f};
+    const sf::Vector2f AXEMAN_SPEED = {30.0f, 0.0f};
 
     // Combat stats
     const float AXEMAN_LIFE = 13.5f;
@@ -16,13 +16,35 @@ private:
     const float distanceToPlayer = 3 * 32; // Num of tiles * tiles dimensions
 
     std::vector<AnimationManager::Frame> axeMovementFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(240, 122), sf::Vector2(24, 32)), 0.1f},
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(265, 122), sf::Vector2(24, 32)), 0.1f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(240, 122), sf::Vector2(24, 32)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(265, 122), sf::Vector2(24, 32)), 0.2f}
     };
+
+    enum class State
+    {
+        WALKINGCLOSE,
+        WALKINGAWAY,
+        WAITINGWALK,
+        ATTACK
+    };
+
+    float timerWalk = 0.f;
+    const float walkInterval = 0.5f;
+
+    float timerWait = 0.f;
+    const float waitInterval = 0.25f;
+
+    float timerAttack = 0.f;
+    float attackInterval = 0.f;
 
 public:
     int level; // Current game level
     int stage; // Current stage
+    State currentState = State::WALKINGCLOSE;
+    State prevState = State::WALKINGCLOSE;
+
+    sf::Vector2f position;
+    // std::array<std::shared_ptr<Axe>, 2> axes;
 
     AxeMan() = default;
     AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage);
