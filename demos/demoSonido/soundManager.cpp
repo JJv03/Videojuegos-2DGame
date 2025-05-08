@@ -3,7 +3,11 @@
 #include <iostream>
 #include <thread>
 
-SoundManager::SoundManager() {}
+SoundManager::SoundManager() : isShuttingDown(false) {}
+
+SoundManager::~SoundManager() {
+    isShuttingDown = true;
+}
 
 void SoundManager::loadSound(const std::string& id, const std::string& filepath) {
     if (soundBuffers.find(id) != soundBuffers.end()) {
@@ -18,7 +22,7 @@ void SoundManager::loadSound(const std::string& id, const std::string& filepath)
     }
 
     soundBuffers[id] = std::move(buffer);
-    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));  // Agregamos la primera instancia
+    sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));  // Adds the first instance
 }
 
 void SoundManager::playSound(const std::string& id, float volume) {
@@ -27,7 +31,7 @@ void SoundManager::playSound(const std::string& id, float volume) {
         return;
     }
 
-    // Buscar una instancia de sonido que no esté reproduciéndose
+    // Searches for a sound instance that's not playing currently
     for (const auto& sound : sounds[id]) {
         if (sound->getStatus() != sf::Sound::Status::Playing) {
             sound->setVolume(volume);
@@ -36,10 +40,23 @@ void SoundManager::playSound(const std::string& id, float volume) {
         }
     }
 
-    // Si todas las instancias están ocupadas, creamos una nueva
+    // If all sound instances are playing, creates a new one
     sounds[id].push_back(std::make_unique<sf::Sound>(soundBuffers[id]));
     sounds[id].back()->setVolume(volume);
     sounds[id].back()->play();
+}
+
+void SoundManager::stopSound(const std::string& soundToStop){
+    for (auto& [id, soundList] : sounds) {
+        if(id == soundToStop) {
+            for (auto& sound : soundList) {
+                if (sound) {
+                    sound->stop();
+                }
+            }
+            return; // Stop searching after stopping the sound
+        }
+    }
 }
 
 void SoundManager::stopAllSounds() {
@@ -73,6 +90,11 @@ void SoundManager::playMusic(const std::string& id, float volume, bool loop) {
         return;
     }
 
+    if (musicTracks[id].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
+
     musicTracks[id].setLooping(loop);
     musicTracks[id].setVolume(volume);
     musicTracks[id].play();
@@ -84,7 +106,13 @@ void SoundManager::stopMusic(const std::string& id) {
     }
 }
 
-void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop) {
+void SoundManager::stopAllMusic() {
+    for (auto& [id, music] : musicTracks) {
+        music.stop();
+    }
+}
+
+void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume) {
     if (musicTracks.find(firstId) == musicTracks.end()) {
         std::cerr << "Music " << firstId << " not found.\n";
         return;
@@ -93,17 +121,64 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         std::cerr << "Music " << secondId << " not found.\n";
         return;
     }
+    if (musicTracks[firstId].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
+    if (musicTracks[secondId].getStatus() == sf::SoundSource::Status::Playing) {
+        // It's already playing, do nothing
+        return;
+    }
 
-    // Crear un hilo separado para gestionar la transición de las músicas
-    std::thread([this, firstId, secondId, secondSongLoop]() {
+    std::thread([this, firstId, secondId, secondSongLoop, volume]() {
+        if (isShuttingDown) return;
+
+        musicTracks[firstId].setVolume(volume);
         musicTracks[firstId].play();
-        
-        // Esperar de forma no bloqueante hasta que la primera canción termine
-        while (musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
+
+        while (!isShuttingDown && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
 
+        if (isShuttingDown){
+            std::cout << "Music thread killed" << std::endl;
+            return;
+        }
+        musicTracks[secondId].setVolume(volume);
         musicTracks[secondId].setLooping(secondSongLoop);
         musicTracks[secondId].play();
-    }).detach(); // Desvincula el hilo para que siga ejecutándose en segundo plano
+    }).detach();
+}
+
+void SoundManager::adjustAllSoundVolumes(float volume) {
+    // Cycle through all active sounds and adjust their volume
+    for (auto& [id, soundList] : sounds) {
+        for (auto& sound : soundList) {
+            if (sound->getStatus() == sf::Sound::Status::Playing) {
+                sound->setVolume(volume);
+            }
+        }
+    }
+}
+
+void SoundManager::adjustAllMusicVolumes(float volume) {
+    // Cycle through all active musics and adjust their volume
+    for (auto& [id, music] : musicTracks) {
+        if (music.getStatus() == sf::Music::Status::Playing) {
+            music.setVolume(volume);
+        }
+    }
+}
+
+float SoundManager::realVolume(float master, float other){
+    return (master*other)/100;
+}
+
+bool SoundManager::musicHasFinished(const std::string& id){
+    auto it = musicTracks.find(id);
+    if (it == musicTracks.end()) {
+        return true; // Considera que ha terminado si no se encuentra
+    }
+
+    return it->second.getStatus() == sf::Music::Status::Stopped;
 }
