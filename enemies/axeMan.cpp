@@ -8,7 +8,7 @@
 AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
     : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
-    speed = AXEMAN_SPEED;
+    speed = sf::Vector2f(0, 0);
     life = AXEMAN_LIFE;
     score = AXEMAN_SCORE;
     damage = AXEMAN_DAMAGE;
@@ -18,6 +18,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     timerAttack = 0.f;
     attackInterval = 0.f;
     atTheEdge = false;
+    selectedTime = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -30,7 +31,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     this->animationManager = animationManager;
     currentAnimation = axeManMovement;
 
-    currentState = State::ATTACK;
+    currentState = State::WALKINGCLOSE;
     prevState = State::WALKINGCLOSE;
 }
 
@@ -95,6 +96,23 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
         }
 
         // Random timer to attack
+        if(!selectedTime){
+            selectedTime = true;
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<float> dist(2.0f, 6.5f);
+
+            attackInterval = dist(gen);
+            timerAttack = 0;
+        }
+
+        timerAttack += deltaTime;
+        if(timerAttack >= attackInterval){
+            prevState = currentState;
+            currentState = State::ATTACK;
+            selectedTime = true;
+            timerAttack = 0;
+        }
 
         // STATE MACHINE
         switch(currentState){
@@ -180,6 +198,7 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                     }
                     axes[0]->setActive(true);
                 }
+                currentState = prevState;
                 break;
         }
         if(axes[0] && axes[0]->sprite && axes[0]->getActive()){
@@ -257,6 +276,10 @@ void AxeMan::resetPosition()
     timerAttack = 0.f;
     attackInterval = 0.f;
     atTheEdge = false;
+
+    selectedTime = false;
+    timerAttack = 0.f;
+    attackInterval = 0.f;
 
     currentAnimation = axeManMovement;
 

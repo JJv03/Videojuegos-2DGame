@@ -92,16 +92,16 @@ void Axe::onCollision(Entity &other, Game &game)
     }
 
     // Handle collision with player
-    // if (dynamic_cast<Player *>(&other))
-    // {
-    //     isActive = false;
-    // }
-    if (dynamic_cast<AxeMan *>(&other))
+    if (dynamic_cast<Player *>(&other))
+    {
+        isActive = false;
+    }
+    else if (dynamic_cast<AxeMan *>(&other))
     {
         isActive = false;
     }
     // Handle collision with weapons
-    if (dynamic_cast<Whip *>(&other))
+    else if (dynamic_cast<Whip *>(&other))
     {
         game.particleSystem.spawnHitParticle(position);
         isActive = false;

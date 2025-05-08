@@ -410,7 +410,6 @@ void Player::onCollision(Entity &other, Game &game)
     }
     else if (Axe *axe = dynamic_cast<Axe *>(&other))
     {   
-        std::cout << "HACHA" << std::endl;
         // Change when axe has animationManager and can have hitbox = 0
         if(axe->getActive() && !this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - axe->damage, 0.f);
