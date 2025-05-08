@@ -759,7 +759,7 @@ void Game::interAnimation(float deltaTime)
         switch (currentLevel)
         {
         case 3:
-            destiny = pos.position.x + 5;
+            destiny = pos.position.x + 2;
             break;
         case 5:
             destiny = pos.position.x - 127;
@@ -771,7 +771,7 @@ void Game::interAnimation(float deltaTime)
 
         sf::Vector2f posMap = map->getPosition();
         const float mapSpeed = 80.0f; // pixels per second
-        // std::cout << posMap.x << std::endl;
+        std::cout << posMap.x << std::endl;
         if (posMap.x <= destiny)
         {
             map->setPosition(sf::Vector2f(destiny, posMap.y));
@@ -787,8 +787,8 @@ void Game::interAnimation(float deltaTime)
         switch (currentLevel)
         {
         case 3:
-            cube->setPosition(sf::Vector2f(pos.position.x + 87, pos.position.y + 102));
-            littleBat->setPosition(sf::Vector2f(pos.position.x + 172, pos.position.y + 83));
+            cube->setPosition(sf::Vector2f(pos.position.x + 79, pos.position.y + 102));
+            littleBat->setPosition(sf::Vector2f(pos.position.x + 167, pos.position.y + 81));
             littleBatManager->update(deltaTime);
             break;
         case 5:
@@ -811,6 +811,7 @@ void Game::interAnimation(float deltaTime)
         {
             simon->setPosition(sf::Vector2f(destiny, posSimon.y));
             showInter = false;
+            isInBossFight = false;
             player.acceptsInput = true;
             player.setState(std::make_unique<PlayerIdleState>());
             loadLevelAndEnemies();
@@ -852,7 +853,6 @@ void Game::prepareVariablesForLevel()
         }
         timerSteps = 0;
         player.acceptsInput = false;
-        isInBossFight = false;
         showInter = true;
         entering = true;
         map->setPosition(sf::Vector2f(pos.position.x + 256, pos.position.y + 30));
