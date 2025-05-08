@@ -35,6 +35,9 @@ private:
     const float enhancedInterval = 1.5f;
     const float enhancedSpeed = 0.5f;
     bool triedAI = false;
+    bool startingMove = false;
+    bool startingAttack = false;
+    bool startingEnhanced = false;
 
     std::vector<AnimationManager::Frame> idlePhBatFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 11), sf::Vector2(16, 16)), 0.1f}
@@ -56,6 +59,8 @@ public:
         ATTACKING,
         ENHANCED
     };
+
+    int weights[3] = {1, 1, 1};
 
     State currentState = State::WAITING;
 
@@ -87,7 +92,11 @@ public:
 
     void objectivePlayer(const sf::FloatRect &playerBounds);
 
-    void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
+    void enhancedAI(bool isOn, const sf::FloatRect &playerBounds);
+
+    void updateWeights();
+
+    void selectNewState();
 
     void hello() const override;
 };
