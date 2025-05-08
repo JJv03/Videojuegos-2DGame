@@ -306,7 +306,6 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         level, currentStage));
                     break;
                 
-                    
                 case 6: // Cannon
                     cannon.push_back(createCannon(
                         enemyData.position, level, currentStage));
@@ -317,7 +316,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         enemyData.position, level, currentStage));
                     break;
 
-                case 8: // AxeMan
+                case 8: // RedSkeleton
                     redSkeleton.push_back(createRedSkeleton(
                         enemyData.position, level, currentStage));
                     break;
