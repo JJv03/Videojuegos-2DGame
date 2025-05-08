@@ -1801,24 +1801,24 @@ int Game::startStage(int stage, int fromStairs)
 
     currentStage = stage;
 
-    switch (currentLevel)
-    {
-    case 1:
-        time = 300;
-        break;
+    // switch (currentLevel)
+    // {
+    // case 1:
+    //     time = 300;
+    //     break;
     
-    case 3:
-        time = 500;
-        break;
+    // case 3:
+    //     time = 500;
+    //     break;
     
-    case 5:
-        time = 500;
-        break;
+    // case 5:
+    //     time = 500;
+    //     break;
     
-    case 7:
-        time = 700;
-        break;
-    }
+    // case 7:
+    //     time = 700;
+    //     break;
+    // }
 
     if (!withOutLives)
     {
