@@ -5,6 +5,7 @@
 #include "game.h"
 #include "item.h"
 #include "enemies/projectile.h"
+#include "enemies/axe.h"
 #include "bosses/scythe.h"
 #include <cmath>
 
@@ -387,6 +388,32 @@ void Player::onCollision(Entity &other, Game &game)
         // Change when scythe has animationManager and can have hitbox = 0
         if(scythe->getActive() && !this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - scythe->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isInvulnerable = true;
+
+                if(this->isOnStairs){
+                    this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
+    }
+    else if (Axe *axe = dynamic_cast<Axe *>(&other))
+    {   
+        std::cout << "HACHA" << std::endl;
+        // Change when axe has animationManager and can have hitbox = 0
+        if(axe->getActive() && !this->isInvulnerable && !this->isDead){
+            this->health = std::max(this->health - axe->damage, 0.f);
 
             if (this->health > 0)
             {

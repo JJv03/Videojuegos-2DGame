@@ -1,12 +1,13 @@
 #pragma once
 
 #include "enemy.h"
+#include "createAxe.h"
 
 class AxeMan : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f AXEMAN_SPEED = {30.0f, 0.0f};
+    const sf::Vector2f AXEMAN_SPEED = {0.0f, 0.0f};
 
     // Combat stats
     const float AXEMAN_LIFE = 13.5f;
@@ -38,6 +39,7 @@ private:
     float attackInterval = 0.f;
 
     bool atTheEdge = false;
+    bool isPlayerRight = false;
 
 public:
     int level; // Current game level
@@ -46,7 +48,7 @@ public:
     State prevState = State::WALKINGCLOSE;
 
     sf::Vector2f position;
-    // std::array<std::shared_ptr<Axe>, 2> axes;
+    std::array<std::shared_ptr<Axe>, 1> axes;
 
     AxeMan() = default;
     AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage);

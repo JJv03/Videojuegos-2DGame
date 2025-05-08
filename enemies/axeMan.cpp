@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "../game.h"
+#include "axe.h"
 
 // Initialize ghost with stats and vision field
 AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
@@ -29,7 +30,7 @@ AxeMan::AxeMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     this->animationManager = animationManager;
     currentAnimation = axeManMovement;
 
-    currentState = State::WALKINGCLOSE;
+    currentState = State::ATTACK;
     prevState = State::WALKINGCLOSE;
 }
 
@@ -77,7 +78,7 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
             return;
         }
 
-        bool isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+        isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
 
         if(isPlayerRight){
             sprite->setScale({-1.f, 1.f});
@@ -158,8 +159,32 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 }
                 break;
             case State::ATTACK:
-
+                int distance = std::abs(position.y - playerPos.y);
+                // std::cout << distance << std::endl;
+                if ((!axes[0] || !axes[0]->getActive()) && distance <= 40){
+                    int chance = rand() % 2;
+                    float posY = 8;
+                    if(chance == 0){
+                        posY = position.y + 8;
+                        std::cout << "Arribaaaaaaaaaaaaaa" << std::endl;
+                    }
+                    else{
+                        posY = position.y + 20;
+                        std::cout << "Abajoooooooooooooooooooooo" << std::endl;
+                    }
+                    if(isPlayerRight){
+                        axes[0] = createAxe(sf::Vector2f(position.x + 32, posY), mapBounds, isPlayerRight, AXEMAN_DAMAGE);
+                    }
+                    else{
+                        axes[0] = createAxe(sf::Vector2f(position.x - 12, posY), mapBounds, isPlayerRight, AXEMAN_DAMAGE);
+                    }
+                    axes[0]->setActive(true);
+                }
                 break;
+        }
+        if(axes[0] && axes[0]->sprite && axes[0]->getActive()){
+            axes[0]->update(deltaTime, mapBounds);
+            // cont ++;
         }
         if (speed.x != 0)
         {
@@ -197,6 +222,9 @@ void AxeMan::onCollision(Entity &other, Game &game)
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
+            for(auto& a : axes){
+                if(a) a->reset();
+            }
             resetPosition();
         }
     }
@@ -206,6 +234,9 @@ void AxeMan::onCollision(Entity &other, Game &game)
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
+            for(auto& a : axes){
+                if(a) a->reset();
+            }
             resetPosition();
         }
     }
@@ -232,6 +263,10 @@ void AxeMan::resetPosition()
     currentState = State::WALKINGCLOSE;
     prevState = State::WALKINGCLOSE;
 
+    for(auto& a : axes){
+        if(a) a->reset();
+    }
+
     sprite->setScale({1.0f, 1.0f});
 }
 
@@ -241,6 +276,11 @@ void AxeMan::draw(sf::RenderWindow &window)
     if (sprite && isActive)
     {
         Enemy::draw(window);
+    }
+    if (axes[0] && axes[0]->sprite && axes[0]->getActive())
+    {
+        //std::cout << "P1 " << projectile->sprite->getPosition().x  << "  " << projectile->sprite->getPosition().y << std::endl;
+        axes[0]->draw(window);
     }
 }
 
