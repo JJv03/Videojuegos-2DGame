@@ -326,8 +326,8 @@ ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weigh
 }
 
 
-std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool canDropWhip,
-                                  ItemType subWeaponType) {
+std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position, bool canDropWhip,
+                                  const ItemType subWeaponType) {
     std::uniform_real_distribution<float> uniformZeroToOne(0.f, 1.f);    // [0, 1] range
 
     static const std::vector<std::pair<ItemType, float>> defaultDrops = {
@@ -518,9 +518,9 @@ std::shared_ptr<Item> getDropItem(DropType dropType, sf::Vector2f position, bool
             return nullptr;
     }
 
-    // if (subWeaponType == type) {    // Avoid dropping the same item as the one the player has
-    //     type = ItemType::SMALL_HEART;
-    // }
+    if (subWeaponType == type) {    // Avoid dropping the same item as the one the player has
+        type = ItemType::SMALL_HEART;
+    }
 
     std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);
     sprite->setPosition(position);
