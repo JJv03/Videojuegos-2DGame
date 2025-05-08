@@ -5,6 +5,9 @@
 #include <string>
 #include <vector>
 #include <atomic>
+#include <vector>
+#include <thread>
+#include <mutex>
 
 /**
  * @brief Manages the loading and playing of sound and music assets.
@@ -107,5 +110,8 @@ private:
     std::unordered_map<std::string, std::vector<std::unique_ptr<sf::Sound>>> sounds;
     std::unordered_map<std::string, sf::Music> musicTracks;
     std::atomic<bool> isShuttingDown;
-    std::atomic<bool> stopAll;
+
+    std::mutex musicThreadsMutex;
+    std::vector<std::thread> musicThreads;
+    std::atomic<bool> cancelMusicThreads;
 };

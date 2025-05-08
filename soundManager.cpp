@@ -3,9 +3,10 @@
 #include <iostream>
 #include <thread>
 
-SoundManager::SoundManager() : isShuttingDown(false), stopAll(false) {}
+SoundManager::SoundManager() : isShuttingDown(false) {}
 
 SoundManager::~SoundManager() {
+    stopAllMusic();
     isShuttingDown = true;
 }
 
@@ -85,7 +86,6 @@ void SoundManager::loadMusic(const std::string& id, const std::string& filepath)
 }
 
 void SoundManager::playMusic(const std::string& id, float volume, bool loop) {
-    stopAll = false;
     if (musicTracks.find(id) == musicTracks.end()) {
         std::cerr << "Music " << id << " not found.\n";
         return;
@@ -108,14 +108,26 @@ void SoundManager::stopMusic(const std::string& id) {
 }
 
 void SoundManager::stopAllMusic() {
+    cancelMusicThreads = true;
+
     for (auto& [id, music] : musicTracks) {
         music.stop();
     }
-    stopAll = true;
+
+    {
+        std::lock_guard<std::mutex> lock(musicThreadsMutex);
+        for (auto& t : musicThreads) {
+            if (t.joinable()) {
+                t.join();
+            }
+        }
+        musicThreads.clear();
+    }
+
+    cancelMusicThreads = false; // Listos para próximos hilos
 }
 
 void SoundManager::playMusicSequence(const std::string& firstId, const std::string& secondId, bool secondSongLoop, float volume) {
-    stopAll = false;
     if (musicTracks.find(firstId) == musicTracks.end()) {
         std::cerr << "Music " << firstId << " not found.\n";
         return;
@@ -133,24 +145,27 @@ void SoundManager::playMusicSequence(const std::string& firstId, const std::stri
         return;
     }
 
-    std::thread([this, firstId, secondId, secondSongLoop, volume]() {
-        if (isShuttingDown || stopAll) return;
-
+    std::thread musicThread([this, firstId, secondId, secondSongLoop, volume]() {
+        if (cancelMusicThreads || isShuttingDown) return;
+    
         musicTracks[firstId].setVolume(volume);
         musicTracks[firstId].play();
-
-        while (!isShuttingDown && !stopAll && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
+    
+        while (!cancelMusicThreads && !isShuttingDown && musicTracks[firstId].getStatus() == sf::Music::Status::Playing) {
             sf::sleep(sf::milliseconds(10));
         }
-
-        if (isShuttingDown || stopAll){
-            std::cout << "Music thread killed" << std::endl;
-            return;
-        }
+    
+        if (cancelMusicThreads || isShuttingDown) return;
+    
         musicTracks[secondId].setVolume(volume);
         musicTracks[secondId].setLooping(secondSongLoop);
         musicTracks[secondId].play();
-    }).detach();
+    });
+    
+    {
+        std::lock_guard<std::mutex> lock(musicThreadsMutex);
+        musicThreads.push_back(std::move(musicThread));
+    }    
 }
 
 void SoundManager::adjustAllSoundVolumes(float volume) {
