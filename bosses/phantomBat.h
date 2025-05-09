@@ -94,9 +94,9 @@ public:
 
     void enhancedAI(bool isOn, const sf::FloatRect &playerBounds);
 
-    void updateWeights();
-
     void selectNewState();
+    
+    void updateWeights();
 
     void hello() const override;
 };

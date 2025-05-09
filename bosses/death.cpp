@@ -26,6 +26,14 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     triedAI = false;
 
     currentState = State::ATTACKING;
+
+    weights[0] = 1;
+    weights[1] = 1;
+    weights[2] = 1;
+
+    startingMove = false;
+    playerClose = false;
+    playerAway = false;
 }
 
 // Update Death logic: handle spawning, movement, and deactivation
@@ -78,6 +86,13 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                 }
             }
             else{
+                auto mode = configManager.getDifficulty();
+
+                float horizontalDistance = std::hypot(position.x - playerBounds.position.x, position.y - playerBounds.position.y);
+
+                playerClose = horizontalDistance < 70.f;
+                playerAway = horizontalDistance > 120.f;
+
                 switch(currentState){
                     case State::ATTACKING:
                         // ATTACK LOGIC
@@ -88,10 +103,7 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                         }
                         if (timer >= attackInterval) {    // Attack timer
                             timer = 0;
-                            currentState = State::MOVING;
                             generated = false;
-                            selectObjective();
-                            auto mode = configManager.getDifficulty();
                             int chance = rand() % 2;
                             if(mode.hard_mode && chance == 0 && !triedAI){ // Enhanced AI
                                 if(playerBounds.position.x < 15 || playerBounds.position.x > 225){
@@ -140,14 +152,33 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                                     }
                                 }
                             }
+
+                            if(mode.hard_mode){
+                                selectNewState();
+                            }
+                            else{
+                                startingMove = false;
+                                currentState = State::MOVING;
+                            }
                         }
                         break;
                     
                     case State::MOVING:
+                        if(!startingMove){
+                            selectObjective();
+                            startingMove = true;
+                            timer = 0;
+                        }
+
                         if (timer >= moveInterval) {    // Move timer
                             timer = 0;
-                            currentState = State::WAITING;
                             speed = sf::Vector2f(0, 0);
+                            if(mode.hard_mode){
+                                selectNewState();
+                            }
+                            else{
+                                currentState = State::WAITING;
+                            }
                         }
                         else{
                             getDoubleSpeed();
@@ -158,7 +189,12 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                     case State::WAITING:
                         if(timer >= waitInterval){
                             timer = 0;
-                            currentState = State::ATTACKING;
+                            if(mode.hard_mode){
+                                selectNewState();
+                            }
+                            else{
+                                currentState = State::ATTACKING;
+                            }
                         }
                         break;
                 }
@@ -242,12 +278,34 @@ void Death::selectObjective(){
         right = false;
     }
     else{
+        auto mode = configManager.getDifficulty();
+        int posY = 105;
+        if(mode.hard_mode){
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<int> distY(25, 105);
+            posY = distY(gen);
+        }
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
         if(right){
-            goal = sf::Vector2f(25, 105);
+            int posX = 25;
+            if(mode.hard_mode){
+                std::uniform_int_distribution<int> distX(25, 90);
+                posX = distX(gen);
+            }
+            goal = sf::Vector2f(posX, posY);
             right = false;
         }
         else{
-            goal = sf::Vector2f(190, 105);
+            int posX = 190;
+            if(mode.hard_mode){
+                std::uniform_int_distribution<int> distX(125, 190);
+                posX = distX(gen);
+            }
+            goal = sf::Vector2f(posX, posY);
             right = true;
         }
     }
@@ -384,10 +442,86 @@ void Death::resetPosition()
     doubleMoveTimer = 0.f;
 
     triedAI = false;
+    weights[0] = 1;
+    weights[1] = 1;
+    weights[2] = 1;
+
+    startingMove = false;
+    playerClose = false;
+    playerAway = false;
 
     for(auto& s : scythes){
         if(s) s->reset();
     }
+}
+
+void Death::selectNewState(){
+    updateWeights();
+
+    startingMove = false;
+
+    int totalWeight = weights[0] + weights[1] + weights[2];
+    if (totalWeight == 0) return;
+
+    int r = rand() % totalWeight;
+
+    if (r < weights[0]) {
+        currentState = State::WAITING;
+        std::cout << "Selected WAITING" << std::endl;
+    } else if (r < weights[0] + weights[1]) {
+        currentState = State::MOVING;
+        std::cout << "Selected MOVING" << std::endl;
+    } else {
+        currentState = State::ATTACKING;
+        std::cout << "Selected ATTACKING" << std::endl;
+    }
+
+    timer = 0.f;
+    speed = sf::Vector2f(0.f, 0.f);
+}
+
+void Death::updateWeights() {
+    // Reset base weights
+    weights[0] = 1; // WAITING
+    weights[1] = 1; // MOVING
+    weights[2] = 1; // ATTACKING
+
+    float lifeRatio = static_cast<float>(life) / static_cast<float>(DEATH_LIFE);
+
+    // If life is low, prioritize moving to escape
+    if (lifeRatio < 0.35f) {
+        weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[1] += 2; // More likely to flee
+    }
+
+    // If the player is attacking, avoid standing still
+    if (gIsWhipBeingUsed || gIsSubWeaponBeingUsed) {
+        weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[1] += 1; // Move more to dodge
+    }
+
+    // Distance to the player
+    if (playerClose) {
+        weights[1] += 2; // Try to get away
+    } else if (playerAway) {
+        weights[2] += 3; // Take advantage of the distance to attack
+    }
+
+    // Penalize repeating the same state
+    int currentIdx = static_cast<int>(currentState);
+    if (weights[currentIdx] > 1) {
+        weights[currentIdx] -= 1;
+    }
+
+    // Rebalancing weights if all are zero
+    int total = weights[0] + weights[1] + weights[2];
+    if (total == 0) {
+        weights[1] = 1; // MOVING by default if all else fails
+    }
+
+    std::cout << "Weight WAITING: " << weights[0] << std::endl;
+    std::cout << "Weight MOVING: " << weights[1] << std::endl;
+    std::cout << "Weight ATTACKING: " << weights[2] << std::endl;
 }
 
 void Death::hello() const

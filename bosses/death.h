@@ -37,6 +37,9 @@ private:
     // const float enhancedInterval = 1.5f;
     // const float enhancedSpeed = 0.5f;
     bool triedAI = false;
+    bool startingMove = false;
+    bool playerClose = false;
+    bool playerAway = false;
 
 public:
     int level; // Current game level
@@ -49,6 +52,8 @@ public:
         MOVING,
         ATTACKING
     };
+
+    int weights[3] = {1, 1, 1};
 
     State currentState = State::WAITING;
 
@@ -84,11 +89,13 @@ public:
 
     void selectObjective();
 
-    void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
-
     sf::Vector2f getRandomScythesPos(const sf::Vector2f &playerPos);
 
     void generateScythes(const sf::Vector2f &playerPos, const sf::FloatRect &mapDims);
+
+    void selectNewState();
+    
+    void updateWeights();
 
     void hello() const override;
 };

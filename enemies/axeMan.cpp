@@ -100,7 +100,7 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
             selectedTime = true;
             std::random_device rd;
             std::mt19937 gen(rd());
-            std::uniform_real_distribution<float> dist(2.0f, 6.5f);
+            std::uniform_real_distribution<float> dist(1.5f, 5.0f);
 
             attackInterval = dist(gen);
             timerAttack = 0;
