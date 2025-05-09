@@ -16,7 +16,6 @@ enum class ItemType {
     AXE,
     FIRE_BOMB,  // Holy water
     BOOMERANG,
-    BOOMERANG_GUI,    // For the GUI
     STOPWATCH,
 
 

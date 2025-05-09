@@ -624,12 +624,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         // checkCollisions();
 
         // Update the subweapon sprite item
-        if (player.subWeaponType == ItemType::BOOMERANG) {
-            guiSubWeaponSprite = getItemSprite(ItemType::BOOMERANG_GUI);
-        }
-        else {
-            guiSubWeaponSprite = getItemSprite(player.subWeaponType);
-        }
+        guiSubWeaponSprite = getItemSprite(player.subWeaponType);
+        
 
         if (player.deathRestart)
         {

@@ -41,11 +41,22 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 void Item::update(const float deltaTime) {
     if (m_spawnDelay > 0.f) {
         m_spawnDelay -= deltaTime;
+        
+        if (this->m_type == ItemType::MAGIC_CRYSTAL) {
+            if (!m_animationManager->isBlinking()) {
+                m_animationManager->setBlinking(true, 0.05f);
+            }
+            m_animationManager->update(deltaTime);
+        }
+
         if (m_spawnDelay <= 0.f) {
             m_spawnDelay = 0.f;
+            m_animationManager->setBlinking(false, 0.05f);
         }
         return; // Skip rest of the logic until spawned
     }
+
+    // ==========================================================================
 
     if (m_lifeTime > 0.f) {       // Item can disappear
         m_lifeTime -= deltaTime;
@@ -68,9 +79,7 @@ void Item::update(const float deltaTime) {
 }
 
 void Item::draw(sf::RenderWindow& window) {
-    if (m_spawnDelay == 0.f) {
-        window.draw(*sprite);
-    }
+    window.draw(*sprite);
 }
 
 ItemType Item::getType() const {
@@ -146,8 +155,7 @@ bool loadItemTextures() {
     item_To_TextureRect[ItemType::DAGGER] = sf::IntRect({1, 18}, {16, 16});
     item_To_TextureRect[ItemType::AXE] = sf::IntRect({18, 18}, {16, 16});
     item_To_TextureRect[ItemType::FIRE_BOMB] = sf::IntRect({35, 18}, {16, 16});
-    item_To_TextureRect[ItemType::BOOMERANG] = sf::IntRect({52, 18}, {16, 16});
-    item_To_TextureRect[ItemType::BOOMERANG_GUI] = sf::IntRect({69, 18}, {16, 16});
+    item_To_TextureRect[ItemType::BOOMERANG] = sf::IntRect({69, 18}, {16, 16});
     item_To_TextureRect[ItemType::STOPWATCH] = sf::IntRect({103, 18}, {16, 16});
 
     item_To_TextureRect[ItemType::MORNING_STAR] = sf::IntRect({1, 1}, {16, 16});
@@ -489,7 +497,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::MAGIC_CRYSTAL:
             type = ItemType::MAGIC_CRYSTAL;
             lifeTime = -1.f;    // Item doesn't dispawn
-            spawnDelay = 2.f;   // Delay before the item is spawned
+            spawnDelay = 1.5f;   // Delay before the item is spawned
             break;
 
         case DropType::FIRE_BOMB:
