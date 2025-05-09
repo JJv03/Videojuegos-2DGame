@@ -634,6 +634,7 @@ void Player::onCollision_Item(Entity &entityItem)
 {
     Item* item = dynamic_cast<Item*>(&entityItem);
     if (item == nullptr) return; // Impossible
+    if (item->m_spawnDelay > 0.f) return; // Can't pickup item if it's not spawned yet
 
     ItemType itemType = item->getType();
 
