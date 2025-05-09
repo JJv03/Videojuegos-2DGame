@@ -1171,7 +1171,7 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
         }
         else if (dynamic_cast<Boss *>(&other))
         {
-            //game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            game.particleSystem.spawnHitParticle(intersectionRect.position);
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
@@ -1238,7 +1238,6 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
         {
             game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
             playSound("whip_hit");
-            //std::cout << "SubWeapon colision" << std::endl;
             if(this->type == ItemType::DAGGER){
                 this->intersected = true;
             }
@@ -1246,7 +1245,7 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
         }
         else if (dynamic_cast<Boss *>(&other))
         {
-            //game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            game.particleSystem.spawnHitParticle(intersectionRect.position);
             playSound("strong_enemy_hit");
             if(this->type == ItemType::DAGGER){
                 this->intersected = true;
