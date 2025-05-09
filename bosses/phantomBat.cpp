@@ -181,8 +181,13 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
 
                     case State::ATTACKING:
                         if(!startingAttack){
-                            int chance = rand() % 4;    // WEIGHT FOR THIS TOO
-                            if(chance == 0){ // 1/4
+                            int chance = rand() % 4;
+                            if(mode.hard_mode){
+                                // Based on de current attack weight
+                                int divisor = std::max(1, std::abs(5 - weights[2]));
+                                chance = rand() % divisor;
+                            }
+                            if(chance == 0){ // 1/4 probability or more depending on divisor
                                 // Direct to the player
                                 objectivePlayer(playerBounds);
                             }
@@ -436,10 +441,10 @@ void PhantomBat::updateWeights() {
     float lifeRatio = static_cast<float>(life) / static_cast<float>(PBAT_LIFE);
 
     // Increase ATTACKING weight if life is low
-    if (lifeRatio < 0.3f) {
+    if (lifeRatio < 0.4f) {
         weights[2] += 3;
         weights[1] += 1;
-        weights[0] = 0; // Remove WAITING if you are in a critical situation
+        weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
     } else if (lifeRatio < 0.6f) {
         weights[2] += 1; // Slightly more aggressive
     }
@@ -449,13 +454,13 @@ void PhantomBat::updateWeights() {
         weights[2] += 2;
         weights[1] += 2; // Also move to dodge
         if (lifeRatio < 0.5f) {
-            weights[0] = 0; // Don't stand still if the player is aggressive
+            weights[0] = std::max(0, weights[0] - 1); // Don't stand still if the player is aggressive
         }
     }
 
     // Penalize repeating the same state
     int currentIdx = static_cast<int>(currentState);
-    if (weights[currentIdx] > 0) {
+    if (weights[currentIdx] > 1) {
         weights[currentIdx] -= 1;
     }
 
