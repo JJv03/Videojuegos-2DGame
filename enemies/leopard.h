@@ -57,7 +57,7 @@ public:
                 const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds);
 
     // Handle collisions
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
     // Update animation frame
     void updateAnimation(float deltaTime);

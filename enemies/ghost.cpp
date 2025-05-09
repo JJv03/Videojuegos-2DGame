@@ -100,7 +100,7 @@ void Ghost::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
     }
 }
 
-void Ghost::onCollision(Entity &other, Game &game)
+void Ghost::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

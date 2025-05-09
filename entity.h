@@ -16,7 +16,7 @@ public:
     Entity(std::vector<sf::FloatRect> &_hitboxes);
 
     virtual std::vector<sf::FloatRect> getBounds() const;
-    virtual void onCollision(Entity& other, Game& game) = 0;
+    virtual void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) = 0;
     virtual void hello() const;
 };
 

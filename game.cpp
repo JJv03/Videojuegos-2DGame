@@ -1350,10 +1350,11 @@ void Game::checkSolidTileCollisions(std::vector<Entity *> &dynamicEntities)
         {
             for (auto &t : solidTileRow)
             {
-                if (checkIntersections(*e, t))
+                std::optional<sf::FloatRect> intersectionRect = checkIntersections(*e, t);
+                if (intersectionRect)
                 {
-                    e->onCollision(t, *this);
-                    t.onCollision(*e, *this);
+                    e->onCollision(t, *this, *intersectionRect);
+                    t.onCollision(*e, *this, *intersectionRect);
                 }
             }
         }
@@ -1368,10 +1369,11 @@ void Game::checkDoorTileCollisions()
 {
     for (auto &d : tilemaps[currentStage].m_doorTiles)
     {
-        if (checkIntersections(player, d))
+        std::optional<sf::FloatRect> intersectionRect = checkIntersections(player, d);
+        if (intersectionRect)
         {
-            player.onCollision(d, *this);
-            d.onCollision(player, *this);
+            player.onCollision(d, *this, *intersectionRect);
+            d.onCollision(player, *this, *intersectionRect);
         }
     }
 }

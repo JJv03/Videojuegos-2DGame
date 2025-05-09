@@ -158,7 +158,7 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     }
 }
 
-void Leopard::onCollision(Entity &other, Game &game)
+void Leopard::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

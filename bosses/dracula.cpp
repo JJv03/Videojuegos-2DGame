@@ -13,7 +13,7 @@ DraculaBody::DraculaBody(std::shared_ptr<sf::Sprite> _draculaSprite, std::vector
                             : EntitySprite(_draculaSprite, _draculaHitboxes), damage(_damage), position(_position) {}
 
 
-void DraculaBody::onCollision(Entity &other, Game &game){
+void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect){
 
 }
 
@@ -547,7 +547,7 @@ void Dracula::updateProjectiles(float deltaTime, const sf::FloatRect& mapBounds)
     }
 }
 
-void Dracula::onCollision(Entity &other, Game &game)
+void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

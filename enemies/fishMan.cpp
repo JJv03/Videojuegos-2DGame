@@ -268,7 +268,7 @@ void FishMan::startJump()
 }
 
 // Handle collisions - only with ground
-void FishMan::onCollision(Entity &other, Game &game)
+void FishMan::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

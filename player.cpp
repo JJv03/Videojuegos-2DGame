@@ -274,7 +274,7 @@ std::vector<sf::FloatRect> Player::getBounds() const
     return std::vector<sf::FloatRect>({animationManager->getGlobalBounds()});
 }
 
-void Player::onCollision(Entity &other, Game &game)
+void Player::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (dynamic_cast<SolidTile *>(&other))
     {
@@ -794,8 +794,9 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
             }
             this->subWeapon.animationManager->update(deltaTime);
 
-            // Hanlde boomerang colision with player
-            if (isIntersecting(this->subWeapon.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && this->subWeapon.changedDirection) {
+            // Handle boomerang colision with player
+            if (isIntersecting(this->subWeapon.sprite->getGlobalBounds(), this->sprite->getGlobalBounds())
+                && this->subWeapon.changedDirection) {
                 //std::cout << "Boomerang colision with player" << std::endl;
                 this->subWeapon.intersected = true;   
             }
@@ -921,8 +922,9 @@ void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPo
             }
             this->subWeapon2.animationManager->update(deltaTime);
 
-            // Hanlde boomerang colision with player
-            if (isIntersecting(this->subWeapon2.sprite->getGlobalBounds(), this->sprite->getGlobalBounds()) && this->subWeapon2.changedDirection) {
+            // Handle boomerang colision with player
+            if (isIntersecting(this->subWeapon2.sprite->getGlobalBounds(), this->sprite->getGlobalBounds())
+                && this->subWeapon2.changedDirection) {
                 //std::cout << "Boomerang colision with player" << std::endl;
                 this->subWeapon2.intersected = true;
                 
@@ -1007,7 +1009,7 @@ std::vector<sf::FloatRect> Whip::getBounds() const
     return std::vector<sf::FloatRect>({sf::FloatRect()});
 }
 
-void Whip::onCollision(Entity &other, Game &game)
+void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!this->collisionedEntities.contains(&other)) {
         if (dynamic_cast<Enemy *>(&other))
@@ -1078,7 +1080,7 @@ std::vector<sf::FloatRect> SubWeapon::getBounds() const
 }
 
 
-void SubWeapon::onCollision(Entity &other, Game &game)
+void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!this->collisionedEntities.contains(&other)) {  
         if (dynamic_cast<Enemy *>(&other))

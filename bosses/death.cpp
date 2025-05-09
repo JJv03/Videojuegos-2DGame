@@ -296,7 +296,7 @@ sf::Vector2f Death::getRandomScythesPos(const sf::Vector2f &playerPos){
     return randomPosition;
 }
 
-void Death::onCollision(Entity &other, Game &game)
+void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

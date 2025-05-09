@@ -26,7 +26,7 @@ public:
     void update(float deltaTime, const sf::FloatRect &deactivationZone);
 
     // Handle collisions with other entities
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
     // Check if projectile is active
     bool getActive() const { return isActive; }

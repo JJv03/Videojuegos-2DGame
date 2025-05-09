@@ -116,10 +116,11 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
                 auto orderedPair = std::minmax(d, s); // A,B = B,A
                 if (checkedPairs.contains(orderedPair)) continue;
                 checkedPairs.insert(orderedPair);
-
-                if (checkIntersections(*d, *s)) {
-                    d->onCollision(*s, *gameRef);
-                    s->onCollision(*d, *gameRef);
+                
+                std::optional<sf::FloatRect> intersectionRect = checkIntersections(*d, *s);
+                if (intersectionRect) {
+                    d->onCollision(*s, *gameRef, *intersectionRect);
+                    s->onCollision(*d, *gameRef, *intersectionRect);
                 }
             }
         }
@@ -143,10 +144,11 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
                 auto orderedPair = std::minmax(dynamicEntities[i], dynamicEntities[j]); // A,B = B,A
                 if (checkedPairs.contains(orderedPair)) continue;
                 checkedPairs.insert(orderedPair);
-
-                if (checkIntersections(*dynamicEntities[i], *dynamicEntities[j])) {
-                    dynamicEntities[i]->onCollision(*dynamicEntities[j], *gameRef);
-                    dynamicEntities[j]->onCollision(*dynamicEntities[i], *gameRef);
+                
+                std::optional<sf::FloatRect> intersectionRect = checkIntersections(*dynamicEntities[i], *dynamicEntities[j]);
+                if (intersectionRect) {
+                    dynamicEntities[i]->onCollision(*dynamicEntities[j], *gameRef, *intersectionRect);
+                    dynamicEntities[j]->onCollision(*dynamicEntities[i], *gameRef, *intersectionRect);
 
                     if(Whip* whip = dynamic_cast<Whip*>(dynamicEntities[i])) whip->collisionedEntities.insert(dynamicEntities[j]);
                     if(Whip* whip = dynamic_cast<Whip*>(dynamicEntities[j])) whip->collisionedEntities.insert(dynamicEntities[i]);
@@ -187,14 +189,14 @@ void CollisionGrid::drawCells(sf::RenderWindow& window, const sf::Vector2f& view
 }
 
 
-bool checkIntersections(const Entity& entityA, const Entity& entityB) {
-    
+std::optional<sf::FloatRect> checkIntersections(const Entity& entityA, const Entity& entityB) {
     for(sf::FloatRect a : entityA.getBounds()){
         for(sf::FloatRect b : entityB.getBounds()){
-            if(isIntersecting(a, b)) return true;
+            if(const std::optional<sf::FloatRect> intersection = a.findIntersection(b))
+                return intersection;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 

@@ -60,7 +60,7 @@ void Zombie::update(float deltaTime)
     }
 }
 
-void Zombie::onCollision(Entity &other, Game &game)
+void Zombie::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

@@ -104,7 +104,7 @@ public:
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
     bool isStretched() const;
 };
@@ -167,7 +167,7 @@ public:
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
     bool onCollision_SolidTile(Entity &solidTile);
 };
@@ -385,7 +385,7 @@ public:
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
 
     // SubWeapon functions

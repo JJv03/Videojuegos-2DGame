@@ -35,7 +35,7 @@ public:
     ~SolidTile() = default;
 
     // Entity functions
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
 };
 
@@ -57,7 +57,7 @@ public:
     sf::Vector2f playerAparition;           // Hitbox of the tile. In global coord.
 
     // Entity functions
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
 };
 
@@ -121,7 +121,7 @@ public:
     // Entity functions
     //////////////////////////////
 
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
 
     //////////////////////////////
@@ -187,7 +187,7 @@ public:
     ~StairTile() = default;
 
     // Entity functions
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
     void hello() const override;
 };
 

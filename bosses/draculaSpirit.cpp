@@ -393,7 +393,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
     }
 }
 
-void DraculaSpirit::onCollision(Entity &other, Game &game)
+void DraculaSpirit::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

@@ -220,7 +220,7 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
     
 }
 
-void RedSkeleton::onCollision(Entity &other, Game &game){
+void RedSkeleton::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect){
     if (!isActive || !sprite)
         return;
 

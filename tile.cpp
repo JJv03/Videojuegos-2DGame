@@ -31,7 +31,7 @@ SolidTile::SolidTile() : Tile() {
     
 }
 
-void SolidTile::onCollision(Entity& other, Game& game){
+void SolidTile::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect){
 
 }
 
@@ -46,7 +46,7 @@ DoorTile::DoorTile() : Tile() {
 }
 
 
-void DoorTile::onCollision(Entity& other, Game& game){
+void DoorTile::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect){
 
 }
 
@@ -293,7 +293,7 @@ std::shared_ptr<MiscellaneousTile> getMiscTile(const MiscTileType type, const sf
     return tile;
 }
 
-void MiscellaneousTile::onCollision(Entity& other, Game& game){
+void MiscellaneousTile::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect){
     if (this->isDestroyed) return;  // The tile is destroyed --> "doesn't exist" anymore
 
     sf::FloatRect tileBounds = this->hitboxes[0];   // Misc tiles only have 1 hitbox
@@ -353,7 +353,7 @@ StairTile::StairTile() : Tile() {
 }
 
 
-void StairTile::onCollision(Entity& other, Game& game){
+void StairTile::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect){
 
 }
 

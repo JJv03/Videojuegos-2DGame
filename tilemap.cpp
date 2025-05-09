@@ -518,7 +518,7 @@ void TileMap::drawScene(sf::RenderWindow &window, Camera &camera)
 
     for (size_t i = 0; i < m_items.size(); ++i)
     {
-        window.draw(*m_items[i]->sprite);
+        m_items[i]->draw(window);
     }
 
     if(gDrawHitboxes) drawHitboxes(window);

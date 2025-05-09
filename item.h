@@ -118,7 +118,7 @@ public:
 
     sf::Vector2f getPosition() const;
 
-    void onCollision(Entity& other, Game& game) override;
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
 
     void onCollision_SolidTile(Entity& other);
 

@@ -318,7 +318,7 @@ void PhantomBat::getDoubleSpeed() {
     // std::cout << "Double speed: " << speed.x << " " << speed.y << std::endl;
 }
 
-void PhantomBat::onCollision(Entity &other, Game &game)
+void PhantomBat::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

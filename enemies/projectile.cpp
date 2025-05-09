@@ -42,7 +42,7 @@ void Projectile::update(float deltaTime, const sf::FloatRect &deactivationZone)
     }
 }
 
-void Projectile::onCollision(Entity &other, Game &game)
+void Projectile::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive)
     {

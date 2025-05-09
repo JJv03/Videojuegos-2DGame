@@ -111,7 +111,7 @@ public:
     void update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds);
 
     // Handle collisions
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
     // Update animation frame
     void updateAnimation(float deltaTime);

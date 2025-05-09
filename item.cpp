@@ -68,7 +68,9 @@ void Item::update(const float deltaTime) {
 }
 
 void Item::draw(sf::RenderWindow& window) {
-    if (m_spawnDelay == 0.f) window.draw(*sprite);
+    if (m_spawnDelay == 0.f) {
+        window.draw(*sprite);
+    }
 }
 
 ItemType Item::getType() const {
@@ -80,14 +82,16 @@ sf::Vector2f Item::getPosition() const {
 }
 
 
-void Item::onCollision(Entity& other, Game& game) {
+void Item::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) {
     if (dynamic_cast<SolidTile*>(&other)) {
         onCollision_SolidTile(other);
     } else if (dynamic_cast<Player*>(&other)){
-        this->m_lifeTime = 0.f;
+        if (m_spawnDelay > 0.f) {   // Can't pickup item if it's not spawned yet
+            return;
+        }
 
-        if (this->m_type == ItemType::MORNING_STAR) std::cout << "MORNING STAR" << std::endl;
-
+        this->m_lifeTime = 0.f;     // Remove item from the game
+        
         if (this->m_type == ItemType::MAGIC_CRYSTAL) {
             gTriggerEndLvlScoreAnimation = true;
         }

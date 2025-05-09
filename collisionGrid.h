@@ -39,5 +39,5 @@ private:
 };
 
 
-bool checkIntersections(const Entity& a, const Entity& b);
+std::optional<sf::FloatRect> checkIntersections(const Entity& a, const Entity& b);
 bool isIntersecting(const sf::FloatRect& a, const sf::FloatRect& b);

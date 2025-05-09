@@ -93,7 +93,7 @@ void Scythe::update(float deltaTime, const sf::FloatRect &deactivationZone)
     }
 }
 
-void Scythe::onCollision(Entity &other, Game &game)
+void Scythe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive)
     {

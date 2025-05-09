@@ -65,7 +65,7 @@ void Bandage::update(float deltaTime, const sf::FloatRect &deactivationZone)
     }
 }
 
-void Bandage::onCollision(Entity &other, Game &game)
+void Bandage::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive)
     {

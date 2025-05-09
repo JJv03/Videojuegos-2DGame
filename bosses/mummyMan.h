@@ -90,7 +90,7 @@ public:
         const float playerDir, const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds,const Player &player);
 
     // Handle collisions
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
     // Update animation frame
     void updateAnimation(float deltaTime);

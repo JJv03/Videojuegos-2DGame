@@ -84,7 +84,7 @@ void Axe::update(float deltaTime, const sf::FloatRect &deactivationZone)
     }
 }
 
-void Axe::onCollision(Entity &other, Game &game)
+void Axe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive)
     {

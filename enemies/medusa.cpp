@@ -118,7 +118,7 @@ void Medusa::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
     }
 }
 
-void Medusa::onCollision(Entity &other, Game &game)
+void Medusa::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

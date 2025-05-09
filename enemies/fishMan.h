@@ -87,7 +87,7 @@ public:
                 const sf::FloatRect &playerBounds, const sf::FloatRect &mapBounds);
 
     // Handle collisions - only with ground
-    void onCollision(Entity &other, Game &game) override;
+    void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
     // Face the player direction
     void facePlayer(const sf::FloatRect &playerBounds);

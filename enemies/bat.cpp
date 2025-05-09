@@ -133,7 +133,7 @@ void Bat::update(float deltaTime, const sf::FloatRect &playerActivationZone, con
     }
 }
 
-void Bat::onCollision(Entity &other, Game &game)
+void Bat::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
         return;

@@ -185,7 +185,7 @@ void Cannon::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
 }
 
 // Handle collisions
-void Cannon::onCollision(Entity &other, Game &game){
+void Cannon::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect){
     if (!isActive || !sprite)
     return;
 
