@@ -560,39 +560,15 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
     if (gGoToNextLevel)
     {
         int aux_CurrentLevel = static_cast<int>(currentLevel);
-        switch (aux_CurrentLevel)
-        {
-        case 1:
-            gStartingLevel = 3;
-            currentLevel = gStartingLevel;
-            currentStage = 1;
-            gStartingStage = currentStage;
-            break;
-        case 3:
-            gStartingLevel = 5;
-            currentLevel = gStartingLevel;
-            currentStage = 1;
-            gStartingStage = currentStage;
-            break;
-        case 5:
-            gStartingLevel = 7;
-            currentLevel = gStartingLevel;
-            currentStage = 1;
-            gStartingStage = currentStage;
-            break;
-        case 7:
+        if(currentLevel == 7){
             std::cout << "Animation of the end of the game" << std::endl;
             goToEndAnimation = true;
             gStartingLevel = 1;
             currentLevel = gStartingLevel;
             gStartingStage = 1;
             currentStage = gStartingStage;
-            break;
-        default:
-            std::cout << "No more levels" << std::endl;
-            break;
+            time = 300; // To ensure Simon doesn't die
         }
-
         // Reset variables, flags and loads entities and the map to start next level
         prepareVariablesForLevel();
         updateGUITime();
@@ -740,15 +716,15 @@ void Game::interAnimation(float deltaTime)
 {
     float destiny = 0;
     sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
+    if (currentLevel == 1)
+    {
+        pos = tilemaps[5].getMapBoundsBossFight();
+    }
     if (currentLevel == 3)
     {
         pos = tilemaps[5].getMapBoundsBossFight();
     }
     if (currentLevel == 5)
-    {
-        pos = tilemaps[4].getMapBoundsBossFight();
-    }
-    if (currentLevel == 7)
     {
         pos = tilemaps[6].getMapBoundsBossFight();
     }
@@ -758,13 +734,13 @@ void Game::interAnimation(float deltaTime)
     {
         switch (currentLevel)
         {
-        case 3:
+        case 1:
             destiny = pos.position.x + 2;
             break;
-        case 5:
+        case 3:
             destiny = pos.position.x - 127;
             break;
-        case 7:
+        case 5:
             destiny = pos.position.x - 127;
             break;
         }
@@ -786,17 +762,17 @@ void Game::interAnimation(float deltaTime)
     { // Show moving animated Simon, animated and placed Bat (big and little), animated and placed box
         switch (currentLevel)
         {
-        case 3:
+        case 1:
             cube->setPosition(sf::Vector2f(pos.position.x + 79, pos.position.y + 102));
             littleBat->setPosition(sf::Vector2f(pos.position.x + 167, pos.position.y + 81));
             littleBatManager->update(deltaTime);
             break;
-        case 5:
+        case 3:
             cube->setPosition(sf::Vector2f(pos.position.x + 156, pos.position.y + 106));
             littleBat->setPosition(sf::Vector2f(pos.position.x + 133, pos.position.y + 63));
             littleBatManager->update(deltaTime);
             break;
-        case 7:
+        case 5:
             cube->setPosition(sf::Vector2f(pos.position.x + 127, pos.position.y + 62));
             bigBat->setPosition(sf::Vector2f(pos.position.x + 41, pos.position.y + 40));
             bigBatManager->update(deltaTime);
@@ -812,6 +788,36 @@ void Game::interAnimation(float deltaTime)
             simon->setPosition(sf::Vector2f(destiny, posSimon.y));
             showInter = false;
             isInBossFight = false;
+
+            // Change of level after the animation
+            int aux_CurrentLevel = static_cast<int>(currentLevel);
+            switch (aux_CurrentLevel)
+            {
+            case 1:
+                gStartingLevel = 3;
+                currentLevel = gStartingLevel;
+                currentStage = 1;
+                gStartingStage = currentStage;
+                break;
+            case 3:
+                gStartingLevel = 5;
+                currentLevel = gStartingLevel;
+                currentStage = 1;
+                gStartingStage = currentStage;
+                break;
+            case 5:
+                gStartingLevel = 7;
+                currentLevel = gStartingLevel;
+                currentStage = 1;
+                gStartingStage = currentStage;
+                break;
+            default:
+                std::cout << "No more levels" << std::endl;
+                break;
+            }
+            // if (aux_CurrentLevel == 7 && gStartingLevel == 1)
+            //     return;
+            
             player.acceptsInput = true;
             player.setState(std::make_unique<PlayerIdleState>());
             loadLevelAndEnemies();
@@ -836,17 +842,17 @@ void Game::prepareVariablesForLevel()
     if (gGoToNextLevel)
     {
         sf::FloatRect pos(sf::Vector2f(0, 0), sf::Vector2f(0, 0));
+        if (currentLevel == 1)
+        {
+            time = 500;
+            pos = tilemaps[5].getMapBoundsBossFight();
+        }
         if (currentLevel == 3)
         {
             time = 500;
             pos = tilemaps[5].getMapBoundsBossFight();
         }
         if (currentLevel == 5)
-        {
-            time = 500;
-            pos = tilemaps[4].getMapBoundsBossFight();
-        }
-        if (currentLevel == 7)
         {
             time = 700;
             pos = tilemaps[6].getMapBoundsBossFight();
@@ -1210,13 +1216,13 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             if(!entering){
                 window.draw(*cube);
                 switch (currentLevel){
+                    case 1:
+                        window.draw(*littleBat);
+                        break;
                     case 3:
                         window.draw(*littleBat);
                         break;
                     case 5:
-                        window.draw(*littleBat);
-                        break;
-                    case 7:
                         window.draw(*bigBat);
                         break;
                 }
