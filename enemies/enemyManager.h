@@ -11,15 +11,16 @@ class EnemyManager
 {
 private:
     // Enemies vector
-    std::vector<ZombieSpawner> zombiesSpawner;
-    std::vector<Leopard *> leopard;
-    std::vector<Bat *> bat;
-    std::vector<FishMan *> fishman;
-    std::vector<Ghost *> ghost;
-    std::vector<Medusa *> medusa;
-    std::vector<Cannon *> cannon;
-    std::vector<AxeMan *> axeman;
-    std::vector<RedSkeleton *> redSkeleton;
+    std::vector<ZombieSpawner> zombiesSpawner;  // 0
+    std::vector<Leopard *> leopard;             // 1
+    std::vector<Bat *> bat;                     // 2
+    std::vector<FishMan *> fishman;             // 3
+    std::vector<Ghost *> ghost;                 // 4
+    std::vector<Medusa *> medusa;               // 5
+    std::vector<Cannon *> cannon;               // 6
+    std::vector<AxeMan *> axeman;               // 7
+    std::vector<RedSkeleton *> redSkeleton;     // 8
+    std::vector<Crow *> crow;                   // 9
 
     // Reference to player
     Player *playerPtr;
