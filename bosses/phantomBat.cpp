@@ -105,7 +105,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 switch (currentState)
                 {
                     case State::ENHANCED:
-                        std::cout << "ENHANCED" << std::endl;
                         if(!startingEnhanced){
                             // Scape depending on the direction of the player
                             if(playerDir >= 0){         // Left
@@ -138,7 +137,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         break;
                     
                     case State::WAITING:
-                        std::cout << "WAITING" << std::endl;
                         enhancedAI(mode.hard_mode, playerBounds);
                         speed = sf::Vector2f(0, 0);
                         timer += deltaTime;
@@ -155,7 +153,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         break;
                     
                     case State::MOVING:
-                        std::cout << "MOVING" << std::endl;
                         // Decide moverse hacia el lado opuesto
                         if(!startingMove){
                             goal = (position.x + 24 > map.x + size.x / 2)
@@ -183,7 +180,6 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                         break;
 
                     case State::ATTACKING:
-                        std::cout << "ATTACKING" << std::endl;
                         if(!startingAttack){
                             int chance = rand() % 4;    // WEIGHT FOR THIS TOO
                             if(chance == 0){ // 1/4
@@ -431,39 +427,44 @@ void PhantomBat::selectNewState(){
     speed = sf::Vector2f(0.f, 0.f);
 }
 
-void PhantomBat::updateWeights(){
-    // Reset weights
+void PhantomBat::updateWeights() {
+    // Reset base weights
     weights[0] = 1; // WAITING
     weights[1] = 1; // MOVING
     weights[2] = 1; // ATTACKING
 
     float lifeRatio = static_cast<float>(life) / static_cast<float>(PBAT_LIFE);
 
-    // Vida baja: favorecer ATTACKING
+    // Increase ATTACKING weight if life is low
     if (lifeRatio < 0.3f) {
-        weights[2] += 2;
+        weights[2] += 3;
+        weights[1] += 1;
+        weights[0] = 0; // Remove WAITING if you are in a critical situation
+    } else if (lifeRatio < 0.6f) {
+        weights[2] += 1; // Slightly more aggressive
     }
 
-    // Jugador usando armas: favorecer ataque y evasión
+    // If the player is using weapons, be more aggressive
     if (gIsWhipBeingUsed || gIsSubWeaponBeingUsed) {
-        weights[2] += 2; // ATTACKING
+        weights[2] += 2;
+        weights[1] += 2; // Also move to dodge
+        if (lifeRatio < 0.5f) {
+            weights[0] = 0; // Don't stand still if the player is aggressive
+        }
     }
 
-    // Aleatoriedad: a veces eliminar WAITING
-    if (rand() % 3 == 0) {
-        weights[0] = 0;
+    // Penalize repeating the same state
+    int currentIdx = static_cast<int>(currentState);
+    if (weights[currentIdx] > 0) {
+        weights[currentIdx] -= 1;
     }
 
-    // Penalizar repetir el mismo estado
-    if (weights[static_cast<int>(currentState)] > 0) {
-        weights[static_cast<int>(currentState)] -= 1;
-    }
-
-    // Asegurarse de que al menos un estado tenga peso > 0
+    // Rebalancing weights if all are zero
     int total = weights[0] + weights[1] + weights[2];
     if (total == 0) {
-        weights[0] = 1; // WAITING por defecto
+        weights[1] = 1; // MOVING by default if all else fails
     }
+
     std::cout << "Weight WAITING: " << weights[0] << std::endl;
     std::cout << "Weight MOVING: " << weights[1] << std::endl;
     std::cout << "Weight ATTACKING: " << weights[2] << std::endl;

@@ -20,12 +20,12 @@ private:
     const float sleepInterval = 2.f;
 
     float doubleMoveTimer = 0.f;
-    const float moveLeftRight = 1.f;
-    const float moveInterval = 1.5f;
+    const float moveLeftRight = 1.5f;
+    const float moveInterval = 2.0f;
 
     bool goingToCenter = true;
 
-    const float waitingInterval = 1.f;
+    const float waitingInterval = 1.5f;
 
     sf::Vector2f startPosition;
     float arcHeight = 25.f;
