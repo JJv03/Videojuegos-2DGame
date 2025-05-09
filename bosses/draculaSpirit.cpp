@@ -407,7 +407,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game, const sf::FloatRect& 
             //dead = true;
             gKilledBoss = true;
             hasInitJump = false;
-            game.particleSystem.spawnBigFireParticle(position, false);
+            game.particleSystem.spawnReallyBigFireParticle(position, false);
             
         }
     }
@@ -420,7 +420,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game, const sf::FloatRect& 
             //dead = true;
             gKilledBoss = true;
             hasInitJump = false;
-            game.particleSystem.spawnBigFireParticle(position, false);
+            game.particleSystem.spawnReallyBigFireParticle(position, false);
         }
     }
     currentBossLife = life;

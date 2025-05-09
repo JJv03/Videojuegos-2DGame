@@ -22,6 +22,7 @@ public:
     void spawnHitParticle(sf::Vector2f position);
     void spawnFireParticle(sf::Vector2f position, bool addOffset = true);
     void spawnBigFireParticle(sf::Vector2f position, bool addOffset = true);
+    void spawnReallyBigFireParticle(sf::Vector2f position, bool addOffset = true);
     void spawnPointsParticle(sf::Vector2f position, int points);
 
 private:

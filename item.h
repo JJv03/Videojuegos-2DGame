@@ -149,9 +149,11 @@ ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weigh
                             std::uniform_real_distribution<float>& uniformZeroToOne);
 
 // Returns a new item based on the drop type. If the drop type is None, returns nullptr. The item
-// is created with the given position. If 'canDropWhip' is true, the item can be a whip upgrade
+// is created with the given position. If 'canDropWhip' is true, the item can be a whip upgrade.
+// If 'subWeaponType' is not NONE, the item can't be the same as the subweapon type. If 'hasDoubleShot'
+// is 'true' and the drop is a double shot, the drop will switch to a triple shot.
 std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position, bool canDropWhip,
-                                  const ItemType subWeaponType);
+                                  const ItemType subWeaponType, const bool hasDoubleShot);
 
 // Returns the sprite of an item based on the item type
 std::shared_ptr<sf::Sprite> getItemSprite(ItemType type);

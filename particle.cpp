@@ -18,6 +18,9 @@ const float FIRE_PARTICLE_LIFETIME = 0.15f; // Particle lifetime in seconds
 // Big fire constants
 const float BIG_FIRE_PARTICLE_LIFETIME = 0.9f; // Particle lifetime in seconds
 
+// Really big fire constants
+const float REALLY_BIG_FIRE_PARTICLE_LIFETIME = 0.9f; // Particle lifetime in seconds
+
 // Points constants
 const float POINTS_PARTICLE_LIFETIME = 0.5f; // Particle lifetime in seconds
 
@@ -156,7 +159,7 @@ bool FireParticle::isAlive() const {
 BigFireParticle::BigFireParticle(const sf::Texture& texture, sf::Vector2f position)
     : m_lifetime(BIG_FIRE_PARTICLE_LIFETIME), m_alive(true) {
     m_sprite = std::make_unique<sf::Sprite>(texture);
-    m_sprite->setTextureRect(sf::IntRect({362, 122}, {8, 16}));
+    m_sprite->setTextureRect(sf::IntRect({32, 243}, {24, 32}));
     m_sprite->setPosition(position);
 
     m_animationManager = std::make_unique<AnimationManager>(*m_sprite);
@@ -188,6 +191,49 @@ void BigFireParticle::draw(sf::RenderTarget& target) const {
 }
 
 bool BigFireParticle::isAlive() const {
+    return m_alive;
+}
+
+
+// =================================================================================================
+// ================================== REALLY BIG FIRE PARTICLE =====================================
+// =================================================================================================
+
+ReallyBigFireParticle::ReallyBigFireParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_lifetime(REALLY_BIG_FIRE_PARTICLE_LIFETIME), m_alive(true) {
+    m_sprite = std::make_unique<sf::Sprite>(texture);
+    m_sprite->setTextureRect(sf::IntRect({111, 243}, {24, 48}));
+    m_sprite->setPosition(position);
+
+    m_animationManager = std::make_unique<AnimationManager>(*m_sprite);
+    m_animation = {
+        notRelevant,
+        {
+            {sf::IntRect({111, 243}, {24, 48}), REALLY_BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)},
+            {sf::IntRect({136, 243}, {24, 48}), REALLY_BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)},
+            {sf::IntRect({161, 243}, {24, 48}), REALLY_BIG_FIRE_PARTICLE_LIFETIME / (3.f*2.f)}
+        },
+        true
+    };
+
+    m_animationManager->playAnimation(m_animation);
+};
+
+void ReallyBigFireParticle::update(float deltaTime) {
+    m_lifetime -= deltaTime;
+
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+
+    m_animationManager->update(deltaTime);
+}
+
+void ReallyBigFireParticle::draw(sf::RenderTarget& target) const {
+    target.draw(*m_sprite);
+}
+
+bool ReallyBigFireParticle::isAlive() const {
     return m_alive;
 }
 

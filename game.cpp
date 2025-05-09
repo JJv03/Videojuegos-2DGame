@@ -1745,7 +1745,8 @@ void Game::activateDoorTile(int doorId)
 
 void Game::createDropItem(DropType dropType, sf::Vector2f itemPosition)
 {
-    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel(), player.subWeaponType);
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel(),
+                                             player.subWeaponType, player.isDoubleShotActive);
     if (item)
     {
         tilemaps[currentStage].m_items.push_back(std::move(item));

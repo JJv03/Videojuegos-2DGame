@@ -339,7 +339,7 @@ ItemType chooseWeightedItem(const std::vector<std::pair<ItemType, float>>& weigh
 
 
 std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position, bool canDropWhip,
-                                  const ItemType subWeaponType) {
+                                  const ItemType subWeaponType, const bool hasDoubleShot) {
     std::uniform_real_distribution<float> uniformZeroToOne(0.f, 1.f);    // [0, 1] range
 
     static const std::vector<std::pair<ItemType, float>> defaultDrops = {
@@ -497,7 +497,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::MAGIC_CRYSTAL:
             type = ItemType::MAGIC_CRYSTAL;
             lifeTime = -1.f;    // Item doesn't dispawn
-            spawnDelay = 1.5f;   // Delay before the item is spawned
+            spawnDelay = 2.f;   // Delay before the item is spawned
             break;
 
         case DropType::FIRE_BOMB:
@@ -530,8 +530,13 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
             return nullptr;
     }
 
+    
     if (subWeaponType == type) {    // Avoid dropping the same item as the one the player has
         type = ItemType::SMALL_HEART;
+    }
+
+    if (hasDoubleShot && type == ItemType::DOUBLE_SHOT) {  // Avoid dropping double shot if the player has it
+        type = ItemType::TRIPLE_SHOT;
     }
 
     std::shared_ptr<sf::Sprite> sprite = getItemSprite(type);
