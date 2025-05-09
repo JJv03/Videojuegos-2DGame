@@ -107,6 +107,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getPosition(), mapBounds);
         }
     }
+    for (auto &crow : crow)
+    {
+        if (crow->level == currentLevel && crow->stage == currentStage)
+        {
+            crow->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -175,6 +183,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
             redSkeleton->draw(window);
         }
     }
+    for (auto &crow : crow)
+    {
+        if (crow->level == currentLevel && crow->stage == currentStage)
+        {
+            crow->draw(window);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -187,6 +202,10 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     fishman.clear();
     ghost.clear();
     medusa.clear();
+    cannon.clear();
+    axeman.clear();
+    redSkeleton.clear();
+    crow.clear();
 
     switch (level)
     {
@@ -274,6 +293,10 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         enemyData.position, level, currentStage));
                     break;
 
+                case 9: // Crow
+                    crow.push_back(createCrow(
+                        enemyData.position, level, currentStage));
+                    break;
 
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
@@ -422,6 +445,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             }
         }
     }
+    for (auto &c : crow)
+    {
+        if (c->level == currentLevel && c->stage == currentStage && c->isActive)
+        {
+            allEnemies.push_back(c);
+        }
+    }
 
     return allEnemies;
 }
@@ -497,6 +527,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             axeman->isActive = false;
             axeman->resetPosition();
+        }
+    }
+    for (auto &crow : crow)
+    {
+        if (crow->level == currentLevel && crow->stage == currentStage)
+        {
+            crow->isActive = false;
+            crow->resetPosition();
         }
     }
 }

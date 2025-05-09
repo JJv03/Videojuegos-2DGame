@@ -235,3 +235,29 @@ RedSkeleton *createRedSkeleton(const sf::Vector2f &position, const size_t &level
     };
     return new RedSkeleton(redSkeletonSprite, hitboxes, level, stage);
 }
+
+Crow *createCrow(const sf::Vector2f &position, const size_t &level, const size_t &stage)
+{
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect CROW_SPRITE_REGION = {{277, 75}, {16, 16}};
+    const float HITBOX_WIDTH = 14.f;
+    const float HITBOX_HEIGHT = 14.f;
+
+    // Configure sprite
+    auto crowSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    crowSprite->setTextureRect(CROW_SPRITE_REGION);
+    crowSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = crowSprite->getLocalBounds();
+    crowSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+
+    return new Crow(crowSprite, hitboxes, level, stage);
+}
