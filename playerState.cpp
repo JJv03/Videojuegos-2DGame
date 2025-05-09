@@ -131,8 +131,9 @@ void PlayerIdleState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon ){
-            bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                                    && player.delayBetweenShotsCounter >= player.delayBetweenShots);
+            bool noWeaponsActive = !player.weaponIsActive || 
+                                    (player.isDoubleShotActive  && !player.weaponIsActive2 && player.delayBetweenShotsCounter >= player.delayBetweenShots) ||
+                                    (player.isTripleShotActive  && !player.weaponIsActive3 && player.delayBetweenShotsCounter >= player.delayBetweenShotsTriple);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive && player.hasToPressAgain){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -291,8 +292,9 @@ void PlayerWalkState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                && player.delayBetweenShotsCounter >= player.delayBetweenShots);
+            bool noWeaponsActive = !player.weaponIsActive || 
+                                    (player.isDoubleShotActive  && !player.weaponIsActive2 && player.delayBetweenShotsCounter >= player.delayBetweenShots) ||
+                                    (player.isTripleShotActive  && !player.weaponIsActive3 && player.delayBetweenShotsCounter >= player.delayBetweenShotsTriple);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -505,8 +507,9 @@ void PlayerJumpState::handleInput(Player& player, sf::Event event)
         }
 
         if(keyPressed->scancode == controls.useSubWeapon && player.hasToPressAgain){
-            bool noWeaponsActive = !player.weaponIsActive || (player.isDoubleShotActive  && !player.weaponIsActive2
-                && player.delayBetweenShotsCounter >= player.delayBetweenShots);
+            bool noWeaponsActive = !player.weaponIsActive || 
+                                    (player.isDoubleShotActive  && !player.weaponIsActive2 && player.delayBetweenShotsCounter >= player.delayBetweenShots) ||
+                                    (player.isTripleShotActive  && !player.weaponIsActive3 && player.delayBetweenShotsCounter >= player.delayBetweenShotsTriple);
             if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive){
             //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
                 player.isAttacking = true;
@@ -1830,6 +1833,7 @@ void PlayerDeadState::end(Player& player)
     player.weaponIsActive2 = false;
     player.isDoubleShotActive = false;
     player.timeDoubleShotActiveCounter = 0.0f;
+    player.timeTripleShotActiveCounter = 0.0f;
     player.startInvulnerable = false;
     player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
@@ -1911,30 +1915,30 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             player.subWeapon.horizontalSpeed = 100.f;
             player.subWeapon.animationManager->playAnimation(axeThrowing); 
     
-        } else if (player.subWeapon.type == ItemType::DAGGER) {
-            player.subWeapon.verticalSpeed = 0.f;
-            player.subWeapon.horizontalSpeed = 100.f;
-            playSound("throw_dagger");
-            player.subWeapon.animationManager->playAnimation(daggerThrowing); 
-        } else if (player.subWeapon.type == ItemType::BOOMERANG) {
-            //player.hearts++; // Depuracion
-            player.subWeapon.horizontalSpeed = 100.f; 
-            player.subWeapon.verticalSpeed = 0.f; 
-            player.subWeapon.animationManager->playAnimation(boomerangThrowing);
-    
-        } else if (player.subWeapon.type == ItemType::FIRE_BOMB) {
-            player.subWeapon.verticalSpeed = -100.f;
-            player.subWeapon.horizontalSpeed = 100.f;
-            player.subWeapon.animationManager->playAnimation(fireBombThrowing);
-            
-        } else if (player.subWeapon.type == ItemType::STOPWATCH) {
-            player.isStopWatchActive = true;
-            player.stopWatchTimeCounter = 0.0f;
-            player.stopWatchTime = 2.0f;
-            playSound("stopwatch");
-        }  
-            player.weaponIsActive = true;
-            player.oneHasBeenUsed = true;
+            } else if (player.subWeapon.type == ItemType::DAGGER) {
+                player.subWeapon.verticalSpeed = 0.f;
+                player.subWeapon.horizontalSpeed = 100.f;
+                playSound("throw_dagger");
+                player.subWeapon.animationManager->playAnimation(daggerThrowing); 
+            } else if (player.subWeapon.type == ItemType::BOOMERANG) {
+                //player.hearts++; // Depuracion
+                player.subWeapon.horizontalSpeed = 100.f; 
+                player.subWeapon.verticalSpeed = 0.f; 
+                player.subWeapon.animationManager->playAnimation(boomerangThrowing);
+        
+            } else if (player.subWeapon.type == ItemType::FIRE_BOMB) {
+                player.subWeapon.verticalSpeed = -100.f;
+                player.subWeapon.horizontalSpeed = 100.f;
+                player.subWeapon.animationManager->playAnimation(fireBombThrowing);
+                
+            } else if (player.subWeapon.type == ItemType::STOPWATCH) {
+                player.isStopWatchActive = true;
+                player.stopWatchTimeCounter = 0.0f;
+                player.stopWatchTime = 2.0f;
+                playSound("stopwatch");
+            }  
+                player.weaponIsActive = true;
+                player.oneHasBeenUsed = true;
         }
         else if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive2) {
             player.subWeapon2.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
@@ -1957,30 +1961,76 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
             player.delayBetweenShots = 2.5f;
             player.subWeapon2.animationManager->playAnimation(axeThrowing); 
     
-        } else if (player.subWeapon2.type == ItemType::DAGGER) {
-            player.subWeapon2.verticalSpeed = 0.f;
-            player.subWeapon2.horizontalSpeed = 100.f;
-            playSound("throw_dagger");
-            player.subWeapon2.animationManager->playAnimation(daggerThrowing); 
-        } else if (player.subWeapon2.type == ItemType::BOOMERANG) {
-            //player.hearts++; // Depuracion
-            player.subWeapon2.horizontalSpeed = 100.f; 
-            player.subWeapon2.verticalSpeed = 0.f; 
-            player.subWeapon2.animationManager->playAnimation(boomerangThrowing);
+            } else if (player.subWeapon2.type == ItemType::DAGGER) {
+                player.subWeapon2.verticalSpeed = 0.f;
+                player.subWeapon2.horizontalSpeed = 100.f;
+                playSound("throw_dagger");
+                player.subWeapon2.animationManager->playAnimation(daggerThrowing); 
+            } else if (player.subWeapon2.type == ItemType::BOOMERANG) {
+                //player.hearts++; // Depuracion
+                player.subWeapon2.horizontalSpeed = 100.f; 
+                player.subWeapon2.verticalSpeed = 0.f; 
+                player.subWeapon2.animationManager->playAnimation(boomerangThrowing);
+        
+            } else if (player.subWeapon2.type == ItemType::FIRE_BOMB) {
+                player.subWeapon2.verticalSpeed = -100.f;
+                player.subWeapon2.horizontalSpeed = 100.f;
+                player.subWeapon2.animationManager->playAnimation(fireBombThrowing);
+                
+            } else if (player.subWeapon2.type == ItemType::STOPWATCH) {
+                player.isStopWatchActive = true;
+                player.stopWatchTimeCounter = 0.0f;
+                player.stopWatchTime = 2.0f;
+                playSound("stopwatch");
+            }  
+                player.weaponIsActive2 = true;
+                player.oneHasBeenUsed = true;
+        }
+        else if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive3) {
+            player.subWeapon3.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
+            sf::Vector2f spawnPos = player.sprite->getPosition();
+            player.subWeapon3.direction = player.dir;
+            player.subWeapon3.sprite->setPosition(spawnPos);
     
-        } else if (player.subWeapon2.type == ItemType::FIRE_BOMB) {
-            player.subWeapon2.verticalSpeed = -100.f;
-            player.subWeapon2.horizontalSpeed = 100.f;
-            player.subWeapon2.animationManager->playAnimation(fireBombThrowing);
+            //player.subWeapon.type = ItemType::STOPWATCH; // Depuracion
+            player.subWeapon3.type = player.subWeaponType;
+    
+            player.subWeapon3.changedDirection = false;
+            player.subWeapon3.intersected = false;
+            player.subWeapon3.isExploding = false;
+            player.subWeapon3.intersectedBomb = false;
             
-        } else if (player.subWeapon2.type == ItemType::STOPWATCH) {
-            player.isStopWatchActive = true;
-            player.stopWatchTimeCounter = 0.0f;
-            player.stopWatchTime = 2.0f;
-            playSound("stopwatch");
-        }  
-            player.weaponIsActive2 = true;
-            player.oneHasBeenUsed = true;
+    
+           if (player.subWeapon3.type == ItemType::AXE) {
+            player.subWeapon3.verticalSpeed = -350.f; 
+            player.subWeapon3.horizontalSpeed = 100.f;
+            player.delayBetweenShots = 2.5f;
+            player.subWeapon3.animationManager->playAnimation(axeThrowing); 
+    
+            } else if (player.subWeapon3.type == ItemType::DAGGER) {
+                player.subWeapon3.verticalSpeed = 0.f;
+                player.subWeapon3.horizontalSpeed = 100.f;
+                playSound("throw_dagger");
+                player.subWeapon3.animationManager->playAnimation(daggerThrowing); 
+            } else if (player.subWeapon3.type == ItemType::BOOMERANG) {
+                //player.hearts++; // Depuracion
+                player.subWeapon3.horizontalSpeed = 100.f; 
+                player.subWeapon3.verticalSpeed = 0.f; 
+                player.subWeapon3.animationManager->playAnimation(boomerangThrowing);
+        
+            } else if (player.subWeapon3.type == ItemType::FIRE_BOMB) {
+                player.subWeapon3.verticalSpeed = -100.f;
+                player.subWeapon3.horizontalSpeed = 100.f;
+                player.subWeapon3.animationManager->playAnimation(fireBombThrowing);
+                
+            } else if (player.subWeapon3.type == ItemType::STOPWATCH) {
+                player.isStopWatchActive = true;
+                player.stopWatchTimeCounter = 0.0f;
+                player.stopWatchTime = 2.0f;
+                playSound("stopwatch");
+            }  
+                player.weaponIsActive3 = true;
+                player.oneHasBeenUsed = true;
         }
     }
     
@@ -2174,6 +2224,52 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
         }  
             player.weaponIsActive2 = true;
             player.oneHasBeenUsed = true;
+        }
+        else if (player.animationManager->getCurrentFrameIndex() == 2 && !player.weaponIsActive3) {
+            player.subWeapon3.sprite->setScale(player.dir == RIGHT ? sf::Vector2f{1.f, 1.f} : sf::Vector2f{-1.f, 1.f});
+            sf::Vector2f spawnPos = player.sprite->getPosition();
+            player.subWeapon3.direction = player.dir;
+            player.subWeapon3.sprite->setPosition(spawnPos);
+    
+            //player.subWeapon.type = ItemType::STOPWATCH; // Depuracion
+            player.subWeapon3.type = player.subWeaponType;
+    
+            player.subWeapon3.changedDirection = false;
+            player.subWeapon3.intersected = false;
+            player.subWeapon3.isExploding = false;
+            player.subWeapon3.intersectedBomb = false;
+            
+    
+           if (player.subWeapon3.type == ItemType::AXE) {
+            player.subWeapon3.verticalSpeed = -350.f; 
+            player.subWeapon3.horizontalSpeed = 100.f;
+            player.delayBetweenShots = 2.5f;
+            player.subWeapon3.animationManager->playAnimation(axeThrowing); 
+    
+            } else if (player.subWeapon3.type == ItemType::DAGGER) {
+                player.subWeapon3.verticalSpeed = 0.f;
+                player.subWeapon3.horizontalSpeed = 100.f;
+                playSound("throw_dagger");
+                player.subWeapon3.animationManager->playAnimation(daggerThrowing); 
+            } else if (player.subWeapon3.type == ItemType::BOOMERANG) {
+                //player.hearts++; // Depuracion
+                player.subWeapon3.horizontalSpeed = 100.f; 
+                player.subWeapon3.verticalSpeed = 0.f; 
+                player.subWeapon3.animationManager->playAnimation(boomerangThrowing);
+        
+            } else if (player.subWeapon3.type == ItemType::FIRE_BOMB) {
+                player.subWeapon3.verticalSpeed = -100.f;
+                player.subWeapon3.horizontalSpeed = 100.f;
+                player.subWeapon3.animationManager->playAnimation(fireBombThrowing);
+                
+            } else if (player.subWeapon3.type == ItemType::STOPWATCH) {
+                player.isStopWatchActive = true;
+                player.stopWatchTimeCounter = 0.0f;
+                player.stopWatchTime = 2.0f;
+                playSound("stopwatch");
+            }  
+                player.weaponIsActive3 = true;
+                player.oneHasBeenUsed = true;
         }
     }
     

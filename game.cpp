@@ -1060,6 +1060,10 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             {
                 window.draw(FloatRectToRectShape(player.subWeapon2.sprite->getGlobalBounds()));
             }
+            if (player.weaponIsActive3)
+            {
+                window.draw(FloatRectToRectShape(player.subWeapon3.sprite->getGlobalBounds()));
+            }
         }
 
         // =========================================
@@ -1122,7 +1126,7 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             window.draw(*guiSubWeaponSprite);
         }
 
-        if (player.isDoubleShotActive)
+        if (player.isDoubleShotActive && !player.isTripleShotActive)
         {
             redBorderPosition.x += 75.f;
             // redBorderPosition.y -= 2.f;
@@ -1139,6 +1143,25 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
             {
                 // Dibujo normal si no está en el rango de parpadeo
                 window.draw(*guiDoubleShotSprite);
+            }
+        }
+        if (player.isTripleShotActive)
+        {
+            redBorderPosition.x += 75.f;
+            // redBorderPosition.y -= 2.f;
+            guiTripleShotSprite = getItemSprite(ItemType::TRIPLE_SHOT_GUI);
+            guiTripleShotSprite->setPosition(redBorderPosition);
+            if (player.timeTripleShotActiveCounter <= 3.0f)
+            {
+                if (static_cast<int>(player.timeTripleShotActiveCounter * 5) % 2 == 0)
+                {
+                    window.draw(*guiTripleShotSprite);
+                }
+            }
+            else
+            {
+                // Dibujo normal si no está en el rango de parpadeo
+                window.draw(*guiTripleShotSprite);
             }
         }
 
@@ -1295,6 +1318,7 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
     dynamicEntities.push_back(&player.whip);
     dynamicEntities.push_back(&player.subWeapon);
     dynamicEntities.push_back(&player.subWeapon2);
+    dynamicEntities.push_back(&player.subWeapon3);
 
     //      Add enemies
     for (auto &enemy : enemyManager->getEnemies(currentLevel, currentStage))

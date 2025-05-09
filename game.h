@@ -142,6 +142,7 @@ private:
     std::shared_ptr<sf::Sprite> guiSubWeaponSprite;
     std::shared_ptr<sf::Sprite> guiHeartSprite;
     std::shared_ptr<sf::Sprite> guiDoubleShotSprite;
+    std::shared_ptr<sf::Sprite> guiTripleShotSprite;
 
     // Vectors with the diferents rectangles of each HealthBar
     std::vector<sf::RectangleShape> playerHealthBar;
