@@ -139,11 +139,14 @@ class PauseGS : public GameState{
 private:
     sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
+    std::vector<sf::Text> popUpText;
     int position, col;
     SoundManager pauseVolumeManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;
     bool cheats;
+    bool showPopUp = false;
+    int colPopUp;
 public:
     explicit PauseGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~PauseGS() override;

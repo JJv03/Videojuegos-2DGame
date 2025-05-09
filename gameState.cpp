@@ -773,6 +773,8 @@ void PauseGS::init(){
     // Loads menu texture
     position = 4;
     col = 1;
+    showPopUp = false;
+    colPopUp = 0;
 
     if (!pauseTextures["bg"].loadFromFile("./assets/sprites/menu/blankBox.png")) {
         throw std::runtime_error("No se pudo cargar la imagen del menú.");
@@ -789,11 +791,64 @@ void PauseGS::init(){
 
     pauseSprites.push_back(bg);
 
+    if (!pauseTextures["popUpExit"].loadFromFile("./assets/sprites/menu/blankBox.png")) {
+        throw std::runtime_error("No se pudo cargar la imagen del menú.");
+    }
+    sf::Sprite popUpExit(pauseTextures["popUpExit"]);
+
+    // Adjusts menu position
+    popUpExit.setScale(sf::Vector2f(0.65, 0.65));
+
+    spriteBounds = popUpExit.getGlobalBounds();
+
+    float xPosition = (gWindowWidth - spriteBounds.size.x) / 2;
+    float yPosition = (gWindowHeight - spriteBounds.size.y) / 2;
+
+    popUpExit.setPosition(sf::Vector2f(xPosition, yPosition));
+
+    pauseSprites.push_back(popUpExit);
+
     if (!font.openFromFile("./assets/fonts/credits/castlevania-nes-end-credits.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
         throw std::runtime_error("No se pudo cargar la fuente.");
     }
     font.setSmooth(false);
+
+    sf::Text textPopUp(font, "BACK", 30);
+    textPopUp.setFillColor(sf::Color::White);
+    sf::FloatRect textPopUpBounds = textPopUp.getLocalBounds();
+
+    // Centers position
+    float xPopPos = 70;
+    float yPopPos = ((gWindowHeight - textPopUpBounds.size.y) / 2) + 20;
+
+    textPopUp.setPosition(sf::Vector2f(xPopPos, yPopPos));
+    popUpText.push_back(textPopUp);
+
+    sf::Text textPopUp2(font, "EXIT", 30);
+    textPopUp2.setFillColor(sf::Color(122, 71, 22));
+    textPopUp2.setOutlineColor(sf::Color(255, 140, 0));
+    textPopUp2.setOutlineThickness(1.5);
+
+    textPopUpBounds = textPopUp2.getLocalBounds();
+
+    // Centers position
+    xPopPos = 250;
+    yPopPos = ((gWindowHeight - textPopUpBounds.size.y) / 2) + 20;
+
+    textPopUp2.setPosition(sf::Vector2f(xPopPos, yPopPos));
+    popUpText.push_back(textPopUp2);
+
+    sf::Text textPopUp3(font, "ARE YOU SURE...", 20);
+    textPopUp3.setFillColor(sf::Color::White);
+    textPopUpBounds = textPopUp3.getLocalBounds();
+
+    // Centers position
+    xPopPos = ((gWindowWidth - textPopUpBounds.size.x) / 2);
+    yPopPos = ((gWindowHeight - textPopUpBounds.size.y) / 2) - 25;
+
+    textPopUp3.setPosition(sf::Vector2f(xPopPos, yPopPos));
+    popUpText.push_back(textPopUp3);
 
     if (!fontinputs.openFromFile("./assets/fonts/NESfonts/nintendo-nes-font.ttf")) {
         std::cout<<"No se ha encontrado la fuente"<<std::endl;
@@ -884,128 +939,182 @@ void PauseGS::init(){
 void PauseGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-        if (keyPressed->scancode == controls.escape)
-        {
-            auto audio = configManager.getAudio();
-            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(audio.master_volume, audio.music_volume));
-            stateMachine->removeState();
-        }
-
-        if (keyPressed->scancode == controls.down && position < 4) {    
-            position ++;
-        }
-
-        if (keyPressed->scancode == controls.up && position > 0) {    
-            position --;
-        }
-
-        if (keyPressed->scancode == controls.right) {    
-            switch (position){
-                case 0:
-                    if(masterVol < 100){
-                        masterVol += 10;
-                    }
-                    break;
-                case 1:
-                    if(musicVol < 100){
-                        musicVol += 10;
-                    }
-                    break;
-                case 2:
-                    if(soundVol < 100){
-                        soundVol += 10;
-                    }
-                    pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
-                    break;
-                case 4:
-                    if (col == 0){
-                        col = 1;
-                    }
-                    break;
-            }
-            pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
-            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
-        }
-
-        if (keyPressed->scancode == controls.left) {    
-            switch (position){
-                case 0:
-                    if(masterVol > 0){
-                        masterVol -= 10;
-                    }
-                    break;
-                case 1:
-                    if(musicVol > 0){
-                        musicVol -= 10;
-                    }
-                    break;
-                case 2:
-                    if(soundVol > 0){
-                        soundVol -= 10;
-                    }
-                    pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
-                    break;
-                case 4:
-                    if (col == 1){
-                        col = 0;
-                    }
-                    break;
-            }
-            pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
-            gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
-        }
-
-        if (keyPressed->scancode == controls.enter) {
-            if (position == 3){ // Cheats
-                cheats = !cheats;
-            }
-
-            configManager::Audio newAudio;
-            newAudio.master_volume = masterVol;
-            newAudio.music_volume = musicVol;
-            newAudio.sound_volume = soundVol;
-
-            configManager::Cheats newCheats;
-            newCheats.enabled = cheats;
-            
-            configManager.setAudio(newAudio);
-            configManager.setCheats(newCheats);
-            configManager.saveConfiguration("config.json");
-
-            if (position == 4 && col == 0){
-                std::cout << "Road back to config menu" << std::endl;
-                gameSoundManager.stopAllMusic();
-                // Reset of the game for story mode
-                gStartingLevel = 1;
-                gStartingStage = 1;
-                stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
-            }
-
-            if (position == 4 && col == 1){
-
-                std::cout << "Road back to game menu after saving" << std::endl;
+        if(!showPopUp){
+            if (keyPressed->scancode == controls.escape)
+            {
+                auto audio = configManager.getAudio();
+                gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(audio.master_volume, audio.music_volume));
                 stateMachine->removeState();
             }
-        }
 
-        if (!pauseSprites.empty()) {
-            sf::Sprite torch = pauseSprites.back();
-            pauseSprites.pop_back();
-            float torchX = 0;
-            float torchY = 0;
-            if (position <= 3){
-                torchX = configs[position+1].getPosition().x - 25.f;
-                torchY = configs[position+1].getPosition().y + 2.f;
+            if (keyPressed->scancode == controls.down && position < 4) {    
+                position ++;
             }
-            else{
-                torchX = configs[position+1+col].getPosition().x - 25.f;
-                torchY = configs[position+1+col].getPosition().y + 2.f;
-            }
-            torch.setPosition(sf::Vector2f(torchX, torchY));
 
-            pauseSprites.push_back(torch);
+            if (keyPressed->scancode == controls.up && position > 0) {    
+                position --;
+            }
+
+            if (keyPressed->scancode == controls.right) {    
+                switch (position){
+                    case 0:
+                        if(masterVol < 100){
+                            masterVol += 10;
+                        }
+                        break;
+                    case 1:
+                        if(musicVol < 100){
+                            musicVol += 10;
+                        }
+                        break;
+                    case 2:
+                        if(soundVol < 100){
+                            soundVol += 10;
+                        }
+                        pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
+                        break;
+                    case 4:
+                        if (col == 0){
+                            col = 1;
+                        }
+                        break;
+                }
+                pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+                gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+            }
+
+            if (keyPressed->scancode == controls.left) {    
+                switch (position){
+                    case 0:
+                        if(masterVol > 0){
+                            masterVol -= 10;
+                        }
+                        break;
+                    case 1:
+                        if(musicVol > 0){
+                            musicVol -= 10;
+                        }
+                        break;
+                    case 2:
+                        if(soundVol > 0){
+                            soundVol -= 10;
+                        }
+                        pauseVolumeManager.playSound("menuEnter", pauseVolumeManager.realVolume(masterVol, soundVol));
+                        break;
+                    case 4:
+                        if (col == 1){
+                            col = 0;
+                        }
+                        break;
+                }
+                pauseVolumeManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+                gameSoundManager.adjustAllMusicVolumes(pauseVolumeManager.realVolume(masterVol, musicVol));
+            }
+
+            if (!pauseSprites.empty()) {
+                sf::Sprite torch = pauseSprites.back();
+                pauseSprites.pop_back();
+                float torchX = 0;
+                float torchY = 0;
+                if (position <= 3){
+                    torchX = configs[position+1].getPosition().x - 25.f;
+                    torchY = configs[position+1].getPosition().y + 2.f;
+                }
+                else{
+                    torchX = configs[position+1+col].getPosition().x - 25.f;
+                    torchY = configs[position+1+col].getPosition().y + 2.f;
+                }
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                pauseSprites.push_back(torch);
+            }
+
+            if (keyPressed->scancode == controls.enter) {
+                if (position == 3){ // Cheats
+                    cheats = !cheats;
+                }
+
+                if (position == 4 && col == 0){
+                    std::cout << "Road back to menu" << std::endl;
+                    colPopUp = 0;
+                    showPopUp = true;
+                    if (!pauseSprites.empty()) {
+                        sf::Sprite torch = pauseSprites.back();
+                        pauseSprites.pop_back();
+
+                        float torchX = popUpText[colPopUp].getPosition().x - 25.f;
+                        float torchY = popUpText[colPopUp].getPosition().y + 2.f;
+                        torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                        pauseSprites.push_back(torch);
+                    }
+                }
+
+                if (position == 4 && col == 1){
+                    configManager::Audio newAudio;
+                    newAudio.master_volume = masterVol;
+                    newAudio.music_volume = musicVol;
+                    newAudio.sound_volume = soundVol;
+
+                    configManager::Cheats newCheats;
+                    newCheats.enabled = cheats;
+                    
+                    configManager.setAudio(newAudio);
+                    configManager.setCheats(newCheats);
+                    configManager.saveConfiguration("config.json");
+                    std::cout << "Road back to game after saving" << std::endl;
+                    stateMachine->removeState();
+                }
+            }
+            std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
         }
-        std::cout<<"Position: "<< position << ", Col: " << col <<std::endl;
+        else{
+            if (keyPressed->scancode == controls.right && colPopUp == 0){
+                colPopUp = 1;
+            }
+            if (keyPressed->scancode == controls.left && colPopUp == 1){
+                colPopUp = 0;
+            }
+            if (!pauseSprites.empty()) {
+                sf::Sprite torch = pauseSprites.back();
+                pauseSprites.pop_back();
+
+                float torchX = popUpText[colPopUp].getPosition().x - 25.f;
+                float torchY = popUpText[colPopUp].getPosition().y + 2.f;
+                torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                pauseSprites.push_back(torch);
+            }
+            if (keyPressed->scancode == controls.enter){
+                if(colPopUp == 0){
+                    showPopUp = false;
+                    if (!pauseSprites.empty()) {
+                        sf::Sprite torch = pauseSprites.back();
+                        pauseSprites.pop_back();
+                        float torchX = 0;
+                        float torchY = 0;
+                        if (position <= 3){
+                            torchX = configs[position+1].getPosition().x - 25.f;
+                            torchY = configs[position+1].getPosition().y + 2.f;
+                        }
+                        else{
+                            torchX = configs[position+1+col].getPosition().x - 25.f;
+                            torchY = configs[position+1+col].getPosition().y + 2.f;
+                        }
+                        torch.setPosition(sf::Vector2f(torchX, torchY));
+
+                        pauseSprites.push_back(torch);
+                    }
+                }
+                if(colPopUp == 1){
+                    gameSoundManager.stopAllMusic();
+                    // Reset of the game for story mode
+                    gStartingLevel = 1;
+                    gStartingStage = 1;
+                    stateMachine->replaceAllStates(std::make_unique<MenuGS>(stateMachine));
+                }
+            }
+        }
     }
 }
 
@@ -1014,9 +1123,7 @@ void PauseGS::update(float deltaTime, const sf::Vector2f& viewPosition, bool win
 }
 
 void PauseGS::draw(sf::RenderWindow& window, Camera& camera){
-    for (const auto& sprite : pauseSprites) {
-        window.draw(sprite);
-    }
+    window.draw(pauseSprites[0]);
     for (const auto& text : configs) {
         window.draw(text);
     }
@@ -1036,6 +1143,14 @@ void PauseGS::draw(sf::RenderWindow& window, Camera& camera){
     drawVolumeBars(window, masterVol, sf::Vector2f(125, 140));
     drawVolumeBars(window, musicVol, sf::Vector2f(125, 190));
     drawVolumeBars(window, soundVol, sf::Vector2f(125, 240));
+
+    if(showPopUp){
+        window.draw(pauseSprites[1]);
+        for (const auto& text : popUpText) {
+            window.draw(text);
+        }
+    }
+    window.draw(pauseSprites[2]);
 }
 
 void PauseGS::drawVolumeBars(sf::RenderWindow& window, int actualVol, sf::Vector2f pos){
@@ -1080,6 +1195,7 @@ void PauseGS::close(){
     pauseSprites.clear();
     pauseTextures.clear();
     configs.clear();
+    popUpText.clear();
 }
 
 PauseGS::~PauseGS() {}
