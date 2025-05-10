@@ -92,7 +92,10 @@ public:
     std::shared_ptr<Projectile> projectile3;
     bool hasProjectile3{false};
 
-
+    // holy water ahndling
+    bool collisionWithHolyWater = false;
+    float paralizeCounter = 0.f;
+    float paralizeTimer = 0.6f;
     // Projectile IA
     bool firstTimeDetected = false;
 

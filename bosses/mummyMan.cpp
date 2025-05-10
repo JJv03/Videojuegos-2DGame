@@ -215,6 +215,7 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
             }
             
         }
+
     }
     
 }

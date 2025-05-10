@@ -138,19 +138,22 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->isNearStair = false;
     this->stairStart = new StairTile();
 
-    if(configManager.getCheats().enabled){
-            this->sprite->setColor(sf::Color(255, 255, 255, 128));
-            this->isInvulnerable=true;
-            this->hadCheats = true;  
-        }
-        else if(!configManager.getCheats().enabled &&  this->hadCheats){
-                this->sprite->setColor(sf::Color::White);
-                this->isInvulnerable=false;
-                this->hadCheats = false;
-                this->isInvisible = false;
-            }
+    if(configManager.getCheats().enabled  && !this->isInvulnerable){
+        this->sprite->setColor(sf::Color(255, 255, 255, 0));
+        this->sprite->setColor(sf::Color(255, 255, 255, 128));
+        this->isInvulnerable=true;
+        this->hadCheats = true;  
+    }
+    else if(!configManager.getCheats().enabled && this->hadCheats){
+        
+            this->sprite->setColor(sf::Color::White);
+            this->isInvulnerable=false;
+            this->hadCheats = false;
+            this->isInvisible = false;
+        
+    }
 
-    if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip && !hadCheats){
+    if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip && !this->hadCheats){
         
         
             if (this->isInvulnerable && !this->isInvisible)
@@ -187,6 +190,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                     this->invisibilityTimeCounter += deltaTime;
                 }
             }
+
 
         
         
