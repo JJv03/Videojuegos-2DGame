@@ -61,6 +61,9 @@ enum animationID{
     whiteSkeletonWalk,
     idleCrow,
     flyingCrow,
+    
+    hunchbackShake,
+
 
     // Bone
     boneFlipping,

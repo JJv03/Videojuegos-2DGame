@@ -123,6 +123,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getPosition(), mapBounds);
         }
     }
+    for (auto &hunchback : hunchback)
+    {
+        if (hunchback->level == currentLevel && hunchback->stage == currentStage)
+        {
+            hunchback->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), mapBounds, playerPtr);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -205,6 +213,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
             whiteSkeleton->draw(window);
         }
     }
+    for (auto &hunchback : hunchback)
+    {
+        if (hunchback->level == currentLevel && hunchback->stage == currentStage)
+        {
+            hunchback->draw(window);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -222,6 +237,8 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     redSkeleton.clear();
     crow.clear();
     whiteSkeleton.clear();
+    hunchback.clear();
+
 
     switch (level)
     {
@@ -318,6 +335,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                     whiteSkeleton.push_back(createWhiteSkeleton(
                         enemyData.position, level, currentStage));
                     break;
+                
+                case 11: // Hunchback
+                    hunchback.push_back(createHunchback(
+                        enemyData.position, level, currentStage));
+                    break;
 
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
@@ -365,8 +387,13 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                         enemyData.position, level, currentStage));
                     break;
                 
-                  case 10: // WhiteSkeleton
+                case 10: // WhiteSkeleton
                     whiteSkeleton.push_back(createWhiteSkeleton(
+                        enemyData.position, level, currentStage));
+                    break;
+                
+                case 11: // Hunchback
+                    hunchback.push_back(createHunchback(
                         enemyData.position, level, currentStage));
                     break;
 
@@ -499,6 +526,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             }
         }
     }
+    for (auto &h : hunchback)
+    {
+        if (h->level == currentLevel && h->stage == currentStage && h->isActive)
+        {
+            allEnemies.push_back(h);
+        }
+    }
 
     return allEnemies;
 }
@@ -598,6 +632,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             whiteSkeleton->isActive = false;
             whiteSkeleton->resetPosition();
+        }
+    }
+    for (auto &hunchback : hunchback)
+    {
+        if (hunchback->level == currentLevel && hunchback->stage == currentStage)
+        {
+            hunchback->isActive = false;
+            hunchback->resetPosition();
         }
     }
 }
