@@ -7,7 +7,7 @@ class RedSkeleton : public Enemy
 private:
 
     // Combat stats
-    const sf::Vector2f RED_SKELETON_SPEED = {15.0f, 0.0f};
+    const sf::Vector2f RED_SKELETON_SPEED = {30.0f, 0.0f};
     const float RED_SKELETON_LIFE = 1.0f;
     const float RED_SKELETON_SCORE = 400.0f;
     const float RED_SKELETON_DAMAGE = 3.0f;
@@ -19,27 +19,25 @@ private:
         DEAD,
         RESPAWNING,
         IDLE,
-        WALKINGCLOSE,
-        WALKINGAWAY,
+        WALKING,
         DESPAWNING,
     };
 
 
-    const float WALK_TIME = 1.0f;
+    const float WALK_TIME = 0.5f;
     float walkTimeCounter;
 
     const float IDLE_TIME = 1.0f;
     float waitingIdleTimeCounter;
 
-    const float DEAD_TIME = 1.0f;
+    const float DEAD_TIME = 2.0f;
     float waitingDeadTimeCounter;
 
-    const float SPAWN_TIME = 1.0f;
+    const float SPAWN_TIME = 0.5f;
     float waitingRespawnTimeCounter;
     float waitingDespawnTimeCounter;
 
-    bool facingRight;
-    bool isPlayerRight;
+    bool moveRight;
     bool atTheEdge;
     
     std::vector<AnimationManager::Frame> noAnimationFrames{

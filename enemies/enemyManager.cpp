@@ -445,6 +445,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             }
         }
     }
+    for (auto &rs : redSkeleton)
+    {
+        if (rs->level == currentLevel && rs->stage == currentStage && rs->isActive)
+        {
+            allEnemies.push_back(rs);
+        }
+    }
     for (auto &c : crow)
     {
         if (c->level == currentLevel && c->stage == currentStage && c->isActive)
@@ -527,6 +534,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             axeman->isActive = false;
             axeman->resetPosition();
+        }
+    }
+    for (auto &redSkeleton : redSkeleton)
+    {
+        if (redSkeleton->level == currentLevel && redSkeleton->stage == currentStage)
+        {
+            redSkeleton->isActive = false;
+            redSkeleton->resetPosition();
         }
     }
     for (auto &crow : crow)
