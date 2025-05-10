@@ -79,6 +79,7 @@ public:
     float fireNextCounter = 0.f;
     float fireNextTimer = 5.0f;
 
+    bool outOfBoder = false;
     // Init
     bool hasInitJump = false;
 

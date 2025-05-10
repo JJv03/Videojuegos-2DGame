@@ -237,31 +237,38 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     animationManager->playAnimation(draculaSpiritGo);
                 }
                 {
-                
+                this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
+                if(!alreadyFlying && (!((map.x + size.x -67.f > position.x + this->directionFlying * this->speed.x &&
+                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump) || outOfBoder)){
+                        outOfBoder = true;
+                        
+                        sprite->move(sf::Vector2f(-this->directionFlying * this->speed.x, this->speed.y));
+                }
+                else{
+                    // Mueve el sprite
+                    auto mode = configManager.getDifficulty();
+                    if(mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
+                        this->speed.x = -this->speed.x;
+                        alreadyChanged=true;
+                    }
+                    alreadyFlying = true;
+                    
+                    if( (map.x + size.x -67.f > position.x + this->directionFlying * this->speed.x &&
+                        map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump){
+                            sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
+                    }
+                    else{
+
+                        this->speed.x=0.f;
+                        sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
+
+                        //this->directionFlying ?
+                    }
+                }
                 // Velocidad de caída (puedes ajustar estos valores)
                 
                 
-                // Mueve el sprite
-                auto mode = configManager.getDifficulty();
-                if(mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
-                    this->speed.x = -this->speed.x;
-                    alreadyChanged=true;
-                }
-                alreadyFlying = true;
-                this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
-                if( (map.x + size.x -67.f > position.x + this->directionFlying * this->speed.x &&
-                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump){
-                        sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
-                }
-                else{
-
-                    this->speed.x=0.f;
-                    
                 
-                    sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
-
-                    //this->directionFlying ?
-                }
                 
 
                 if (this->directionFlying != this->facingRight && !this->flyDone)
@@ -277,7 +284,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     if(!hasInitJump){
                         hasInitJump=true;
                     }
-                    
+                    outOfBoder = false;
                     this->currentState = DraculeSpiritState::LANDING;
                 }
                 }
