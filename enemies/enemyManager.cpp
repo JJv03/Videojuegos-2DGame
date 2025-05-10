@@ -30,7 +30,7 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
 {
     PlayerPosition playerPos = playerPtr->getPlayerOffsetPosition();
 
-    if (playerPtr->isStopWatchActive || playerPtr->upgradeWhip)
+    if (playerPtr->isStopWatchActive || playerPtr->upgradeWhip || playerPtr->activateRosario)
     {
         return;
     }
