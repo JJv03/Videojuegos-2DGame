@@ -95,6 +95,7 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
     {
         isActive = false;
         resetPosition();
+        needsPlayerToLeaveZone = true;
     }
 
     isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
