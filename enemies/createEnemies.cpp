@@ -285,3 +285,27 @@ WhiteSkeleton *createWhiteSkeleton(const sf::Vector2f &position, const size_t &l
     };
     return new WhiteSkeleton(whiteSkeletonSprite, hitboxes, level, stage);
 }
+
+Hunchback *createHunchback(const sf::Vector2f &position, const size_t &level, const size_t &stage) {
+    // Sprite sheet coordinates and dimensions
+    const sf::IntRect placeHolder = {{0, 0}, {16, 16}};
+    const float HITBOX_WIDTH = 16.f;
+    const float HITBOX_HEIGHT = 16.f;
+
+    // Configure sprite
+    auto hunchbackSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    hunchbackSprite->setTextureRect(placeHolder);
+    hunchbackSprite->setPosition(position);
+
+    // Center sprite origin
+    sf::FloatRect bounds = hunchbackSprite->getLocalBounds();
+    hunchbackSprite->setOrigin({bounds.size.x / 2.f, bounds.size.y});
+
+    // Create collision hitbox
+    std::vector<sf::FloatRect> hitboxes = {
+        sf::FloatRect(
+            {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
+            {HITBOX_WIDTH, HITBOX_HEIGHT}),
+    };
+    return new Hunchback(hunchbackSprite, hitboxes, level, stage);
+}

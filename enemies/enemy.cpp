@@ -242,6 +242,11 @@ void Enemy::applyGravity(float deltaTime)
     }
 }
 
+void Enemy::onlyApplyGravity(float deltaTime)
+{
+    speed.y -= GRAVITY * deltaTime;
+}
+
 void Enemy::resetPosition()
 {
     // Reset to original position and restore initial speed

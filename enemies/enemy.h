@@ -28,6 +28,8 @@ public:
 
     virtual void applyGravity(float deltaTime);
 
+    void onlyApplyGravity(float deltaTime);
+
     // Resets enemy to its original position
     virtual void resetPosition();
 

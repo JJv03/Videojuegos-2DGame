@@ -13,6 +13,8 @@
 #include "redSkeleton.h"
 #include "crow.h"
 #include "whiteSkeleton.h"
+#include "hunchback.h"
+
 
 // Factory functions for creating enemy instances
 Zombie *createZombie(const sf::Vector2f &position);
@@ -26,3 +28,4 @@ AxeMan *createAxeMan(const sf::Vector2f &position, const size_t &level, const si
 RedSkeleton *createRedSkeleton(const sf::Vector2f &position, const size_t &level, const size_t &stage);
 Crow *createCrow(const sf::Vector2f &position, const size_t &level, const size_t &stage);
 WhiteSkeleton *createWhiteSkeleton(const sf::Vector2f &position, const size_t &level, const size_t &stage);
+Hunchback *createHunchback(const sf::Vector2f &position, const size_t &level, const size_t &stage);

@@ -619,9 +619,8 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         livesStream << "P-" << std::setw(2) << std::setfill('0') << player.lives; // Format with zeroes
         texts[6].setString(livesStream.str());
 
-        // Cuando esté implementado collisionGrid, cambiar la función existente por la nueva:
         checkCollisions(viewPosition);
-        // checkCollisions();
+        // checkCollisions();   // Previous function to check collisions
 
         // Update the subweapon sprite item
         guiSubWeaponSprite = getItemSprite(player.subWeaponType);

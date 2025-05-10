@@ -62,6 +62,9 @@ enum animationID{
     whiteSkeletonWalkAttack,
     idleCrow,
     flyingCrow,
+    
+    hunchbackShake,
+
 
 
     // Bosses
