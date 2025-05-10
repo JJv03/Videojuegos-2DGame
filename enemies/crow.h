@@ -6,7 +6,7 @@ class Crow : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f CROW_SPEED = {-125.0f, 0.0f};
+    const sf::Vector2f CROW_SPEED = {0.0f, 0.0f};
     const float CROW_JUMP_SPEED = 300.0f;
 
     // Combat stats
@@ -38,6 +38,16 @@ private:
         POSITIONING,
         ATTACK
     };
+    bool startingMoving = false;
+    bool startingPositioning = false;
+
+    sf::Vector2f goal;
+    sf::Vector2f position;
+
+    float timerMove = 0.f;
+    float timerWait = 0.f;
+    float timerPositioning = 0.f;
+    const float interval = 2.5f;
     
 public:
     int level; // Current game level
@@ -58,6 +68,12 @@ public:
     // Update crow logic (spawn, movement, etc.)
     void update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
                 const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds);
+    
+    void getLinelSpeed(float timeToMove);
+
+    void getRandomGoal(sf::Vector2f playerPos);
+
+    void getPlayerGoal(sf::Vector2f playerPos);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
