@@ -138,11 +138,18 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->isNearStair = false;
     this->stairStart = new StairTile();
 
-    if(configManager.getCheats().enabled  && this->sprite->getColor() == sf::Color::White){
+    if(configManager.getCheats().enabled ){
         //this->sprite->setColor(sf::Color(255, 255, 255, 0));
+        if(this->sprite->getColor() != sf::Color::White){
+            this->sprite->setColor(sf::Color::White);
+        }
+        
+        
         this->sprite->setColor(sf::Color(255, 255, 255, 128));
         this->isInvulnerable=true;
         this->hadCheats = true;  
+        this->blinkTimer = 0.0f;
+        this->visible = true;
     }
     else if(!configManager.getCheats().enabled && this->hadCheats){
         
@@ -156,7 +163,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip && !this->hadCheats){
         
         
-            if (this->isInvulnerable && !this->isInvisible)
+            if (this->isInvulnerable && !this->isInvisible && !this->hadCheats)
             {
                 this->blinkTimer += deltaTime;
                 if (this->blinkTimer >= this->blinkInterval) {
