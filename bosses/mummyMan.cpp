@@ -165,11 +165,12 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         {
             lanzado = false;
         }
+        currentBossLife = life;
     }
 
     sf::FloatRect spriteBounds = sprite->getGlobalBounds();
     hitboxes[0] = spriteBounds;
-
+    
     updateAnimation(deltaTime);
 }
 
@@ -215,7 +216,7 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
             
         }
     }
-    currentBossLife = life;
+    
 }
 
 // Render phantomBat and debug info (spawn zone)

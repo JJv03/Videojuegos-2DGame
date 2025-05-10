@@ -192,7 +192,6 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
 
             case DraculeSpiritState::GO:
                 
-                //std::cout << "go" << std::endl;
                 if(!animationManager->isPlaying(draculaSpiritGo)){
                     animationManager->playAnimation(draculaSpiritGo);
                 }
@@ -390,6 +389,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             projectile3->update(deltaTime, mapDims);
         }
         updateAnimation(deltaTime);
+        currentBossLife = life;
     }
 }
 
