@@ -245,6 +245,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
                 if(a) a->reset();
             }
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -257,6 +258,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
                 if(a) a->reset();
             }
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
 }

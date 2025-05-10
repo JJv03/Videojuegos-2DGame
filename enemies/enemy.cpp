@@ -253,7 +253,7 @@ void Enemy::resetPosition()
 
     sf::Vector2f offset = originalPosition - sprite->getPosition();
 
-    needsPlayerToLeaveZone = true;
+    needsPlayerToLeaveZone = false;
 
     sprite->setPosition(originalPosition);
 

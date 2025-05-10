@@ -145,6 +145,7 @@ void Bat::onCollision(Entity &other, Game &game, const sf::FloatRect& intersecti
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -154,12 +155,14 @@ void Bat::onCollision(Entity &other, Game &game, const sf::FloatRect& intersecti
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (dynamic_cast<Player *>(&other))
     {
         isActive = false;
         resetPosition();
+        needsPlayerToLeaveZone = true;
     }
 }
 

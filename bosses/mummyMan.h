@@ -70,6 +70,11 @@ public:
     float attackWaitingCounter = 0.f;
     float attackWaitingTime = 5.f;
 
+
+    float actionTimer = 0.f;
+    float nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f; // entre 1 y 3 seg
+    int currentAction = 0; // 0: caminar, 1: atacar
+    bool directionChanged = false;
     // Bandage
     std::shared_ptr<Bandage> bandage;
     bool lanzado = false;

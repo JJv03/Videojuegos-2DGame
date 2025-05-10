@@ -6,6 +6,7 @@
 #include "item.h"
 #include "enemies/projectile.h"
 #include "enemies/axe.h"
+#include "enemies/bone.h"
 #include "bosses/scythe.h"
 #include <cmath>
 
@@ -137,23 +138,22 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->isNearStair = false;
     this->stairStart = new StairTile();
 
-    if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip){
-        
-        if(configManager.getCheats().enabled){
-            this->sprite->setColor(sf::Color(255, 255, 255, 0));
+    if(configManager.getCheats().enabled){
             this->sprite->setColor(sf::Color(255, 255, 255, 128));
             this->isInvulnerable=true;
             this->hadCheats = true;  
         }
-        else{
-            
-            if(!configManager.getCheats().enabled &&  this->hadCheats){
+        else if(!configManager.getCheats().enabled &&  this->hadCheats){
                 this->sprite->setColor(sf::Color::White);
                 this->isInvulnerable=false;
                 this->hadCheats = false;
                 this->isInvisible = false;
             }
-            else if (this->isInvulnerable && !this->isInvisible)
+
+    if(!this->isBeingHurt && !this->isDead && !this->upgradeWhip && !hadCheats){
+        
+        
+            if (this->isInvulnerable && !this->isInvisible)
             {
                 this->blinkTimer += deltaTime;
                 if (this->blinkTimer >= this->blinkInterval) {
@@ -188,7 +188,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                 }
             }
 
-        }
+        
         
         
         
@@ -438,6 +438,31 @@ void Player::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         // Change when axe has animationManager and can have hitbox = 0
         if(axe->getActive() && !this->isInvulnerable && !this->isDead){
             this->health = std::max(this->health - axe->damage, 0.f);
+
+            if (this->health > 0)
+            {
+                this->isInvulnerable = true;
+
+                if(this->isOnStairs){
+                    this->isBeingHurt = true;
+                    this->setState(std::make_unique<PlayerHurtStairState>());
+                } else {
+                    this->isJumping = true;
+                    this->verticalSpeed = -gPlayerJumpForce;
+                    this->isOnGround = false;
+                    this->setState(std::make_unique<PlayerHurtState>());
+                }
+            }
+            else{
+                this->setState(std::make_unique<PlayerDeadState>());
+            }
+        }
+    }
+    else if (Bone *bone = dynamic_cast<Bone *>(&other))
+    {   
+        // Change when axe has animationManager and can have hitbox = 0
+        if(bone->getActive() && !this->isInvulnerable && !this->isDead){
+            this->health = std::max(this->health - bone->damage, 0.f);
 
             if (this->health > 0)
             {

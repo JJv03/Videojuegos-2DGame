@@ -40,6 +40,8 @@ Crow::Crow(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hit
     currentState = State::MOVING;
     prevState = State::MOVING;
     playerDetected = false;
+    startingMoving = false;
+    goal = sf::Vector2f(0, 0);
 }
 
 // Update vision field based on current position
@@ -102,6 +104,7 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
         {
             return;
         }
+        position = sprite->getGlobalBounds().position;
 
         updateVisionField();
 
@@ -118,19 +121,55 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
         if(playerDetected){
             switch(currentState){
                 case State::MOVING:
+                    std::cout << "Moving" << std::endl;
+                    timerMove += deltaTime;
+                    if(!startingMoving){
+                        startingMoving = true;
+                        getRandomGoal(playerPos);
+                        getLinelSpeed(interval);
+                    }
+                    if(timerMove >= interval){
+                        prevState = currentState;
+                        currentState = State::WAITING;
+                    }
 
                     break;
                 
                 case State::WAITING:
-
+                    std::cout << "Waiting" << std::endl;
+                    speed = sf::Vector2f(0, 0);
+                    timerWait += deltaTime;
+                    if(timerWait >= interval){
+                        timerWait = 0;
+                        if(prevState == State::MOVING){
+                            prevState = currentState;
+                            currentState = State::POSITIONING;
+                        }
+                        else if(prevState == State::POSITIONING){
+                            prevState = currentState;
+                            currentState = State::ATTACK;
+                        }
+                    }
                     break;
                 
                 case State::POSITIONING:
+                    std::cout << "Positioning" << std::endl;
+                    timerPositioning += deltaTime;
+                    if(!startingPositioning){
+                        startingPositioning = true;
+                        getPlayerGoal(playerPos);
+                        getLinelSpeed(interval);
+                    }
+                    if(timerPositioning >= interval){
+                        prevState = currentState;
+                        currentState = State::WAITING;
+                    }
 
                     break;
 
                 case State::ATTACK:
-
+                    std::cout << "Moving" << std::endl;
+                    speed = sf::Vector2f(0, 0);
                     break;
             }
         }
@@ -161,6 +200,46 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
     updateAnimation(deltaTime);
 }
 
+void Crow::getLinelSpeed(float timeToMove){
+    float deltaX = goal.x - position.x;
+    float deltaY = goal.y - position.y;
+
+    speed = sf::Vector2f(deltaX / timeToMove, -deltaY / timeToMove);
+    // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
+}
+
+void Crow::getRandomGoal(sf::Vector2f playerPos){
+    // Obtener una distancia aleatoria entre 50 y 120
+    float distance = 50 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (120 - 50)));
+
+    // Player is right, lets go to left
+    float goalX = isPlayerRight ? (playerPos.x - distance) : (playerPos.x + distance);
+
+    // Generar un desplazamiento vertical aleatorio entre -75 y -15
+    float verticalOffset = -15 - static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (60))); // 60 = -15 - (-75)
+
+    // Aplicar el offset vertical desde la posición actual del cuervo
+    float goalY = position.y + verticalOffset;
+
+    // Asignar la posición de destino
+    goal = sf::Vector2f(goalX, goalY);
+}
+
+void Crow::getPlayerGoal(sf::Vector2f playerPos){
+    // Obtener una distancia aleatoria entre 50 y 120
+    float distance = 50 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (120 - 50)));
+
+    // Player is right, lets go to left
+    float goalX = isPlayerRight ? (playerPos.x - distance) : (playerPos.x + distance);
+
+    // Calcular Y como la posición del jugador + un valor aleatorio entre 4 y 20
+    float yOffset = 4 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (20 - 4)));
+    float goalY = playerPos.y + yOffset;
+
+    // Asignar la posición de destino
+    goal = sf::Vector2f(goalX, goalY);
+}
+
 void Crow::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
     if (!isActive || !sprite)
@@ -173,6 +252,7 @@ void Crow::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -182,6 +262,7 @@ void Crow::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
 }

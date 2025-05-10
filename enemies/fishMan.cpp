@@ -297,6 +297,7 @@ void FishMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -306,6 +307,7 @@ void FishMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetPosition();
+            needsPlayerToLeaveZone = true;
         }
     }
 }
