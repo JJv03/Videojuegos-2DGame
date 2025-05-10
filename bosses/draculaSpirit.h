@@ -104,6 +104,10 @@ public:
     bool alreadyFlying = false;
     DraculeSpiritState currentState = DraculeSpiritState::ASLEEP;
 
+    // PROJECTILE INIT
+    std::array<std::shared_ptr<Projectile>, 6> projectiles;
+    bool respawned = true;;
+
     DraculaSpirit() = default;
     DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const int &level, const int &stage, const sf::FloatRect &mapDims);
 

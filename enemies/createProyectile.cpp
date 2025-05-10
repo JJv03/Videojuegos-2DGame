@@ -13,6 +13,11 @@ std::shared_ptr<Projectile> createProjectile(const sf::Vector2f &position, const
         hitboxWidth = 7.0f;
         hitboxHeight = 7.0f;
         break;
+    case ProjectileType::ROCK:
+        spriteRegion = {{344, 148}, {16, 16}};
+        hitboxWidth = 16.0f;
+        hitboxHeight = 16.0f;
+        break;
     default:
         spriteRegion = {{377, 28}, {8, 8}};
         hitboxWidth = 7.0f;
@@ -21,7 +26,13 @@ std::shared_ptr<Projectile> createProjectile(const sf::Vector2f &position, const
     }
 
     // Configure sprite
+    
     auto projectileSprite = std::make_shared<sf::Sprite>(gTextures["enemy"]);
+    if (type == ProjectileType::ROCK)
+    {
+        projectileSprite = std::make_shared<sf::Sprite>(gTextures["boss"]);
+    }
+    
     projectileSprite->setTextureRect(spriteRegion);
     projectileSprite->setPosition(position);
 

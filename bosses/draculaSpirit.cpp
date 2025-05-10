@@ -62,9 +62,11 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             {
                 isActive = true;
                 maxLife = life;
+                respawned = true;
                 if(!reproduced){
                     reproduced = true;
                     this->currentState = DraculeSpiritState::IDLE;
+                    
                     gameSoundManager.stopAllMusic();
                     auto audio = configManager.getAudio();
                     gameSoundManager.playMusicSequence("dracula2.1", "dracula2.2", true, gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
@@ -77,6 +79,25 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
     // MOVEMENT LOGIC
     if (isActive)
     {
+        if(respawned){
+            respawned = false;
+            float ejeX[2] = {200.f, -200.f};
+                    float ejeY[3] = {0.f, 65.f, -65.f};
+                    int counter = 0;
+                    for(auto& projectil : projectiles){
+                        float  vx = ejeX[counter%2];
+                        float vy = ejeY[counter%3];
+                        counter++;
+                        projectil = createProjectile(
+                            {   sprite->getPosition().x - 8.f,
+                                sprite->getPosition().y - 26.f},
+                            {vx, vy},
+                            ProjectileType::ROCK,
+                            1.f);
+                        projectil->sprite->setScale({1.f, 1.f});
+                        projectil->setActive(true);
+                    }
+        }
         // MAQUINA DE ESTADOS DEL BOSS
         // PARA LA IA MEJORADA DIRÍA DE HACER DOS MAQUINAS DE ESTADOS Y QUE SE ELIJAN CON UNA VARAIBLE GLOBAL
 
@@ -330,7 +351,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 if(!animationManager->isPlaying(draculaSpiritLand)){
                     animationManager->playAnimation(draculaSpiritLand);
                 }
-                gameSoundManager.playSound("draculaSpiritLand", gameSoundManager.realVolume(configManager::getInstance().getAudio().master_volume, configManager::getInstance().getAudio().sound_volume));
+                gameSoundManager.playSound("door", gameSoundManager.realVolume(configManager::getInstance().getAudio().master_volume, configManager::getInstance().getAudio().sound_volume));
                 this->currentState = DraculeSpiritState::IDLE;
                 break;
 
@@ -412,6 +433,12 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
         {
             projectile3->update(deltaTime, mapDims);
         }
+
+        for(auto& projectil : projectiles){
+            if(projectil && projectil->sprite && projectil->getActive()){
+                projectil->update(deltaTime, mapBounds);
+            }
+        }
         updateAnimation(deltaTime);
         currentBossLife = life;
     }
@@ -482,6 +509,13 @@ void DraculaSpirit::draw(sf::RenderWindow &window)
     {
         //std::cout << "P3 " << projectile3->sprite->getPosition().x  << "  " << projectile3->sprite->getPosition().y << std::endl;
         projectile3->draw(window);
+    }
+    for(auto& projectil : projectiles){
+        if (projectil && projectil->sprite && projectil->getActive())
+        {
+            //std::cout << "P1 " << projectile->sprite->getPosition().x  << "  " << projectile->sprite->getPosition().y << std::endl;
+            projectil->draw(window);
+        }
     }
 }
 
