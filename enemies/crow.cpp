@@ -130,6 +130,7 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
                         getLinelSpeed(interval);
                     }
                     if(timerMove >= interval){
+                        timerMove = 0;
                         prevState = currentState;
                         currentState = State::WAITING;
                     }
@@ -162,6 +163,7 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
                         getLinelSpeed(interval);
                     }
                     if(timerPositioning >= interval){
+                        timerPositioning = 0;
                         prevState = currentState;
                         currentState = State::WAITING;
                     }
@@ -246,13 +248,13 @@ void Crow::getRandomGoal(const sf::Vector2f &playerPos){
 
 void Crow::getPlayerGoal(const sf::Vector2f &playerPos){
     // Obtener una distancia aleatoria entre 50 y 120
-    float distance = 50 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (120 - 50)));
+    float distance = 50 + std::rand() % (120 - 50 + 1);
 
     // Player is right, lets go to left
     float goalX = isPlayerRight ? (playerPos.x - distance) : (playerPos.x + distance);
 
     // Calcular Y como la posición del jugador + un valor aleatorio entre 4 y 9
-    float yOffset = 4 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (9 - 4)));
+    float yOffset = 4 + std::rand() % (9 - 4 + 1);
     float goalY = playerPos.y + yOffset;
 
     std::cout << "POS: " << position.x << " " << position.y << std::endl;
@@ -299,6 +301,8 @@ void Crow::resetPosition()
 
     sprite->setScale({1.0f, 1.0f});
 
+    currentAnimation = idleCrow;
+
     playerDetected = false;
     hasRedirected = false;
     isPlayerRight = false;
@@ -306,7 +310,12 @@ void Crow::resetPosition()
     prevState = State::MOVING;
     playerDetected = false;
     startingMoving = false;
+    startingPositioning = false;
     attackPositioning = false;
+    origDirRight = false;
+    timerMove = 0.f;
+    timerWait = 0.f;
+    timerPositioning = 0.f;
 }
 
 // Render with optional debug visuals
