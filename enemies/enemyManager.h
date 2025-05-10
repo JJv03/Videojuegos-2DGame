@@ -21,6 +21,7 @@ private:
     std::vector<AxeMan *> axeman;               // 7
     std::vector<RedSkeleton *> redSkeleton;     // 8
     std::vector<Crow *> crow;                   // 9
+    std::vector<WhiteSkeleton *> whiteSkeleton; // 10
 
     // Reference to player
     Player *playerPtr;

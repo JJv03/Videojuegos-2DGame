@@ -107,6 +107,7 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
     
                     if(waitingDeadTimeCounter >= DEAD_TIME){
                         waitingDeadTimeCounter = 0.f;
+                        life = RED_SKELETON_LIFE;
                         currentState = State::RESPAWNING;
                     }
                 }

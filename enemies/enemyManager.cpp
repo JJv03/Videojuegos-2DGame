@@ -115,6 +115,14 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
                             playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
         }
     }
+    for (auto &whiteSkeleton : whiteSkeleton)
+    {
+        if (whiteSkeleton->level == currentLevel && whiteSkeleton->stage == currentStage)
+        {
+            whiteSkeleton->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
+                            playerPtr->sprite->getPosition(), mapBounds);
+        }
+    }
 }
 
 // Render all enemies in current level/stage with debug visuals
@@ -190,6 +198,13 @@ void EnemyManager::draw(sf::RenderWindow &window, const int currentLevel, const 
             crow->draw(window);
         }
     }
+    for (auto &whiteSkeleton : whiteSkeleton)
+    {
+        if (whiteSkeleton->level == currentLevel && whiteSkeleton->stage == currentStage)
+        {
+            whiteSkeleton->draw(window);
+        }
+    }
 }
 
 // Load enemy layout for specified level from tilemap data
@@ -206,6 +221,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
     axeman.clear();
     redSkeleton.clear();
     crow.clear();
+    whiteSkeleton.clear();
 
     switch (level)
     {
@@ -297,6 +313,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                     crow.push_back(createCrow(
                         enemyData.position, level, currentStage));
                     break;
+                
+                case 10: // WhiteSkeleton
+                    whiteSkeleton.push_back(createWhiteSkeleton(
+                        enemyData.position, level, currentStage));
+                    break;
 
                 default:
                     std::cerr << "Unknown enemy type: " << enemyData.type << std::endl;
@@ -341,6 +362,11 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
 
                 case 8: // RedSkeleton
                     redSkeleton.push_back(createRedSkeleton(
+                        enemyData.position, level, currentStage));
+                    break;
+                
+                  case 10: // WhiteSkeleton
+                    whiteSkeleton.push_back(createWhiteSkeleton(
                         enemyData.position, level, currentStage));
                     break;
 
@@ -459,6 +485,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
             allEnemies.push_back(c);
         }
     }
+    for (auto &ws : whiteSkeleton)
+    {
+        if (ws->level == currentLevel && ws->stage == currentStage && ws->isActive)
+        {
+            allEnemies.push_back(ws);
+        }
+    }
 
     return allEnemies;
 }
@@ -550,6 +583,14 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         {
             crow->isActive = false;
             crow->resetPosition();
+        }
+    }
+    for (auto &whiteSkeleton : whiteSkeleton)
+    {
+        if (whiteSkeleton->level == currentLevel && whiteSkeleton->stage == currentStage)
+        {
+            whiteSkeleton->isActive = false;
+            whiteSkeleton->resetPosition();
         }
     }
 }
