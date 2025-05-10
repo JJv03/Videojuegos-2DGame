@@ -1,52 +1,40 @@
-#include "axe.h"
+#include "bone.h"
 #include "../game.h"
-#include "../globals.h"
-#include <iostream>
 
-Axe::Axe(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-                       const sf::Vector2f &position, const sf::FloatRect &mapDims, bool facingRight, float _damage)
+Bone::Bone(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
+               const sf::Vector2f &position, const sf::FloatRect &mapDims, bool facingRight, float verticalSpeed, float _damage)
     : EntitySprite(_sprite, _hitboxes), mapDims(mapDims), facingRight(facingRight), damage(_damage){
-        velocity = sf::Vector2f(0, 0);
         
-        AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+        velocity = sf::Vector2f(0, 0);
 
-        if (!animationManager)
-        {
-            std::cerr << "Error: Failed to initialize Axe AnimationManager!" << std::endl;
-        }
+        velocity.y = verticalSpeed;
 
-        animationManager->addAnimation(axeThrowing, this->normalFrames);
+        if(facingRight) velocity.x = 45.f;
+        else velocity.x = -45.f;
+    
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
 
-        this->animationManager = animationManager;
-        changedSpeed = false;
-
-        currentAnimation = axeThrowing;
-        animationManager->playAnimation(currentAnimation);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Bone AnimationManager!" << std::endl;
     }
 
-void Axe::update(float deltaTime, const sf::FloatRect &deactivationZone)
-{
+    if(facingRight) animationManager->addAnimation(boneFlipping, this->rightFlipFrames);
+    else animationManager->addAnimation(boneFlipping, this->leftFlipFrames);
+
+    this->animationManager = animationManager;
+
+    currentAnimation = boneFlipping;
+    animationManager->playAnimation(currentAnimation);
+}
+
+void Bone::update(float deltaTime){
     if (!isActive || !sprite)
     {
         return;
     }
 
     position = sprite->getGlobalBounds().position;
-
-    if(timer == 0){
-        if(facingRight){
-            planPosSpeed(sf::Vector2f(position.x + maxDist, position.y));
-        }
-        else{
-            planPosSpeed(sf::Vector2f(position.x - maxDist, position.y));
-        }
-    }
-
-    timer += deltaTime;
-    if(timer >= timeToMove && !changedSpeed){
-        velocity = sf::Vector2f(-velocity.x, 0);
-        changedSpeed = true;
-    }
 
     animationManager->update(deltaTime);
 
@@ -67,25 +55,25 @@ void Axe::update(float deltaTime, const sf::FloatRect &deactivationZone)
         }
     }
 
-    // Check if projectile is outside deactivation zone
-    bool isInsideZone = false;
+    bool isInsideMap = false;
     for (const auto &hitbox : hitboxes)
     {
-        if (deactivationZone.findIntersection(hitbox).has_value())
+        if (mapDims.findIntersection(hitbox).has_value())
         {
-            isInsideZone = true;
+            isInsideMap = true;
             break;
         }
     }
 
-    if (!isInsideZone)
+    if (!isInsideMap)
     {
         isActive = false;
     }
+
+    velocity.y -= gPlayerGravity * deltaTime;
 }
 
-void Axe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
-{
+void Bone::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect){
     if (!isActive)
     {
         return;
@@ -93,10 +81,6 @@ void Axe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersecti
 
     // Handle collision with player
     if (dynamic_cast<Player *>(&other))
-    {
-        isActive = false;
-    }
-    else if (dynamic_cast<AxeMan *>(&other))
     {
         isActive = false;
     }
@@ -113,21 +97,11 @@ void Axe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersecti
     }
 }
 
-void Axe::planPosSpeed(const sf::Vector2f goal){
-    timer = 0;
-    float deltaX = goal.x - position.x;
-
-    velocity = sf::Vector2f(deltaX / timeToMove, 0);
-    // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
-}
-
-void Axe::reset()
-{
+void Bone::reset(){
     isActive = false;
 }
 
-void Axe::draw(sf::RenderWindow &window)
-{
+void Bone::draw(sf::RenderWindow &window){
     if (sprite && isActive)
     {
         window.draw(*sprite);

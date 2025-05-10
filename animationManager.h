@@ -58,11 +58,12 @@ enum animationID{
     redSkeletonWalk,
     redSkeletonSpawn,
     redSkeletonDead,
-    whiteSkeletonIdle,
-    whiteSkeletonWalkAttack,
+    whiteSkeletonWalk,
     idleCrow,
     flyingCrow,
 
+    // Bone
+    boneFlipping,
 
     // Bosses
     // PhantomBat

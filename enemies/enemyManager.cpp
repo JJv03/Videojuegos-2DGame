@@ -490,6 +490,13 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
         if (ws->level == currentLevel && ws->stage == currentStage && ws->isActive)
         {
             allEnemies.push_back(ws);
+            for(auto &b : ws->bones)
+            {
+                if (b && b->getActive())
+                {
+                    allEnemies.push_back(b.get());
+                }
+            }
         }
     }
 
