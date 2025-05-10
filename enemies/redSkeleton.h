@@ -7,7 +7,7 @@ class RedSkeleton : public Enemy
 private:
 
     // Combat stats
-    const sf::Vector2f RED_SKELETON_SPEED = {30.0f, 0.0f};
+    const sf::Vector2f RED_SKELETON_SPEED = {60.0f, 0.0f};
     const float RED_SKELETON_LIFE = 1.0f;
     const float RED_SKELETON_SCORE = 400.0f;
     const float RED_SKELETON_DAMAGE = 3.0f;
@@ -57,7 +57,8 @@ private:
     };
 
     std::vector<AnimationManager::Frame> walkingFrames{
-        AnimationManager::Frame{sf::IntRect(sf::Vector2(208, 122), sf::Vector2(16, 32)), 0.1f}
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(191, 122), sf::Vector2(16, 32)), 0.2f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(208, 122), sf::Vector2(16, 32)), 0.3f}
     };
 
 public:
