@@ -60,6 +60,8 @@ stair
 2,152,128
 3,56,32
 end_stair
+water
+end_water
 enemies
 7,735,160
 7,210,64

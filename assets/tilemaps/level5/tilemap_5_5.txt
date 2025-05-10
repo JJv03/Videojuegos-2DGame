@@ -32,6 +32,8 @@ stair
 3,56,32
 1,376,32
 end_stair
+water
+end_water
 enemies
 6,56.f,64.f
 6,312.f,160.f

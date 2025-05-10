@@ -15,5 +15,7 @@ end_miscellaneous
 stair
 2,408,64
 end_stair
+water
+end_water
 enemies
 end_enemies
