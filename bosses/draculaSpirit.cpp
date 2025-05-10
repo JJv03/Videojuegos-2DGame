@@ -79,7 +79,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
     // MOVEMENT LOGIC
     if (isActive)
     {
-        if(respawned){
+        if(respawned && !gKilledBoss){
             respawned = false;
             float ejeX[2] = {200.f, -200.f};
                     float ejeY[3] = {0.f, 65.f, -65.f};
