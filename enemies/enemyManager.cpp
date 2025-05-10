@@ -112,7 +112,7 @@ void EnemyManager::update(float deltaTime, const int currentLevel, const int cur
         if (crow->level == currentLevel && crow->stage == currentStage)
         {
             crow->update(deltaTime, playerPtr->gPlayerActivationZone, playerPtr->gPlayerDeactivationZone,
-                            playerPtr->sprite->getPosition(), playerPtr->getBounds(), mapBounds);
+                            playerPtr->sprite->getGlobalBounds().position, playerPtr->getBounds(), mapBounds);
         }
     }
     for (auto &whiteSkeleton : whiteSkeleton)

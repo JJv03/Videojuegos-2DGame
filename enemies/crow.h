@@ -40,6 +40,9 @@ private:
     };
     bool startingMoving = false;
     bool startingPositioning = false;
+    bool attackPositioning = false;
+
+    bool origDirRight = false;
 
     sf::Vector2f goal;
     sf::Vector2f position;
@@ -47,7 +50,8 @@ private:
     float timerMove = 0.f;
     float timerWait = 0.f;
     float timerPositioning = 0.f;
-    const float interval = 2.5f;
+    const float interval = 2.0f;
+    const float waitInterval = 1.5f;
     
 public:
     int level; // Current game level
@@ -71,9 +75,9 @@ public:
     
     void getLinelSpeed(float timeToMove);
 
-    void getRandomGoal(sf::Vector2f playerPos);
+    void getRandomGoal(const sf::Vector2f &playerPos);
 
-    void getPlayerGoal(sf::Vector2f playerPos);
+    void getPlayerGoal(const sf::Vector2f &playerPos);
 
     // Handle collisions
     void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
