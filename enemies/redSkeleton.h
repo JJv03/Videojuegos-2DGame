@@ -66,7 +66,6 @@ public:
     int stage; // Current stage
 
     State currentState = State::DEAD;
-    State prevState = State::DEAD;
 
     RedSkeleton() = default;
     RedSkeleton(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage);

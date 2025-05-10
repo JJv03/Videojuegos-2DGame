@@ -36,7 +36,6 @@ RedSkeleton::RedSkeleton(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Fl
     currentAnimation = redSkeletonDead;
 
     currentState = State::DEAD;
-    prevState = State::DEAD;
 }
 
 // Main update loop
@@ -139,7 +138,6 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
                 walkTimeCounter += deltaTime;
                 if(walkTimeCounter >= WALK_TIME || atTheEdge){
                     walkTimeCounter = 0.f;
-                    prevState = currentState;
                     currentState = State::IDLE;
                 }
 
@@ -263,7 +261,6 @@ void RedSkeleton::resetPosition()
 
     currentAnimation = redSkeletonDead;
     currentState = State::DEAD;
-    prevState = State::DEAD;
 
     sprite->setScale({1.0f, 1.0f});
 }
