@@ -1811,6 +1811,12 @@ void Game::handleSimonInteractionWithItem(ItemType itemType)
 
 int Game::startStage(int stage, int fromStairs)
 {
+    tilemaps[currentStage].regenerateMiscTiles();
+    tilemaps[currentStage].m_items.clear();
+
+    enemyManager->loadEnemiesFromLevel(currentLevel, tilemaps);
+    bossManager->loadBossesFromLevel(currentLevel, tilemaps);
+
     player.acceptsInput = true;
 
     hasReachedEndStage = false;
@@ -1899,7 +1905,8 @@ void Game::restartStage()
 
     setLevelMusic(currentLevel);
 
-    tilemaps.restartMiscTiles();
+    tilemaps[currentStage].m_items.clear();
+    tilemaps.loadLevel(currentLevel);
 
     switch (currentLevel)
     {
@@ -1950,16 +1957,9 @@ void Game::restartLevel()
 {
     // std::cout << "Current stage: " << currentStage << std::endl;
 
-    for (auto &tilemap : tilemaps.tilemaps)
-    {
-        tilemap.m_items.clear();
-
-        for (auto &miscTile : tilemap.m_miscTiles)
-        {
-            miscTile->isBreakable = true;
-            miscTile->isDestroyed = false;
-        }
-    }
+    particleSystem.clear();
+    tilemaps[currentStage].m_items.clear();
+    tilemaps.loadLevel(currentLevel);
 
     switch (currentLevel)
     {

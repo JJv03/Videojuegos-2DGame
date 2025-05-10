@@ -138,16 +138,3 @@ void TilemapManager::loadLevel(int level) {
         break;
     }
 }
-
-void TilemapManager::restartMiscTiles(){
-    for(auto& tilemap : tilemaps)
-    {
-        tilemap.m_items.clear();
-
-        for(auto& miscTile: tilemap.m_miscTiles)
-        {
-            miscTile->isBreakable = true;
-            miscTile->isDestroyed = false;
-        }
-    }
-}

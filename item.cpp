@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <cmath>
 #include "item.h"
 #include "globals.h"
 #include "tile.h"
@@ -10,23 +11,26 @@
 #include "game.h"
 
 
+const float OSCILLATION_AMPLITUDE = 30.f;   // Amplitude of the sinusoidal movement
+const float OSCILLATION_SPEED = 4.f;        // Speed of the sinusoidal movement
+
 static std::random_device rd;       // we only want 1 instance of random_device
 static std::mt19937 rng(rd());
-
 
 std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 
 
 
+
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            const float _lifeTime, const float _spawnDelay): EntitySprite(_sprite, _hitboxes),
-           m_type(_type), m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay) {}
+           m_type(_type), m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_sinusoidalTotalTime(0.f) {}
 
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime,
            const float _spawnDelay): EntitySprite(_sprite, _hitboxes), m_type(_type),
-           m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay)
+           m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_sinusoidalTotalTime(0.f)
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
 
@@ -39,6 +43,7 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 
 
 void Item::update(const float deltaTime) {
+    // ============================ BEFORE SPAWN ===================================
     if (m_spawnDelay > 0.f) {
         m_spawnDelay -= deltaTime;
         
@@ -56,7 +61,7 @@ void Item::update(const float deltaTime) {
         return; // Skip rest of the logic until spawned
     }
 
-    // ==========================================================================
+    // ============================ AFTER SPAWN ===================================
 
     if (m_lifeTime > 0.f) {       // Item can disappear
         m_lifeTime -= deltaTime;
@@ -68,9 +73,21 @@ void Item::update(const float deltaTime) {
         }
     }
 
-    if (!isOnGround) {
-        sprite->move({0.f, gItemGravity * deltaTime});
-        hitboxes[0].position.y += gItemGravity * deltaTime;
+    if (!isOnGround) {  // Falling down logic
+        if (this->m_type == ItemType::SMALL_HEART) {    // Have a sinusoidal falling movement
+            m_sinusoidalTotalTime += deltaTime;
+            float offsetX = OSCILLATION_AMPLITUDE * std::sin(OSCILLATION_SPEED * m_sinusoidalTotalTime);
+            
+            float moveX = offsetX * deltaTime;
+            float moveY = gItemGravity/3.f * deltaTime;
+            sprite->move({moveX, moveY});
+            hitboxes[0].position.x += moveX;
+            hitboxes[0].position.y += moveY;
+        }
+        else {
+            sprite->move({0.f, gItemGravity * deltaTime});
+            hitboxes[0].position.y += gItemGravity * deltaTime;
+        }
     }
 
     if (m_animationManager != nullptr) {
