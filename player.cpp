@@ -145,6 +145,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
             this->isInvulnerable=true;
         }
         else{
+            this->sprite->setColor(sf::Color::White);
             if (this->isInvulnerable && !this->isInvisible)
             {
                 this->blinkTimer += deltaTime;
