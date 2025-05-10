@@ -138,8 +138,8 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     this->isNearStair = false;
     this->stairStart = new StairTile();
 
-    if(configManager.getCheats().enabled  && !this->isInvulnerable){
-        this->sprite->setColor(sf::Color(255, 255, 255, 0));
+    if(configManager.getCheats().enabled  && this->sprite->getColor() == sf::Color::White){
+        //this->sprite->setColor(sf::Color(255, 255, 255, 0));
         this->sprite->setColor(sf::Color(255, 255, 255, 128));
         this->isInvulnerable=true;
         this->hadCheats = true;  
@@ -167,6 +167,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                 
                 if (this->invulnerableTimeCounter >= this->invulnerableTime) {
                     this->isInvulnerable = false;
+                    
                     this->startInvulnerable = false;
                     this->visible = true; // Ensure the player is visible after invulnerability ends
                     this->invulnerableTimeCounter = 0.0f; // Reset the counter
