@@ -151,6 +151,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                 this->sprite->setColor(sf::Color::White);
                 this->isInvulnerable=false;
                 this->hadCheats = false;
+                this->isInvisible = false;
             }
             else if (this->isInvulnerable && !this->isInvisible)
             {
@@ -759,10 +760,13 @@ void Player::hello() const {
 void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPosition) {
     static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
 
+    
     if (!this->weaponIsActive)
-    {
+    {   
+
         return;
     }
+    
     
     if(!this->subWeapon.intersected){
         if (this->subWeapon.type == ItemType::AXE)
@@ -887,11 +891,14 @@ void Player::updateActiveSubWeapons(float deltaTime, const sf::Vector2f &viewPos
 
 void Player::updateActiveSubWeapons2(float deltaTime, const sf::Vector2f &viewPosition) {
     static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
-
     if (!this->weaponIsActive2)
-    {
+    {   
+
         return;
     }    
+    else{
+        std::cout << "Subweapon2 active" << std::endl;
+    }
     if(!this->subWeapon2.intersected){
         if (this->subWeapon2.type == ItemType::AXE)
         {
@@ -1022,9 +1029,12 @@ void Player::updateActiveSubWeapons3(float deltaTime, const sf::Vector2f &viewPo
     static bool hasExplodedOnce = false;        // To apply firebomb hit only once per explosion
 
     if (!this->weaponIsActive3)
-    {
+    {   
         return;
-    }    
+    }   
+    else{
+        std::cout << "Subweapon3 active" << std::endl;
+    }
     if(!this->subWeapon3.intersected){
         if (this->subWeapon3.type == ItemType::AXE)
         {

@@ -2118,7 +2118,7 @@ void PlayerAttackJumpSecondaryState::update(Player& player, float deltaTime, boo
     player.verticalSpeed += gPlayerGravity * deltaTime;
     player.sprite->move({0.f, player.verticalSpeed * deltaTime});
 
-    if (player.isWalking)
+    if (player.isWalking && !player.isOnGround)
     {
         if (player.dir == RIGHT)
         {
