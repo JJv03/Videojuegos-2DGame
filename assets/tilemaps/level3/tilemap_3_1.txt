@@ -35,5 +35,5 @@ end_stair
 water
 end_water
 enemies
-4,662.0,161.0
+9,500,160
 end_enemies

@@ -20,6 +20,7 @@ private:
     bool playerDetected = false;
     bool hasRedirected = false;
     sf::Vector2f playerPosition;
+    bool isPlayerRight = false;
 
     std::vector<AnimationManager::Frame> idleCrowFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(277, 75), sf::Vector2(16, 16)), 0.1f}
@@ -29,11 +30,21 @@ private:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(311, 75), sf::Vector2(16, 16)), 0.1f},
         AnimationManager::Frame{sf::IntRect(sf::Vector2(328, 75), sf::Vector2(16, 16)), 0.1f}
     };
-    
 
+    enum class State
+    {
+        MOVING,
+        WAITING,
+        POSITIONING,
+        ATTACK
+    };
+    
 public:
     int level; // Current game level
     int stage; // Current stage
+
+    State currentState = State::MOVING;
+    State prevState = State::MOVING;
 
     Crow() = default;
     Crow(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage);

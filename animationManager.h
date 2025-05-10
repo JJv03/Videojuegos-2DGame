@@ -60,6 +60,8 @@ enum animationID{
     redSkeletonDead,
     whiteSkeletonIdle,
     whiteSkeletonWalkAttack,
+    idleCrow,
+    flyingCrow,
 
 
     // Bosses
@@ -76,8 +78,6 @@ enum animationID{
     // Bandage  
     bandageAttack,
 
-
-
     // Dracula
     draculaMask,
     draculaIdle,
@@ -92,7 +92,6 @@ enum animationID{
     draculaSpiritLand,
     draculaSpiritFire,
     
-
     // Secondary weapon
     daggerThrowing,
     axeThrowing,

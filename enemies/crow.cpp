@@ -19,7 +19,27 @@ Crow::Crow(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hit
             {hitboxes[0].position.x - VISION_RANGE, hitboxes[0].position.y - VISION_RANGE},
             {hitboxes[0].size.x + (VISION_RANGE * 2), hitboxes[0].size.y + (VISION_RANGE * 2)});
     }
-    
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize Leopard AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(idleCrow, this->idleCrowFrames);
+    animationManager->addAnimation(flyingCrow, this->flyCrowFrames);
+
+    // animationManager->addAnimation(invulnerableSimon,this->invulnerableFrames,false);
+    this->currentAnimation = idleCrow;
+    animationManager->playAnimation(idleCrow);
+
+    this->animationManager = animationManager;
+    playerDetected = false;
+    hasRedirected = false;
+    isPlayerRight = false;
+    currentState = State::MOVING;
+    prevState = State::MOVING;
+    playerDetected = false;
 }
 
 // Update vision field based on current position
@@ -37,7 +57,108 @@ void Crow::updateVisionField()
 void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerDeactivationZone,
                      const sf::Vector2f &playerPos, const std::vector<sf::FloatRect> &simonBounds, const sf::FloatRect &mapBounds)
 {
+    playerPosition = playerPos;
+
+    // SPAWN LOGIC
+    bool enemyInsideActivationZone = false;
+    bool enemyInsideDeactivationZone = false;
+
+    for (const auto &hitbox : hitboxes)
+    {
+        if (playerActivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideActivationZone = true;
+        }
+        if (playerDeactivationZone.findIntersection(hitbox).has_value())
+        {
+            enemyInsideDeactivationZone = true;
+        }
+    }
+
+    // If the player is outside the deactivation zone, the enemy is allowed to reactivate in the future.
+    if (!enemyInsideDeactivationZone)
+    {
+        needsPlayerToLeaveZone = false;
+    }
+
+    // We only activate if the player is in the area, the enemy is not active and the player has previously moved away
+    if (enemyInsideActivationZone && !isActive && !needsPlayerToLeaveZone)
+    {
+        isActive = true;
+    }
+
+    // Deactivates if the enemy is active and has left the deactivation zone
+    if (isActive && !enemyInsideDeactivationZone)
+    {
+        isActive = false;
+        resetPosition();
+    }
+
+    isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+
+    if (isActive)
+    {
+        if (checkMapBoundaries(mapBounds))
+        {
+            return;
+        }
+
+        updateVisionField();
+
+        for (auto &hitbox : simonBounds)
+        {
+            if (visionField.findIntersection(hitbox).has_value())
+            {
+                playerDetected = true;
+                currentAnimation = flyingCrow;
+                break;
+            }
+        }
+
+        if(playerDetected){
+            switch(currentState){
+                case State::MOVING:
+
+                    break;
+                
+                case State::WAITING:
+
+                    break;
+                
+                case State::POSITIONING:
+
+                    break;
+
+                case State::ATTACK:
+
+                    break;
+            }
+        }
+    }
+
+    if(isPlayerRight){
+        sprite->setScale({-1.f, 1.f});
+    } else {
+        sprite->setScale({1.f, 1.f});
+    }
+    if (speed.x != 0)
+    {
+        sprite->move({speed.x * deltaTime, 0.f});
+        for (auto &hitbox : hitboxes)
+        {
+            hitbox.position.x += speed.x * deltaTime;
+        }
+    }
+    if (speed.y != 0)
+    {
+        sprite->move({0.f, speed.y * deltaTime});
+        for (auto &hitbox : hitboxes)
+        {
+            hitbox.position.y += speed.y * deltaTime;
+        }
+    }
     
+    updateAnimation(deltaTime);
 }
 
 void Crow::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
@@ -77,6 +198,10 @@ void Crow::resetPosition()
 
     playerDetected = false;
     hasRedirected = false;
+    isPlayerRight = false;
+    currentState = State::MOVING;
+    prevState = State::MOVING;
+    playerDetected = false;
 }
 
 // Render with optional debug visuals
@@ -103,7 +228,12 @@ void Crow::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void Crow::updateAnimation(float deltaTime)
 {
-    
+    if (!isActive || !sprite) return;
+
+    if(!animationManager->isPlaying(currentAnimation)){
+        animationManager->playAnimation(currentAnimation);
+    }
+    animationManager->update(deltaTime);
 }
 
 void Crow::hello() const
