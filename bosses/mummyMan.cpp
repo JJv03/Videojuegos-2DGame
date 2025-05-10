@@ -52,6 +52,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
             if (playerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
+                life = MUMMY_LIFE;
                 maxLife = life;
                 this->currentState = MummyState::IDLE;
                 break;
@@ -59,102 +60,116 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         }
     }
 
-    int chance = rand() % 2;
-    //int speedP = (rand()%10)+1;
-    int speedP = 10;
-    //int waitingTime = rand() % 4;
+
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
-    {   
-        sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
-        position = sprite->getGlobalBounds().position;
-        //sf::Vector2f map = mapDims.position;
-        //sf::Vector2f size = mapDims.size;
-        //float distance = playerPos.x - draculaSpiritPos.x;
-        if(started){
-            if (playerPos.x < position.x) {
-                if(firstTime){
-                    firstTime = false;
-                    sprite->move(sf::Vector2f(-16.f, 0.f));
-                }
-                sprite->setScale(sf::Vector2f(1.f, 1.f)); // Negative X scale flips the sprite
-                facingRight = -1;
-            } 
-            else {
-                if(firstTime){
-                    firstTime = false;
-                    sprite->move(sf::Vector2f(16.f, 0.f));
-                }
-                sprite->setScale(sf::Vector2f(-1.f, 1.f));
-                facingRight = 1;
-            }
-        }
-        /**/
-       switch (currentState)
-       {
-            case MummyState::WALK:
-                    currentAnimation = mummyWalk;
-                    sprite->move(sf::Vector2f(facingRight * deltaTime * speed.x, 0.f));
-                    if (chance == 0 && attackWaitingCounter >= attackWaitingTime && !lanzado)//&& (!bandage->getActive() || !bandage) )
-                    {
-                        this->currentState = MummyState::ATTACK;
-                        
-                    }
-                    else{
-                        attackWaitingCounter +=deltaTime;
-                    }
-                    
-                /* code */
-                break;
-                case MummyState::ATTACK:
-                    currentAnimation = mummyAttack;
-                    if (animationManager->isAnimationFinished())
-                    {
-                        position = sprite->getGlobalBounds().position;
-                        position.y = position.y +10;
-                        bandage = createBandage(position,mapDims,MUMMY_DAMAGE);
-                        bandage->setActive(true);
-                        bandage->velocity.x = 60.f*facingRight;
-                        bandage->velocity.y = 85.f;
-                        lanzado = true;
-                        speed.x = MUMMY_SPEED.x * (speedP/10.f);
-                        attackWaitingCounter = 0.f;
-                        this->currentState = MummyState::WALK;
-                    }
-                    
-                
-                /* code */
-                break;
-            default: //IDLE
-                    if(counterStarting>=time2Start){
-                        this->currentState = MummyState::WALK;
-                        counterStarting = 0.f;
-                        started = true;
-                        firstTime = true;
-                        attackWaitingCounter = 0.f;
-                    }
-                    else{
-                        counterStarting +=deltaTime;
+    {
+        sf::Vector2f playerPos = player.sprite->getPosition();
+        sf::Vector2f mummyPos = sprite->getPosition();
+        sf::FloatRect mummyBounds = sprite->getGlobalBounds();
 
+        // Verificar límites del mapa
+        bool atLeftEdge = mummyBounds.position.x  <= mapDims.position.x;
+        bool atRightEdge = mummyBounds.position.x + mummyBounds.size.x >= mapBounds.position.x + mapBounds.size.x;
+    
+        
+        // FSM
+        switch (currentState)
+        {
+            case MummyState::WALK:
+                currentAnimation = mummyWalk;
+                
+                // Cambio de dirección cuando llega a los bordes
+                if (atLeftEdge || atRightEdge)
+                {
+                    facingRight = atLeftEdge ? 1.f : -1.f;
+                    directionChanged = true;
+                }
+
+                // Cambio de dirección basado en la posición del jugador (sólo si no está en un borde)
+                if (!atLeftEdge && !atRightEdge && 
+                    ((playerPos.x < mummyPos.x && facingRight > 0) || 
+                    (playerPos.x > mummyPos.x && facingRight < 0)))
+                {
+                    // Sólo cambiar dirección si el jugador está a cierta distancia
+                    if (abs(playerPos.x - mummyPos.x) > 50.f)
+                    {
+                        facingRight = (playerPos.x < mummyPos.x) ? -1.f : 1.f;
+                        directionChanged = true;
                     }
-        break;
-       }
-    
-    if(bandage && bandage->sprite && bandage->getActive()){
-        bandage->update(deltaTime,mapBounds);
-    }
-    else{
-        lanzado = false;
-    }
-    
-      
+                }
+
+                // Aplicar cambio de dirección
+                if (directionChanged)
+                {
+                    sprite->setScale(sf::Vector2f(static_cast<float>(-facingRight), 1.f));
+                    sprite->move(sf::Vector2f(facingRight * 16.f, 0.f));
+                    directionChanged = false;
+                }
+                if (!(atLeftEdge && facingRight < 0) && !(atRightEdge && facingRight > 0))
+                {
+                    sprite->move(sf::Vector2f(facingRight * deltaTime * speed.x, 0.f));
+                }
+
+                actionTimer += deltaTime;
+                if (!lanzado && actionTimer >= nextActionTime && ((playerPos.x < mummyPos.x && facingRight == -1.f) ||( playerPos.x > mummyPos.x && facingRight == 1.f)) )
+                {
+                    currentState = MummyState::ATTACK;
+                    nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
+                    actionTimer = 0.f;
+                    
+                }
+                break;
+
+            case MummyState::ATTACK:
+                currentAnimation = mummyAttack;
+                if (animationManager->isAnimationFinished())
+                {
+                    
+                    
+                    sf::Vector2f position = sprite->getGlobalBounds().position;
+                    position.y += 10.f;
+                    bandage = createBandage(position, mapDims, MUMMY_DAMAGE);
+                    bandage->setActive(true);
+                    bandage->sprite->setScale(sf::Vector2f(static_cast<float>(-facingRight), 1.f));
+                    bandage->velocity.x = 60.f * facingRight;
+                    bandage->velocity.y = 85.f;
+                    lanzado = true;
+
+                    //speed.x = MUMMY_SPEED.x * (static_cast<float>((rand() % 10) + 1) / 10.f);
+                    currentState = MummyState::WALK;
+                }
+                break;
+
+            default: // IDLE
+                if (counterStarting >= time2Start)
+                {
+                    currentState = MummyState::WALK;
+                    counterStarting = 0.f;
+                    started = true;
+                    firstTime = true;
+                    attackWaitingCounter = 0.f;
+                }
+                else
+                {
+                    counterStarting += deltaTime;
+                }
+                break;
+        }
+
+        if (bandage && bandage->sprite && bandage->getActive())
+        {
+            bandage->update(deltaTime, mapBounds);
+        }
+        else
+        {
+            lanzado = false;
+        }
     }
 
     sf::FloatRect spriteBounds = sprite->getGlobalBounds();
     hitboxes[0] = spriteBounds;
-    
-    
-    
+
     updateAnimation(deltaTime);
 }
 
