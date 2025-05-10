@@ -263,6 +263,7 @@ void WhiteSkeleton::onCollision(Entity &other, Game &game, const sf::FloatRect& 
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetSkeleton();
+            needsPlayerToLeaveZone = true;
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
@@ -272,6 +273,7 @@ void WhiteSkeleton::onCollision(Entity &other, Game &game, const sf::FloatRect& 
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
             resetSkeleton();
+            needsPlayerToLeaveZone = true;
         }
     }
 }
