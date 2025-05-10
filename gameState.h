@@ -112,12 +112,15 @@ class MenuGS : public GameState{
 private:
     sf::Font font;
     std::vector<sf::Text> options;
+    std::vector<sf::Text> popUpText;
     int position;
     SoundManager menuSoundManager;
     configManager &configManager;
     bool exit, enterPressed;
     float timeOut = 0.0f;
-    float timeInterval = 30.f;
+    float timeInterval = 60.f;
+    bool showPopUp = false;
+    int colPopUp;
 public:
     explicit MenuGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~MenuGS() override;
@@ -136,11 +139,14 @@ class PauseGS : public GameState{
 private:
     sf::Font font, fontinputs;
     std::vector<sf::Text> configs;
+    std::vector<sf::Text> popUpText;
     int position, col;
     SoundManager pauseVolumeManager;
     configManager &configManager;
     int masterVol, musicVol, soundVol;
     bool cheats;
+    bool showPopUp = false;
+    int colPopUp;
 public:
     explicit PauseGS(GameStateMachine* machine) : GameState(machine), configManager(configManager::getInstance()) {}
     ~PauseGS() override;

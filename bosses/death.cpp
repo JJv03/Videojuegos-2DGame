@@ -361,7 +361,7 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
+        // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
@@ -375,7 +375,7 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
+        // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));

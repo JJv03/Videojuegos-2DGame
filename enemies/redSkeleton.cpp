@@ -18,8 +18,7 @@ RedSkeleton::RedSkeleton(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Fl
     waitingRespawnTimeCounter = 0.f;
     waitingDespawnTimeCounter = 0.f;
 
-    isPlayerRight = false;
-    facingRight = false;
+    moveRight = false;
     atTheEdge = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
@@ -83,35 +82,36 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
         {
             return;
         }
-
-        bool isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
-
-        if(isPlayerRight){
-            sprite->setScale({-1.f, 1.f});
-        } else {
-            sprite->setScale({1.f, 1.f});
+        
+        if(currentState == State::IDLE || currentState == State::WALKING){
+            if(moveRight){
+                sprite->setScale({-1.f, 1.f});
+            } else {
+                sprite->setScale({1.f, 1.f});
+            }
         }
+        
 
         float distance = 0.f;
-        if (isPlayerRight){
-            distance = playerPos.x - position.x;
-        }
-        else{
-            distance = position.x - playerPos.x;
-        }
 
-        // Random timer to attack
-
+        distance = abs(position.x - playerPos.x);
+        
         // STATE MACHINE
         switch(currentState){
             case State::DEAD:
                 currentAnimation = redSkeletonDead;
-                waitingDeadTimeCounter += deltaTime;
 
-                if(waitingDeadTimeCounter >= DEAD_TIME){
-                    waitingDeadTimeCounter = 0.f;
-                    currentState = State::RESPAWNING;
+                if(abs((sprite->getGlobalBounds().position.y + 32.f) - playerPos.y) <= 32.f){
+                    moveRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+
+                    waitingDeadTimeCounter += deltaTime;
+    
+                    if(waitingDeadTimeCounter >= DEAD_TIME){
+                        waitingDeadTimeCounter = 0.f;
+                        currentState = State::RESPAWNING;
+                    }
                 }
+                
                 break;
             
             case State::RESPAWNING:
@@ -124,11 +124,12 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
                 }
                 break;
 
-            case State::WALKINGCLOSE:
+            case State::WALKING:
                 currentAnimation = redSkeletonWalk;
 
+                
                 // Movement
-                if(isPlayerRight){
+                if(moveRight){
                     speed = sf::Vector2f(RED_SKELETON_SPEED.x, RED_SKELETON_SPEED.y);
                 }
                 else{
@@ -141,25 +142,16 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
                     prevState = currentState;
                     currentState = State::IDLE;
                 }
-                break;
 
-            case State::WALKINGAWAY:
-                currentAnimation = redSkeletonWalk;
-
-                // Movement
-                if(isPlayerRight){
-                    speed = sf::Vector2f(-RED_SKELETON_SPEED.x, RED_SKELETON_SPEED.y);
-                }
-                else{
-                    speed = sf::Vector2f(RED_SKELETON_SPEED.x, RED_SKELETON_SPEED.y);
+                if (speed.x != 0)
+                {
+                    sprite->move({speed.x * deltaTime, 0.f});
+                    for (auto &hitbox : hitboxes)
+                    {
+                        hitbox.position.x += speed.x * deltaTime;
+                    }
                 }
                 
-                walkTimeCounter += deltaTime;
-                if(walkTimeCounter >= WALK_TIME || atTheEdge){
-                    walkTimeCounter = 0.f;
-                    prevState = currentState;
-                    currentState = State::IDLE;
-                }
                 break;
 
             case State::IDLE:
@@ -170,26 +162,19 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
                 waitingIdleTimeCounter += deltaTime;
                 if(waitingIdleTimeCounter >= WALK_TIME){
                     waitingIdleTimeCounter = 0.f;
+
+                    bool isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+
+                    if(distance >= DISTANCE_TO_PLAYER + 8 && (isPlayerRight != moveRight)){    // 32/4, 1/4 of a tile
+                        moveRight = !moveRight;
+                    }
+
                     if(atTheEdge){
-                        if(prevState == State::WALKINGAWAY){
-                            currentState = State::WALKINGCLOSE;
-                        }
-                        else if(prevState == State::WALKINGCLOSE){
-                            currentState = State::WALKINGAWAY;
-                        }
-                        else{
-                            currentState = State::IDLE;
-                        }
+                        moveRight = !moveRight;
                         atTheEdge = false;
                     }
-                    else{
-                        if(distance < DISTANCE_TO_PLAYER + 8){    // 32/4, 1/4 of a tile
-                            currentState = State::WALKINGAWAY;
-                        }
-                        else{
-                            currentState = State::WALKINGCLOSE;
-                        }
-                    }
+            
+                    currentState = State::WALKING;
                 }
                 break;
 
@@ -206,16 +191,23 @@ void RedSkeleton::update(float deltaTime, const sf::FloatRect &playerActivationZ
                 default:
                 break;
         }
-        if (speed.x != 0)
-        {
-            sprite->move({speed.x * deltaTime, 0.f});
-            for (auto &hitbox : hitboxes)
+        
+        if(currentState == State::IDLE || currentState == State::WALKING){
+            applyGravity(deltaTime);
+
+            if (speed.y != 0)
             {
-                hitbox.position.x += speed.x * deltaTime;
+                sprite->move({0.f, -speed.y * deltaTime});
+                for (auto &hitbox : hitboxes)
+                {
+                    hitbox.position.y -= speed.y * deltaTime;
+                }
             }
         }
-
+        
         updateAnimation(deltaTime);
+
+        isOnGround = false;
     }
     
 }
@@ -266,8 +258,7 @@ void RedSkeleton::resetPosition()
     waitingRespawnTimeCounter = 0.f;
     waitingDespawnTimeCounter = 0.f;
 
-    isPlayerRight = false;
-    facingRight = false;
+    moveRight = false;
     atTheEdge = false;
 
     currentAnimation = redSkeletonDead;
