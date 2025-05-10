@@ -421,10 +421,22 @@ void TileMap::updateItems(const float& deltaTime) {
     }
 }
 
-void TileMap::updateMiscTiles(const float& delfaTime) {
+void TileMap::updateMiscTiles(const float& deltaTime) {
     for (auto tile : m_miscTiles) {
         if (!tile->isDestroyed) {
-            tile->update(delfaTime);
+            tile->update(deltaTime);
+        }
+    }
+}
+
+void TileMap::regenerateMiscTiles() {
+    for (auto tile : m_miscTiles) {
+        if (tile->isDestroyed) {
+            tile->isDestroyed = false;
+
+            if (tile->isCollidable()) {
+                tile->isBreakable = false;  // Can't be destroyed again
+            }
         }
     }
 }

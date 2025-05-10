@@ -101,6 +101,8 @@ public:
                             // If it is -1, the item NEVER disappears
     
     float m_spawnDelay;     // Delay before the item is spawned.
+
+    float m_sinusoidalTotalTime;    // Total time of the sinusoidal movement
     
     Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
          const float _lifeTime = 5.0f, const float _spawnDelay = 0.f);

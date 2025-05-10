@@ -335,6 +335,7 @@ void MiscellaneousTile::onCollision_Player(Entity& other, Game& game) {
     else if (Player* player = dynamic_cast<Player*>(&other); player && player->isDucking) {  // It's MiscTileType::DROP_TRIGGER
         auto audio = game.configManager.getAudio();
         gameSoundManager.playSound("secret_treasure", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+        
         game.createDropItem(this->dropType,
                             sf::Vector2f{static_cast<float>(this->dropItem_position.x),
                                          static_cast<float>(this->dropItem_position.y)});

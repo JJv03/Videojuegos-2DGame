@@ -135,7 +135,13 @@ public:
     void updateItems(const float& deltaTime);
 
     // Function that updates the animation of the miscellaneous tiles in the tilemap
-    void updateMiscTiles(const float& delfaTime);
+    void updateMiscTiles(const float& deltaTime);
+
+    // Function that regenerates the broken miscellaneous tiles in the tilemap 
+    void regenerateMiscTiles();
+
+    // Function that restarts completely the miscellaneous tiles in the tilemap
+    void restartMiscTiles();
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow &window, Camera &camera);
