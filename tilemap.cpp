@@ -459,6 +459,13 @@ void TileMap::drawHitboxes(sf::RenderWindow &window) const
         window.draw(rect);
     }
 
+    // Water
+    for (auto &waterZone : this->m_waterZones)
+    {
+        sf::RectangleShape rect = FloatRectToRectShape(waterZone.hitboxes[0], 2);
+        window.draw(rect);
+    }
+
     // Items
     for (auto &item : this->m_items)
     {
@@ -593,6 +600,8 @@ void TileMap::processFile(const std::string &file_path, std::vector<int> &solidT
     processFileMiscTiles(file);
 
     processFileStairTiles(file);
+
+    processFileWaterZone(file);
 
     processFileEnemies(file);
 
@@ -927,6 +936,64 @@ void TileMap::processFileStairTiles(std::ifstream &file)
             tile.type = static_cast<StairType>(stairType);
 
             m_stairTiles.push_back(tile);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error al procesar stair tile en la línea: " << line
+                      << ". Excepción: " << e.what() << std::endl;
+        }
+    }
+}
+
+void TileMap::processFileWaterZone(std::ifstream &file)
+{
+    std::string line;
+    std::getline(file, line);
+    if (line != "water")
+    {
+        std::cerr << "[Error] Expected 'water' but found: " << line << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line))
+    { // Until we find "end_water"
+        if (line == "end_water")
+            break;
+        if (line.empty())
+            continue;
+
+        std::stringstream ss(line);
+        std::string token;
+
+        try
+        {
+            // Extraction of X position
+            std::getline(ss, token, ',');
+            int posX = std::stoi(token);
+
+            // Extraction of Y position
+            std::getline(ss, token, ',');
+            int posY = std::stoi(token);
+
+            // Extraction of X size
+            std::getline(ss, token, ',');
+            int sizeX = std::stoi(token);
+
+            // Extraction of Y size
+            std::getline(ss, token, ',');
+            int sizeY = std::stoi(token);
+
+            sf::FloatRect hitbox;
+            hitbox.size.x = sizeX;
+            hitbox.size.y = sizeY;
+
+            hitbox.position.x = posX;
+            hitbox.position.y = posY;
+
+            WaterZone zone;
+            zone.hitboxes.emplace_back(hitbox);
+
+            m_waterZones.emplace_back(zone);
         }
         catch (const std::exception &e)
         {

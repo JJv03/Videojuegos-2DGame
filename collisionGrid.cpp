@@ -122,6 +122,9 @@ void CollisionGrid::checkCollisions(std::vector<Entity*>& staticEntities, std::v
                     d->onCollision(*s, *gameRef, *intersectionRect);
                     s->onCollision(*d, *gameRef, *intersectionRect);
                 }
+                else if (WaterZone* waterZone = dynamic_cast<WaterZone*>(s)) {
+                    waterZone->clearEntity(*d);
+                }
             }
         }
     }

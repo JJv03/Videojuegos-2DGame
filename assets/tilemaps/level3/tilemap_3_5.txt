@@ -24,6 +24,8 @@ miscellaneous
 end_miscellaneous
 stair
 end_stair
+water
+end_water
 enemies
 5,1046.f,97.f,20.0,20.0
 6,416.f,96.f

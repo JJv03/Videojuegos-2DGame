@@ -2,10 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <memory>
+#include <set>
 #include "animationManager.h"
 #include "entity.h"
 #include "item.h"
-
 
 
 class Game;
@@ -194,3 +194,18 @@ public:
 bool getStairType(int level, int tileNumber, StairTile::Type& stairType);
 
 
+// -------------------------------------------------
+
+class WaterZone : public Tile
+{
+public:
+    std::set<const Entity*> collisionedEntities;
+
+    WaterZone();
+    ~WaterZone() = default;
+
+    // Entity functions
+    void onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect) override;
+    void clearEntity(const Entity& entity);
+    void hello() const override;
+};

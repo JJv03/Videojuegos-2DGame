@@ -147,3 +147,28 @@ private:
     // Returns 'true' if the digits for the index 'index' are "00"
     bool isDoubleZeroDigits(int digit, int index, const std::vector<int>& digits);
 };
+
+
+// =================================================================================================
+// ===================================== WATER SLASH PARTICLE ======================================
+// =================================================================================================
+
+class WaterSplashParticle : public Particle {
+public:
+    WaterSplashParticle(const sf::Texture& texture, sf::Vector2f position);
+
+    void update(float deltaTime) override;
+    void draw(sf::RenderTarget& target) const override;
+    bool isAlive() const override;
+
+private:
+    struct Droplet {
+        sf::Sprite sprite;
+        sf::Vector2f velocity;
+    };
+
+    std::vector<Droplet> m_droplets;
+    float m_gravity;
+    float m_lifetime;
+    bool m_alive;
+};

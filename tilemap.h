@@ -70,6 +70,9 @@ private:
     // Function that processes the tilemap file's extra stair tiles section
     void processFileStairTiles(std::ifstream &file);
 
+    // Function to process the water zone section in tilemap file
+    void processFileWaterZone(std::ifstream &file);
+
     // Function to process the enemy section in tilemap file
     void processFileEnemies(std::ifstream &file);
 
@@ -119,6 +122,9 @@ public:
 
     // Vector with the properties of each stair tile
     std::vector<StairTile> m_stairTiles;
+
+    // Vector with the properties of each water
+    std::vector<WaterZone> m_waterZones;
 
     //BVHTree<Entity> solidTileBVH; // BVH tree for collision detection
 

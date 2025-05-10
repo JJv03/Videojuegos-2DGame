@@ -56,3 +56,7 @@ void ParticleSystem::spawnReallyBigFireParticle(sf::Vector2f position, bool addO
 void ParticleSystem::spawnPointsParticle(sf::Vector2f position, int points) {
     spawn<PointsParticle>(gTextures.at("miscTile_1"), position, points);
 }
+
+void ParticleSystem::spawnWaterSplashParticle(sf::Vector2f position) {
+    spawn<WaterSplashParticle>(gTextures.at("enemy"), position);
+}

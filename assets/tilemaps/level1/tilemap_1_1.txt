@@ -19,5 +19,7 @@ miscellaneous
 end_miscellaneous
 stair
 end_stair
+water
+end_water
 enemies
 end_enemies

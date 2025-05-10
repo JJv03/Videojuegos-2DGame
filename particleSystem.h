@@ -24,6 +24,7 @@ public:
     void spawnBigFireParticle(sf::Vector2f position, bool addOffset = true);
     void spawnReallyBigFireParticle(sf::Vector2f position, bool addOffset = true);
     void spawnPointsParticle(sf::Vector2f position, int points);
+    void spawnWaterSplashParticle(sf::Vector2f position);
 
 private:
     std::vector<std::unique_ptr<Particle>> particles;

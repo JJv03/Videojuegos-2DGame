@@ -24,6 +24,10 @@ const float REALLY_BIG_FIRE_PARTICLE_LIFETIME = 0.9f; // Particle lifetime in se
 // Points constants
 const float POINTS_PARTICLE_LIFETIME = 0.5f; // Particle lifetime in seconds
 
+// BreakBlock constants
+const float DROPLET_PARTICLE_GRAVITY = 400.f; // Gravity acceleration in pixels per second squared
+const float DROPLET_PARTICLE_LIFETIME = 4.f;  // Particle lifetime in seconds
+
 
 // =================================================================================================
 // ===================================== BREAK BLOCK PARTICLE ======================================
@@ -47,14 +51,11 @@ BreakBlockParticle::BreakBlockParticle(const sf::Texture& texture, sf::Vector2f 
             -std::abs(std::sin(angle_in_radians) * speed)
         };
 
-        Debris d {
-            sf::Sprite(texture),
-            velocity
-        };
-        d.sprite.setTextureRect(sf::IntRect({56, 69}, {7, 8}));
-        d.sprite.setPosition(position);
+        sf::Sprite sprite(texture);
+        sprite.setTextureRect(sf::IntRect({56, 69}, {7, 8}));
+        sprite.setPosition(position);
 
-        m_debris.push_back(d);
+        m_debris.emplace_back(sprite, velocity);
     }
 }
 
@@ -334,3 +335,57 @@ void PointsParticle::draw(sf::RenderTarget& target) const {
 bool PointsParticle::isAlive() const {
     return m_alive;
 }
+
+
+// =================================================================================================
+// ===================================== WATER SPLASH PARTICLE =====================================
+// =================================================================================================
+
+
+WaterSplashParticle::WaterSplashParticle(const sf::Texture& texture, sf::Vector2f position)
+    : m_gravity(DROPLET_PARTICLE_GRAVITY), m_lifetime(DROPLET_PARTICLE_LIFETIME), m_alive(true)
+{
+    const float angle_in_deg[] = {105.f, 75.f, 55.f };  // angle in which the debris will be thrown
+    const float sign[] = {-1.f, 1.f, 1.f };             // sign of the horizontal velocity of the debris
+    const float speed = 140.f;
+    const float max_angle_variation = 5.f; // 5 degrees of random variation
+
+    for (int i = 0; i < 3; ++i) {
+        float angle_variation = (static_cast<float>(rand()) / RAND_MAX) * max_angle_variation;
+        float angle_in_radians = (angle_in_deg[i] + angle_variation) * std::numbers::pi / 360.f;
+
+        sf::Vector2f velocity = {
+            sign[i] * std::cos(angle_in_radians) * speed / 4.f,
+            -std::abs(std::sin(angle_in_radians) * speed)
+        };
+
+        sf::Sprite sprite(texture);
+        sprite.setTextureRect(sf::IntRect({386, 28}, {8, 16}));
+        sprite.setPosition(position);
+
+        m_droplets.emplace_back(sprite, velocity);
+    }
+}
+
+void WaterSplashParticle::update(float deltaTime) {
+    for (auto& d : m_droplets) {
+        d.velocity.y += m_gravity * deltaTime;
+        d.sprite.move(d.velocity * deltaTime);
+    }
+
+    m_lifetime -= deltaTime;
+    if (m_lifetime <= 0.f) {
+        m_alive = false;
+    }
+}
+
+void WaterSplashParticle::draw(sf::RenderTarget& target) const {
+    for (const auto& d : m_droplets) {
+        target.draw(d.sprite);
+    }
+}
+
+bool WaterSplashParticle::isAlive() const {
+    return m_alive;
+}
+

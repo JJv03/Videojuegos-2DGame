@@ -326,11 +326,11 @@ void MiscellaneousTile::onCollision_Whip(Game& game){
 }
 
 void MiscellaneousTile::onCollision_Player(Entity& other, Game& game) {
-    sf::FloatRect tileBounds = this->hitboxes[0];   // Misc tiles only have 1 hitbox
+    sf::FloatRect *tileBounds = &this->hitboxes[0];   // Misc tiles only have 1 hitbox
 
     if (this->type != MiscTileType::DROP_TRIGGER) {
         bool hasCollided = false;
-        game.computePlayerTileIntersection(hasCollided, tileBounds);
+        game.computePlayerTileIntersection(hasCollided, *tileBounds);
     }
     else if (Player* player = dynamic_cast<Player*>(&other); player && player->isDucking) {  // It's MiscTileType::DROP_TRIGGER
         auto audio = game.configManager.getAudio();
@@ -389,3 +389,39 @@ bool getStairType(int level, int tileNumber, StairTile::Type& stairType){
     }
 }
 
+
+// -------------------------- WATER ZONE --------------------------
+
+WaterZone::WaterZone() : Tile() {
+    
+}
+
+
+void WaterZone::onCollision(Entity& other, Game& game, const sf::FloatRect& intersectionRect){
+    if (game.currentLevel != 1 || game.currentStage != 4) return;
+
+    if (this->collisionedEntities.find(&other) != this->collisionedEntities.end()) {
+        return;  // Already collided with this entity
+    }
+    
+    if (dynamic_cast<Player*>(&other)) {
+        this->collisionedEntities.insert(&other);
+        auto audio = game.configManager.getAudio();
+        gameSoundManager.playSound("water_surface_hit", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+        game.particleSystem.spawnWaterSplashParticle(intersectionRect.position + intersectionRect.size * 0.5f);
+    }
+    else if (dynamic_cast<Enemy*>(&other)) {
+        this->collisionedEntities.insert(&other);
+        auto audio = game.configManager.getAudio();
+        gameSoundManager.playSound("water_surface_hit", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
+        game.particleSystem.spawnWaterSplashParticle(intersectionRect.position + intersectionRect.size * 0.5f);
+    }
+}
+
+void WaterZone::clearEntity(const Entity& entity) {
+    this->collisionedEntities.erase(&entity);
+}
+
+void WaterZone::hello() const {
+    std::cout << "Soy WaterZone" << std::endl;
+}

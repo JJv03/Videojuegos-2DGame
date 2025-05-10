@@ -1311,6 +1311,8 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
         staticEntities.push_back(&*miscTile);
     for (auto &stairTile : tilemaps[currentStage].m_stairTiles)
         staticEntities.push_back(&stairTile);
+    for (auto &waterZone : tilemaps[currentStage].m_waterZones)
+        staticEntities.push_back(&waterZone);
 
     // 2. Add everything else (dynamic entities)
     dynamicEntities.clear();
