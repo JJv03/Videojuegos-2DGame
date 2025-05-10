@@ -47,17 +47,52 @@ void Item::update(const float deltaTime) {
     if (m_spawnDelay > 0.f) {
         m_spawnDelay -= deltaTime;
         
-        if (this->m_type == ItemType::MAGIC_CRYSTAL) {
-            if (!m_animationManager->isBlinking()) {
-                m_animationManager->setBlinking(true, 0.05f);
+        switch(this->m_type) {
+            case ItemType::MAGIC_CRYSTAL: {
+                if (!m_animationManager->isBlinking()) {
+                    m_animationManager->setBlinking(true, 0.05f);
+                }
+                m_animationManager->update(deltaTime);
+        
+                if (m_spawnDelay <= 0.f) {
+                    m_spawnDelay = 0.f;
+                    m_animationManager->setBlinking(false, 0.05f);
+                }
+
+                break;
             }
-            m_animationManager->update(deltaTime);
+
+            // case ItemType::FLASHING_MONEY_BAG: {
+            //     if (!m_animationManager->isBlinking()) {
+            //         m_animationManager->setBlinking(true, 0.05f);
+            //     }
+            //     m_animationManager->update(deltaTime);
+        
+            //     if (m_spawnDelay <= 0.f) {
+            //         m_spawnDelay = 0.f;
+            //         m_animationManager->setBlinking(false, 0.05f);
+            //     }
+
+            //     break;
+            // }
+
+            // case ItemType::ONE_UP: {
+            //     if (!m_animationManager->isBlinking()) {
+            //         m_animationManager->setBlinking(true, 0.05f);
+            //     }
+            //     m_animationManager->update(deltaTime);
+        
+            //     if (m_spawnDelay <= 0.f) {
+            //         m_spawnDelay = 0.f;
+            //         m_animationManager->setBlinking(false, 0.05f);
+            //     }
+
+            //     break;
+            // }
+            default:
+                break;
         }
 
-        if (m_spawnDelay <= 0.f) {
-            m_spawnDelay = 0.f;
-            m_animationManager->setBlinking(false, 0.05f);
-        }
         return; // Skip rest of the logic until spawned
     }
 
@@ -400,8 +435,8 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
 
 
     ItemType type;
-    float lifeTime = 5.f;
-    float spawnDelay = 0.f;
+    float lifeTime = 5.f;       // Lifetime of the item (in seconds). If "-1", item doesn't dispawn
+    float spawnDelay = 0.f;     // Delay before the item is spawned
 
     switch (dropType) {
         case DropType::NONE:
@@ -497,6 +532,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
             lifeTime = 10.f;
+            //spawnDelay = 1.5f;  
             break;
 
         case DropType::PORK_CHOP:
@@ -513,8 +549,8 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         
         case DropType::MAGIC_CRYSTAL:
             type = ItemType::MAGIC_CRYSTAL;
-            lifeTime = -1.f;    // Item doesn't dispawn
-            spawnDelay = 2.f;   // Delay before the item is spawned
+            lifeTime = -1.f;
+            spawnDelay = 2.f;
             break;
 
         case DropType::FIRE_BOMB:
@@ -540,6 +576,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::ONE_UP:
             type = ItemType::ONEUP;
             lifeTime = 10.f;
+            //spawnDelay = 1.5f;
             break;
 
         default:
