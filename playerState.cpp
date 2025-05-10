@@ -1176,8 +1176,8 @@ void PlayerAttackIdleState::update(Player& player, float deltaTime, bool windowH
         player.isAttacking = false;
         player.attackedFinished = true;
         //player.animationManager->setAnimationSpeed(1.0f); // 2x speed
-        player.sprite->setColor(sf::Color::White);
-        player.whip.sprite->setColor(sf::Color::White);
+        //player.sprite->setColor(sf::Color::White);
+        //player.whip.sprite->setColor(sf::Color::White);
         player.currentAnimation = idleSimon;
         player.whip.animationManager->playAnimation(noAnimation);
         player.setState(state<Idle>());
@@ -1332,8 +1332,8 @@ void PlayerAttackJumpState::update(Player& player, float deltaTime, bool windowH
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        player.sprite->setColor(sf::Color::White);
-        player.whip.sprite->setColor(sf::Color::White);
+        //player.sprite->setColor(sf::Color::White);
+        //player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(noAnimation);
         player.isJumpStanding = true;
         player.setState(state<Jump>());
@@ -1456,8 +1456,8 @@ void PlayerAttackDuckState::update(Player& player, float deltaTime, bool windowH
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        player.sprite->setColor(sf::Color::White);
-        player.whip.sprite->setColor(sf::Color::White);
+        //player.sprite->setColor(sf::Color::White);
+        //player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(noAnimation);
         if(player.isDucking){
             player.currentAnimation = duckSimon;
@@ -1598,8 +1598,8 @@ void PlayerAttackStairState::update(Player& player, float deltaTime, bool window
     {
         player.isAttacking = false;
         player.attackedFinished = true;
-        player.sprite->setColor(sf::Color::White);
-        player.whip.sprite->setColor(sf::Color::White);
+        //player.sprite->setColor(sf::Color::White);
+        //player.whip.sprite->setColor(sf::Color::White);
         player.whip.animationManager->playAnimation(noAnimation);
         if(player.stairStepDistance == 0.f){
             player.setState(state<StairIdle>());
@@ -2335,8 +2335,8 @@ void PlayerWhipUpgradeState::update(Player& player, float deltaTime, bool window
     else{
         if(player.invisibilityTimeCounter == 0.0f){ // Not invisible before
             player.isInvisible = false;
-            player.sprite->setColor(sf::Color::White);
-            player.whip.sprite->setColor(sf::Color::White);
+            //player.sprite->setColor(sf::Color::White);
+            //player.whip.sprite->setColor(sf::Color::White);
             player.visible = true;
         }
         
