@@ -98,6 +98,7 @@ void Leopard::update(float deltaTime, const sf::FloatRect &playerActivationZone,
     {
         isActive = false;
         resetPosition();
+        needsPlayerToLeaveZone = true;
     }
 
     // MOVEMENT AI LOGIC
