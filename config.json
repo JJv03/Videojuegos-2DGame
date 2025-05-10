@@ -5,7 +5,7 @@
         "sound_volume": 50
     },
     "cheats": {
-        "enabled": false
+        "enabled": true
     },
     "controls": {
         "attack": "Z",
