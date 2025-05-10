@@ -201,6 +201,7 @@ public:
     float lastHeight;
     bool hasFallen;
     
+    bool hadCheats = false;
     // Secondary weapon
     bool weaponIsActive;
 

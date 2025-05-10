@@ -143,10 +143,16 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
             this->sprite->setColor(sf::Color(255, 255, 255, 0));
             this->sprite->setColor(sf::Color(255, 255, 255, 128));
             this->isInvulnerable=true;
+            this->hadCheats = true;  
         }
         else{
             
-            if (this->isInvulnerable && !this->isInvisible)
+            if(!configManager.getCheats().enabled &&  this->hadCheats){
+                this->sprite->setColor(sf::Color::White);
+                this->isInvulnerable=false;
+                this->hadCheats = false;
+            }
+            else if (this->isInvulnerable && !this->isInvisible)
             {
                 this->blinkTimer += deltaTime;
                 if (this->blinkTimer >= this->blinkInterval) {
@@ -180,10 +186,7 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
                     this->invisibilityTimeCounter += deltaTime;
                 }
             }
-            else{
-                this->sprite->setColor(sf::Color::White);
-                this->isInvulnerable = false;
-            }
+
         }
         
         
