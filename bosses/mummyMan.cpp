@@ -195,7 +195,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
 
 void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
 {
-    if (!isActive || !sprite || currentState ==MummyState::IDLE || currentState ==MummyState::ATTACK )
+    if (!isActive || !sprite || currentState ==MummyState::IDLE ||( currentState ==MummyState::ATTACK && !configManager.getDifficulty().hard_mode) )
         return;
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
