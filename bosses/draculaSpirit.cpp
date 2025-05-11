@@ -196,9 +196,18 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     if (waitingInReadyCounter >= waitingInReady)
                         {
 
-                            waitingInSteadyCounter = 0.f;
-                            this->currentState = DraculeSpiritState::STEADY;
-                            waitingInReadyCounter = 0.f;
+                            if (!hasFired && mode.hard_mode)
+                            {
+                                fireCounter = 0.f;
+                                sprite->move({0.f,-16.f});
+                                this->currentState = DraculeSpiritState::FIRE;
+                            }
+                            else{
+                                waitingInSteadyCounter = 0.f;
+                                this->currentState = DraculeSpiritState::STEADY;
+                                waitingInReadyCounter = 0.f;
+                            } 
+                            
                         }
                     else{
                         waitingInReadyCounter += deltaTime;
@@ -634,13 +643,19 @@ void DraculaSpirit::updateWeights() {
         waitingInSteady = 0.25f;
         fireTimer = 0.6f;
         speedFire = 120.f;
+        if(lifeRatio < 0.15f){
+            weights[0] += 5; // More likely to flee
+            waitingIdle = 0.1f;
+            waitingInReady = 0.1f;
+            waitingInSteady = 0.1f;
+        }
     }
     else{
         waitingIdle = 0.5f;
         waitingInReady = 0.5f;
         waitingInSteady = 0.5f;
-        speedFire = 80.f;
-        fireTimer = 1.4f;
+        
+        
     }
 
     // If the player is attacking, avoid waiting for so long
@@ -669,9 +684,10 @@ void DraculaSpirit::updateWeights() {
         }
         
     } else if (playerAway) {
+        std::cout << "Away" << std::endl;
         speedFire = 120.f;
         fireTimer = 0.6f;
-        weights[1] += 3; // Try yo fire
+        weights[1] += 5; // Try yo fire
     }
 
     // Penalize repeating the same state
@@ -683,7 +699,7 @@ void DraculaSpirit::updateWeights() {
     // Rebalancing weights if all are zero
     int total = weights[0] + weights[1];
     if (total == 0) {
-        weights[1] = 1; // MOVING by default if all else fails
+        weights[0] = 1; // MOVING by default if all else fails
     }
 
     std::cout << "Weight MOVING: " << weights[0] << std::endl;
