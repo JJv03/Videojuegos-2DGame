@@ -790,6 +790,10 @@ bool Player::isWhipAtMaxLevel() const {
     return whip.whipLvl < gWhipMaxLevel;
 }
 
+int Player::getWhipLevel() const {
+    return whip.whipLvl;
+}
+
 void Player::hello() const {
     std::cout << "Soy Player" << std::endl;
 }
@@ -1258,6 +1262,13 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
                 playSound("whip_hit");
             }
         }
+        else if (Bone* bone = dynamic_cast<Bone *>(&other))
+        {
+            if (bone->getActive()){
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
+                playSound("whip_hit");
+            }
+        }
         else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other))
         {
             if(tile->isBreakable && !tile->isDestroyed){
@@ -1336,14 +1347,21 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
         }
         else if (Scythe* scythe = dynamic_cast<Scythe *>(&other))
         {
-            if(scythe->getActive()){
+            if (scythe->getActive()){
                 game.particleSystem.spawnHitParticle(intersectionRect.position);
                 playSound("whip_hit");
             }
         }
         else if (Axe* axe = dynamic_cast<Axe *>(&other))
         {
-            if(axe->getActive()){
+            if (axe->getActive()){
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
+                playSound("whip_hit");
+            }
+        }
+        else if (Bone* bone = dynamic_cast<Bone *>(&other))
+        {
+            if (bone->getActive()){
                 game.particleSystem.spawnHitParticle(intersectionRect.position);
                 playSound("whip_hit");
             }

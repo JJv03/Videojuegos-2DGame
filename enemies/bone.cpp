@@ -84,15 +84,15 @@ void Bone::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
     {
         isActive = false;
     }
-    // // Handle collision with weapons
-    // else if (dynamic_cast<Whip *>(&other))
-    // {
-    //     isActive = false;
-    // }
-    // else if (dynamic_cast<SubWeapon *>(&other))
-    // {
-    //     isActive = false;
-    // }
+    // Handle collision with weapons
+    else if (dynamic_cast<Whip *>(&other))
+    {
+        isActive = false;
+    }
+    else if (dynamic_cast<SubWeapon *>(&other))
+    {
+        isActive = false;
+    }
 }
 
 void Bone::reset(){

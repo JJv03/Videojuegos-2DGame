@@ -1747,7 +1747,10 @@ void Game::activateDoorTile(int doorId)
 
 void Game::createDropItem(DropType dropType, sf::Vector2f itemPosition)
 {
-    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, player.isWhipAtMaxLevel(),
+    int numMorningStars = tilemaps[currentStage].countMorningStarsOnStage();
+    int whipLvl = player.getWhipLevel();
+    bool canDropMorningStar = (numMorningStars + whipLvl) < gWhipMaxLevel;
+    std::shared_ptr<Item> item = getDropItem(dropType, itemPosition, canDropMorningStar,
                                              player.subWeaponType, player.isDoubleShotActive);
     if (item)
     {
