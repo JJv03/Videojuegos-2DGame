@@ -12,6 +12,17 @@ Medusa::Medusa(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     life = MEDUSA_LIFE;
     score = MEDUSA_SCORE;
     damage = MEDUSA_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize AxeMan AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(idleMedusa, this->idleMedusaFrames);
+
+    this->animationManager = animationManager;
+    currentAnimation = idleMedusa;
 }
 
 // Update medusa logic: handle spawning, movement, and deactivation
@@ -155,7 +166,7 @@ void Medusa::resetPosition()
 
     spawnTime = 0.0f;
 
-    currentAnimation = noAnimation;
+    currentAnimation = idleMedusa;
 }
 
 // Move medusa to spawn position at the edge of player's activation zone
@@ -228,6 +239,13 @@ void Medusa::updateAnimation(float deltaTime)
     {
         sprite->setScale({-1.0f, 1.0f});
     }
+
+    if (!isActive || !sprite) return;
+
+    if(!animationManager->isPlaying(currentAnimation)){
+        animationManager->playAnimation(currentAnimation);
+    }
+    animationManager->update(deltaTime);
 }
 
 void Medusa::hello() const

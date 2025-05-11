@@ -22,6 +22,11 @@ private:
     float spawnTime = 0.0f;
     float medusaSpawnTimers = 0.0f;
 
+    std::vector<AnimationManager::Frame> idleMedusaFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(119, 75), sf::Vector2(16, 16)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(136, 75), sf::Vector2(16, 16)), 0.15f}
+    };
+
 public:
     int level; // Current game level
     int stage; // Current stage within level

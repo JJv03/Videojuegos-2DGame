@@ -11,6 +11,17 @@ Ghost::Ghost(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     life = GHOST_LIFE;
     score = GHOST_SCORE;
     damage = GHOST_DAMAGE;
+
+    AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
+    if (!animationManager)
+    {
+        std::cerr << "Error: Failed to initialize AxeMan AnimationManager!" << std::endl;
+    }
+
+    animationManager->addAnimation(idleGhost, this->idleGhostFrames);
+
+    this->animationManager = animationManager;
+    currentAnimation = idleGhost;
 }
 
 // Main update loop
@@ -142,6 +153,8 @@ void Ghost::resetPosition()
     stunTime = 0.0f;
 
     sprite->setScale({1.0f, 1.0f});
+
+    currentAnimation = idleMedusa;
 }
 
 // Render with optional debug visuals
@@ -156,8 +169,6 @@ void Ghost::draw(sf::RenderWindow &window)
 // Update animation frame and direction
 void Ghost::updateAnimation(float deltaTime)
 {
-    // falta animacion ****
-
     // Flip sprite based on movement direction
     sf::Vector2f currentSpeed = speed;
 
@@ -169,6 +180,13 @@ void Ghost::updateAnimation(float deltaTime)
     {
         sprite->setScale({-1.0f, 1.0f});
     }
+
+    if (!isActive || !sprite) return;
+
+    if(!animationManager->isPlaying(currentAnimation)){
+        animationManager->playAnimation(currentAnimation);
+    }
+    animationManager->update(deltaTime);
 }
 
 void Ghost::hello() const
