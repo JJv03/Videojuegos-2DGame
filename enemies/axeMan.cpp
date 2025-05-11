@@ -74,10 +74,10 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
     if (isActive)
     {   
         position = sprite->getGlobalBounds().position;
-        if (checkMapBoundaries(mapBounds))
-        {
-            return;
-        }
+        // if (checkMapBoundaries(mapBounds))
+        // {
+        //     return;
+        // }
 
         isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
 
