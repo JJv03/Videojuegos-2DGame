@@ -758,18 +758,21 @@ void Player::onCollision_Item(Entity &entityItem)
     }
     else if (itemType == ItemType::DOUBLE_SHOT)
     {
-         playSound("other_item_pick");
-         this->isDoubleShotActive = true;
+        playSound("other_item_pick");
+        this->isDoubleShotActive = true;
     }
     else if (itemType == ItemType::TRIPLE_SHOT)
     {
-         playSound("other_item_pick");
-         this->isTripleShotActive = true;
+        playSound("other_item_pick");
+        this->isTripleShotActive = true;
     }
     else if (itemType == ItemType::MAGIC_CRYSTAL) {
         playSound("other_item_pick");
         this->health = this->maxHealth;
         return;
+    }
+    else if (itemType == ItemType::FLASHING_MONEY_BAG) {
+        playSound("score_item_pick");
     }
     else if (itemType == ItemType::ONEUP)
     {
