@@ -20,6 +20,11 @@ private:
     const float STUN_DURATION = 0.05f;
     const float MIN_PLAYER_DISTANCE_TO_SPAWN = 85.0f;
 
+    std::vector<AnimationManager::Frame> idleGhostFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 75), sf::Vector2(16, 16)), 0.15f},
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(18, 75), sf::Vector2(16, 16)), 0.15f}
+    };
+
 public:
     int level; // Current game level
     int stage; // Current stage
