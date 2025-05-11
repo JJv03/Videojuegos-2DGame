@@ -639,6 +639,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
         if (player.activateRosario)
         {
             enemyManager->restartEnemies(currentLevel, currentStage);
+            enemyManager->turnOffAutoSpawn(currentLevel, currentStage);
             isRosarioBlinking = true;
             rosarioBlinkClock.restart();
             player.activateRosario = false;

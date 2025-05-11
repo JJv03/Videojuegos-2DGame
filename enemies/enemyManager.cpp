@@ -643,3 +643,95 @@ void EnemyManager::restartEnemies(int currentLevel, int currentStage)
         }
     }
 }
+
+
+void EnemyManager::turnOffAutoSpawn(int currentLevel, int currentStage)
+{
+    for (auto &zombieSpawner : zombiesSpawner)
+    {
+        if (zombieSpawner.level == currentLevel && zombieSpawner.stage == currentStage)
+        {
+            for(auto& zombie : zombieSpawner.zombies)
+            {
+                zombie->needsPlayerToLeaveZone = true;
+            }
+        }
+    }
+    for (auto &leopard : leopard)
+    {
+        if (leopard->level == currentLevel && leopard->stage == currentStage)
+        {
+            leopard->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &bat : bat)
+    {
+        if (bat->level == currentLevel && bat->stage == currentStage)
+        {
+            bat->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &fishman : fishman)
+    {
+        if (fishman->level == currentLevel && fishman->stage == currentStage)
+        {
+            fishman->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &ghost : ghost)
+    {
+        if (ghost->level == currentLevel && ghost->stage == currentStage)
+        {
+            ghost->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &medusa : medusa)
+    {
+        if (medusa->level == currentLevel && medusa->stage == currentStage)
+        {
+            medusa->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &cannon : cannon)
+    {
+        if (cannon->level == currentLevel && cannon->stage == currentStage)
+        {
+            cannon->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &axeman : axeman)
+    {
+        if (axeman->level == currentLevel && axeman->stage == currentStage)
+        {
+            axeman->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &redSkeleton : redSkeleton)
+    {
+        if (redSkeleton->level == currentLevel && redSkeleton->stage == currentStage)
+        {
+            redSkeleton->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &crow : crow)
+    {
+        if (crow->level == currentLevel && crow->stage == currentStage)
+        {
+            crow->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &whiteSkeleton : whiteSkeleton)
+    {
+        if (whiteSkeleton->level == currentLevel && whiteSkeleton->stage == currentStage)
+        {
+            whiteSkeleton->needsPlayerToLeaveZone = true;
+        }
+    }
+    for (auto &hunchback : hunchback)
+    {
+        if (hunchback->level == currentLevel && hunchback->stage == currentStage)
+        {
+            hunchback->needsPlayerToLeaveZone = true;
+        }
+    }
+}
