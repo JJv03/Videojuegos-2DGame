@@ -351,12 +351,12 @@ std::vector<Entity *> BossManager::getBosses(int currentLevel, int currentStage)
                 allBosses.push_back(draculaSpirit->getProjectile3().get());
             }
             allBosses.push_back(draculaSpirit);
-            for(auto& projectil : draculaSpirit->projectiles){
+            /*for(auto& projectil : draculaSpirit->projectiles){
                 if (projectil)
                 {
                     allBosses.push_back(projectil.get());
                 }
-            }
+            }*/
         }
     }
 

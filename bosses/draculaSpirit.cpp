@@ -62,11 +62,11 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             {
                 isActive = true;
                 maxLife = life;
-                respawned = true;
+                
                 if(!reproduced){
                     reproduced = true;
                     this->currentState = DraculeSpiritState::IDLE;
-                    
+                    respawned = true;
                     gameSoundManager.stopAllMusic();
                     auto audio = configManager.getAudio();
                     gameSoundManager.playMusicSequence("dracula2.1", "dracula2.2", true, gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
