@@ -74,7 +74,7 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
     if (isActive)
     {   
         position = sprite->getGlobalBounds().position;
-        // if (checkMapBoundaries(mapBounds))
+        // if (checkMapBoundaries(mapBounds))   // Without this it doesnt matter if he runs out of the mapBounds (avoid bugs)
         // {
         //     return;
         // }

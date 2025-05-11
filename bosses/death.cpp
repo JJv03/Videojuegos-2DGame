@@ -34,6 +34,8 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     startingMove = false;
     playerClose = false;
     playerAway = false;
+    collisionWithHolyWater = false;
+    paralizeCounter = 0.7f;
 }
 
 // Update Death logic: handle spawning, movement, and deactivation
@@ -64,8 +66,8 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
         // sf::Vector2f size = mapDims.size;
         // std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
 
-        timer += deltaTime;
         if(starting){
+            timer += deltaTime;
             if (timer >= sleepInterval) {
                 timer = 0.0f;
                 starting = false;
@@ -79,6 +81,7 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
         }
         else{
             if(goingDown){
+                timer += deltaTime;
                 if (timer >= moveInterval) {    // Arrived to the goal
                     timer = 0;
                     speed = sf::Vector2f(0, 0);
@@ -93,34 +96,23 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                 playerClose = horizontalDistance < 70.f;
                 playerAway = horizontalDistance > 120.f;
 
-                switch(currentState){
-                    case State::ATTACKING:
-                        // ATTACK LOGIC
-                        if(!generated){
-                            // auto audio = configManager.getAudio();
-                            // gameSoundManager.playSound("17", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-                            generateScythes(playerBounds.position, mapDims);
-                        }
-                        if (timer >= attackInterval) {    // Attack timer
-                            timer = 0;
-                            generated = false;
-                            int chance = rand() % 2;
-                            if(mode.hard_mode && chance == 0 && !triedAI){ // Enhanced AI
-                                if(playerBounds.position.x < 15 || playerBounds.position.x > 225){
-                                    std::cout << "ALL OUT ATTACK" << std::endl;
-                                    triedAI = true;
-                                    auto audio = configManager.getAudio();
-                                    gameSoundManager.playSound("falling_stage2", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
-                                    for(auto& scythe : scythes){
-                                        if(scythe && scythe->sprite && scythe->getActive()){
-                                            sf::Vector2f attackPosition = playerBounds.position;
-                                            scythe->planPosSpeed(attackPosition);
-                                        }
-                                    }
-                                }
-                                else{
-                                    chance = rand() % 2;
-                                    if(chance == 0){
+                if(paralizeCounter>=paralizeTimer){
+                    timer += deltaTime;
+                    collisionWithHolyWater = false;
+                    switch(currentState){
+                        case State::ATTACKING:
+                            // ATTACK LOGIC
+                            if(!generated){
+                                // auto audio = configManager.getAudio();
+                                // gameSoundManager.playSound("17", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                                generateScythes(playerBounds.position, mapDims);
+                            }
+                            if (timer >= attackInterval) {    // Attack timer
+                                timer = 0;
+                                generated = false;
+                                int chance = rand() % 2;
+                                if(mode.hard_mode && chance == 0 && !triedAI){ // Enhanced AI
+                                    if(playerBounds.position.x < 15 || playerBounds.position.x > 225){
                                         std::cout << "ALL OUT ATTACK" << std::endl;
                                         triedAI = true;
                                         auto audio = configManager.getAudio();
@@ -133,70 +125,89 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
                                         }
                                     }
                                     else{
-                                        triedAI = false;
-                                        for(auto& scythe : scythes){
-                                            if(scythe && scythe->sprite && scythe->getActive()){
-                                                sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
-                                                scythe->planPosSpeed(randomPosition);
+                                        chance = rand() % 2;
+                                        if(chance == 0){
+                                            std::cout << "ALL OUT ATTACK" << std::endl;
+                                            triedAI = true;
+                                            auto audio = configManager.getAudio();
+                                            gameSoundManager.playSound("falling_stage2", gameSoundManager.realVolume(audio.master_volume, audio.sound_volume));
+                                            for(auto& scythe : scythes){
+                                                if(scythe && scythe->sprite && scythe->getActive()){
+                                                    sf::Vector2f attackPosition = playerBounds.position;
+                                                    scythe->planPosSpeed(attackPosition);
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            triedAI = false;
+                                            for(auto& scythe : scythes){
+                                                if(scythe && scythe->sprite && scythe->getActive()){
+                                                    sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
+                                                    scythe->planPosSpeed(randomPosition);
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            else{
-                                triedAI = false;
-                                for(auto& scythe : scythes){
-                                    if(scythe && scythe->sprite && scythe->getActive()){
-                                        sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
-                                        scythe->planPosSpeed(randomPosition);
+                                else{
+                                    triedAI = false;
+                                    for(auto& scythe : scythes){
+                                        if(scythe && scythe->sprite && scythe->getActive()){
+                                            sf::Vector2f randomPosition = getRandomScythesPos(playerBounds.position);
+                                            scythe->planPosSpeed(randomPosition);
+                                        }
                                     }
                                 }
+
+                                if(mode.hard_mode){
+                                    selectNewState();
+                                }
+                                else{
+                                    startingMove = false;
+                                    currentState = State::MOVING;
+                                }
+                            }
+                            break;
+                        
+                        case State::MOVING:
+                            if(!startingMove){
+                                selectObjective();
+                                startingMove = true;
+                                timer = 0;
                             }
 
-                            if(mode.hard_mode){
-                                selectNewState();
+                            if (timer >= moveInterval) {    // Move timer
+                                timer = 0;
+                                speed = sf::Vector2f(0, 0);
+                                if(mode.hard_mode){
+                                    selectNewState();
+                                }
+                                else{
+                                    currentState = State::WAITING;
+                                }
                             }
                             else{
-                                startingMove = false;
-                                currentState = State::MOVING;
+                                getDoubleSpeed();
+                                doubleMoveTimer += deltaTime;
                             }
-                        }
-                        break;
-                    
-                    case State::MOVING:
-                        if(!startingMove){
-                            selectObjective();
-                            startingMove = true;
-                            timer = 0;
-                        }
+                            break;
 
-                        if (timer >= moveInterval) {    // Move timer
-                            timer = 0;
-                            speed = sf::Vector2f(0, 0);
-                            if(mode.hard_mode){
-                                selectNewState();
+                        case State::WAITING:
+                            if(timer >= waitInterval){
+                                timer = 0;
+                                if(mode.hard_mode){
+                                    selectNewState();
+                                }
+                                else{
+                                    currentState = State::ATTACKING;
+                                }
                             }
-                            else{
-                                currentState = State::WAITING;
-                            }
-                        }
-                        else{
-                            getDoubleSpeed();
-                            doubleMoveTimer += deltaTime;
-                        }
-                        break;
-
-                    case State::WAITING:
-                        if(timer >= waitInterval){
-                            timer = 0;
-                            if(mode.hard_mode){
-                                selectNewState();
-                            }
-                            else{
-                                currentState = State::ATTACKING;
-                            }
-                        }
-                        break;
+                            break;
+                    }
+                }
+                else{
+                    speed = sf::Vector2f(0, 0);
+                    paralizeCounter += deltaTime;
                 }
             }
         }
@@ -386,6 +397,14 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
             }
             game.particleSystem.spawnBigFireParticle(position, false);
         }
+        if (subWeapon->type == ItemType::FIRE_BOMB)
+        {
+            collisionWithHolyWater = true;
+            paralizeCounter = 0.f;
+        }
+        else{
+            collisionWithHolyWater = false;
+        }
     }
     currentBossLife = life;
 }
@@ -447,6 +466,9 @@ void Death::resetPosition()
     startingMove = false;
     playerClose = false;
     playerAway = false;
+
+    collisionWithHolyWater = false;
+    paralizeCounter = 0.7f;
 
     for(auto& s : scythes){
         if(s) s->reset();
