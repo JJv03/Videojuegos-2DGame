@@ -386,7 +386,6 @@ void MenuGS::handleInput(sf::Event event){
                         case 3:
                             colPopUp = 0;
                             showPopUp = true;
-                            enterPressed = false;
                             if (!menuSprites.empty()) {
                                 timeOut = 0;
                                 sf::Sprite torch = menuSprites.back();
@@ -441,6 +440,11 @@ void MenuGS::handleInput(sf::Event event){
                 }
                 std::cout << colPopUp << std::endl;
             }
+        }
+    }
+    else{
+        if(showPopUp){
+            enterPressed = false;
         }
     }
 }
@@ -2240,14 +2244,14 @@ void GameplayConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[4] = {"SCREEN MODE", "ADVANCED MODE", "CHEATS", "CUSTOM SKINS"};
+    std::string textos[4] = {"FULLSCREEN", "ADVANCED MODE", "CHEATS", "CUSTOM SKINS"};
     for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
-        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 35.f;
+        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 38.f;
         float yPos = 125.f + i * 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
@@ -2410,7 +2414,7 @@ void GameplayConfGS::draw(sf::RenderWindow& window, Camera& camera){
     }
 
     std::string boolTexts[4] = {
-        video ? "FSCRN" : "WINDOW",
+        video ? "ON" : "OFF",
         difficulty ? "ON" : "OFF",
         cheats ? "ON" : "OFF",
         skins ? "ON" : "OFF"

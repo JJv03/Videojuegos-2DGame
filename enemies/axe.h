@@ -28,7 +28,7 @@ public:
     float damage;
 
     float timer = 0.f;
-    const float timeToMove = 2.5f;
+    const float timeToMove = 2.0f;
     bool changedSpeed = false;
 
     Axe() = default;

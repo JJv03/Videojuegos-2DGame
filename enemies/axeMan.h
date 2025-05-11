@@ -7,7 +7,7 @@ class AxeMan : public Enemy
 {
 private:
     // Movement constants
-    const sf::Vector2f AXEMAN_SPEED = {30.0f, 0.0f};
+    const sf::Vector2f AXEMAN_SPEED = {25.0f, 0.0f};
 
     // Combat stats
     const float AXEMAN_LIFE = 13.5f;
