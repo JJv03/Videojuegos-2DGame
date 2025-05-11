@@ -83,6 +83,7 @@ public:
     bool isOtherDead = false;
     bool dead = false;
     
+    int id;
     // IA 
     int weights[2] = {1, 1};
     bool playerClose = false;

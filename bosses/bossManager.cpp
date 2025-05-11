@@ -205,10 +205,12 @@ void BossManager::loadBossesFromLevel(int level, const TilemapManager &tilemaps)
                 if (bossData.type== 111)
                 {
                     mummyMan1 = createMummyMan(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
+                    mummyMan1->id = 1;
                 }
                 if (bossData.type== 112)
                 {
                     mummyMan2 = createMummyMan(bossData.position, level, currentStage, tilemap.getMapBoundsBossFight());
+                    mummyMan2->id = 2;
                 }
 
                 

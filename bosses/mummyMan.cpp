@@ -53,7 +53,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
             {
                 isActive = true;
                 life = MUMMY_LIFE;
-                maxLife = life;
+                maxLife = currentMummy1Life + currentMummy2Life;
                 this->currentState = MummyState::IDLE;
                 break;
             }
@@ -181,7 +181,7 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         {
             lanzado = false;
         }
-        currentBossLife = life;
+        
     }
 
     sf::FloatRect spriteBounds = sprite->getGlobalBounds();
@@ -233,6 +233,12 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
         }
 
     }
+    if(id==1){
+            currentMummy1Life = life;
+        }else{
+            currentMummy2Life = life;
+        }
+        currentBossLife = currentMummy1Life + currentMummy2Life;
     
 }
 
@@ -274,7 +280,8 @@ void MummyMan::resetPosition()
     attacking = false;
     weights[0] = 1;
     weights[1] = 1;
-
+    currentMummy1Life  = MUMMY_LIFE;
+    currentMummy2Life = MUMMY_LIFE;
     playerClose = false;
     playerAway = false;
     nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
