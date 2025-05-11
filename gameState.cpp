@@ -2309,19 +2309,19 @@ void GameplayConfGS::handleInput(sf::Event event){
     auto controls = configManager.getControls();
     if(!enterPressed){
         if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
-            if (keyPressed->scancode == controls.down && position < 4) {    
+            if (keyPressed->scancode == controls.down && position < 4) {
                 position ++;
             }
 
-            if (keyPressed->scancode == controls.up && position > 0) {    
+            if (keyPressed->scancode == controls.up && position > 0) {
                 position --;
             }
 
-            if (keyPressed->scancode == controls.right && position == 4 && col == 0) {    
+            if (keyPressed->scancode == controls.right && position == 4 && col == 0) {
                 col = 1;
             }
 
-            if (keyPressed->scancode == controls.left && position == 4 && col == 1) {    
+            if (keyPressed->scancode == controls.left && position == 4 && col == 1) {
                 col = 0;
             }
 
@@ -2382,7 +2382,7 @@ void GameplayConfGS::handleInput(sf::Event event){
                 gameplayConfigSprites.pop_back();
                 float torchX = 0;
                 float torchY = 0;
-                if (position <= 2){
+                if (position <= 3){
                     torchX = configs[position+1].getPosition().x - 20.f;
                     torchY = configs[position+1].getPosition().y + 2.f;
                 }
