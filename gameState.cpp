@@ -2240,14 +2240,14 @@ void GameplayConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[4] = {"SCREEN MODE", "ADVANCE MODE", "CHEATS", "CUSTOM SKINS"};
+    std::string textos[4] = {"SCREEN MODE", "ADVANCED MODE", "CHEATS", "CUSTOM SKINS"};
     for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
-        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 40.f;
+        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 35.f;
         float yPos = 125.f + i * 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
@@ -2287,7 +2287,7 @@ void GameplayConfGS::init(){
 
     torch.setScale(sf::Vector2f(torch.getScale().x * 1.5f, torch.getScale().y * 1.5f));
 
-    float torchX = configs[1].getPosition().x - 25.f;
+    float torchX = configs[1].getPosition().x - 20.f;
     float torchY = configs[1].getPosition().y + 2.f;
     torch.setPosition(sf::Vector2f(torchX, torchY));
 
@@ -2379,11 +2379,11 @@ void GameplayConfGS::handleInput(sf::Event event){
                 float torchX = 0;
                 float torchY = 0;
                 if (position <= 2){
-                    torchX = configs[position+1].getPosition().x - 25.f;
+                    torchX = configs[position+1].getPosition().x - 20.f;
                     torchY = configs[position+1].getPosition().y + 2.f;
                 }
                 else{
-                    torchX = configs[position+1+col].getPosition().x - 25.f;
+                    torchX = configs[position+1+col].getPosition().x - 20.f;
                     torchY = configs[position+1+col].getPosition().y + 2.f;
                 }
                 torch.setPosition(sf::Vector2f(torchX, torchY));
