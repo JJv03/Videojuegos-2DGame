@@ -15,7 +15,34 @@ DraculaBody::DraculaBody(std::shared_ptr<sf::Sprite> _draculaSprite, std::vector
 
 
 void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect){
+    auto mode = dracula->configManager.getDifficulty();
 
+    if(mode.hard_mode){
+        if (Whip *whip = dynamic_cast<Whip *>(&other))
+        {
+            if (!whip->collisionedEntities.contains(this))
+            {
+                dracula->hasBeenHurtThisTime = true;
+                if(dracula->applyDamage(whip->whipDmg, game.player)){
+                    sprite->setColor(sf::Color::White);
+                    dracula->sprite->setColor(sf::Color::White);
+                    dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;
+                }
+            }
+        }
+        else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
+        {
+            if (!subWeapon->collisionedEntities.contains(this))
+            {
+                dracula->hasBeenHurtThisTime = true;
+                if(dracula->applyDamage(subWeapon->subDamage, game.player)){
+                    sprite->setColor(sf::Color::White);
+                    dracula->sprite->setColor(sf::Color::White);
+                    dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;
+                }
+            }
+        }
+    }
 }
 
 void DraculaBody::hello() const {
@@ -109,6 +136,10 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
 // Update dracula logic: handle spawning, movement, and deactivation
 void Dracula::update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds)
 {
+    if(!draculaBody->dracula || draculaBody->dracula != this){
+        draculaBody->dracula = this;
+    }
+
     // SPAWN LOGIC
     if (!isActive && phase == 1)
     {
@@ -533,11 +564,6 @@ bool Dracula::shouldStartAnotherAttack(const Player& player) {
         return false;
     }
 
-    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
-        //std::cout << "shouldStartAnotherAttack: Double-attack can't happen twice in a row" << std::endl;
-        return false;
-    }
-
     if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen if dracula is not almost dead
         //std::cout << "shouldStartAnotherAttack: Triple-or-more-attack can't happen" << std::endl;
         if(lifeRatio < 0.3) return true;
@@ -943,13 +969,9 @@ float clamp(float v, float lo, float hi) {
 void Dracula::updateWeights() {
 
     // Keep weights between values
-    // Weight[0] between -10 and +10
+    // Weight[0] between -5 and +5
     weights[0] = clamp(weights[0], -5.f, 5.f);
     weights[1] = clamp(weights[1], -5.f, 5.f);
-
-
-    //std::cout << "Weight IDLE: " << weights[0] << std::endl;
-    std::cout << "Weight ATTACK: " << weights[1] << std::endl;
 }
 
 

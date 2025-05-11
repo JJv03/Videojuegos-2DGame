@@ -3,6 +3,8 @@
 #include "boss.h"
 #include "../enemies/projectile.h"
 
+class Dracula;
+
 class DraculaBody : public EntitySprite {
 public:
     std::vector<AnimationManager::Frame> idleDraculaFrames{
@@ -18,6 +20,7 @@ public:
 
     float damage; 
     sf::Vector2f position;
+    Dracula *dracula;
 
     // Handle collisions
     void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
@@ -79,8 +82,7 @@ private:
 
     int attacksThisTime;
     int attacksLastTime;
-    bool hasBeenHurtThisTime;
-    bool hasBeenHurtLastTime;
+
 
     const float PROB_HIGH = 0.9f;
     const float PROB_MID = 0.5f;
@@ -108,6 +110,9 @@ private:
 public:
     int level; // Current game level
     int stage; // Current stage within level
+
+    bool hasBeenHurtThisTime;
+    bool hasBeenHurtLastTime;
 
     bool isDead;
 
