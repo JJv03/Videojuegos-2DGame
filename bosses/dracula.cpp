@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include <algorithm>
 #include "../configManager.h"
 
 static std::random_device rd;       // we only want 1 instance of random_device
@@ -64,6 +65,8 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
 
     attacksThisTime = 0;
     attacksLastTime = 0;
+    hasBeenHurtThisTime = false;
+    hasBeenHurtLastTime = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -98,7 +101,8 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
     bodyAnimationManager->addAnimation(draculaAttack, draculaBody->attackDraculaFrames);
 
     draculaBody->animationManager = bodyAnimationManager;
-
+    weights[0] = 0.f;
+    weights[1] = 0.f;
     currentState = DraculaState::ASLEEP;
 }
 
@@ -174,7 +178,7 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
         case DraculaState::BODY_APPEAR:
             if(appearBody(deltaTime)){
                 idleTimeCounter = 0.f;
-                WAIT_IDLE_TIME = randomIdleTime();
+                WAIT_IDLE_TIME = randomIdleTime(player);
                 currentState = DraculaState::BATTLE_IDLE;
             }
             break;
@@ -221,7 +225,7 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
         case DraculaState::BATTLE_APPEAR:
             if(appear(deltaTime)){
                 idleTimeCounter = 0.f;
-                WAIT_IDLE_TIME = randomIdleTime();
+                WAIT_IDLE_TIME = randomIdleTime(player);
                 currentState = DraculaState::BATTLE_IDLE;
             }
             break;
@@ -300,7 +304,7 @@ void Dracula::updateHardMode(float deltaTime, const Player &player, const sf::Fl
         case DraculaState::BODY_APPEAR:
             if(appearBody(deltaTime)){
                 idleTimeCounter = 0.f;
-                WAIT_IDLE_TIME = randomIdleTime();
+                WAIT_IDLE_TIME = randomIdleTime(player);
                 currentState = DraculaState::BATTLE_IDLE;
             }
             break;
@@ -372,6 +376,8 @@ void Dracula::updateHardMode(float deltaTime, const Player &player, const sf::Fl
                     timesPlayerHasNotSwitchedSides = 0;
                 }
 
+                hasBeenHurtLastTime = hasBeenHurtThisTime;
+                hasBeenHurtThisTime = false;
                 adjustHead = true;
                 currentState = DraculaState::BATTLE_APPEAR;
             }
@@ -380,7 +386,7 @@ void Dracula::updateHardMode(float deltaTime, const Player &player, const sf::Fl
         case DraculaState::BATTLE_APPEAR:
             if(appear(deltaTime)){
                 idleTimeCounter = 0.f;
-                WAIT_IDLE_TIME = randomIdleTime();
+                WAIT_IDLE_TIME = randomIdleTime(player);
                 currentState = DraculaState::BATTLE_IDLE;
             }
             break;
@@ -408,6 +414,7 @@ void Dracula::updateHardMode(float deltaTime, const Player &player, const sf::Fl
             break;
     }
 
+    updateWeights();
     updateProjectiles(deltaTime, mapBounds);
     updateAnimation(deltaTime);
 }
@@ -442,65 +449,107 @@ bool Dracula::shouldSwitchSide() {
 }
 
 bool Dracula::shouldAttack(const Player& player) {
+
+    if(player.isBeingHurt || player.isInvulnerable){
+        if(attacksLastTime > 0) weights[1] -= 1;
+        else weights[1] += 1;
+    } else {
+        if(attacksLastTime > 0) weights[1] += 1;
+        else weights[1] -= 1;
+    }
+
+    if(player.isBeingHurt || player.isInvulnerable){
+        if(attacksLastTime > 0) weights[1] -= 1;
+        else weights[1] += 1;
+    } else {
+        if(attacksLastTime > 0) weights[1] += 1;
+        else weights[1] -= 1;
+    }
+
+
     if (attacksLastTime == 0 && attacksThisTime == 0) { // No-attack can't happen twice in a row
-        std::cout << "ShouldAttack: No-attack can't happen twice in a row" << std::endl;
+        //std::cout << "ShouldAttack: No-attack can't happen twice in a row" << std::endl;
         return true;
     }
 
     if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
-        std::cout << "ShouldAttack: Double-attack can't happen twice in a row" << std::endl;
-        return false;
-    }
-
-    if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen
-        std::cout << "ShouldAttack: Triple-or-more-attack can't happen twice in a row" << std::endl;
+        //std::cout << "ShouldAttack: Double-attack can't happen twice in a row" << std::endl;
         return false;
     }
 
     if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) < DISTANCE_TOO_CLOSE){    // If too close, maybe attack
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        std::cout << "ShouldAttack: Too close" << std::endl;
-        return dis(rng) < PROB_MID;
+        float prob = dis(rng);
+        prob = prob + (weights[0] * 0.1f);
+        prob = std::clamp(prob, 0.0f, 1.0f);
+        //std::cout << "ShouldAttack: Too close" << std::endl;
+        return prob < PROB_MID;
     }
 
     if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) > DISTANCE_TOO_FAR){      // If too far, attack
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        std::cout << "ShouldAttack: Too far" << std::endl;
-        return dis(rng) < PROB_HIGH;
+        float prob = dis(rng);
+        prob = prob + (weights[0] * 0.1f);
+        prob = std::clamp(prob, 0.0f, 1.0f);
+        //std::cout << "ShouldAttack: Too far" << std::endl;
+        return prob < PROB_HIGH;
     }
 
     if (attacksThisTime == 0){
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        std::cout << "ShouldAttack: Didn't attack this time" << std::endl;
-        return dis(rng) < PROB_HIGH;
+        float prob = dis(rng);
+        prob = prob + (weights[0] * 0.1f);
+        prob = std::clamp(prob, 0.0f, 1.0f);
+        //std::cout << "ShouldAttack: Didn't attack this time" << std::endl;
+        return prob < PROB_HIGH;
     }
 
     if (attacksThisTime == 1){
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        std::cout << "ShouldAttack: Already attacked this time" << std::endl;
-        return dis(rng) < PROB_LOW;
+        float prob = dis(rng);
+        prob = prob + (weights[0] * 0.1f);
+        prob = std::clamp(prob, 0.0f, 1.0f);
+        //std::cout << "ShouldAttack: Already attacked this time" << std::endl;
+        return prob < PROB_MID;
+    }
+
+    if (attacksThisTime == 2){
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        float prob = dis(rng);
+        prob = prob + (weights[0] * 0.1f);
+        prob = std::clamp(prob, 0.0f, 1.0f);
+        //std::cout << "ShouldAttack: Already attacked this time" << std::endl;
+        return prob < PROB_MID;
     }
     
     return true;
 }
 
 bool Dracula::shouldStartAnotherAttack(const Player& player) {
-    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
-        std::cout << "shouldStartAnotherAttack: Double-attack can't happen twice in a row" << std::endl;
+
+    // Second attack only happens when Dracula is low in hp
+    float lifeRatio = static_cast<float>(life) / static_cast<float>(DRACULA_LIFE);
+    if(lifeRatio > 0.6) {
         return false;
     }
 
-    if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen
-        std::cout << "shouldStartAnotherAttack: Triple-or-more-attack can't happen" << std::endl;
+    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
+        //std::cout << "shouldStartAnotherAttack: Double-attack can't happen twice in a row" << std::endl;
         return false;
+    }
+
+    if (attacksThisTime >= 2){  // Triple-or-more-attack can't happen if dracula is not almost dead
+        //std::cout << "shouldStartAnotherAttack: Triple-or-more-attack can't happen" << std::endl;
+        if(lifeRatio < 0.3) return true;
+        else return false;
     }
 
     if(player.isInvulnerable || player.isBeingHurt){
-        std::cout << "shouldStartAnotherAttack: Invulnerable or hurt" << std::endl;
+        //std::cout << "shouldStartAnotherAttack: Invulnerable or hurt" << std::endl;
         return false;
     }
 
-    std::cout << "shouldStartAnotherAttack: Yes" << std::endl;
+    //std::cout << "shouldStartAnotherAttack: Yes" << std::endl;
     return true;
 }
 
@@ -554,18 +603,24 @@ void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
-        if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
+        if (!whip->collisionedEntities.contains(this))
         {
-            sprite->setColor(sf::Color::White);
-            currentState = DraculaState::DEAD_MASK_OFF;
+            hasBeenHurtThisTime = true;
+            if(applyDamage(whip->whipDmg, game.player)){
+                sprite->setColor(sf::Color::White);
+                currentState = DraculaState::DEAD_MASK_OFF;
+            }
         }
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
-        if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
+        if (!subWeapon->collisionedEntities.contains(this))
         {
-            sprite->setColor(sf::Color::White);
-            currentState = DraculaState::DEAD_MASK_OFF;
+            hasBeenHurtThisTime = true;
+            if(applyDamage(subWeapon->subDamage, game.player)){
+                sprite->setColor(sf::Color::White);
+                currentState = DraculaState::DEAD_MASK_OFF;
+            }
         }
     }
 }
@@ -642,10 +697,15 @@ void Dracula::resetPosition()
 
     attacksThisTime = 0;
     attacksLastTime = 0;
+    hasBeenHurtThisTime = false;
+    hasBeenHurtLastTime = false;
     
     for(auto& p : projectiles){
         if(p) p->reset();
     }
+
+    weights[0] = 0.f;
+    weights[1] = 0.f;
 
     currentState = DraculaState::ASLEEP;
 
@@ -876,10 +936,49 @@ void Dracula::hello() const
     std::cout << "Soy Dracula" << std::endl;
 } 
 
-float randomIdleTime(){
-    std::uniform_real_distribution<float> dis(0.3f, 1.0f);
+float clamp(float v, float lo, float hi) {
+    return std::max(lo, std::min(v, hi));
+}
 
-    return dis(rng);
+void Dracula::updateWeights() {
+
+    // Keep weights between values
+    // Weight[0] between -10 and +10
+    weights[0] = clamp(weights[0], -5.f, 5.f);
+    weights[1] = clamp(weights[1], -5.f, 5.f);
+
+
+    //std::cout << "Weight IDLE: " << weights[0] << std::endl;
+    std::cout << "Weight ATTACK: " << weights[1] << std::endl;
+}
+
+
+float Dracula::randomIdleTime(const Player &player){
+    // If dracula has been hurt, switch weight (if high idle time, lower. if low idle time, higher)
+    // Otherwise, reward weights (if high idle time, higher. if low idle time, lower)
+    if(hasBeenHurtLastTime){
+        if(weights[0] <= -2) weights[0] += 2;
+        else if (weights[0] == -1) weights[0] = 0;
+        else weights[0] -= 2;
+    } else {
+        if(weights[0] <= 0) weights[0] -= 1;
+        else weights[0] += 1;
+    }
+
+    // If player has been hurt, reward weights (if high idle time, higher. if low idle time, lower)
+    /*
+    if(player.isInvulnerable || player.isBeingHurt){
+        if(weights[0] <= 0) weights[0] -= 2;
+        else weights[0] += 2;
+    }
+    */
+
+    std::uniform_real_distribution<float> dis(0.75f, 0.85f);
+
+    float idleTime = dis(rng) + (weights[0] / 10.f);
+
+    // Time between 0.25 and 1.35
+    return idleTime;
 }
 
 float randomPosition(float playerPos, float margin){
