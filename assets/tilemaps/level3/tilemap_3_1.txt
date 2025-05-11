@@ -43,7 +43,7 @@ water
 end_water
 enemies
 10,40,128
-11,172,80
+11,172,92
 11,302,127
 11,430,127
 end_enemies
