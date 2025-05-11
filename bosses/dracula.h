@@ -3,6 +3,8 @@
 #include "boss.h"
 #include "../enemies/projectile.h"
 
+class Dracula;
+
 class DraculaBody : public EntitySprite {
 public:
     std::vector<AnimationManager::Frame> idleDraculaFrames{
@@ -18,6 +20,7 @@ public:
 
     float damage; 
     sf::Vector2f position;
+    Dracula *dracula;
 
     // Handle collisions
     void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
@@ -80,6 +83,7 @@ private:
     int attacksThisTime;
     int attacksLastTime;
 
+
     const float PROB_HIGH = 0.9f;
     const float PROB_MID = 0.5f;
     const float PROB_LOW = 0.2f;
@@ -87,6 +91,10 @@ private:
     const float DISTANCE_TOO_CLOSE = 48.f;
     const float DISTANCE_TOO_FAR = 112.f;
 
+    float weights[2] = {0.f, 0.f}; // Idle, Attack
+
+    void updateWeights();
+    float randomIdleTime(const Player &player);
  
     std::vector<AnimationManager::Frame> noAnimationFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 1), sf::Vector2(0, 0)), 0.1f}
@@ -102,6 +110,9 @@ private:
 public:
     int level; // Current game level
     int stage; // Current stage within level
+
+    bool hasBeenHurtThisTime;
+    bool hasBeenHurtLastTime;
 
     bool isDead;
 
@@ -186,7 +197,6 @@ public:
     void hello() const override;
 };
 
-float randomIdleTime();
 float randomPosition(float playerPos, float margin = 32.f);
 float randomPositionRight(float playerPos, float margin = 32.f);
 float randomPositionLeft(float playerPos, float margin = 32.f);

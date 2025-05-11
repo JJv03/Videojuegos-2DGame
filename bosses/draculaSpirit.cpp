@@ -415,11 +415,6 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         
                         this->currentState = DraculeSpiritState::IDLE;
                     }
-                
-                
-                
-                
-               
                 break;
 
             default:

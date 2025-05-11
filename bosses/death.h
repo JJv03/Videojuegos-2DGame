@@ -61,6 +61,11 @@ public:
     std::array<std::shared_ptr<Scythe>, 5> scythes;
     bool generated = false;
 
+    // Holy water handling
+    bool collisionWithHolyWater = false;
+    float paralizeCounter = 0.7f;
+    const float paralizeTimer = 0.6f;
+
     Death() = default;
     Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
                const int &level, const int &stage, const sf::FloatRect &mapDims);
