@@ -14,6 +14,15 @@ public:
         AnimationManager::Frame{sf::IntRect(sf::Vector2(274, 74), sf::Vector2(32, 48)), 0.1f}
     };
 
+    std::vector<AnimationManager::Frame> customIdleDraculaFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(356, 171), sf::Vector2(24, 48)), 0.1f}
+    };
+    
+    std::vector<AnimationManager::Frame> customAttackDraculaFrames{
+        AnimationManager::Frame{sf::IntRect(sf::Vector2(381, 171), sf::Vector2(32, 48)), 0.1f}
+    };
+
+
     DraculaBody() = default;
     DraculaBody(std::shared_ptr<sf::Sprite> _draculaSprite, std::vector<sf::FloatRect> &_draculaHitboxes,
                 const float _damage, const sf::Vector2f _position);
