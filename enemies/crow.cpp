@@ -224,24 +224,24 @@ void Crow::update(float deltaTime, const sf::FloatRect &playerActivationZone, co
 void Crow::getLinelSpeed(float timeToMove){
     float deltaX = goal.x - position.x;
     float deltaY = goal.y - position.y;
-    if(deltaY > 0) deltaY = -deltaY;
+    std::cout << "Goal y: " << goal.y << " Pos y: " << position.y << std::endl;
 
-    speed = sf::Vector2f(deltaX / timeToMove, -deltaY / timeToMove);
+    speed = sf::Vector2f(deltaX / timeToMove, deltaY / timeToMove);
     // std::cout << "Speed: " << speed.x << " " << speed.y << std::endl;
 }
 
 void Crow::getRandomGoal(const sf::Vector2f &playerPos){
     // Obtener una distancia aleatoria entre 20 y 70
-    float distance = 20 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (70 - 20)));
+    float distance = 20 + std::rand() % (70 - 20 + 1);;
 
     // Player is right, lets go to left
     float goalX = isPlayerRight ? (playerPos.x - distance) : (playerPos.x + distance);
 
     // Generar un desplazamiento vertical aleatorio entre -75 y -15
-    float verticalOffset = -15 - static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (60))); // 60 = -15 - (-75)
+    float verticalOffset = -15 - std::rand() % (61); // 60 = -15 - (-75)
 
     // Aplicar el offset vertical desde la posición actual del cuervo
-    float goalY = position.y + verticalOffset;
+    float goalY = position.y > 100 ? position.y + verticalOffset : position.y - verticalOffset;
 
     // Asignar la posición de destino
     goal = sf::Vector2f(goalX, goalY);

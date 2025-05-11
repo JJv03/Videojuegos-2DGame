@@ -2240,14 +2240,14 @@ void GameplayConfGS::init(){
     configs.push_back(text);
 
     // Defines menu options
-    std::string textos[4] = {"SCREEN MODE", "ENHANCED AI", "CHEATS", "CUSTOM SKINS"};
+    std::string textos[4] = {"SCREEN MODE", "ADVANCE MODE", "CHEATS", "CUSTOM SKINS"};
     for (int i = 0; i < 4; i++) {
         sf::Text text(font, textos[i], 30);
         text.setFillColor(sf::Color::White);
         sf::FloatRect textBounds = text.getLocalBounds();
 
         // Centers position
-        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 45.f;
+        float xPos = (gWindowWidth - textBounds.size.x) / 2 - 40.f;
         float yPos = 125.f + i * 50.f;
 
         text.setPosition(sf::Vector2f(xPos, yPos));
