@@ -59,6 +59,7 @@ Player::Player():configManager(configManager::getInstance())
     blinkTimer = 0.0f;
     blinkInterval = 0.05f; // 0.1 segs
     visible = true;
+    firstStepTaken = false;
 
     // Invisibility
     isInvisible = false;

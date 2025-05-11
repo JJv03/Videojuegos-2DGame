@@ -223,6 +223,7 @@ public:
     bool visible;
     float blinkInterval;
     float autoWalkDistance;
+    bool firstStepTaken;
 
     // Invisibility
     bool isInvisible;

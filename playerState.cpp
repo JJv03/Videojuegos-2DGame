@@ -392,59 +392,67 @@ void PlayerAutoWalkState::handleInput(Player& player, sf::Event event)
 
 void PlayerAutoWalkState::update(Player& player, float deltaTime, bool windowHasFocus)
 {   
-    float move = deltaTime * gPlayerMovementSpeed;
-
-    if(abs(player.autoWalkDistance) < 1.f) {
-        move = abs(player.autoWalkDistance);
-    }
+    float desiredMove = deltaTime * gPlayerMovementSpeed;
+    float actualMove = std::min(desiredMove, std::abs(player.autoWalkDistance));
 
     // Player going right
-    if(player.autoWalkDistance > 0.f)
+    if (player.autoWalkDistance > 0.f)
     {
-        player.sprite->move({move, 0.f});
+        player.sprite->move({actualMove, 0.f});
         player.dir = RIGHT;
         player.sprite->setScale({-1.f, 1.f});
-        player.autoWalkDistance -= move;
+        player.autoWalkDistance -= actualMove;
 
-        if(player.autoWalkDistance <= 0.f){
-            if(player.isNearStair){
+        if (player.autoWalkDistance <= 0.f)
+        {
+            player.autoWalkDistance = 0.f; // Garantiza que no quede residuo negativo
+
+            if (player.isNearStair)
+            {
                 player.isPositionedInStair = true;
 
-                if(player.stairStart->type == StairTile::Type::BOTTOM_RIGHT ||
-                   player.stairStart->type == StairTile::Type::TOP_RIGHT){
-
+                if (player.stairStart->type == StairTile::Type::BOTTOM_RIGHT ||
+                    player.stairStart->type == StairTile::Type::TOP_RIGHT)
+                {
                     player.dir = LEFT;
                     player.sprite->setScale({1.f, 1.f});
                 }
-
+                player.firstStepTaken = false;
                 player.setState(state<StairWalk>());
-
-            } else {
-                
+            }
+            else
+            {
                 player.setState(state<Idle>());
             }
         }
-    }    
+    }
     // Player going left
-    else {
-        player.sprite->move({-move, 0.f});
+    else if (player.autoWalkDistance < 0.f)
+    {
+        player.sprite->move({-actualMove, 0.f});
         player.dir = LEFT;
         player.sprite->setScale({1.f, 1.f});
-        player.autoWalkDistance += move;
+        player.autoWalkDistance += actualMove;
 
-        if(player.autoWalkDistance >= 0.f){
-            if(player.isNearStair){
+        if (player.autoWalkDistance >= 0.f)
+        {
+            player.autoWalkDistance = 0.f; // Para evitar residuo positivo
+
+            if (player.isNearStair)
+            {
                 player.isPositionedInStair = true;
 
-                if(player.stairStart->type == StairTile::Type::BOTTOM_LEFT||
-                   player.stairStart->type == StairTile::Type::TOP_LEFT){
-
+                if (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
+                    player.stairStart->type == StairTile::Type::TOP_LEFT)
+                {
                     player.dir = RIGHT;
                     player.sprite->setScale({-1.f, 1.f});
                 }
-
+                player.firstStepTaken = false;
                 player.setState(state<StairWalk>());
-            } else {
+            }
+            else
+            {
                 player.setState(state<Idle>());
             }
         }
@@ -808,6 +816,7 @@ void PlayerStairIdleState::init(Player& player)
 {
     player.isOnStairs = true;
     player.stairStepDistance = 0.f;
+    player.firstStepTaken = true;
 
     if(player.isPositionedInStair){ // If player just arrived to the stair
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
@@ -895,13 +904,14 @@ void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHa
     }
     player.animationManager->update(deltaTime);
 
-    if(player.isNearStair && 
+    if(player.isNearStair && player.firstStepTaken &&
         (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f) &&
         (abs((player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y) - (player.stairStart->hitboxes[0].position.y + player.stairStart->hitboxes[0].size.y)) < 1.f)){
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
         player.sprite->move({0.f, 2.f}); // Stairs are a bit higher than the ground
+        player.firstStepTaken = false;
         player.setState(state<Idle>());
     }
 }
@@ -1023,7 +1033,8 @@ void PlayerStairWalkState::update(Player& player, float deltaTime, bool windowHa
         player.setState(state<StairIdle>());
     }
 
-    if(player.isNearStair && 
+
+    if(player.isNearStair && player.firstStepTaken &&
         (abs(player.sprite->getGlobalBounds().position.x - player.stairStart->hitboxes[0].position.x) < 0.1f) &&
         (abs((player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y) - (player.stairStart->hitboxes[0].position.y + player.stairStart->hitboxes[0].size.y)) < 5.f)){
         player.stairStepDistance = 0.f;
@@ -1031,8 +1042,10 @@ void PlayerStairWalkState::update(Player& player, float deltaTime, bool windowHa
         player.isOnStairs = false;
         player.isWalking = false;
         player.sprite->move({0.f, 1.f}); // Stairs are a bit higher than the ground
+        player.firstStepTaken = false;
         player.setState(state<Idle>());
     }
+
     
     /*
     if (!player.animationManager->isPlaying(player.currentAnimation)){
