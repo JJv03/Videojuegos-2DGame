@@ -124,8 +124,14 @@ Dracula::Dracula(std::shared_ptr<sf::Sprite> _maskSprite, std::vector<sf::FloatR
 
 
     bodyAnimationManager->addAnimation(noAnimation, this->noAnimationFrames);
-    bodyAnimationManager->addAnimation(draculaIdle, draculaBody->idleDraculaFrames);
-    bodyAnimationManager->addAnimation(draculaAttack, draculaBody->attackDraculaFrames);
+    if(skins.activated){
+        bodyAnimationManager->addAnimation(draculaIdle, draculaBody->customIdleDraculaFrames);
+        bodyAnimationManager->addAnimation(draculaAttack, draculaBody->customAttackDraculaFrames);
+    } else {
+        bodyAnimationManager->addAnimation(draculaIdle, draculaBody->idleDraculaFrames);
+        bodyAnimationManager->addAnimation(draculaAttack, draculaBody->attackDraculaFrames);
+    }
+    
 
     draculaBody->animationManager = bodyAnimationManager;
     weights[0] = 0.f;
@@ -986,14 +992,6 @@ float Dracula::randomIdleTime(const Player &player){
         if(weights[0] <= 0) weights[0] -= 1;
         else weights[0] += 1;
     }
-
-    // If player has been hurt, reward weights (if high idle time, higher. if low idle time, lower)
-    /*
-    if(player.isInvulnerable || player.isBeingHurt){
-        if(weights[0] <= 0) weights[0] -= 2;
-        else weights[0] += 2;
-    }
-    */
 
     std::uniform_real_distribution<float> dis(0.75f, 0.85f);
 

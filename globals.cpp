@@ -27,8 +27,8 @@ const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
-int gStartingLevel = 5;
-int gStartingStage = 6;
+int gStartingLevel = 3;
+int gStartingStage = 5;
 
 const float gTileSize = 32.f;
 
@@ -83,7 +83,7 @@ const int gWhipMaxLevel = 3;
 
 const float gSimonFeetCollisionNewHeight = 0.15f;
 
-const float gPlayerMovementSpeed = 60.0f;
+const float gPlayerMovementSpeed = 160.0f;
 const float gPlayerStairSpeed = 30.0f;
 const float gPlayerGravity = 450.0f;
 const float gPlayerJumpForce = 180.0f;
@@ -96,6 +96,8 @@ bool isInBossFight = false;
 bool hasReachedEndStage = false;
 bool hasReachedStartStage = false;
 float currentBossLife = 16.f;
+float currentMummy1Life = 24.f;
+float currentMummy2Life = 24.f;
 float maxLife = 16.f;
 bool gKilledBoss = false;
 
