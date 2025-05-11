@@ -42,7 +42,7 @@ namespace {     // Only visible in this file
 
 
 Hunchback::Hunchback(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
-                     const int &level, const int &stage): Enemy(_sprite, _hitboxes),
+                     const int &level, const int &stage, const bool lookRight): Enemy(_sprite, _hitboxes),
                      onGround_TimeCounter(0.f), moveRight(true), level(level), stage(stage)//, atTheEdge(false)
 {
     speed = sf::Vector2f{SMALL_SPEED_X, 0.0f};
@@ -62,7 +62,8 @@ Hunchback::Hunchback(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatR
     animationManager->playAnimation(currentAnimation);
 
     sprite->setTextureRect(textureRects[0]);
-    sprite->setScale({-1.0f, 1.0f});
+
+    if (lookRight) sprite->setScale({-1.0f, 1.0f});
     currentState = State::INIT;
 }
 

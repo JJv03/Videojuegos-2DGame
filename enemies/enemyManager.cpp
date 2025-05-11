@@ -394,7 +394,7 @@ void EnemyManager::loadEnemiesFromLevel(int level, const TilemapManager &tilemap
                 
                 case 11: // Hunchback
                     hunchback.push_back(createHunchback(
-                        enemyData.position, level, currentStage));
+                        enemyData.position, level, currentStage, false));
                     break;
 
                 default:

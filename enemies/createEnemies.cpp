@@ -286,7 +286,8 @@ WhiteSkeleton *createWhiteSkeleton(const sf::Vector2f &position, const size_t &l
     return new WhiteSkeleton(whiteSkeletonSprite, hitboxes, level, stage);
 }
 
-Hunchback *createHunchback(const sf::Vector2f &position, const size_t &level, const size_t &stage) {
+Hunchback *createHunchback(const sf::Vector2f &position, const size_t &level, const size_t &stage,
+                           const bool lookRight) {
     // Sprite sheet coordinates and dimensions
     const sf::IntRect placeHolder = {{0, 0}, {16, 16}};
     const float HITBOX_WIDTH = 16.f;
@@ -307,5 +308,5 @@ Hunchback *createHunchback(const sf::Vector2f &position, const size_t &level, co
             {position.x - (HITBOX_WIDTH / 2.f), position.y - HITBOX_HEIGHT},
             {HITBOX_WIDTH, HITBOX_HEIGHT}),
     };
-    return new Hunchback(hunchbackSprite, hitboxes, level, stage);
+    return new Hunchback(hunchbackSprite, hitboxes, level, stage, lookRight);
 }
