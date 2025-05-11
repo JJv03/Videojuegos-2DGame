@@ -68,7 +68,7 @@ public:
 
     // Timer to attack
     float attackWaitingCounter = 0.f;
-    float attackWaitingTime = 5.f;
+    float attackWaitingTime = 3.5f;
 
 
     float actionTimer = 0.f;
@@ -83,6 +83,12 @@ public:
     bool isOtherDead = false;
     bool dead = false;
     
+    // IA 
+    int weights[2] = {1, 1};
+    bool playerClose = false;
+    bool playerAway = false;
+    float speedFire = 80.f;
+
     MummyMan() = default;
     MummyMan(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position,
                const int &level, const int &stage, const sf::FloatRect &mapDims);
@@ -106,6 +112,9 @@ public:
     void objectivePlayer(const sf::FloatRect &playerBounds);
 
     void enhancedAI(bool isOn, const int playerDir, const sf::FloatRect &playerBounds);
-
+    
+    void selectNewState();
+    
+    void updateWeights();
     void hello() const override;
 };

@@ -64,15 +64,21 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
     // MOVEMENT LOGIC
     if (isActive && isInBossFight)
     {
-        sf::Vector2f playerPos = player.sprite->getPosition();
+        sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
+        position.x = sprite->getGlobalBounds().position.x + sprite->getGlobalBounds().size.x / 2;
+        position.y = sprite->getGlobalBounds().position.y + sprite->getGlobalBounds().size.y / 2;
+        
         sf::Vector2f mummyPos = sprite->getPosition();
         sf::FloatRect mummyBounds = sprite->getGlobalBounds();
+        float horizontalDistance = std::hypot(position.x - playerPos.x, position.y - playerPos.y);
 
+        playerClose = horizontalDistance < 70.f;
+        playerAway = horizontalDistance > 120.f;
         // Verificar límites del mapa
         bool atLeftEdge = mummyBounds.position.x  <= mapDims.position.x;
         bool atRightEdge = mummyBounds.position.x + mummyBounds.size.x >= mapBounds.position.x + mapBounds.size.x;
     
-        
+        auto mode = configManager.getDifficulty();
         // FSM
         switch (currentState)
         {
@@ -111,13 +117,18 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                     sprite->move(sf::Vector2f(facingRight * deltaTime * speed.x, 0.f));
                 }
 
-                actionTimer += deltaTime;
-                if (!lanzado && actionTimer >= nextActionTime && ((playerPos.x < mummyPos.x && facingRight == -1.f) ||( playerPos.x > mummyPos.x && facingRight == 1.f)) )
-                {
-                    currentState = MummyState::ATTACK;
-                    nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
-                    actionTimer = 0.f;
-                    
+                if(mode.hard_mode){
+                            selectNewState();
+                        }
+                else{
+                    actionTimer += deltaTime;
+                    if (!lanzado && actionTimer >= nextActionTime && ((playerPos.x < mummyPos.x && facingRight == -1.f) ||( playerPos.x > mummyPos.x && facingRight == 1.f)) )
+                    {
+                        currentState = MummyState::ATTACK;
+                        nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
+                        actionTimer = 0.f;
+                        
+                    }
                 }
                 break;
 
@@ -135,9 +146,14 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
                     bandage->velocity.x = 60.f * facingRight;
                     bandage->velocity.y = 85.f;
                     lanzado = true;
-
-                    //speed.x = MUMMY_SPEED.x * (static_cast<float>((rand() % 10) + 1) / 10.f);
-                    currentState = MummyState::WALK;
+                    if(mode.hard_mode){
+                            selectNewState();
+                        }
+                    else{
+                        //speed.x = MUMMY_SPEED.x * (static_cast<float>((rand() % 10) + 1) / 10.f);
+                        currentState = MummyState::WALK;
+                    }
+                    
                 }
                 break;
 
@@ -256,7 +272,111 @@ void MummyMan::resetPosition()
     dead = false;
     starting = true;
     attacking = false;
+    weights[0] = 1;
+    weights[1] = 1;
+
+    playerClose = false;
+    playerAway = false;
+    nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
 }
+
+
+void MummyMan::selectNewState(){
+    updateWeights();
+
+    //startingMove = false;
+
+    int totalWeight = weights[0] + weights[1];
+    if (totalWeight == 0) return;
+
+    int r = rand() % totalWeight;
+
+    if (r < weights[0] && !playerAway) {
+        this->currentState = MummyState::WALK;
+        std::cout << "Selected WALK" << std::endl;
+    } 
+    else if(!lanzado){                     
+
+        currentState = MummyState::ATTACK;
+        std::cout << "Selected ATTACKING" << std::endl;
+    }
+    else{
+        this->currentState = MummyState::WALK;
+        std::cout << "Selected WALK" << std::endl;
+    }
+
+    //timer = 0.f;
+    //speed = sf::Vector2f(0.f, 0.f);
+}
+
+void MummyMan::updateWeights() {
+    // Reset base weights
+    weights[0] = 1; // MOVING
+    weights[1] = 1; // ATTACKING
+
+    float lifeRatio = static_cast<float>(life) / static_cast<float>(MUMMY_LIFE);
+
+    // If life is low, prioritize moving to escape
+    if (lifeRatio < 0.35f) {
+        //weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[0] += 2; // More likely to flee
+        actionTimer = 0.f;
+        speed.x = 1.2f * MUMMY_SPEED.x;
+        nextActionTime = 0.5f + static_cast<float>(rand() % 1000) / 500.f; // entre 0.5 y 1.5 seg
+    }
+    else{
+        speed.x = MUMMY_SPEED.x;
+        nextActionTime = 1.f + static_cast<float>(rand() % 1000) / 500.f;
+        
+        
+    }
+
+    // If the player is attacking, avoid waiting for so long
+    if (gIsWhipBeingUsed || gIsSubWeaponBeingUsed) {
+        //weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[0] += 1; // Move more to dodge
+        if(lifeRatio >= 0.35f){
+            nextActionTime = 0.5f + static_cast<float>(rand() % 1000) / 500.f;
+            actionTimer = 0.f;
+            speed.x = 1.2f * MUMMY_SPEED.x;
+            // paralizeCounter = 0.7f;
+        }
+        
+        
+    }
+    
+
+    // Distance to the player
+    if (playerClose) {
+        weights[0] += 2; // Try to jump to the player
+        if(lifeRatio >= 0.35f){
+            speed.x = 1.2f * MUMMY_SPEED.x;
+            attackWaitingTime = 3.5f;
+        }
+        
+    } else if (playerAway) {
+        std::cout << "Away" << std::endl;
+        attackWaitingTime = 1.5f;
+        speed.x = MUMMY_SPEED.x;
+        weights[1] += 5; // Try yo fire
+    }
+
+    // Penalize repeating the same state
+    int currentIdx = static_cast<int>(currentState);
+    if (weights[currentIdx] > 1) {
+        weights[currentIdx] -= 1;
+    }
+
+    // Rebalancing weights if all are zero
+    int total = weights[0] + weights[1];
+    if (total == 0) {
+        weights[0] = 1; // MOVING by default if all else fails
+    }
+
+    std::cout << "Weight MOVING: " << weights[0] << std::endl;
+    std::cout << "Weight ATTACKING: " << weights[1] << std::endl;
+}
+
 
 void MummyMan::hello() const
 {
