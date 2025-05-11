@@ -273,7 +273,7 @@ void MummyMan::resetPosition()
 
     speed = MUMMY_SPEED;
     life = MUMMY_LIFE;
-
+    bandage->setActive(false);
     currentAnimation = mummyIdle;
     dead = false;
     starting = true;
