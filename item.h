@@ -100,7 +100,8 @@ public:
                             // If it is 0, the item is removed from the game
                             // If it is -1, the item NEVER disappears
     
-    float m_spawnDelay;     // Delay before the item is spawned.
+    float m_spawnDelay;         // Delay before the item is spawned.
+    float m_elapsedSpawnDelay; // Time elapsed since the item was spawned
 
     float m_sinusoidalTotalTime;    // Total time of the sinusoidal movement
     
@@ -137,13 +138,16 @@ const std::vector<AnimationManager::Frame>& getItemAnimationFrames(ItemType type
 bool loadItemTextures();
 
 // Returns 'true' if the item is a subweapon. Else 'false'
-bool isSubweaponItem(ItemType type);
+bool isSubweaponItem(const ItemType type);
+
+// Returns 'true' if the item is a secret item. Else 'false'
+bool isSecretItem(const ItemType type);
 
 // Returns 'true' if the item gives score points to Simon. Else 'false'
-bool isScoringItem(ItemType type);
+bool isScoringItem(const ItemType type);
 
 // Returns the score of an item. If the item is not a scoring item, returns 0
-int getItemScore(ItemType item);
+int getItemScore(const ItemType item);
 
 // Returns an item from weighted items. The item is chosen randomly based on the weights
 // of each item.

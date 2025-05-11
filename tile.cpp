@@ -75,6 +75,7 @@ bool loadMiscTextures()
     sf::Image itemsObjectsImage;
     if (!itemsObjectsImage.loadFromFile("./assets/sprites/items/itemsObjects.png")) return false;
     itemsObjectsImage.createMaskFromColor(gColorKeyGrey);
+    itemsObjectsImage.createMaskFromColor(gColorKeyGreen);
 
     sf::Texture tex1;
     if (!tex1.loadFromImage(itemsObjectsImage)) return false;

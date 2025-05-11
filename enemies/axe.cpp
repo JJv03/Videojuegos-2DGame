@@ -103,12 +103,10 @@ void Axe::onCollision(Entity &other, Game &game, const sf::FloatRect& intersecti
     // Handle collision with weapons
     else if (dynamic_cast<Whip *>(&other))
     {
-        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
     else if (dynamic_cast<SubWeapon *>(&other))
     {
-        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
 }

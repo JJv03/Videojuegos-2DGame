@@ -108,12 +108,10 @@ void Scythe::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
     // Handle collision with weapons
     if (dynamic_cast<Whip *>(&other))
     {
-        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
     else if (dynamic_cast<SubWeapon *>(&other))
     {
-        game.particleSystem.spawnHitParticle(position);
         isActive = false;
     }
 }

@@ -24,13 +24,15 @@ std::unordered_map<ItemType, sf::IntRect, ItemTypeHash> item_To_TextureRect;
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            const float _lifeTime, const float _spawnDelay): EntitySprite(_sprite, _hitboxes),
-           m_type(_type), m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_sinusoidalTotalTime(0.f) {}
+           m_type(_type), m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_elapsedSpawnDelay(0.f),
+           m_sinusoidalTotalTime(0.f) {}
 
 
 Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes,
            std::vector<AnimationManager::Frame>& _animationFrames, const float _lifeTime,
            const float _spawnDelay): EntitySprite(_sprite, _hitboxes), m_type(_type),
-           m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_sinusoidalTotalTime(0.f)
+           m_lifeTime(_lifeTime), m_spawnDelay(_spawnDelay), m_elapsedSpawnDelay(0.f),
+           m_sinusoidalTotalTime(0.f)
 {
     m_animationManager = std::make_unique<AnimationManager>(*sprite);
 
@@ -43,58 +45,31 @@ Item::Item(ItemType _type, std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::
 
 
 void Item::update(const float deltaTime) {
-    // ============================ BEFORE SPAWN ===================================
-    if (m_spawnDelay > 0.f) {
-        m_spawnDelay -= deltaTime;
-        
-        switch(this->m_type) {
-            case ItemType::MAGIC_CRYSTAL: {
-                if (!m_animationManager->isBlinking()) {
-                    m_animationManager->setBlinking(true, 0.05f);
-                }
-                m_animationManager->update(deltaTime);
-        
-                if (m_spawnDelay <= 0.f) {
-                    m_spawnDelay = 0.f;
-                    m_animationManager->setBlinking(false, 0.05f);
-                }
+    //==================== SPAWN DELAY MANAGEMENT ====================
 
-                break;
-            }
-
-            // case ItemType::FLASHING_MONEY_BAG: {
-            //     if (!m_animationManager->isBlinking()) {
-            //         m_animationManager->setBlinking(true, 0.05f);
-            //     }
-            //     m_animationManager->update(deltaTime);
-        
-            //     if (m_spawnDelay <= 0.f) {
-            //         m_spawnDelay = 0.f;
-            //         m_animationManager->setBlinking(false, 0.05f);
-            //     }
-
-            //     break;
-            // }
-
-            // case ItemType::ONE_UP: {
-            //     if (!m_animationManager->isBlinking()) {
-            //         m_animationManager->setBlinking(true, 0.05f);
-            //     }
-            //     m_animationManager->update(deltaTime);
-        
-            //     if (m_spawnDelay <= 0.f) {
-            //         m_spawnDelay = 0.f;
-            //         m_animationManager->setBlinking(false, 0.05f);
-            //     }
-
-            //     break;
-            // }
-            default:
-                break;
-        }
-
-        return; // Skip rest of the logic until spawned
+    if (m_elapsedSpawnDelay < m_spawnDelay) {
+        m_elapsedSpawnDelay += deltaTime;
+        if (m_elapsedSpawnDelay > m_spawnDelay)
+            m_elapsedSpawnDelay = m_spawnDelay;
     }
+
+    const bool isSpawning = m_elapsedSpawnDelay < m_spawnDelay;
+    const bool isMagicCrystal = (m_type == ItemType::MAGIC_CRYSTAL);
+
+
+    // MAGIC_CRYSTAL has a special behavior before spawning: doesn't fall and it's blinking
+    if (isMagicCrystal && isSpawning) {
+        if (!m_animationManager->isBlinking())
+            m_animationManager->setBlinking(true, 0.05f);
+
+        m_animationManager->update(deltaTime);
+        return;
+    }
+    else if (isMagicCrystal && !isSpawning) {   // Stop blinking once it's spawned
+        if (m_animationManager->isBlinking())
+            m_animationManager->setBlinking(false, 0.05f);
+    }
+
 
     // ============================ AFTER SPAWN ===================================
 
@@ -108,30 +83,41 @@ void Item::update(const float deltaTime) {
         }
     }
 
-    if (!isOnGround) {  // Falling down logic
-        if (this->m_type == ItemType::SMALL_HEART) {    // Have a sinusoidal falling movement
+    // Falling down logic
+    if (!isOnGround) {
+        float moveX = 0.f;
+        float moveY = gItemGravity * deltaTime;
+
+        if (m_type == ItemType::SMALL_HEART) {      // Special: has sinusoidal movement
             m_sinusoidalTotalTime += deltaTime;
             float offsetX = OSCILLATION_AMPLITUDE * std::sin(OSCILLATION_SPEED * m_sinusoidalTotalTime);
-            
-            float moveX = offsetX * deltaTime;
-            float moveY = gItemGravity/3.f * deltaTime;
-            sprite->move({moveX, moveY});
-            hitboxes[0].position.x += moveX;
-            hitboxes[0].position.y += moveY;
+            moveX = offsetX * deltaTime;
+            moveY /= 3.f;
         }
-        else {
-            sprite->move({0.f, gItemGravity * deltaTime});
-            hitboxes[0].position.y += gItemGravity * deltaTime;
-        }
+
+        sprite->move({moveX, moveY});
+        hitboxes[0].position.x += moveX;
+        hitboxes[0].position.y += moveY;
     }
 
     if (m_animationManager != nullptr) {
         m_animationManager->update(deltaTime);
     }
+
+    //==================== SECRET ITEM TEXTURE GROWTH ====================
+    if (isSecretItem(m_type) && isSpawning) {
+        sf::IntRect texRect = sprite->getTextureRect();
+        int newHeight = (m_elapsedSpawnDelay / m_spawnDelay) * item_To_TextureRect[m_type].size.y;
+        texRect.size.y = newHeight + 1;
+        sprite->setTextureRect(texRect);
+        for (auto& hitbox : hitboxes) {
+            hitbox.size.y = newHeight;
+        }
+    }
 }
 
 void Item::draw(sf::RenderWindow& window) {
-    window.draw(*sprite);
+    if (m_spawnDelay == 0.f || m_elapsedSpawnDelay != 0.f) window.draw(*sprite);
 }
 
 ItemType Item::getType() const {
@@ -147,7 +133,7 @@ void Item::onCollision(Entity& other, Game& game, const sf::FloatRect& intersect
     if (dynamic_cast<SolidTile*>(&other)) {
         onCollision_SolidTile(other);
     } else if (dynamic_cast<Player*>(&other)){
-        if (m_spawnDelay > 0.f) {   // Can't pickup item if it's not spawned yet
+        if ((m_type == ItemType::MAGIC_CRYSTAL) && (m_elapsedSpawnDelay < m_spawnDelay)) {   // Special case
             return;
         }
 
@@ -241,7 +227,7 @@ bool loadItemTextures() {
 }
 
 
-bool isSubweaponItem(ItemType type) {
+bool isSubweaponItem(const ItemType type) {
     if (type == ItemType::DAGGER ||
         type == ItemType::AXE ||
         type == ItemType::FIRE_BOMB ||
@@ -254,7 +240,19 @@ bool isSubweaponItem(ItemType type) {
 }
 
 
-bool isScoringItem(ItemType type) {
+bool isSecretItem(const ItemType type) {
+    if (type == ItemType::MOAI ||
+        type == ItemType::FLASHING_MONEY_BAG ||
+        type == ItemType::ONEUP ||
+        type == ItemType::CROWN) {
+        return true;
+    }
+
+    return false;
+}
+
+
+bool isScoringItem(const ItemType type) {
     if (type == ItemType::RED_MONEY_BAG ||
         type == ItemType::PURPLE_MONEY_BAG ||
         type == ItemType::WHITE_MONEY_BAG ||
@@ -269,7 +267,7 @@ bool isScoringItem(ItemType type) {
 }
 
 
-int getItemScore(ItemType item) {
+int getItemScore(const ItemType item) {
     switch (item) {
         case ItemType::RED_MONEY_BAG:
             return 100;
@@ -532,7 +530,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::FLASHING_MONEY_BAG:
             type = ItemType::FLASHING_MONEY_BAG;
             lifeTime = 10.f;
-            //spawnDelay = 1.5f;  
+            spawnDelay = 1.5f;  
             break;
 
         case DropType::PORK_CHOP:
@@ -576,7 +574,7 @@ std::shared_ptr<Item> getDropItem(const DropType dropType, sf::Vector2f position
         case DropType::ONE_UP:
             type = ItemType::ONEUP;
             lifeTime = 10.f;
-            //spawnDelay = 1.5f;
+            spawnDelay = 1.5f;
             break;
 
         default:

@@ -1220,9 +1220,13 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
     if (!this->collisionedEntities.contains(&other)) {
         if (dynamic_cast<Enemy *>(&other))
         {
-            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+            game.particleSystem.spawnHitParticle(intersectionRect.position);
             gameSoundManager.stopSound("whip_use");
-            playSound("whip_hit");
+            if (dynamic_cast<AxeMan *>(&other)) {
+                playSound("strong_enemy_hit");
+            } else {
+                playSound("whip_hit");
+            }
         }
         else if (dynamic_cast<Boss *>(&other))
         {
@@ -1233,7 +1237,7 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
         else if (Projectile* projectile = dynamic_cast<Projectile *>(&other))
         {
             if(projectile->getActive()){
-                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
                 gameSoundManager.stopSound("whip_use");
                 playSound("whip_hit");
             }
@@ -1241,7 +1245,15 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
         else if (Scythe* scythe = dynamic_cast<Scythe *>(&other))
         {
             if(scythe->getActive()){
-                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
+                gameSoundManager.stopSound("whip_use");
+                playSound("whip_hit");
+            }
+        }
+        else if (Axe* axe = dynamic_cast<Axe *>(&other))
+        {
+            if(axe->getActive()){
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
                 gameSoundManager.stopSound("whip_use");
                 playSound("whip_hit");
             }
@@ -1249,7 +1261,7 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
         else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other))
         {
             if(tile->isBreakable && !tile->isDestroyed){
-                game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
                 gameSoundManager.stopSound("whip_use");
                 playSound("whip_hit");
             }
@@ -1291,8 +1303,12 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
     if (!this->collisionedEntities.contains(&other)) {  
         if (dynamic_cast<Enemy *>(&other))
         {
-            game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
-            playSound("whip_hit");
+            game.particleSystem.spawnHitParticle(intersectionRect.position);
+            if (dynamic_cast<AxeMan *>(&other)) {
+                playSound("strong_enemy_hit");
+            } else {
+                playSound("whip_hit");
+            }
             if(this->type == ItemType::DAGGER){
                 this->intersected = true;
             }
@@ -1318,18 +1334,30 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
                 this->intersectedBomb = true;
             }
         }
+        else if (Scythe* scythe = dynamic_cast<Scythe *>(&other))
+        {
+            if(scythe->getActive()){
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
+                playSound("whip_hit");
+            }
+        }
+        else if (Axe* axe = dynamic_cast<Axe *>(&other))
+        {
+            if(axe->getActive()){
+                game.particleSystem.spawnHitParticle(intersectionRect.position);
+                playSound("whip_hit");
+            }
+        }
         else if (MiscellaneousTile* tile = dynamic_cast<MiscellaneousTile *>(&other) )
         {
             if(tile->isBreakable && !tile->isDestroyed && isSoftBlock(tile->type)){
                 if(this->type != ItemType::FIRE_BOMB){
-                    game.particleSystem.spawnHitParticle(other.getBounds()[0].position);
+                    game.particleSystem.spawnHitParticle(intersectionRect.position);
                     playSound("whip_hit");
                     if(this->type == ItemType::DAGGER){
                         this->intersected = true;
                     }
                 }
-                
-                
             }   
         }
     }

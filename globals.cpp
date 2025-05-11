@@ -27,7 +27,7 @@ const sf::Color gColorKeyGrey = sf::Color(0x74, 0x74, 0x74);
 const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
-int gStartingLevel = 3;
+int gStartingLevel = 5;
 int gStartingStage = 3;
 
 const float gTileSize = 32.f;
