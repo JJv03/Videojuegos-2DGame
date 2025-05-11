@@ -393,6 +393,7 @@ public:
 
     // Returns 'true' if Vampire Killer (the Whip) is at max level. Else 'false'
     bool isWhipAtMaxLevel() const;
+    int getWhipLevel() const;
 
     // Entity functions
     std::vector<sf::FloatRect> getBounds() const override;

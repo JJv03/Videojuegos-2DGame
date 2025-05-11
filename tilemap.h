@@ -141,7 +141,7 @@ public:
     void regenerateMiscTiles();
 
     // Function that restarts completely the miscellaneous tiles in the tilemap
-    void restartMiscTiles();
+    int countMorningStarsOnStage() const;
 
     // Function that draws on the window the section of the tilemap that is visible through the camera
     void drawScene(sf::RenderWindow &window, Camera &camera);

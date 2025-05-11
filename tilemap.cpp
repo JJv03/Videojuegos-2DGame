@@ -441,6 +441,16 @@ void TileMap::regenerateMiscTiles() {
     }
 }
 
+int TileMap::countMorningStarsOnStage() const {
+    int numMorningStars = 0;
+    for (auto item : m_items) {
+        if (item->m_type == ItemType::MORNING_STAR) {
+            numMorningStars++;
+        }
+    }
+    return numMorningStars;
+}
+
 void TileMap::drawHitboxes(sf::RenderWindow &window) const
 {
     // Solid tiles
