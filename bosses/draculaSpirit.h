@@ -73,7 +73,7 @@ public:
     bool flyDone = false;
 
     float fireCounter = 0.f;
-    float fireTimer = 1.0f;
+    float fireTimer = 1.4f;
     // Time wait next fire
     bool hasFired = false;
     float fireNextCounter = 0.f;
@@ -107,7 +107,14 @@ public:
 
     // PROJECTILE INIT
     std::array<std::shared_ptr<Projectile>, 6> projectiles;
-    bool respawned = true;;
+    bool respawned = true;
+    bool outOf= false;
+
+    // IA 
+    int weights[2] = {1, 1};
+    bool playerClose = false;
+    bool playerAway = false;
+    float speedFire = 80.f;
 
     DraculaSpirit() = default;
     DraculaSpirit(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const sf::Vector2f &position, const int &level, const int &stage, const sf::FloatRect &mapDims);
@@ -118,6 +125,8 @@ public:
     // Update draculaSpirit logic (spawn, movement, etc.)
     void update(float deltaTime, const int phase, const Player &player, const sf::FloatRect &mapBounds);
 
+    void resetPosition();
+
     // Handle collisions
     void onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect) override;
 
@@ -127,5 +136,9 @@ public:
     std::shared_ptr<Projectile> getProjectile() const { return projectile; }
     std::shared_ptr<Projectile> getProjectile2() const { return projectile2; }
     std::shared_ptr<Projectile> getProjectile3() const { return projectile3; }
+    void selectNewState();
+    
+    void updateWeights();
+    
     void hello() const override;
 };

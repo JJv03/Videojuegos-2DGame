@@ -61,6 +61,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             if (player.gPlayerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
+                life = DRACULASPIRIT_LIFE;
                 maxLife = life;
                 
                 if(!reproduced){
@@ -79,7 +80,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
     // MOVEMENT LOGIC
     if (isActive)
     {
-        if(respawned && !gKilledBoss){
+        if(respawned){
             respawned = false;
             float ejeX[2] = {200.f, -200.f};
                     float ejeY[3] = {0.f, 65.f, -65.f};
@@ -103,7 +104,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
 
         // Facing logic of draculaSpirit looking at the player
         sf::Vector2f playerPos(player.sprite->getGlobalBounds().position.x + player.sprite->getGlobalBounds().size.x / 2, player.sprite->getGlobalBounds().position.y + player.sprite->getGlobalBounds().size.y / 2);
-        position = sprite->getGlobalBounds().position;
+        position.x = sprite->getGlobalBounds().position.x + sprite->getGlobalBounds().size.x / 2;
+        position.y = sprite->getGlobalBounds().position.y + sprite->getGlobalBounds().size.y / 2;
         sf::Vector2f map = mapDims.position;
         sf::Vector2f size = mapDims.size;
         //float distance = playerPos.x - draculaSpiritPos.x;
@@ -115,7 +117,10 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             sprite->setScale(sf::Vector2f(-1.f, 1.f));
             facingRight = 1;
         }
+        float horizontalDistance = std::hypot(position.x - playerPos.x, position.y - playerPos.y);
 
+        playerClose = horizontalDistance < 70.f;
+        playerAway = horizontalDistance > 120.f;
         if(hasFired){
             fireNextCounter += deltaTime;
             if(fireNextCounter >= fireNextTimer){
@@ -126,7 +131,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
 
         int chance = rand() % 3;
         int chanceFlying = rand() % 2;
-        int chanceDodging = rand() % 3;
+        auto mode = configManager.getDifficulty();
         switch(currentState){
             case DraculeSpiritState::ASLEEP:
                 //std::cout << "sleep" << std::endl;
@@ -147,16 +152,23 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     alreadyFlying = false;
                     if (waitingIdleCounter >= waitingIdle)
                     {
-                        if (chance == 0 && !hasFired )
-                        {
-                            fireCounter = 0.f;
-                            sprite->move({0.f,-16.f});
-                            this->currentState = DraculeSpiritState::FIRE;
+                        if(mode.hard_mode){
+                            selectNewState();
                         }
                         else{
-                            waitingInReadyCounter = 0.f;
-                            this->currentState = DraculeSpiritState::READY;
-                        }   
+                            if (chance == 0 && !hasFired )
+                            {
+                                fireCounter = 0.f;
+                                sprite->move({0.f,-16.f});
+                                this->currentState = DraculeSpiritState::FIRE;
+                            }
+                            else{
+                                waitingInReadyCounter = 0.f;
+                                this->currentState = DraculeSpiritState::READY;
+                            } 
+                        }
+
+                          
                         
                         
                         waitingIdleCounter = 0.f;
@@ -183,13 +195,14 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     }
                     if (waitingInReadyCounter >= waitingInReady)
                         {
+
                             waitingInSteadyCounter = 0.f;
                             this->currentState = DraculeSpiritState::STEADY;
                             waitingInReadyCounter = 0.f;
                         }
-                        else{
-                            waitingInReadyCounter += deltaTime;
-                        }
+                    else{
+                        waitingInReadyCounter += deltaTime;
+                    }
                 }
                 
                 /*else
@@ -218,6 +231,14 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         
                         waitingInSteadyCounter = 0.f;
                         this->directionFlying = facingRight;
+                        if(!(map.x + size.x -39.f > position.x + this->directionFlying * this->speed.x)){
+                             outOfBoder = true;
+                             this->directionFlying = -1.f;
+                        } else if(!(map.x + 34.f  < position.x + this->directionFlying * this->speed.x)) {
+                               
+                            outOfBoder = true;
+                            this->directionFlying = 1.f;
+                        }
                     }
                     else{
                         waitingInSteadyCounter += deltaTime;
@@ -237,24 +258,16 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     animationManager->playAnimation(draculaSpiritGo);
                 }
                 {
-                this->speed.y = this->speed.y + 980* deltaTime * deltaTime; // Velocidad vertical
-                if(!alreadyFlying && (!((map.x + size.x -67.f > position.x + this->directionFlying * this->speed.x &&
-                    map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump) || outOfBoder)){
-                        outOfBoder = true;
-                        
-                        sprite->move(sf::Vector2f(-this->directionFlying * this->speed.x, this->speed.y));
-                }
-                else{
+                this->speed.y = this->speed.y + 1180* deltaTime * deltaTime; // Velocidad vertical
+                
+                
                     // Mueve el sprite
-                    auto mode = configManager.getDifficulty();
-                    if(mode.hard_mode && chanceDodging == 0 && !alreadyChanged && !alreadyFlying){
-                        this->speed.x = -this->speed.x;
-                        alreadyChanged=true;
-                    }
+                    
+                    
                     alreadyFlying = true;
                     
-                    if( (map.x + size.x -67.f > position.x + this->directionFlying * this->speed.x &&
-                        map.x + 10.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump){
+                    if( (map.x + size.x -39.f > position.x + this->directionFlying * this->speed.x &&
+                        map.x + 34.f  < position.x + this->directionFlying * this->speed.x) || !hasInitJump || outOfBoder){
                             sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, this->speed.y));
                     }
                     else{
@@ -264,7 +277,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
 
                         //this->directionFlying ?
                     }
-                }
+                
                 // Velocidad de caída (puedes ajustar estos valores)
                 
                 
@@ -298,7 +311,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         animationManager->playAnimation(draculaSpiritFlying);
                     }
                     sprite->move(sf::Vector2f(this->directionFlying * this->speed.x, 0.f));
-                    auto mode = configManager.getDifficulty();
+                    
                     
                     if(mode.hard_mode && !hasFired && chanceFlying==0 && !firstTimeDetected){
                         hasFired = true;               
@@ -359,7 +372,13 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                     animationManager->playAnimation(draculaSpiritLand);
                 }
                 gameSoundManager.playSound("door", gameSoundManager.realVolume(configManager::getInstance().getAudio().master_volume, configManager::getInstance().getAudio().sound_volume));
-                this->currentState = DraculeSpiritState::IDLE;
+                
+                if(mode.hard_mode){
+                    selectNewState();
+                }
+                else{
+                    this->currentState = DraculeSpiritState::IDLE;
+                }
                 break;
 
             case DraculeSpiritState::FIRE:
@@ -381,9 +400,9 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         projectile = createProjectile(
                             {   sprite->getPosition().x + (facingRight * 5.0f),
                                 sprite->getPosition().y - 27.0f},
-                            {80.f * facingRight, -20.0f},
+                            {speedFire * facingRight, -1.f *speedFire/4.f},
                             ProjectileType::FISHMAN,
-                            1.f);
+                            3.f);
         
                         projectile->setActive(true);
         
@@ -392,9 +411,9 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         projectile2 = createProjectile(
                             {   sprite->getPosition().x + (facingRight * 5.0f),
                                 sprite->getPosition().y - 27.0f},
-                            {80.f * facingRight, 10.0f},
+                            {speedFire * facingRight, speedFire/8.f},
                             ProjectileType::FISHMAN,
-                            1.f);
+                            3.f);
         
                         projectile2->setActive(true);
         
@@ -404,16 +423,21 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                         projectile3 = createProjectile(
                             {   sprite->getPosition().x + (facingRight * 5.0f),
                                 sprite->getPosition().y - 27.0f},
-                            {80.f * facingRight, 40.0f},
+                            {speedFire * facingRight, speedFire/2.f},
                             ProjectileType::FISHMAN,
-                            1.f);
+                            3.f);
         
                         projectile3->setActive(true);
         
                         hasProjectile3 = true;
                         sprite->move({0.f,16.f});
                         
-                        this->currentState = DraculeSpiritState::IDLE;
+                        if(mode.hard_mode){
+                            selectNewState();
+                        }
+                        else{
+                            this->currentState = DraculeSpiritState::IDLE;
+                        }
                     }
                 break;
 
@@ -539,6 +563,131 @@ void DraculaSpirit::updateAnimation(float deltaTime)
     {
         sprite->setScale({-1.0f, 1.0f});
     }*/
+}
+
+
+void DraculaSpirit::resetPosition()
+{
+    //Boss::resetPosition();
+
+    life = DRACULASPIRIT_LIFE;
+    reproduced = false;
+    weights[0] = 1;
+    weights[1] = 1;
+
+    playerClose = false;
+    playerAway = false;
+    waitingIdle = 0.5f;
+    waitingInReady = 0.5f;
+    waitingInSteady = 0.5f;
+    speedFire = 80.f;
+    fireTimer = 1.4f;
+}
+
+void DraculaSpirit::selectNewState(){
+    updateWeights();
+
+    //startingMove = false;
+
+    int totalWeight = weights[0] + weights[1];
+    if (totalWeight == 0) return;
+
+    int r = rand() % totalWeight;
+
+    if (r < weights[0]) {
+        waitingInReadyCounter = 0.f;
+        this->currentState = DraculeSpiritState::READY;
+        std::cout << "Selected READY" << std::endl;
+    } 
+    else if(!hasFired){
+        
+                            
+        fireCounter = 0.f;
+
+        sprite->move({0.f,-16.f});
+        currentState = DraculeSpiritState::FIRE;
+        std::cout << "Selected ATTACKING" << std::endl;
+    }
+    else{
+        waitingInReadyCounter = 0.f;
+        this->currentState = DraculeSpiritState::READY;
+        std::cout << "Selected READY" << std::endl;
+    }
+
+    //timer = 0.f;
+    //speed = sf::Vector2f(0.f, 0.f);
+}
+
+void DraculaSpirit::updateWeights() {
+    // Reset base weights
+    weights[0] = 1; // MOVING
+    weights[1] = 1; // ATTACKING
+
+    float lifeRatio = static_cast<float>(life) / static_cast<float>(DRACULASPIRIT_LIFE);
+
+    // If life is low, prioritize moving to escape
+    if (lifeRatio < 0.35f) {
+        //weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[0] += 2; // More likely to flee
+        waitingIdle = 0.25f;
+        waitingInReady = 0.25f;
+        waitingInSteady = 0.25f;
+        fireTimer = 0.6f;
+        speedFire = 120.f;
+    }
+    else{
+        waitingIdle = 0.5f;
+        waitingInReady = 0.5f;
+        waitingInSteady = 0.5f;
+        speedFire = 80.f;
+        fireTimer = 1.4f;
+    }
+
+    // If the player is attacking, avoid waiting for so long
+    if (gIsWhipBeingUsed || gIsSubWeaponBeingUsed) {
+        //weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
+        weights[0] += 1; // Move more to dodge
+        if(lifeRatio >= 0.35f){
+            waitingIdle = 0.25f;
+            waitingInReady = 0.25f;
+            waitingInSteady = 0.25f;
+            speedFire = 120.f;
+            fireTimer = 0.6f;
+            // paralizeCounter = 0.7f;
+        }
+        
+        
+    }
+    
+
+    // Distance to the player
+    if (playerClose) {
+        weights[0] += 2; // Try to jump to the player
+        if(lifeRatio >= 0.35f){
+            speedFire = 80.f;
+            fireTimer = 1.4f;
+        }
+        
+    } else if (playerAway) {
+        speedFire = 120.f;
+        fireTimer = 0.6f;
+        weights[1] += 3; // Try yo fire
+    }
+
+    // Penalize repeating the same state
+    int currentIdx = static_cast<int>(currentState);
+    if (weights[currentIdx] > 1) {
+        weights[currentIdx] -= 1;
+    }
+
+    // Rebalancing weights if all are zero
+    int total = weights[0] + weights[1];
+    if (total == 0) {
+        weights[1] = 1; // MOVING by default if all else fails
+    }
+
+    std::cout << "Weight MOVING: " << weights[0] << std::endl;
+    std::cout << "Weight ATTACKING: " << weights[1] << std::endl;
 }
 
 void DraculaSpirit::hello() const
