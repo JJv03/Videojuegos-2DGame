@@ -979,33 +979,31 @@ void PlayerStairWalkState::update(Player& player, float deltaTime, bool windowHa
         player.sprite->setScale(sf::Vector2f(1.f, 1.f));
     }
 
-    float move = deltaTime * gPlayerStairSpeed;
+    float desiredMove = deltaTime * gPlayerStairSpeed;
+    float actualMove = std::min(desiredMove, player.stairStepDistance);
 
-    if(player.stairStepDistance < 1.f) {
-        move = player.stairStepDistance;
-    }
-    
-    if(player.isStairUpRight){
-        if(player.dir == LEFT){
-            player.sprite->move({-move, move});
+    sf::Vector2f movement(0.f, 0.f);
+
+    if (player.isStairUpRight) {
+        if (player.dir == LEFT) {
+            movement = {-actualMove, actualMove};
             player.currentAnimation = stairDescendWalkSimon;
         } else {
-            player.sprite->move({move, -move});
+            movement = {actualMove, -actualMove};
             player.currentAnimation = stairAscendWalkSimon;
         }
-
     } else {
-        if(player.dir == RIGHT){
-            player.sprite->move({move, move});
+        if (player.dir == RIGHT) {
+            movement = {actualMove, actualMove};
             player.currentAnimation = stairDescendWalkSimon;
         } else {
-            player.sprite->move({-move, -move});
+            movement = {-actualMove, -actualMove};
             player.currentAnimation = stairAscendWalkSimon;
         }
     }
 
-    player.stairStepDistance = max(0.f, player.stairStepDistance - move);
-
+    player.sprite->move(movement);
+    player.stairStepDistance = std::max(0.f, player.stairStepDistance - actualMove);
     
 
     if (!player.animationManager->isPlaying(player.currentAnimation)){
