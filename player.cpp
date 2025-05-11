@@ -681,7 +681,7 @@ void Player::onCollision_Item(Entity &entityItem)
 {
     Item* item = dynamic_cast<Item*>(&entityItem);
     if (item == nullptr) return; // Impossible
-    if (item->m_spawnDelay > 0.f) return; // Can't pickup item if it's not spawned yet
+    if (item->m_elapsedSpawnDelay < item->m_spawnDelay) return; // Can't pickup item if it's not spawned yet
 
     ItemType itemType = item->getType();
 
@@ -702,9 +702,6 @@ void Player::onCollision_Item(Entity &entityItem)
                 this->timeTripleShotActiveCounter = 0.f;
             }
         }
-        
-        
-        
     }
     else if (itemType == ItemType::MORNING_STAR)
     {
