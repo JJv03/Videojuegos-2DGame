@@ -43,4 +43,6 @@ public:
     void loadEnemiesFromLevel(int level, const TilemapManager &tilemaps);
 
     void restartEnemies(int currentLevel, int currentStage);
+
+    void turnOffAutoSpawn(int currentLevel, int currentStage);
 };
