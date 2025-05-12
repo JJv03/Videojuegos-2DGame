@@ -203,7 +203,12 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         hitboxes[0] = spriteBounds;
     }
     
-    
+    if(id==1){
+            currentMummy1Life = life;
+        }else{
+            currentMummy2Life = life;
+        }
+        currentBossLife = currentMummy1Life + currentMummy2Life;
     updateAnimation(deltaTime);
 }
 
@@ -250,12 +255,7 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
         }
 
     }
-    if(id==1){
-            currentMummy1Life = life;
-        }else{
-            currentMummy2Life = life;
-        }
-        currentBossLife = currentMummy1Life + currentMummy2Life;
+    
     
 }
 
