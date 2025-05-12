@@ -289,6 +289,11 @@ public:
     const float DEACTIVATION_WIDTH = gWindowWidth * 1.2f;
     const float DEACTIVATION_HEIGHT = gWindowHeight * 1.2f;
 
+    // Input buffering
+    bool jumpBuffer;
+    float jumpBufferTimeCounter;
+    const float JUMP_BUFFER_TIME = 0.2f;
+
     // Animations
     std::vector<AnimationManager::Frame> idleFrames{
         AnimationManager::Frame{sf::IntRect(sf::Vector2(1, 21), sf::Vector2(16, 31)), 0.2f}};
@@ -382,6 +387,7 @@ public:
 
     bool loadSpritesAndAnimations();
     void handleInput(sf::Event event);
+    void inputBuffering(sf::Event event);
     void update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus);
     void draw(sf::RenderWindow &window);
 

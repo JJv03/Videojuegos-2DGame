@@ -102,16 +102,36 @@ Player::Player():configManager(configManager::getInstance())
     delayBetweenShotsTriple = 2.5f; // 0.5 segs
     delayBetweenShotsCounterTriple = 0.0f;
     timeTripleShotActive = 10.0f; // 5 segs
-    
+    jumpBufferTimeCounter = 0.0f;
+    jumpBuffer = false;   
 }
 
 void Player::handleInput(sf::Event event)
 {
+    inputBuffering(event);
     getActiveState()->handleInput(*this, event);
 }
 
+void Player::inputBuffering(sf::Event event){
+    auto controls = configManager.getControls();
+    if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()){
+        if (keyPressed->scancode == controls.jump) {
+            jumpBuffer = true;
+            jumpBufferTimeCounter = 0.0f;
+        }
+    }
+}
+
+
 void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool windowHasFocus)
 {
+    // Update input buffering before updating state
+    if (jumpBuffer) jumpBufferTimeCounter += deltaTime;
+    if (jumpBufferTimeCounter >= JUMP_BUFFER_TIME) {
+        jumpBuffer = false;
+        jumpBufferTimeCounter = 0.0f;
+    }
+
     getActiveState()->update(*this, deltaTime, windowHasFocus);
     //getActiveState()->hello();
     updateActivationZones(viewPosition);

@@ -187,6 +187,16 @@ void PlayerIdleState::update(Player& player, float deltaTime, bool windowHasFocu
         player.setState(state<Walk>());
     }
 
+    if(player.jumpBuffer){
+        player.jumpBuffer = false;
+        player.jumpBufferTimeCounter = 0.f;
+        player.isJumping = true;
+        player.verticalSpeed = -gPlayerJumpForce;
+        player.isOnGround = false;
+        player.sprite->move({0.f, -7.f});
+        player.setState(state<Jump>());
+    }
+
     player.sprite->move({0.f, gPlayerGravity * deltaTime});
 
     player.currentAnimation = idleSimon;
@@ -333,6 +343,17 @@ void PlayerWalkState::update(Player& player, float deltaTime, bool windowHasFocu
     if (player.upgradeWhip){
         player.setState(state<WhipUpgrade>());
     }
+
+    if(player.jumpBuffer){
+        player.jumpBuffer = false;
+        player.jumpBufferTimeCounter = 0.f;
+        player.isJumping = true;
+        player.verticalSpeed = -gPlayerJumpForce;
+        player.isOnGround = false;
+        player.sprite->move({0.f, -7.f});
+        player.setState(state<Jump>());
+    }
+
     player.sprite->move({0.f,gPlayerGravity*deltaTime});
     
     if(player.dir == RIGHT){
@@ -501,6 +522,17 @@ void PlayerJumpState::init(Player& player)
     } else {
         player.horizontalSpeed = 0.0f; // No horizontal movement if not walking
     }
+
+    auto controls = configManager.getControls();
+    
+    if(sf::Keyboard::isKeyPressed(controls.left) && player.acceptsInput){
+        player.dir = LEFT;
+        player.isWalking = true;
+    } else if(sf::Keyboard::isKeyPressed(controls.right) && player.acceptsInput){
+        player.dir = RIGHT;
+        player.isWalking = true;
+    }
+
 }
 
 void PlayerJumpState::handleInput(Player& player, sf::Event event)
