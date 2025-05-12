@@ -154,7 +154,7 @@ private:
     // Blinking screen when rosary is used
     sf::Clock rosarioBlinkClock;
     bool isRosarioBlinking = false;
-    float rosarioBlinkDuration = 1.0f;
+    float rosarioBlinkDuration = 0.2f;
     float rosarioBlinkInterval = 0.1f;
 
     // ----- All refered to the end level score animation -----

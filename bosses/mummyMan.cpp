@@ -184,8 +184,25 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
         
     }
 
-    sf::FloatRect spriteBounds = sprite->getGlobalBounds();
-    hitboxes[0] = spriteBounds;
+    if (currentState == MummyState::IDLE)
+    {
+        sf::FloatRect spriteBounds = sprite->getGlobalBounds();
+        if (spriteBounds.position.x < mapDims.position.x + mapDims.size.x / 2)
+        {
+            spriteBounds.position.x = spriteBounds.position.x-100.f;
+        }
+        else {
+            spriteBounds.position.x = spriteBounds.position.x+35.f;
+            spriteBounds.position.y = spriteBounds.position.y-130.f;
+        }
+        
+        hitboxes[0] = spriteBounds;
+    }
+    else {
+        sf::FloatRect spriteBounds = sprite->getGlobalBounds();
+        hitboxes[0] = spriteBounds;
+    }
+    
     
     updateAnimation(deltaTime);
 }
@@ -208,9 +225,10 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
             if(bandage){
                 bandage->reset();
             }
+            game.particleSystem.spawnBigFireParticle(position, false);
             if(isOtherDead){
                 game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
-                game.particleSystem.spawnBigFireParticle(position, false);
+                
             }
             
         }
@@ -224,10 +242,9 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
             if(bandage){
                 bandage->reset();
             }
-            
+            game.particleSystem.spawnBigFireParticle(position, false);
             if(isOtherDead){
                 game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
-                game.particleSystem.spawnBigFireParticle(position, false);
             }
             
         }

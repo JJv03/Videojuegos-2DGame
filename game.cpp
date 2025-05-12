@@ -641,6 +641,7 @@ void Game::update(float deltaTime, const sf::Vector2f &viewPosition, bool window
             enemyManager->restartEnemies(currentLevel, currentStage);
             enemyManager->turnOffAutoSpawn(currentLevel, currentStage);
             isRosarioBlinking = true;
+            
             rosarioBlinkClock.restart();
             player.activateRosario = false;
         }
@@ -1005,15 +1006,12 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
 
         if (elapsed < rosarioBlinkDuration)
         {
-            if (static_cast<int>(elapsed / rosarioBlinkInterval) % 2 == 0)
-            {
-                sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * gTileSize,
+            sf::RectangleShape whiteScreen(sf::Vector2f{tilemaps[currentLevel].m_tilesPerRow * gTileSize,
                                                             tilemaps[currentLevel].m_tilesPerColumn * gTileSize});
                 whiteScreen.setFillColor(sf::Color::White);
                 window.draw(whiteScreen);
                 window.display();
                 sf::sleep(sf::milliseconds(10));
-            }
         }
         else
         {
@@ -1992,6 +1990,9 @@ void Game::restartLevel()
     player.hearts = 5;
     player.score = 0;
     player.lives = 3;
+    player.score80k = false;
+    player.score130k = false;
+    player.score30k = false;
 
     player.acceptsInput = true;
 

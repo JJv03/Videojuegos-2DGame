@@ -15,8 +15,14 @@ Player::Player():configManager(configManager::getInstance())
     activeState = std::make_unique<PlayerIdleState>();
     dir = RIGHT;
 
-    acceptsInput = true;
+    score80k = false;
+    score30k = false;
+    score130k = false;
 
+    acceptsInput =  true;
+    score30k = false;
+    score80k=false;
+    score130k=false;
     isOnGround = false;
     isOnStairs = false;
     hasToPressAgain = true;
@@ -112,6 +118,28 @@ void Player::update(float deltaTime, const sf::Vector2f &viewPosition, bool wind
     updateActiveSubWeapons(deltaTime, viewPosition);
     updateActiveSubWeapons2(deltaTime, viewPosition);
     updateActiveSubWeapons3(deltaTime, viewPosition);
+
+    if(!this->score30k && this->score >= 30000){
+        this->score30k = true;
+        this->lives++;
+        playSound("one_up");
+    }
+    if (!this->score80k && this->score >= 80000)
+    {
+
+        this->score80k = true;
+        this->lives++;
+        playSound("one_up");
+    }
+    if (!this->score130k && this->score >= 130000)
+    {
+        this->score130k = true;
+        this->lives++;
+        playSound("one_up");
+    }
+    
+    
+    
     if(this->activateRosario && this->rosarioTimeCounter < this->invulnerableTime){
         this->rosarioTimeCounter += deltaTime;
     }

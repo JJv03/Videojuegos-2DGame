@@ -182,7 +182,9 @@ public:
 
     bool acceptsInput;
     configManager &configManager;
-
+    bool score30k = false;
+    bool score80k=false;
+    bool score130k=false;
     bool isOnStairs;
     bool isAttacking;
     bool attackedFinished;
