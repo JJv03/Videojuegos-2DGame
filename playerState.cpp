@@ -942,7 +942,7 @@ void PlayerStairIdleState::update(Player& player, float deltaTime, bool windowHa
         player.stairStepDistance = 0.f;
         player.isDucking = false;
         player.isOnStairs = false;
-        player.sprite->move({0.f, 2.f}); // Stairs are a bit higher than the ground
+        player.sprite->move({0.f, 1.f}); // Stairs are a bit higher than the ground
         player.firstStepTaken = false;
         player.setState(state<Idle>());
     }
@@ -984,7 +984,7 @@ void PlayerStairWalkState::init(Player& player)
     player.isWalking = true;
 
     if(player.isPositionedInStair){ // If player just arrived to the stair
-        player.sprite->move({0.f, -2.f}); // Stairs are a bit higher than the ground
+        player.sprite->move({0.f, -1.f}); // Stairs are a bit higher than the ground
         player.isStairUpRight = (player.stairStart->type == StairTile::Type::BOTTOM_LEFT ||
                                  player.stairStart->type == StairTile::Type::TOP_RIGHT);
         player.isPositionedInStair = false;
