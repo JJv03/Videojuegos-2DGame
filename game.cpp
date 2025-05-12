@@ -2012,7 +2012,7 @@ void Game::restartLevel()
 void Game::setLevelMusic(int level)
 {
     // Music for the game
-    gameSoundManager.stopAllMusic();
+    // gameSoundManager.stopAllMusic();
     auto audio = configManager.getAudio();
     float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
     switch (level)
