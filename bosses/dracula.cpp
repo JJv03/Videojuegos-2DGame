@@ -641,6 +641,7 @@ void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
             if(applyDamage(whip->whipDmg, game.player)){
                 sprite->setColor(sf::Color::White);
                 currentState = DraculaState::DEAD_MASK_OFF;
+                reproduced = true;
             }
         }
     }
@@ -652,6 +653,7 @@ void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
             if(applyDamage(subWeapon->subDamage, game.player)){
                 sprite->setColor(sf::Color::White);
                 currentState = DraculaState::DEAD_MASK_OFF;
+                reproduced = true;
             }
         }
     }

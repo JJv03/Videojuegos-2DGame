@@ -64,8 +64,8 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
                 life = DRACULASPIRIT_LIFE;
                 maxLife = life;
                 
-                if(!reproduced){
-                    reproduced = true;
+                if(reproduced){
+                    reproduced = false;
                     this->currentState = DraculeSpiritState::IDLE;
                     respawned = true;
                     gameSoundManager.stopAllMusic();
@@ -580,10 +580,29 @@ void DraculaSpirit::resetPosition()
     //Boss::resetPosition();
 
     life = DRACULASPIRIT_LIFE;
-    reproduced = false;
+    
+    
     weights[0] = 1;
     weights[1] = 1;
-
+    if(projectile){
+        projectile->setActive(false);
+        projectile = nullptr;
+    }
+    if(projectile2){
+        projectile2->setActive(false);
+        projectile2 = nullptr;
+    }
+    if(projectile3){
+        projectile3->setActive(false);
+        projectile3 = nullptr;
+    }
+    for(auto& projectil : projectiles){
+        if(projectil){
+            projectil->setActive(false);
+            projectil = nullptr;
+        }
+    }
+    
     playerClose = false;
     playerAway = false;
     waitingIdle = 0.5f;

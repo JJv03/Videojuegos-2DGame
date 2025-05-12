@@ -1945,7 +1945,8 @@ void Game::restartStage()
     gKilledBoss = false;
     currentBossPhase = 0;
     player.visible = true;
-
+    gameSoundManager.stopMusic("dracula2.1");
+    gameSoundManager.stopMusic("dracula2.2");
     player.sprite->setPosition(tilemaps[currentStage].initialPosition);
 
     enemyManager->restartEnemies(currentLevel, currentStage);
@@ -1994,6 +1995,8 @@ void Game::restartLevel()
     player.score130k = false;
     player.score30k = false;
 
+    gameSoundManager.stopMusic("dracula2.1");
+    gameSoundManager.stopMusic("dracula2.2");
     player.acceptsInput = true;
 
     hasReachedEndStage = false;
@@ -2009,6 +2012,7 @@ void Game::restartLevel()
 void Game::setLevelMusic(int level)
 {
     // Music for the game
+    gameSoundManager.stopAllMusic();
     auto audio = configManager.getAudio();
     float volume = gameSoundManager.realVolume(audio.master_volume, audio.music_volume);
     switch (level)
