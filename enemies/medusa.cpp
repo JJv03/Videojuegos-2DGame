@@ -43,7 +43,7 @@ void Medusa::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
 
     if (playerInZone && !isActive && !spawnerActive)
     {
-        medusaSpawnTimers = 0.25f; // Delay before spawning
+        medusaSpawnTimers = 1.00f; // Delay before spawning
 
         medusaToSpawn = true;
     }
@@ -129,7 +129,7 @@ void Medusa::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
     }
 }
 
-void Medusa::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
+void Medusa::onCollision(Entity &other, Game &game, const sf::FloatRect &intersectionRect)
 {
     if (!isActive || !sprite)
         return;
@@ -240,9 +240,11 @@ void Medusa::updateAnimation(float deltaTime)
         sprite->setScale({-1.0f, 1.0f});
     }
 
-    if (!isActive || !sprite) return;
+    if (!isActive || !sprite)
+        return;
 
-    if(!animationManager->isPlaying(currentAnimation)){
+    if (!animationManager->isPlaying(currentAnimation))
+    {
         animationManager->playAnimation(currentAnimation);
     }
     animationManager->update(deltaTime);
