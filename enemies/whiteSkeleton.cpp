@@ -6,6 +6,19 @@
 static std::random_device rd;       // we only want 1 instance of random_device
 static std::mt19937 rng(rd());
 
+
+const sf::Vector2f WhiteSkeleton::WHITE_SKELETON_SPEED = {85.0f, 0.0f};
+const float WhiteSkeleton::WHITE_SKELETON_LIFE = 1.0f;
+const float WhiteSkeleton::WHITE_SKELETON_SCORE = 400.0f;
+const float WhiteSkeleton::WHITE_SKELETON_DAMAGE = 3.0f;
+const float WhiteSkeleton::BONE_DAMAGE = 3.f;
+const float WhiteSkeleton::DISTANCE_TO_PLAYER = 2.f * 32.f;
+const float WhiteSkeleton::DISTANCE_TO_PLAYER_TO_JUMP = 32.f;
+const int WhiteSkeleton::JUMP_CHANCE = 5;
+const sf::Vector2f WhiteSkeleton::WHITE_SKELETON_JUMP_SPEED = {85.0, 300.0f};
+
+
+
 WhiteSkeleton::WhiteSkeleton(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_hitboxes, const int &level, const int &stage)
     : Enemy(_sprite, _hitboxes), level(level), stage(stage)
 {
@@ -21,6 +34,7 @@ WhiteSkeleton::WhiteSkeleton(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf
     atTheEdge = false;
     isPlayerRight = false;
     attackLow = false;
+    startingJump = false;
 
     AnimationManager *animationManager = new AnimationManager(*this->sprite, this);
     if (!animationManager)
@@ -83,7 +97,9 @@ void WhiteSkeleton::update(float deltaTime, const sf::FloatRect &playerActivatio
             return;
         }
         
-        isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+        if (currentState != State::JUMP) {
+            isPlayerRight = sprite->getGlobalBounds().position.x <= playerPos.x;
+        }
 
         if(isPlayerRight){
             sprite->setScale({-1.f, 1.f});
@@ -111,7 +127,14 @@ void WhiteSkeleton::update(float deltaTime, const sf::FloatRect &playerActivatio
                     } 
                     else if(atTheEdge)
                     {
-                        if(prevState == State::WALKINGAWAY){
+                        bool jumpAway = (prevState == State::WALKINGAWAY) && shouldJump();
+                        bool jumpClose = (prevState == State::WALKINGCLOSE) && shouldJump();
+                                         //&& (distance >= DISTANCE_TO_PLAYER_TO_JUMP);
+                        if (jumpAway || jumpClose){
+                            currentState = State::JUMP;
+                            startingJump = true;
+                        }
+                        else if(prevState == State::WALKINGAWAY){
                             currentState = State::WALKINGCLOSE;
                         }
                         else if(prevState == State::WALKINGCLOSE){
@@ -169,7 +192,36 @@ void WhiteSkeleton::update(float deltaTime, const sf::FloatRect &playerActivatio
                 }
 
                 break;
+
+            case State::JUMP: {
+                float directionChange = (prevState == State::WALKINGCLOSE) ? -1.f : 1.f;
+
+                if (startingJump) {
+                    isOnGround = false;
+                    if(isPlayerRight){
+                        speed = sf::Vector2f(-WHITE_SKELETON_JUMP_SPEED.x * directionChange, WHITE_SKELETON_JUMP_SPEED.y);
+                    }
+                    else{
+                        speed = sf::Vector2f(WHITE_SKELETON_JUMP_SPEED.x * directionChange, WHITE_SKELETON_JUMP_SPEED.y);
+                    }
+                    startingJump = false;
+                }
+                else {
+                    float current_speed_x = speed.x;
+                    if(isPlayerRight){
+                        speed = sf::Vector2f(current_speed_x, speed.y);
+                    }
+                    else{
+                        speed = sf::Vector2f(current_speed_x, speed.y);
+                    }
+                }
                 
+                if(isOnGround){
+                    prevState = currentState;
+                    currentState = State::IDLE;
+                }
+                break;
+            }    
             case State::ATTACKING:
                 speed = sf::Vector2f(0.f, 0.f);
 
@@ -197,7 +249,6 @@ void WhiteSkeleton::update(float deltaTime, const sf::FloatRect &playerActivatio
         }
 
         applyGravity(deltaTime);
-
         if (speed.y != 0)
         {
             sprite->move({0.f, -speed.y * deltaTime});
@@ -302,6 +353,7 @@ void WhiteSkeleton::resetSkeleton(){
     atTheEdge = false;
     isPlayerRight = false;
     attackLow = false;
+    startingJump = false;
 
     walksThisRound = 2;
     attacksThisRound = 1;
@@ -383,6 +435,26 @@ float WhiteSkeleton::getHighBoneSpeed(){
     return dis(rng);
 }
 
+bool WhiteSkeleton::shouldJump() {
+    std::uniform_int_distribution<int> dist(0, JUMP_CHANCE - 1);
+    int randValue = dist(rng);
+    return randValue == 0;  // 1/JUMP_CHANCE possibility of jumping
+}
+
+bool WhiteSkeleton::checkMapBoundaries(const sf::FloatRect &mapBounds)
+{
+    sf::FloatRect enemyBounds = sprite->getGlobalBounds();
+
+    if (enemyBounds.position.x <= mapBounds.position.x ||
+        enemyBounds.position.x + enemyBounds.size.x >= mapBounds.position.x + mapBounds.size.x ||
+        enemyBounds.position.y + enemyBounds.size.y >= mapBounds.position.y + mapBounds.size.y)
+    {
+        isActive = false;
+        return true;
+    }
+
+    return false;
+}
 
 void WhiteSkeleton::hello() const{
     std::cout << "Hello from WhiteSkeleton!" << std::endl;

@@ -3,18 +3,23 @@
 #include "enemy.h"
 #include "bone.h"
 
+
 class WhiteSkeleton : public Enemy
 {
 private:
     // Combat stats
-    const sf::Vector2f WHITE_SKELETON_SPEED = {85.0f, 0.0f};
-    const float WHITE_SKELETON_LIFE = 1.0f;
-    const float WHITE_SKELETON_SCORE = 400.0f;
-    const float WHITE_SKELETON_DAMAGE = 3.0f;
+    static const sf::Vector2f WHITE_SKELETON_SPEED;
+    static const float WHITE_SKELETON_LIFE;
+    static const float WHITE_SKELETON_SCORE;
+    static const float WHITE_SKELETON_DAMAGE;
 
-    const float BONE_DAMAGE = 3.f;
+    static const float BONE_DAMAGE;
 
-    const float DISTANCE_TO_PLAYER = 2.f * 32.f;
+    static const float DISTANCE_TO_PLAYER;
+    static const float DISTANCE_TO_PLAYER_TO_JUMP;
+
+    static const int JUMP_CHANCE;
+    static const sf::Vector2f WHITE_SKELETON_JUMP_SPEED;
 
     enum class State
     {
@@ -22,6 +27,7 @@ private:
         ATTACKING,
         WALKINGCLOSE,
         WALKINGAWAY,
+        JUMP,
     };
 
     const float WALK_TIME = 0.2f;
@@ -36,6 +42,7 @@ private:
     bool atTheEdge;
     bool isPlayerRight;
     bool attackLow;
+    bool startingJump;
 
     int attacksThisRound;
     int walksThisRound;
@@ -56,6 +63,8 @@ private:
     float getLowBoneSpeed();
     float getHighBoneSpeed();
 
+    bool shouldJump();
+    bool checkMapBoundaries(const sf::FloatRect &mapBounds);
     
 public:
 
