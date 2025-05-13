@@ -69,12 +69,10 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
         case 53:
             return collisionTypes.at(TOP_HALF_COLLISION);
         case 7:
-        case 6:
         case 13:
         case 16:
         case 21:
         case 22:
-        case 23:
         case 31:
         case 45:
         case 55:
@@ -89,6 +87,8 @@ sf::FloatRect TileMap::getHitboxForSolidTile(const int level, const int id) cons
         //case 4:  // Escalera (quitar)
         //case 61: // Escalera (quitar)
             return collisionTypes.at(BOTTOM_RIGHT_COLLISION);
+        case 6:
+        case 23:
         case 80:
         case 82:
         //case 46: // Escalera (quitar)
