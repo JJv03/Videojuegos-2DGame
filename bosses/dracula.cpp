@@ -28,6 +28,7 @@ void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& in
                     dracula->sprite->setColor(sf::Color::White);
                     dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;
                     reproduced = true;
+                    currentBossLife = 0.f;
                 }
             }
         }
@@ -41,6 +42,7 @@ void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& in
                     dracula->sprite->setColor(sf::Color::White);
                     dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;
                     reproduced = true;
+                    currentBossLife = 0.f;
                 }
             }
         }
@@ -165,9 +167,13 @@ void Dracula::update(float deltaTime, const int phase, const Player &player, con
         } else {
             updateNormalMode(deltaTime, player, mapBounds);
         }
+        if(!reproduced){
+            currentBossLife = life;
+        }
+        
     }
 
-    currentBossLife = life;
+    
 }
 
 // Update dracula logic: handle spawning, movement, and deactivation
@@ -644,6 +650,7 @@ void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
                 sprite->setColor(sf::Color::White);
                 currentState = DraculaState::DEAD_MASK_OFF;
                 reproduced = true;
+                currentBossLife = 0.f;
             }
         }
     }
@@ -656,6 +663,7 @@ void Dracula::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
                 sprite->setColor(sf::Color::White);
                 currentState = DraculaState::DEAD_MASK_OFF;
                 reproduced = true;
+                currentBossLife = 0.f;
             }
         }
     }
