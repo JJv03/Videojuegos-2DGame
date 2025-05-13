@@ -31,6 +31,10 @@ Death::Death(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &_h
     weights[1] = 1;
     weights[2] = 1;
 
+    damageReceived[0] = 0;
+    damageReceived[1] = 0;
+    damageReceived[2] = 0;
+
     startingMove = false;
     playerClose = false;
     playerAway = false;
@@ -374,6 +378,10 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
+        int idx = static_cast<int>(currentState);
+        if (idx >= 0 && idx < 3) {
+            damageReceived[idx] += whip->whipDmg;
+        }
         // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
@@ -388,6 +396,10 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
+        int idx = static_cast<int>(currentState);
+        if (idx >= 0 && idx < 3) {
+            damageReceived[idx] += subWeapon->subDamage;
+        }
         // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
@@ -465,6 +477,10 @@ void Death::resetPosition()
     weights[1] = 1;
     weights[2] = 1;
 
+    damageReceived[0] = 0;
+    damageReceived[1] = 0;
+    damageReceived[2] = 0;
+
     startingMove = false;
     playerClose = false;
     playerAway = false;
@@ -527,6 +543,20 @@ void Death::updateWeights() {
         weights[1] += 2; // Try to get away
     } else if (playerAway) {
         weights[2] += 3; // Take advantage of the distance to attack
+    }
+
+    // Penalize the most damaged state
+    int maxDamageIdx = 0;
+    for (int i = 1; i < 3; ++i) {
+        if (damageReceived[i] > damageReceived[maxDamageIdx]) {
+            maxDamageIdx = i;
+        }
+    }
+
+    // Penalize that state by reducing its weight
+    if (weights[maxDamageIdx] > 0) {
+        weights[maxDamageIdx] = std::max(0, weights[maxDamageIdx] - 2);
+        std::cout << maxDamageIdx << std::endl;
     }
 
     // Penalize repeating the same state

@@ -228,7 +228,7 @@ void Cannon::generateProjectile(bool secondAttack){
             {PROJECTILE_SPEED, 0.f},
             ProjectileType::FISHMAN,
             PROJECTILE_DAMAGE);
-        projectiles[i]->sprite->setScale({-1.f, 1.f});
+        projectiles[i]->sprite->setScale({1.f, 1.f});
         projectiles[i]->setActive(true);
     
     } else {
@@ -238,7 +238,7 @@ void Cannon::generateProjectile(bool secondAttack){
             {-PROJECTILE_SPEED, 0.f},
             ProjectileType::FISHMAN,
             PROJECTILE_DAMAGE);
-        projectiles[i]->sprite->setScale({1.f, 1.f});
+        projectiles[i]->sprite->setScale({-1.f, 1.f});
         projectiles[i]->setActive(true);
     }
 }

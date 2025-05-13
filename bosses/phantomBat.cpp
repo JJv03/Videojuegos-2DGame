@@ -32,6 +32,10 @@ PhantomBat::PhantomBat(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::Floa
     weights[1] = 1;
     weights[2] = 1;
 
+    damageReceived[0] = 0;
+    damageReceived[1] = 0;
+    damageReceived[2] = 0;
+
     startingMove = false;
     startingAttack = false;
     startingEnhanced = false;
@@ -328,6 +332,10 @@ void PhantomBat::onCollision(Entity &other, Game &game, const sf::FloatRect& int
 
     if (Whip *whip = dynamic_cast<Whip *>(&other))
     {
+        int idx = static_cast<int>(currentState);
+        if (idx >= 0 && idx < 3) {
+            damageReceived[idx] += whip->whipDmg;
+        }
         // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!whip->collisionedEntities.contains(this) && applyDamage(whip->whipDmg, game.player))
         {
@@ -339,6 +347,10 @@ void PhantomBat::onCollision(Entity &other, Game &game, const sf::FloatRect& int
     }
     else if (SubWeapon *subWeapon = dynamic_cast<SubWeapon *>(&other))
     {
+        int idx = static_cast<int>(currentState);
+        if (idx >= 0 && idx < 3) {
+            damageReceived[idx] += subWeapon->subDamage;
+        }
         // sf::Vector2f spriteCenter = position + sprite->getGlobalBounds().size / 2.f;
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
@@ -400,6 +412,10 @@ void PhantomBat::resetPosition()
     weights[1] = 1;
     weights[2] = 1;
 
+    damageReceived[0] = 0;
+    damageReceived[1] = 0;
+    damageReceived[2] = 0;
+
     startingMove = false;
     startingAttack = false;
     startingEnhanced = false;
@@ -456,6 +472,19 @@ void PhantomBat::updateWeights() {
         if (lifeRatio < 0.5f) {
             weights[0] = std::max(0, weights[0] - 1); // Don't stand still if the player is aggressive
         }
+    }
+
+    // Penalize the most damaged state
+    int maxDamageIdx = 0;
+    for (int i = 1; i < 3; ++i) {
+        if (damageReceived[i] > damageReceived[maxDamageIdx]) {
+            maxDamageIdx = i;
+        }
+    }
+
+    // Penalize that state by reducing its weight
+    if (weights[maxDamageIdx] > 0) {
+        weights[maxDamageIdx] = std::max(0, weights[maxDamageIdx] - 2);
     }
 
     // Penalize repeating the same state
