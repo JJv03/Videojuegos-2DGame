@@ -276,8 +276,10 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
             break;
 
         case DraculaState::DEAD_MASK_OFF:
-            sprite->setColor(sf::Color::White);
-            draculaBody->sprite->setColor(sf::Color::White);
+            (sprite && draculaBody->sprite){
+                sprite->setColor(sf::Color::White);
+                draculaBody->sprite->setColor(sf::Color::White);
+            }
 
             if(!isDead){
                 isDead = true;
@@ -291,6 +293,11 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
             break;
         
         case DraculaState::DEAD_WAIT:
+            (sprite && draculaBody->sprite){
+                sprite->setColor(sf::Color::White);
+                draculaBody->sprite->setColor(sf::Color::White);
+            }
+            
             deadTimeCounter += deltaTime;
 
             if(deadTimeCounter >= DEAD_TIME){
