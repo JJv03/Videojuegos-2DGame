@@ -1363,8 +1363,6 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
                 auto audio = configManager.getAudio();
                 gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
             }
-
-            // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
         }
     }
 

@@ -154,7 +154,7 @@ bool loadMiscTextures();
 // E.g: Candelabrum, Firepit
 bool isSoftBlock(MiscTileType type);
 
-// Returns 'true' if the player can collide with the 'type' tile
+// Returns 'true' if an entity can physically collide with the 'type' tile
 bool isCollidable(MiscTileType type);
 
 // Returns the animation frames of a miscellaneous tile based on its type
