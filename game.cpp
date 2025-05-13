@@ -1100,14 +1100,16 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         { // Boss fight
             int maxSquares = 16;
             int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
-            float scaledBossLifeFloat = (currentBossLife * maxSquares) / maxLife;
 
-            if (scaledBossLife > maxSquares)
+            if (scaledBossLife >= maxSquares) {
                 scaledBossLife = maxSquares;
-            else if (scaledBossLife < 0)
+            }
+            else if (scaledBossLife < 0) {
                 scaledBossLife = 0;
-            else if (scaledBossLifeFloat < 1 && scaledBossLifeFloat > 0)    // At least 1 HP square if the boss has some life
+            }
+            else if (scaledBossLife == 0 && currentBossLife > 0.f) { // At least 1 HP square if the boss has some life
                 scaledBossLife = 1;
+            }
             drawHealthBars(window, player.health, scaledBossLife, virtualWorldOffset);
         }
 
@@ -1363,8 +1365,6 @@ void Game::checkCollisions(const sf::Vector2f &viewPosition)
                 auto audio = configManager.getAudio();
                 gameSoundManager.playMusic("boss", gameSoundManager.realVolume(audio.master_volume, audio.music_volume), true);
             }
-
-            // FALTA HACER QUE NO SPAWNEEN MÁS ENEMIGOS / QUE NO ENTREN EN PANTALLA
         }
     }
 

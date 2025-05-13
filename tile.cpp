@@ -309,7 +309,7 @@ void MiscellaneousTile::onCollision(Entity& other, Game& game, const sf::FloatRe
         this->onCollision_Whip(game);
     }
     else if (dynamic_cast<Player*>(&other)) {
-        if (this->isCollidable()) {
+        if (!isSoftBlock(this->type)) {
             this->onCollision_Player(other, game);
         }
     }
@@ -330,12 +330,12 @@ void MiscellaneousTile::onCollision_Whip(Game& game){
 
 void MiscellaneousTile::onCollision_Player(Entity& other, Game& game) {
     sf::FloatRect *tileBounds = &this->hitboxes[0];   // Misc tiles only have 1 hitbox
-
     if (this->type != MiscTileType::DROP_TRIGGER) {
         bool hasCollided = false;
         game.computePlayerTileIntersection(hasCollided, *tileBounds);
     }
-    else if (Player* player = dynamic_cast<Player*>(&other); player && player->isDucking) {  // It's MiscTileType::DROP_TRIGGER
+    else if (Player* player = dynamic_cast<Player*>(&other); player &&
+            ((game.currentLevel == 1 && game.currentStage == 1) || player->isDucking)) {
         auto audio = game.configManager.getAudio();
         gameSoundManager.playSound("secret_treasure", gameSoundManager.realVolume(audio.master_volume, audio.music_volume));
         
