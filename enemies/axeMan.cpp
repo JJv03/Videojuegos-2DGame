@@ -261,6 +261,13 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
             needsPlayerToLeaveZone = true;
         }
     }
+    else if (MiscellaneousTile *miscTile = dynamic_cast<MiscellaneousTile *>(&other))
+    {
+        if (!miscTile->isDestroyed && miscTile->isCollidable())
+        {
+            onCollision_MiscTile(miscTile->getBounds()[0]);
+        }
+    }
 }
 
 // Reset to initial state

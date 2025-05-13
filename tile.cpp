@@ -210,15 +210,17 @@ bool MiscellaneousTile::isCollidable() const {
     return ::isCollidable(this->type);
 }
 
-bool isSoftBlock(MiscTileType type) {
-    if (type == MiscTileType::CANDELABRUM || type == MiscTileType::FIREPIT) {
+
+bool isCollidable(MiscTileType type) {
+    if (type != MiscTileType::CANDELABRUM && type != MiscTileType::FIREPIT && type != MiscTileType::DROP_TRIGGER) {
         return true;
     }
     return false;
 }
 
-bool isCollidable(MiscTileType type) {
-    if (type != MiscTileType::CANDELABRUM && type != MiscTileType::FIREPIT) {
+
+bool isSoftBlock(MiscTileType type) {
+    if (type == MiscTileType::CANDELABRUM || type == MiscTileType::FIREPIT) {
         return true;
     }
     return false;

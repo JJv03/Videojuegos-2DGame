@@ -327,6 +327,13 @@ void WhiteSkeleton::onCollision(Entity &other, Game &game, const sf::FloatRect& 
             needsPlayerToLeaveZone = true;
         }
     }
+    else if (MiscellaneousTile *miscTile = dynamic_cast<MiscellaneousTile *>(&other))
+    {
+        if (!miscTile->isDestroyed && miscTile->isCollidable())
+        {
+            onCollision_MiscTile(miscTile->getBounds()[0]);
+        }
+    }
 }
 
 void WhiteSkeleton::updateAnimation(float deltaTime){

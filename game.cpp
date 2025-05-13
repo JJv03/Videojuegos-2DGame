@@ -1099,14 +1099,15 @@ void Game::draw(sf::RenderWindow &window, Camera &camera)
         else
         { // Boss fight
             int maxSquares = 16;
-            //int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
-            float scaledBossLifeFloat = (float(currentBossLife) * maxSquares) / float(maxLife);
-            int scaledBossLife = std::max(1, static_cast<int>(scaledBossLifeFloat));
-            scaledBossLife = std::min(scaledBossLife, maxSquares); 
-            // if (scaledBossLife > maxSquares)
-            //     scaledBossLife = maxSquares;
-            // if (scaledBossLife < 0)
-            //     scaledBossLife = 0;
+            int scaledBossLife = (currentBossLife * maxSquares) / maxLife;
+            float scaledBossLifeFloat = (currentBossLife * maxSquares) / maxLife;
+
+            if (scaledBossLife > maxSquares)
+                scaledBossLife = maxSquares;
+            else if (scaledBossLife < 0)
+                scaledBossLife = 0;
+            else if (scaledBossLifeFloat < 1 && scaledBossLifeFloat > 0)    // At least 1 HP square if the boss has some life
+                scaledBossLife = 1;
             drawHealthBars(window, player.health, scaledBossLife, virtualWorldOffset);
         }
 
