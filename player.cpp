@@ -1300,7 +1300,7 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
         {
             game.particleSystem.spawnHitParticle(intersectionRect.position);
             gameSoundManager.stopSound("whip_use");
-            if (dynamic_cast<AxeMan *>(&other)) {
+            if (dynamic_cast<AxeMan *>(&other) || dynamic_cast<Cannon *>(&other)) {
                 playSound("strong_enemy_hit");
             } else {
                 playSound("whip_hit");
