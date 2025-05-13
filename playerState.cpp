@@ -528,9 +528,11 @@ void PlayerJumpState::init(Player& player)
     if(sf::Keyboard::isKeyPressed(controls.left) && player.acceptsInput){
         player.dir = LEFT;
         player.isWalking = true;
+        player.sprite->setScale({1.f, 1.f});
     } else if(sf::Keyboard::isKeyPressed(controls.right) && player.acceptsInput){
         player.dir = RIGHT;
         player.isWalking = true;
+        player.sprite->setScale({-1.f, 1.f});
     }
 
 }
