@@ -40,8 +40,7 @@ Cannon::Cannon(std::shared_ptr<sf::Sprite> _sprite, std::vector<sf::FloatRect> &
     currentState = State::WAITING_FIRST_ATTACK;
 }
 
-// Reset cannon to initial state
-void Cannon::resetPosition(){
+void Cannon::resetCannon(){
     Enemy::resetPosition();
  
     speed = {0.0f, 0.0f};
@@ -55,6 +54,13 @@ void Cannon::resetPosition(){
     facingRight = false;
     isPlayerRight = false;
 
+    animationManager->playAnimation(idleCannon);
+}
+
+// Reset cannon to initial state
+void Cannon::resetPosition(){
+    resetCannon();
+
     for(auto& projectile : projectiles){
         if (projectile && projectile->sprite && projectile->getActive())
         {
@@ -62,8 +68,6 @@ void Cannon::resetPosition(){
             projectile->reset();
         }
     }
-
-    animationManager->playAnimation(idleCannon);
 }
 
 // Render cannon and debug info
@@ -179,9 +183,10 @@ void Cannon::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 break;
         }
 
-    updateProjectiles(deltaTime, mapBounds);
-    updateAnimation(deltaTime);
+        updateAnimation(deltaTime);
     }     
+    
+    updateProjectiles(deltaTime, mapBounds);
 }
 
 // Handle collisions
@@ -195,7 +200,7 @@ void Cannon::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            resetPosition();
+            resetCannon();
             needsPlayerToLeaveZone = true;
         }
     }
@@ -205,7 +210,7 @@ void Cannon::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            resetPosition();
+            resetCannon();
             needsPlayerToLeaveZone = true;
         }
     }

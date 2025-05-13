@@ -76,6 +76,8 @@ public:
     // Reset fishman to initial state
     void resetPosition() override;
 
+    void resetFishman();
+
     // Move fishman to spawn position - updated to use random position
     void moveToSpawnPosition(const sf::FloatRect &playerActivationZone, const sf::FloatRect &playerBounds);
 
