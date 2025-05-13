@@ -23,7 +23,7 @@ void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& in
             if (!whip->collisionedEntities.contains(this))
             {
                 dracula->hasBeenHurtThisTime = true;
-                if(dracula->applyDamage(whip->whipDmg/3.0f, game.player)){
+                if(dracula->applyDamage(whip->whipDmg/4.5f, game.player)){
                     sprite->setColor(sf::Color::White);
                     dracula->sprite->setColor(sf::Color::White);
                     dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;
@@ -36,7 +36,7 @@ void DraculaBody::onCollision(Entity &other, Game &game, const sf::FloatRect& in
             if (!subWeapon->collisionedEntities.contains(this))
             {
                 dracula->hasBeenHurtThisTime = true;
-                if(dracula->applyDamage(subWeapon->subDamage/3.0f, game.player)){
+                if(dracula->applyDamage(subWeapon->subDamage/4.5f, game.player)){
                     sprite->setColor(sf::Color::White);
                     dracula->sprite->setColor(sf::Color::White);
                     dracula->currentState = Dracula::DraculaState::DEAD_MASK_OFF;

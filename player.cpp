@@ -1312,6 +1312,12 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
+        else if (dynamic_cast<DraculaBody *>(&other))
+        {
+            game.particleSystem.spawnHitParticle(intersectionRect.position);
+            gameSoundManager.stopSound("whip_use");
+            playSound("strong_enemy_hit");
+        }
         else if (Projectile* projectile = dynamic_cast<Projectile *>(&other))
         {
             if(projectile->getActive()){
