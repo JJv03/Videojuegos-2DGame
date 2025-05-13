@@ -866,7 +866,33 @@ void PlayerStairIdleState::handleInput(Player& player, sf::Event event)
             player.isAttacking = true;
             player.setState(state<AttackStairs>());
         }
+        if(keyPressed->scancode == controls.useSubWeapon ){
+            bool noWeaponsActive = !player.weaponIsActive || 
+                                    (player.isDoubleShotActive  && !player.weaponIsActive2 && player.delayBetweenShotsCounter >= player.delayBetweenShots) ||
+                                    (player.isTripleShotActive  && !player.weaponIsActive3 && player.delayBetweenShotsCounter >= player.delayBetweenShotsTriple);
+            if(player.hearts>0 && noWeaponsActive && player.subWeaponType != ItemType::NONE && !player.isStopWatchActive && player.hasToPressAgain){
+            //if(player.hearts>0 && !player.weaponIsActive){// && player.subWeaponType != ItemType::NONE){ // Depuracion
+                player.isAttacking = true;
+                player.hasToPressAgain = false;
+                
+                player.hearts -= 1;
+                player.setState(state<AttackSecondary>());
+                if (player.hearts>3  && player.subWeaponType == ItemType::STOPWATCH){
+                    player.hearts -= 4;
+                }
+            }
+            
+        }
     }   
+    if(const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()){
+        if (keyReleased->scancode == controls.attack) {
+            player.hasToPressAgain = true;
+        }
+        if (keyReleased->scancode == controls.useSubWeapon) {
+            player.hasToPressAgain = true;
+        }
+        
+    }
     
 }
 
@@ -1878,6 +1904,10 @@ void PlayerDeadState::end(Player& player)
     player.timeDoubleShotActiveCounter = 0.0f;
     player.timeTripleShotActiveCounter = 0.0f;
     player.startInvulnerable = false;
+    player.weaponIsActive3 = false;
+    player.isTripleShotActive = false;
+    player.timeTripleShotActiveCounter = 0.0f;
+    player.startInvulnerable = false;
     player.invulnerableTimeCounter = player.invulnerableTime + 1;
     player.isDead = false;
     player.hasDied = false;
@@ -2084,8 +2114,14 @@ void PlayerAttackSecondaryState::update(Player& player, float deltaTime, bool wi
         player.isAttacking = false;
         player.attackedFinished = true;
         player.oneHasBeenUsed = false;
-        player.currentAnimation = idleSimon;
-        player.setState(state<Idle>());
+        if(player.isOnStairs){
+            player.currentAnimation = idleSimon;
+            player.setState(state<StairIdle>());
+        }else{  
+            player.currentAnimation = idleSimon;
+            player.setState(state<Idle>());
+        }
+        
     }
 }
 
