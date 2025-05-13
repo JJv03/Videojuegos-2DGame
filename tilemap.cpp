@@ -23,7 +23,7 @@ enum CollisionType
     BOTTOM_RIGHT_COLLISION,
     TWO_VERTICAL_COLLISION,
     TWO_VERTICAL_RIGHT_COLLISION,
-    THREE_VERTICAL_COLLISION,
+    CASTLE_ENTRANCE_COLISION,
 };
 
 std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
@@ -40,7 +40,7 @@ std::unordered_map<CollisionType, sf::FloatRect> collisionTypes = {
     {BOTTOM_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, gTileSize / 2.0f}, {gTileSize / 2.0f, gTileSize / 2.0f})},
     {TWO_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 2.f))},
     {TWO_VERTICAL_RIGHT_COLLISION, sf::FloatRect({gTileSize / 2.0f, 0.0f}, sf::Vector2f(gTileSize / 2.f, gTileSize * 2.f))},
-    {THREE_VERTICAL_COLLISION, sf::FloatRect({0.0f, 0.0f}, sf::Vector2f(gTileSize, gTileSize * 3.f))},
+    {CASTLE_ENTRANCE_COLISION, sf::FloatRect({gTileSize * 0.6f, gTileSize * 2.75f}, sf::Vector2f(gTileSize * 0.25f, gTileSize * 0.25f))},
 };
 
 // ======================================================================================
@@ -229,7 +229,7 @@ sf::FloatRect TileMap::getHitboxForDoorTile(const int id) const
         switch (id)
         {
         case 0: // Castle Entrance
-            return collisionTypes.at(THREE_VERTICAL_COLLISION);
+            return collisionTypes.at(CASTLE_ENTRANCE_COLISION);
 
         case 1: // Door
             return collisionTypes.at(TWO_VERTICAL_RIGHT_COLLISION);

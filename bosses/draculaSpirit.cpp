@@ -120,7 +120,7 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
         float horizontalDistance = std::hypot(position.x - playerPos.x, position.y - playerPos.y);
 
         playerClose = horizontalDistance < 70.f;
-        playerAway = horizontalDistance > 120.f;
+        playerAway = horizontalDistance >= 70.f;
         if(hasFired){
             fireNextCounter += deltaTime;
             if(fireNextCounter >= fireNextTimer){
@@ -654,7 +654,7 @@ void DraculaSpirit::updateWeights() {
     float lifeRatio = static_cast<float>(life) / static_cast<float>(DRACULASPIRIT_LIFE);
 
     // If life is low, prioritize moving to escape
-    if (lifeRatio < 0.35f) {
+    if (lifeRatio < 0.5f) {
         //weights[0] = std::max(0, weights[0] - 1); // Remove WAITING if you are in a critical situation
         weights[0] += 2; // More likely to flee
         waitingIdle = 0.25f;
@@ -662,7 +662,7 @@ void DraculaSpirit::updateWeights() {
         waitingInSteady = 0.25f;
         fireTimer = 0.6f;
         speedFire = 120.f;
-        if(lifeRatio < 0.15f){
+        if(lifeRatio < 0.35f){
             weights[0] += 5; // More likely to flee
             waitingIdle = 0.1f;
             waitingInReady = 0.1f;

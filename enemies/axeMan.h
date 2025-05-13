@@ -58,6 +58,8 @@ public:
     // Reset ghost to initial state
     void resetPosition() override;
 
+    void resetAxeman();
+
     // Render ghost and debug info
     void draw(sf::RenderWindow &window) override;
 

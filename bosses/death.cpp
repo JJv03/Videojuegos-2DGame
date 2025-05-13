@@ -245,7 +245,9 @@ void Death::update(float deltaTime, const sf::FloatRect &playerActivationZone, c
             }
         }
         // std::cout << cont << std::endl;
+        currentBossLife = life;
     }
+    
 }
 
 void Death::getLinelSpeed(float timeToMove){
@@ -406,7 +408,7 @@ void Death::onCollision(Entity &other, Game &game, const sf::FloatRect& intersec
             collisionWithHolyWater = false;
         }
     }
-    currentBossLife = life;
+    
 }
 
 // Render Death and debug info (spawn zone)

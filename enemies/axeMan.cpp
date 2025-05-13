@@ -184,11 +184,11 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                     float posY = 8;
                     if(chance == 0){
                         posY = position.y + 8;
-                        std::cout << "Arribaaaaaaaaaaaaaa" << std::endl;
+                        //std::cout << "Arribaaaaaaaaaaaaaa" << std::endl;
                     }
                     else{
                         posY = position.y + 20;
-                        std::cout << "Abajoooooooooooooooooooooo" << std::endl;
+                        //std::cout << "Abajoooooooooooooooooooooo" << std::endl;
                     }
                     if(isPlayerRight){
                         axes[0] = createAxe(sf::Vector2f(position.x + 32, posY), mapBounds, isPlayerRight, AXEMAN_DAMAGE);
@@ -201,10 +201,7 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
                 currentState = prevState;
                 break;
         }
-        if(axes[0] && axes[0]->sprite && axes[0]->getActive()){
-            axes[0]->update(deltaTime, mapBounds);
-            // cont ++;
-        }
+        
         if (speed.x != 0)
         {
             sprite->move({speed.x * deltaTime, 0.f});
@@ -217,6 +214,10 @@ void AxeMan::update(float deltaTime, const sf::FloatRect &playerActivationZone, 
         updateAnimation(deltaTime);
     }
     
+    if(axes[0] && axes[0]->sprite && axes[0]->getActive()){
+        axes[0]->update(deltaTime, mapBounds);
+        // cont ++;
+    }
 }
 
 void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& intersectionRect)
@@ -231,7 +232,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         if (isOnGround && Enemy::checkForLedge(other))
         {
             atTheEdge = true;
-            std::cout << "I dont have the high ground" << std::endl;
+            //std::cout << "I dont have the high ground" << std::endl;
         }
     }
 
@@ -241,10 +242,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            for(auto& a : axes){
-                if(a) a->reset();
-            }
-            resetPosition();
+            resetAxeman();
             needsPlayerToLeaveZone = true;
         }
     }
@@ -254,10 +252,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            for(auto& a : axes){
-                if(a) a->reset();
-            }
-            resetPosition();
+            resetAxeman();
             needsPlayerToLeaveZone = true;
         }
     }
@@ -271,7 +266,7 @@ void AxeMan::onCollision(Entity &other, Game &game, const sf::FloatRect& interse
 }
 
 // Reset to initial state
-void AxeMan::resetPosition()
+void AxeMan::resetAxeman()
 {
     Enemy::resetPosition();
 
@@ -295,11 +290,17 @@ void AxeMan::resetPosition()
     currentState = State::WALKINGCLOSE;
     prevState = State::WALKINGCLOSE;
 
+    sprite->setScale({1.0f, 1.0f});
+}
+
+// Reset to initial state
+void AxeMan::resetPosition()
+{
+    resetAxeman();
+
     for(auto& a : axes){
         if(a) a->reset();
     }
-
-    sprite->setScale({1.0f, 1.0f});
 }
 
 // Render with optional debug visuals

@@ -296,7 +296,7 @@ void FishMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            resetPosition();
+            resetFishman();
             needsPlayerToLeaveZone = true;
         }
     }
@@ -306,14 +306,14 @@ void FishMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inters
         {
             game.createDropItem(DropType::DEFAULT_ENEMIES, sprite->getGlobalBounds().position);
             game.particleSystem.spawnFireParticle(sprite->getGlobalBounds().position);
-            resetPosition();
+            resetFishman();
             needsPlayerToLeaveZone = true;
         }
     }
 }
 
 // Reset fishman to initial state
-void FishMan::resetPosition()
+void FishMan::resetFishman()
 {
     Enemy::resetPosition();
 
@@ -326,6 +326,15 @@ void FishMan::resetPosition()
     pauseTimer = 0.0f;
 
     isOnGround = false;
+}
+
+
+// Reset fishman to initial state
+void FishMan::resetPosition()
+{
+    resetFishman();
+
+    projectile->setActive(false);
 }
 
 // Move fishman to spawn position randomly within activation zone

@@ -235,8 +235,10 @@ void PhantomBat::update(float deltaTime, const sf::FloatRect &playerActivationZo
                 hitbox.position.y -= speed.y * deltaTime;
             }
         }
+        currentBossLife = life;
     }
     updateAnimation(deltaTime);
+    
 }
 
 void PhantomBat::enhancedAI(bool isOn, const sf::FloatRect &playerBounds){
@@ -346,7 +348,7 @@ void PhantomBat::onCollision(Entity &other, Game &game, const sf::FloatRect& int
             game.particleSystem.spawnBigFireParticle(position, false);
         }
     }
-    currentBossLife = life;
+    
 }
 
 // Render phantomBat and debug info (spawn zone)

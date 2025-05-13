@@ -142,8 +142,8 @@ Death *createDeath(const sf::Vector2f &position, const size_t &level, const size
     std::vector<sf::FloatRect> hitboxes = {
         // Wings opened
         sf::FloatRect(
-            {position.x - 20.f, position.y - 48.f},
-            {40.f, 48.f}
+            {position.x - 12.f, position.y - 48.f},
+            {24.f, 48.f}
         )
     };
 

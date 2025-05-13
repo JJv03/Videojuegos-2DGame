@@ -66,6 +66,8 @@ public:
     // Reset cannon to initial state
     void resetPosition() override;
 
+    void resetCannon();
+
     // Render cannon and debug info
     void draw(sf::RenderWindow &window) override;
 

@@ -447,13 +447,10 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
     }
     for (auto &f : fishman)
     {
-        if (f->level == currentLevel && f->stage == currentStage && f->isActive)
+        if (f->level == currentLevel && f->stage == currentStage)
         {
-            if (f->getProjectile())
-            {
-                allEnemies.push_back(f->getProjectile().get());
-            }
-            allEnemies.push_back(f);
+            if (f->isActive) allEnemies.push_back(f);
+            if (f->getProjectile() && f->getProjectile()->getActive()) allEnemies.push_back(f->getProjectile().get());
         }
     }
     for (auto &g : ghost)
@@ -472,9 +469,9 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
     }
     for (auto &c : cannon)
     {
-        if (c->level == currentLevel && c->stage == currentStage && c->isActive)
+        if (c->level == currentLevel && c->stage == currentStage)
         {
-            allEnemies.push_back(c);
+            if(c->isActive) allEnemies.push_back(c);
 
             for(auto &p : c->projectiles)
             {
@@ -487,9 +484,10 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
     }
     for (auto &ax : axeman)
     {
-        if (ax->level == currentLevel && ax->stage == currentStage && ax->isActive)
+        if (ax->level == currentLevel && ax->stage == currentStage)
         {
-            allEnemies.push_back(ax);
+            if(ax->isActive) allEnemies.push_back(ax);
+
             for(auto& axe : ax->axes){
                 if (axe)
                 {
@@ -514,9 +512,10 @@ std::vector<Entity *> EnemyManager::getEnemies(int currentLevel, int currentStag
     }
     for (auto &ws : whiteSkeleton)
     {
-        if (ws->level == currentLevel && ws->stage == currentStage && ws->isActive)
+        if (ws->level == currentLevel && ws->stage == currentStage)
         {
-            allEnemies.push_back(ws);
+            if(ws->isActive) allEnemies.push_back(ws);
+
             for(auto &b : ws->bones)
             {
                 if (b && b->getActive())
