@@ -54,6 +54,7 @@ public:
     };
 
     int weights[3] = {1, 1, 1};
+    int damageReceived[3] = {0, 0, 0}; // WAITING, MOVING, ATTACKING
 
     State currentState = State::WAITING;
 
