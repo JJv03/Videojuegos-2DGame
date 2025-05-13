@@ -120,7 +120,7 @@ void configManager::loadConfiguration(const std::string& file) {
     if (!inputFile) {
         std::cerr << "Error opening configuration file, generating default." << std::endl;
         audio.master_volume = audio.music_volume = audio.sound_volume = 50;
-        video.window_mode = false;
+        video.window_mode = true;
         controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
         cheats.enabled = false;
         difficulty.hard_mode = false;
@@ -151,7 +151,7 @@ void configManager::loadConfiguration(const std::string& file) {
         if (originalConfig.contains("video") && originalConfig["video"].contains("window_mode") && originalConfig["video"]["window_mode"].is_boolean()) {
             video.window_mode = originalConfig["video"]["window_mode"];
         } else {
-            video.window_mode = false; // Default to windowed mode
+            video.window_mode = true; // Default to fullScreen mode
         }
 
         // Controls
@@ -203,7 +203,7 @@ void configManager::loadConfiguration(const std::string& file) {
     }
     catch (const std::exception& e) {
         audio.master_volume = audio.music_volume = audio.sound_volume = 50;
-        video.window_mode = false;
+        video.window_mode = true;
         controls = {defRight, defLeft, defDown, defUp, defJump, defAttack, defEnter, defEscape, defUseSubWeapon};
         cheats.enabled = false;
         difficulty.hard_mode = false;
