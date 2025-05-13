@@ -527,10 +527,6 @@ bool Dracula::shouldAttack(const Player& player) {
         return true;
     }
 
-    if (attacksLastTime == 2 && attacksThisTime == 1) { // Double-attack can't happen twice in a row
-        //std::cout << "ShouldAttack: Double-attack can't happen twice in a row" << std::endl;
-        return false;
-    }
 
     if(std::abs(player.sprite->getPosition().x - sprite->getPosition().x) < DISTANCE_TOO_CLOSE){    // If too close, maybe attack
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
@@ -559,16 +555,7 @@ bool Dracula::shouldAttack(const Player& player) {
         return prob < PROB_HIGH;
     }
 
-    if (attacksThisTime == 1){
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-        float prob = dis(rng);
-        prob = prob + (weights[0] * 0.1f);
-        prob = std::clamp(prob, 0.0f, 1.0f);
-        //std::cout << "ShouldAttack: Already attacked this time" << std::endl;
-        return prob < PROB_MID;
-    }
-
-    if (attacksThisTime == 2){
+    if (attacksThisTime >= 1){
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
         float prob = dis(rng);
         prob = prob + (weights[0] * 0.1f);
