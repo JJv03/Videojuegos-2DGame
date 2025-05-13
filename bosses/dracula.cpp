@@ -276,7 +276,7 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
             break;
 
         case DraculaState::DEAD_MASK_OFF:
-            (sprite && draculaBody->sprite){
+            if (sprite && draculaBody->sprite){
                 sprite->setColor(sf::Color::White);
                 draculaBody->sprite->setColor(sf::Color::White);
             }
@@ -293,7 +293,7 @@ void Dracula::updateNormalMode(float deltaTime, const Player &player, const sf::
             break;
         
         case DraculaState::DEAD_WAIT:
-            (sprite && draculaBody->sprite){
+            if (sprite && draculaBody->sprite){
                 sprite->setColor(sf::Color::White);
                 draculaBody->sprite->setColor(sf::Color::White);
             }
