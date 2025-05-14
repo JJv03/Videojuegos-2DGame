@@ -817,6 +817,7 @@ void Game::interAnimation(float deltaTime)
             
             player.acceptsInput = true;
             player.setState(std::make_unique<PlayerIdleState>());
+            player.isOnStairs = false;
             loadLevelAndEnemies();
         }
         else
