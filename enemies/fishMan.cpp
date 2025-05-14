@@ -334,7 +334,7 @@ void FishMan::resetPosition()
 {
     resetFishman();
 
-    projectile->setActive(false);
+    if(projectile) projectile->setActive(false);
 }
 
 // Move fishman to spawn position randomly within activation zone
