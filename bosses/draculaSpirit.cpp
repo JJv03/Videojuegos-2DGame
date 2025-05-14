@@ -61,10 +61,10 @@ void DraculaSpirit::update(float deltaTime, const int phase, const Player &playe
             if (player.gPlayerActivationZone.findIntersection(hitbox).has_value())
             {
                 isActive = true;
-                life = DRACULASPIRIT_LIFE;
                 maxLife = life;
                 
                 if(reproduced){
+                    life = DRACULASPIRIT_LIFE;
                     reproduced = false;
                     this->currentState = DraculeSpiritState::IDLE;
                     respawned = true;
