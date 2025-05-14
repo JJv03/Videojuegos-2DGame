@@ -1306,11 +1306,17 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
                 playSound("whip_hit");
             }
         }
-        else if (dynamic_cast<Boss *>(&other))
+        else if (auto boss = dynamic_cast<Boss *>(&other))
         {
+            if (auto mummy = dynamic_cast<MummyMan*>(boss)) {
+                if (mummy->currentState == MummyMan::MummyState::ATTACK && !game.configManager.getDifficulty().hard_mode)
+                    return;     // Mummy in IDLE can't be hit in easy mode
+            }
+        
             game.particleSystem.spawnHitParticle(intersectionRect.position);
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
+                
         }
         else if (dynamic_cast<DraculaBody *>(&other) && game.configManager.getDifficulty().hard_mode)
         {
@@ -1405,8 +1411,13 @@ void SubWeapon::onCollision(Entity &other, Game &game, const sf::FloatRect& inte
             }
             
         }
-        else if (dynamic_cast<Boss *>(&other))
+        else if (auto boss = dynamic_cast<Boss *>(&other))
         {
+            if (auto mummy = dynamic_cast<MummyMan*>(boss)) {
+                if (mummy->currentState == MummyMan::MummyState::ATTACK && !game.configManager.getDifficulty().hard_mode)
+                    return;     // Mummy in IDLE can't be hit
+            }
+    
             game.particleSystem.spawnHitParticle(intersectionRect.position);
             playSound("strong_enemy_hit");
             if(this->type == ItemType::DAGGER){
