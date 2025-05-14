@@ -1312,7 +1312,7 @@ void Whip::onCollision(Entity &other, Game &game, const sf::FloatRect& intersect
             gameSoundManager.stopSound("whip_use");
             playSound("strong_enemy_hit");
         }
-        else if (dynamic_cast<DraculaBody *>(&other))
+        else if (dynamic_cast<DraculaBody *>(&other) && game.configManager.getDifficulty().hard_mode)
         {
             game.particleSystem.spawnHitParticle(intersectionRect.position);
             gameSoundManager.stopSound("whip_use");
