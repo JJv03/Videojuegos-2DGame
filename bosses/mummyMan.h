@@ -9,7 +9,7 @@ class MummyMan : public Boss
 private:
     // Movement and combat constants
     const sf::Vector2f MUMMY_SPEED = {30.0f, 0.0f};   // By default static
-    const float MUMMY_LIFE = 1.0f;
+    const float MUMMY_LIFE = 24.0f;
     const float MUMMY_SCORE = 3000.0f;
     const float MUMMY_DAMAGE = 2.0f;
 
