@@ -205,8 +205,23 @@ void MummyMan::update(float deltaTime, const sf::FloatRect &playerActivationZone
     
     if(id==1){
             currentMummy1Life = life;
+            if (currentMummy1Life <= 0)
+            {
+                mummy1IsAlive = false;
+            }
+            else{
+                mummy1IsAlive = true;
+            }
+            
         }else{
             currentMummy2Life = life;
+            if (currentMummy2Life <= 0)
+            {
+                mummy2IsAlive = false;
+            }
+            else{
+                mummy2IsAlive = true;
+            }
         }
         currentBossLife = currentMummy1Life + currentMummy2Life;
     updateAnimation(deltaTime);
@@ -227,11 +242,21 @@ void MummyMan::onCollision(Entity &other, Game &game, const sf::FloatRect& inter
             
             dead = true;
             gKilledBoss = true;
+            if(id==1){
+                mummy1IsAlive = false;
+            }
+            if (id==2){
+                mummy2IsAlive = false;
+            }
+
+            
+            
             if(bandage){
                 bandage->reset();
             }
+            bool spawenC = (id==1 && !mummy2IsAlive) || (id==2 && !mummy1IsAlive);
             game.particleSystem.spawnBigFireParticle(position, false);
-            if(isOtherDead){
+            if(isOtherDead || spawenC){
                 game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
                 
             }
@@ -294,6 +319,15 @@ void MummyMan::resetPosition()
         bandage->setActive(false);
     }
     
+    if(id==1){
+        this->sprite->setPosition(sf::Vector2f(1295.f, 136.15f));
+        this->sprite->setScale(sf::Vector2f(1.f, 1.f));
+    }
+    if(id==2){
+        this->sprite->setPosition(sf::Vector2f(1515.f, 136.15f));
+        this->sprite->setScale(sf::Vector2f(-1.f, 1.f));
+
+    }
     currentAnimation = mummyIdle;
     dead = false;
     starting = true;

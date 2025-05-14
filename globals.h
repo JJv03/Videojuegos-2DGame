@@ -109,6 +109,8 @@ extern bool hasReachedStartStage;
 extern float currentBossLife;
 extern float currentMummy1Life;
 extern float currentMummy2Life;
+extern bool mummy1IsAlive;
+extern bool mummy2IsAlive;
 extern bool reproduced;
 extern float maxLife;
 extern bool gKilledBoss;
