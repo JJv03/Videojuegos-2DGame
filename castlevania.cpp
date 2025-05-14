@@ -80,7 +80,7 @@ void Castlevania::run(){
             }
         }
 
-        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        // sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
 
         //sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
         //std::cout << "Mouse View X: " << worldPos.x << ", Y: " << worldPos.y << std::endl;

@@ -23,8 +23,8 @@ all: $(EXEC)
 
 # Enlazar ejecutable con objetos y recursos
 $(EXEC): $(OBJS) $(RES_FILE) | $(OBJ_DIR)
-	$(CXX) $(OBJS) $(RES_FILE) -o $@ $(LDFLAGS)
-#	$(CXX) $(OBJS) $(RES_FILE) -mwindows -o $@ $(LDFLAGS)
+#	$(CXX) $(OBJS) $(RES_FILE) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) $(RES_FILE) -mwindows -o $@ $(LDFLAGS)
 
 # Compilar .cpp en .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
