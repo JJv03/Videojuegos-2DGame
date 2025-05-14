@@ -489,6 +489,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game, const sf::FloatRect& 
         if (!whip->collisionedEntities.contains(this) && applyDamage((whip->whipDmg), game.player))
         {
             // DROP
+            currentBossLife = 0.f;
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             //dead = true;
             gKilledBoss = true;
@@ -502,6 +503,7 @@ void DraculaSpirit::onCollision(Entity &other, Game &game, const sf::FloatRect& 
         if (!subWeapon->collisionedEntities.contains(this) && applyDamage(subWeapon->subDamage, game.player))
         {
             // DROP
+            currentBossLife = 0.f;
             game.createDropItem(DropType::MAGIC_CRYSTAL, sf::Vector2f(mapDims.position.x + mapDims.size.x / 2, mapDims.position.y + mapDims.size.y / 2));
             //dead = true;
             gKilledBoss = true;
