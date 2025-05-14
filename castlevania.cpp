@@ -27,7 +27,7 @@ void Castlevania::run(){
     std::ifstream archivo("./assets/DONOTDELETE/PLEASE/IBEGYOU/coconut.png");
 
     if (!archivo) {  // Si no se puede abrir el archivo (no existe, por ejemplo)
-        std::cout << "THE COCONUT HAS DISAPPEARED..." << std::endl;
+        std::cerr << "THE COCONUT HAS DISAPPEARED..." << std::endl;
         return;
     }
 
