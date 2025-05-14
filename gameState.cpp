@@ -1649,6 +1649,7 @@ void ControlsConfGS::handleInput(sf::Event event){
                             if (checkInputErrors()){
                                 std::cout << "At least one with a bad input or a duplicated input, setting default" << std::endl;
                                 showPopUp = true; // ADD POP UP AND DONT GO TO OTHER WINDOW
+                                popUpTimer = 0.0f;
                             }
                             else{
                                 enterPressed = true;
