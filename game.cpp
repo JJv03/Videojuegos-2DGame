@@ -1824,7 +1824,9 @@ int Game::startStage(int stage, int fromStairs)
     bossManager->loadBossesFromLevel(currentLevel, tilemaps);
 
     player.acceptsInput = true;
-
+    player.weaponIsActive = false;
+    player.weaponIsActive2 = false;
+    player.weaponIsActive3 = false;
     hasReachedEndStage = false;
     hasReachedStartStage = false;
     isInBossFight = false;
