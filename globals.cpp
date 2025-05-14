@@ -28,7 +28,7 @@ const sf::Color gColorKeyGreen = sf::Color(0, 128, 0);
 
 // ============ TILEMAP VARIABLES =============
 int gStartingLevel = 1;
-int gStartingStage = 5;
+int gStartingStage = 1;
 
 const float gTileSize = 32.f;
 
@@ -119,5 +119,5 @@ const float gHEARTS_SFX_FRECUENCY = 1.f;
 bool gGoToNextLevel = false;
 
 // ============ DEBUG =============
-const bool gDrawHitboxes = true;
-const bool gSkipAnims = true;
+const bool gDrawHitboxes = false;
+const bool gSkipAnims = false;
