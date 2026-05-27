@@ -18,6 +18,9 @@ El proyecto incluye:
 - Gestión de entradas del usuario
 - Lógica de enemigos y/o obstáculos
 
+Link al trailer del juego:
+    https://www.youtube.com/watch?v=IYjdBuC4Huw
+
 ---
 
 ## 🕹️ Características
@@ -28,17 +31,6 @@ El proyecto incluye:
 ✅ Diseño modular del código  
 ✅ Sprites y animaciones  
 ✅ Escenarios interactivos  
-
----
-
-## 📂 Estructura del proyecto
-
-```bash
-Videojuegos-2DGame/
-│
-├── Assets/           # Recursos gráficos y sonidos
-├── Scripts/          # Código fuente del juego
-├── Scenes/           # Escenas y niveles
-├── Prefabs/          # Objetos reutilizables
-├── ProjectSettings/  # Configuración del proyecto
-└── README.md
+✅ Nuevas animaciones creadas de cero  
+✅ Sistema de ajustes 
+✅ Modo historia o selector de niveles
